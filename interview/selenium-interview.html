@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selenium (Fundamentals, Locators, Exceptions) — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/selenium-interview" data-root="../" data-lesson="0" data-title="Selenium (Fundamentals, Locators, Exceptions) — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="selenium-fundamentals-locators-exceptions--interview">Selenium (Fundamentals, Locators, Exceptions) — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h2 id="phần-1--selenium-fundamentals">Phần 1 — Selenium Fundamentals</h2>
+<h3 id="q1-what-is-selenium-and-what-does-it-consist-of">Q1. What is Selenium and what does it consist of?</h3>
+<p><strong>Dịch:</strong> Selenium là gì, gồm những thành phần nào?</p>
+<p><strong>Sample answer:</strong> Selenium is an open-source suite for automating web browsers. Its main parts are Selenium WebDriver, which is the API to control browsers, Selenium Grid for running tests in parallel on many machines, and Selenium IDE for record and playback. I mostly use WebDriver with Java.</p>
+<p><strong>Giải thích:</strong> Nêu 3 thành phần; bổ sung Selenium Manager tự tải driver (từ 4.6). Selenium chỉ cho web, không phải mobile native.</p>
+<p><strong>Ví dụ:</strong> Dự án dùng <code>selenium-java 4.52.0</code>, chỉ WebDriver (không Grid/IDE).</p>
+<p><strong>Đào sâu:</strong> <em>Can Selenium test desktop or mobile native apps?</em> → Không (Appium cho mobile).</p>
+<hr />
+<h3 id="q2-explain-the-selenium-webdriver-architecture">Q2. Explain the Selenium WebDriver architecture.</h3>
+<p><strong>Dịch:</strong> Giải thích kiến trúc Selenium WebDriver.</p>
+<p><strong>Sample answer:</strong> The test code uses the Selenium client library, which sends commands as HTTP requests in JSON, following the W3C WebDriver protocol, to a browser driver such as chromedriver. The driver translates them into browser actions and returns the results the same way.</p>
+<p><strong>Giải thích:</strong> Chuỗi: Test (Java) → HTTP/JSON (W3C) → Browser Driver → Browser. Hệ quả: mỗi lệnh là một request; <code>WebElement</code> là handle chứ không phải bản sao DOM.</p>
+<p><strong>Ví dụ:</strong> <code>driver.findElement(By.id("flash"))</code> ⇒ <code>POST /session/{id}/element</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why can a WebElement become stale?</em> → handle trỏ phần tử đã bị thay trong DOM.</p>
+<hr />
+<h3 id="q3-what-is-the-difference-between-webdriver-a-browser-driver-and-the-browser">Q3. What is the difference between WebDriver, a browser driver and the browser?</h3>
+<p><strong>Dịch:</strong> Khác nhau giữa WebDriver, browser driver và browser?</p>
+<p><strong>Sample answer:</strong> WebDriver is the API in my code. The browser driver, for example chromedriver, is an executable by the browser vendor that receives WebDriver commands. The browser, for example Chrome, is what actually renders pages and performs the actions.</p>
+<p><strong>Giải thích:</strong> Ba lớp riêng biệt, driver phải khớp phiên bản browser.</p>
+<p><strong>Ví dụ:</strong> Dự án không tải chromedriver thủ công; Selenium Manager làm điều đó.</p>
+<p><strong>Đào sâu:</strong> <em>What if Chrome updates and the driver is old?</em> → <code>SessionNotCreatedException</code>.</p>
+<hr />
+<h3 id="q4-how-does-selenium-manager-work">Q4. How does Selenium Manager work?</h3>
+<p><strong>Dịch:</strong> Selenium Manager hoạt động thế nào?</p>
+<p><strong>Sample answer:</strong> Since Selenium 4.6, when I create <code>new ChromeDriver()</code>, Selenium Manager detects the installed Chrome version, downloads the matching driver and caches it, so I do not need WebDriverManager or manual downloads. It needs internet the first time.</p>
+<p><strong>Giải thích:</strong> Có trong <code>selenium-manager-4.52.0.jar</code> (dependency tree). Lỗi liên quan: <code>NoSuchDriverException</code>, <code>SessionNotCreatedException</code>.</p>
+<p><strong>Ví dụ:</strong> README dự án: "ChromeDriver được Selenium tự tải về".</p>
+<p><strong>Đào sâu:</strong> <em>Do you still need WebDriverManager?</em> → Không bắt buộc với Selenium ≥ 4.6.</p>
+<hr />
+<h3 id="q5-what-is-the-difference-between-close-and-quit">Q5. What is the difference between <code>close()</code> and <code>quit()</code>?</h3>
+<p><strong>Dịch:</strong> <code>close()</code> khác <code>quit()</code>?</p>
+<p><strong>Sample answer:</strong> <code>close()</code> closes only the current window or tab. <code>quit()</code> closes all windows of the session and ends the driver process. I use <code>quit()</code> in teardown; <code>close()</code> when I close a secondary tab and then switch back to the main window.</p>
+<p><strong>Giải thích:</strong> <code>close()</code> cuối cùng có thể để sót process driver ⇒ rò rỉ tài nguyên.</p>
+<p><strong>Ví dụ:</strong> <code>BaseTest.tearDown()</code> dùng <code>quit()</code> có kiểm tra <code>driver != null</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What happens if you call a command after <code>close()</code> of the only window?</em> → <code>NoSuchWindowException</code>/session lỗi.</p>
+<hr />
+<h3 id="q6-what-is-the-difference-between-get-and-navigateto">Q6. What is the difference between <code>get()</code> and <code>navigate().to()</code>?</h3>
+<p><strong>Dịch:</strong> <code>get()</code> khác <code>navigate().to()</code>?</p>
+<p><strong>Sample answer:</strong> Functionally they are very similar: both load a URL and wait for page load. <code>navigate()</code> belongs to the <code>Navigation</code> interface, which also provides <code>back()</code>, <code>forward()</code> and <code>refresh()</code>, and <code>to()</code> accepts a <code>URL</code> object too.</p>
+<p><strong>Giải thích:</strong> Quy ước: <code>get()</code> mở lần đầu; <code>navigate()</code> cho lịch sử duyệt.</p>
+<p><strong>Ví dụ:</strong> Mọi Exercise dùng <code>driver.get(URL)</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What happens to previously found elements after <code>refresh()</code>?</em> → stale.</p>
+<hr />
+<h3 id="q7-how-do-you-handle-browser-options-such-as-headless-mode">Q7. How do you handle browser options such as headless mode?</h3>
+<p><strong>Dịch:</strong> Cấu hình trình duyệt (headless) thế nào?</p>
+<p><strong>Sample answer:</strong> I use <code>ChromeOptions</code>, for example <code>options.addArguments("--headless=new", "--window-size=1920,1080")</code>, and pass them to <code>new ChromeDriver(options)</code>. I read values from configuration so the same code runs locally and in CI.</p>
+<p><strong>Giải thích:</strong> Headless cần đặt <code>window-size</code> vì <code>maximize()</code> không đáng tin.</p>
+<p><strong>Ví dụ:</strong> Dự án hiện dùng mặc định + <code>maximize()</code>; đây là điểm cải thiện cho CI.</p>
+<p><strong>Đào sâu:</strong> <em>What is the page load strategy?</em> → NORMAL/EAGER/NONE.</p>
+<hr />
+<h3 id="q8-what-are-the-different-timeouts-in-selenium">Q8. What are the different timeouts in Selenium?</h3>
+<p><strong>Dịch:</strong> Selenium có những loại timeout nào?</p>
+<p><strong>Sample answer:</strong> Page load timeout for <code>get()</code>, implicit wait for element lookup, and script timeout for async JavaScript. Explicit waits are separate: they are controlled in the test code by <code>WebDriverWait</code>.</p>
+<p><strong>Giải thích:</strong> Đừng lẫn <code>WebDriverWait</code> với timeouts của <code>manage().timeouts()</code>.</p>
+<p><strong>Ví dụ:</strong> <code>BaseTest</code>: <code>pageLoadTimeout(30s)</code> + <code>WebDriverWait(15s)</code>; không implicit.</p>
+<p><strong>Đào sâu:</strong> <em>What happens when page load timeout is exceeded?</em> → <code>TimeoutException</code>.</p>
+<hr />
+<h3 id="q9-how-do-you-take-a-screenshot-when-a-test-fails">Q9. How do you take a screenshot when a test fails?</h3>
+<p><strong>Dịch:</strong> Chụp ảnh khi test fail thế nào?</p>
+<p><strong>Sample answer:</strong> Cast the driver to <code>TakesScreenshot</code> and call <code>getScreenshotAs(OutputType.FILE)</code>, then copy the file to a folder like <code>target/screenshots</code>. I do this in a TestNG listener or in <code>@AfterMethod</code> using <code>ITestResult</code>, before calling <code>quit()</code>.</p>
+<p><strong>Giải thích:</strong> Phải chụp trước <code>quit()</code>.</p>
+<p><strong>Ví dụ:</strong> Gợi ý cải tiến cho <code>BaseTest</code> của dự án (<a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">selenium/10</a>).</p>
+<p><strong>Đào sâu:</strong> <em>Why <code>target/</code>?</em> → không bị commit.</p>
+<hr />
+<h3 id="q10-what-are-the-limitations-of-selenium">Q10. What are the limitations of Selenium?</h3>
+<p><strong>Dịch:</strong> Giới hạn của Selenium?</p>
+<p><strong>Sample answer:</strong> It only automates web browsers, has no built-in reporting or test runner, can be slow compared with API tests, and UI tests can be flaky if synchronization is poor. It cannot natively handle things like OS dialogs or CAPTCHA. I combine it with TestNG or JUnit, and prefer API tests for logic that does not need the UI.</p>
+<p><strong>Giải thích:</strong> Thể hiện hiểu <strong>kim tự tháp kiểm thử</strong>: UI test ít, chậm; API/unit nhiều, nhanh.</p>
+<p><strong>Ví dụ:</strong> Suite 10 test của dự án mất ~91 giây vì mỗi test mở Chrome mới.</p>
+<p><strong>Đào sâu:</strong> <em>How would you reduce the run time?</em> → song song (ThreadLocal), setup qua API/cookie, <code>@BeforeClass</code>.</p>
+<h2 id="phần-2--locators-và-webelement">Phần 2 — Locators và WebElement</h2>
+<h3 id="q1-what-locator-strategies-does-selenium-support">Q1. What locator strategies does Selenium support?</h3>
+<p><strong>Dịch:</strong> Selenium hỗ trợ những locator nào?</p>
+<p><strong>Sample answer:</strong> Eight: ID, Name, ClassName, TagName, LinkText, PartialLinkText, CSS Selector and XPath. In Selenium 4 there are also relative locators like <code>above</code> and <code>near</code>.</p>
+<p><strong>Giải thích:</strong> Nêu đủ 8 + relative locators.</p>
+<p><strong>Ví dụ:</strong> Ex1 dùng <code>id</code>, <code>name</code>, <code>className</code>, <code>xpath</code>; Ex2/5/8 dùng <code>cssSelector</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Which is the fastest?</em> → ID, nhưng chênh lệch thực tế nhỏ.</p>
+<hr />
+<h3 id="q2-how-do-you-choose-a-stable-locator">Q2. How do you choose a stable locator?</h3>
+<p><strong>Dịch:</strong> Chọn locator ổn định thế nào?</p>
+<p><strong>Sample answer:</strong> I prefer a unique, meaningful ID or a dedicated test attribute like <code>data-testid</code>, then name, then a short CSS selector, then XPath on stable attributes or text. I avoid absolute XPath, deep <code>nth-child</code> and auto-generated class names, and I verify uniqueness in DevTools.</p>
+<p><strong>Giải thích:</strong> Ngắn, có nghĩa, không phụ thuộc cấu trúc. Thoả thuận với dev thêm <code>data-testid</code>.</p>
+<p><strong>Ví dụ:</strong> Nút Login không có id/name nên Ex1 dùng <code>//button[@type='submit']</code> thay vì class <code>radius</code> chỉ mang tính giao diện.</p>
+<p><strong>Đào sâu:</strong> <em>What if the ID is dynamic?</em> → <code>[id^='prefix']</code> hoặc thuộc tính khác.</p>
+<hr />
+<h3 id="q3-css-selector-vs-xpath">Q3. CSS Selector vs XPath?</h3>
+<p><strong>Dịch:</strong> CSS khác XPath?</p>
+<p><strong>Sample answer:</strong> CSS is shorter, readable and usually a bit faster, but it cannot select by text or go up to a parent. XPath is more powerful: it can use text, parent/ancestor and sibling axes, and positions, but it is longer and more fragile. I prefer CSS when it is enough.</p>
+<p><strong>Giải thích:</strong> Bảng so sánh ở <a href="../03-selenium-fundamentals/03-locators.html#6-so-sánh-css-vs-xpath">selenium/02</a>.</p>
+<p><strong>Ví dụ:</strong> Ex6 dùng XPath theo text <code>//button[text()='Add Element']</code>; Ex3 dùng XPath vị trí <code>tr[last()-1]</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Write XPath for the last row of a table.</em> → <code>//table[@id='table1']/tbody/tr[last()]</code>.</p>
+<hr />
+<h3 id="q4-what-is-the-difference-between-findelement-and-findelements">Q4. What is the difference between <code>findElement</code> and <code>findElements</code>?</h3>
+<p><strong>Dịch:</strong> <code>findElement</code> khác <code>findElements</code>?</p>
+<p><strong>Sample answer:</strong> <code>findElement</code> returns the first matching element and throws <code>NoSuchElementException</code> if none. <code>findElements</code> returns a list and returns an empty list if nothing matches. I use <code>findElements(...).isEmpty()</code> to check existence safely.</p>
+<p><strong>Giải thích:</strong> Với Implicit Wait, <code>findElements</code> rỗng vẫn chờ hết giờ.</p>
+<p><strong>Ví dụ:</strong> Ex2 <code>findElements</code> lấy 2 checkbox; Ex6 kiểm tra danh sách rỗng sau khi xoá.</p>
+<p><strong>Đào sâu:</strong> <em>Which element does <code>findElement</code> return when many match?</em> → phần tử đầu tiên theo thứ tự tài liệu.</p>
+<hr />
+<h3 id="q5-what-is-a-staleelementreferenceexception-and-how-do-you-handle-it">Q5. What is a StaleElementReferenceException and how do you handle it?</h3>
+<p><strong>Dịch:</strong> <code>StaleElementReferenceException</code> là gì, xử lý sao?</p>
+<p><strong>Sample answer:</strong> It happens when a stored <code>WebElement</code> is no longer attached to the DOM because the page refreshed or was re-rendered. I handle it by finding the element again, storing the <code>By</code> locator instead of the element, waiting with <code>stalenessOf</code> before reading new data, or a limited retry.</p>
+<p><strong>Giải thích:</strong> <code>WebElement</code> là handle chứ không phải bản sao.</p>
+<p><strong>Ví dụ:</strong> Ex4 lấy trước text/value dạng chuỗi để không phụ thuộc phần tử khi duyệt.</p>
+<p><strong>Đào sâu:</strong> <em>Does PageFactory help?</em> → proxy tìm lại mỗi lần gọi, nhưng khó debug.</p>
+<hr />
+<h3 id="q6-how-do-you-locate-an-element-inside-another-element">Q6. How do you locate an element inside another element?</h3>
+<p><strong>Dịch:</strong> Tìm phần tử bên trong phần tử khác?</p>
+<p><strong>Sample answer:</strong> I call <code>findElement</code> on the parent <code>WebElement</code>, which limits the search to its descendants. With XPath I must start with <code>.//</code> because <code>//</code> starts from the document root.</p>
+<p><strong>Giải thích:</strong> Lỗi kinh điển: <code>//td</code> trong <code>row.findElement</code>.</p>
+<p><strong>Ví dụ:</strong> Ex3 <code>row.findElements(By.tagName("td"))</code>; Ex8 <code>modalElement.findElement(By.cssSelector(".modal-title h3"))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why scope the search?</em> → nhanh hơn, ít khớp nhầm.</p>
+<hr />
+<h3 id="q7-what-is-the-difference-between-gettext-and-getattributevalue">Q7. What is the difference between <code>getText()</code> and <code>getAttribute("value")</code>?</h3>
+<p><strong>Dịch:</strong> <code>getText()</code> khác <code>getAttribute("value")</code>?</p>
+<p><strong>Sample answer:</strong> <code>getText()</code> returns the visible text of an element and returns an empty string if it is hidden. An input field has no inner text, so I use <code>getAttribute("value")</code> or <code>getDomProperty("value")</code> for its content.</p>
+<p><strong>Giải thích:</strong> <code>getDomAttribute</code> = attribute trong HTML; <code>getDomProperty</code> = property hiện tại.</p>
+<p><strong>Ví dụ:</strong> Ex10: <code>textInput.getAttribute("value")</code> so với chuỗi đã gõ.</p>
+<p><strong>Đào sâu:</strong> <em>How to get hidden text?</em> → <code>getAttribute("textContent")</code>.</p>
+<hr />
+<h3 id="q8-what-do-isdisplayed-isenabled-and-isselected-return">Q8. What do <code>isDisplayed()</code>, <code>isEnabled()</code> and <code>isSelected()</code> return?</h3>
+<p><strong>Dịch:</strong> Ba method này trả gì?</p>
+<p><strong>Sample answer:</strong> <code>isDisplayed</code> tells whether the element is visible. <code>isEnabled</code> is false for disabled controls. <code>isSelected</code> tells the state of checkboxes, radio buttons and options. They are instant checks, so for asynchronous changes I wait first and then assert.</p>
+<p><strong>Giải thích:</strong> Không dùng để "chờ".</p>
+<p><strong>Ví dụ:</strong> Ex2 <code>isSelected</code>, Ex10 <code>isEnabled</code> trước/sau, Ex4 lọc option disabled.</p>
+<p><strong>Đào sâu:</strong> <em>How do you assert an element does not exist?</em></p>
+<hr />
+<h3 id="q9-how-do-you-handle-a-dropdown">Q9. How do you handle a dropdown?</h3>
+<p><strong>Dịch:</strong> Xử lý dropdown?</p>
+<p><strong>Sample answer:</strong> For a native <code>&lt;select&gt;</code>, I wrap it with the <code>Select</code> class and use <code>selectByVisibleText</code>, <code>selectByValue</code> or <code>selectByIndex</code>, and <code>getFirstSelectedOption</code> to verify. For custom dropdowns made of divs, I click to open, wait for the list and click the item.</p>
+<p><strong>Giải thích:</strong> <code>Select</code> chỉ cho <code>&lt;select&gt;</code>; ưu tiên visible text/value hơn index.</p>
+<p><strong>Ví dụ:</strong> Ex4 duyệt <code>getOptions()</code>, lọc <code>isEnabled()</code>, chọn từng mục.</p>
+<p><strong>Đào sâu:</strong> <em>What happens if you pass a div to <code>Select</code>?</em> → <code>UnexpectedTagNameException</code>.</p>
+<hr />
+<h3 id="q10-how-do-you-interact-with-elements-that-are-hidden-until-hover">Q10. How do you interact with elements that are hidden until hover?</h3>
+<p><strong>Dịch:</strong> Phần tử chỉ hiện khi hover?</p>
+<p><strong>Sample answer:</strong> I use <code>Actions.moveToElement(element).perform()</code>, then wait for visibility of the revealed element before reading it. Forgetting <code>perform()</code> does nothing.</p>
+<p><strong>Giải thích:</strong> <code>Actions</code> là builder; <code>perform()</code> mới chạy.</p>
+<p><strong>Ví dụ:</strong> Ex5 hover từng ảnh rồi <code>wait.until(visibilityOf(captionHeader))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How do you do drag and drop and what can go wrong?</em> → <code>dragAndDrop</code>; HTML5 DnD có thể flaky (Ex9) — dùng <code>clickAndHold/moveToElement/release</code> hoặc JS dự phòng.</p>
+<h2 id="phần-3--exception-handling">Phần 3 — Exception Handling</h2>
+<h3 id="q1-name-common-selenium-exceptions-and-their-causes">Q1. Name common Selenium exceptions and their causes.</h3>
+<p><strong>Dịch:</strong> Kể tên các exception thường gặp và nguyên nhân.</p>
+<p><strong>Sample answer:</strong> <code>NoSuchElementException</code> for a missing or not yet loaded element; <code>TimeoutException</code> when a wait expires; <code>StaleElementReferenceException</code> when the element was re-rendered; <code>ElementNotInteractableException</code> for hidden or disabled elements; <code>ElementClickInterceptedException</code> when another element covers the target; <code>InvalidSelectorException</code> for a bad locator; <code>NoSuchWindowException</code>/<code>NoSuchFrameException</code>; <code>SessionNotCreatedException</code> for driver or browser mismatch.</p>
+<p><strong>Giải thích:</strong> Học theo cặp <em>exception ⇒ nguyên nhân ⇒ cách xử lý</em> (<a href="../03-selenium-fundamentals/10-selenium-exceptions.html#2-bảng-exception-thường-gặp">selenium/09</a>).</p>
+<p><strong>Ví dụ:</strong> Ex1 tránh <code>NoSuchElementException</code> bằng cách chờ flash message.</p>
+<p><strong>Đào sâu:</strong> <em>Are they checked or unchecked?</em> → unchecked.</p>
+<hr />
+<h3 id="q2-how-do-you-fix-nosuchelementexception">Q2. How do you fix <code>NoSuchElementException</code>?</h3>
+<p><strong>Dịch:</strong> Sửa <code>NoSuchElementException</code> thế nào?</p>
+<p><strong>Sample answer:</strong> I check the locator in DevTools, make sure the element is not inside an iframe or shadow DOM, and add an explicit wait for the element, for example visibility, instead of searching immediately.</p>
+<p><strong>Giải thích:</strong> Ba nguyên nhân chính: locator sai / chưa tải / ngữ cảnh khác (iframe).</p>
+<p><strong>Ví dụ:</strong> <code>wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("flash")))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What if the element is in an iframe?</em> → <code>frameToBeAvailableAndSwitchToIt</code>.</p>
+<hr />
+<h3 id="q3-how-do-you-handle-staleelementreferenceexception">Q3. How do you handle <code>StaleElementReferenceException</code>?</h3>
+<p><strong>Dịch:</strong> Xử lý <code>StaleElementReferenceException</code>?</p>
+<p><strong>Sample answer:</strong> Find the element again, keep the locator rather than the element, wait for <code>stalenessOf</code> the old element and then locate the new one, or use a limited retry for transient cases.</p>
+<p><strong>Giải thích:</strong> Retry phải có giới hạn và ném lại sau lượt cuối.</p>
+<p><strong>Ví dụ:</strong> Ex4 đọc trước text/value dạng chuỗi.</p>
+<p><strong>Đào sâu:</strong> <em>Show a retry loop.</em></p>
+<hr />
+<h3 id="q4-when-do-you-get-elementclickinterceptedexception-and-how-do-you-fix-it">Q4. When do you get <code>ElementClickInterceptedException</code>, and how do you fix it?</h3>
+<p><strong>Dịch:</strong> Khi nào gặp <code>ElementClickInterceptedException</code>?</p>
+<p><strong>Sample answer:</strong> When another element, like a modal, spinner or banner, receives the click instead. I wait for the overlay to become invisible, close the popup, or scroll the element into view; I avoid forcing the click with JavaScript because it bypasses what a real user can do.</p>
+<p><strong>Giải thích:</strong> Message nêu rõ phần tử che.</p>
+<p><strong>Ví dụ:</strong> Ex8 modal quảng cáo che trang cho tới khi đóng.</p>
+<p><strong>Đào sâu:</strong> <em>Why avoid JS click?</em></p>
+<hr />
+<h3 id="q5-timeoutexception-vs-nosuchelementexception">Q5. <code>TimeoutException</code> vs <code>NoSuchElementException</code>?</h3>
+<p><strong>Dịch:</strong> Khác nhau?</p>
+<p><strong>Sample answer:</strong> <code>NoSuchElementException</code> is thrown immediately by <code>findElement</code>. <code>TimeoutException</code> is thrown when an explicit wait expires; inside the wait, <code>NoSuchElementException</code> is ignored and retried.</p>
+<p><strong>Giải thích:</strong> Một cái "ngay lúc này", một cái "hết thời gian chờ".</p>
+<p><strong>Ví dụ:</strong> Sai id trong <code>visibilityOfElementLocated</code> ⇒ <code>TimeoutException</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What do you read in the message?</em> → điều kiện đang chờ + locator.</p>
+<hr />
+<h3 id="q6-is-it-good-to-catch-exception-and-continue">Q6. Is it good to catch <code>Exception</code> and continue?</h3>
+<p><strong>Dịch:</strong> Có nên <code>catch (Exception)</code> rồi chạy tiếp?</p>
+<p><strong>Sample answer:</strong> No, usually. It hides failures and tests may pass falsely. I catch specific exceptions only for a clear purpose and either retry, log or rethrow.</p>
+<p><strong>Giải thích:</strong> Test fail đúng chỗ giúp debug.</p>
+<p><strong>Ví dụ:</strong> Dự án gần như không có <code>catch</code>; chỉ <code>try/finally</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Example of a legitimate catch?</em> → banner cookie tuỳ chọn: <code>catch (TimeoutException ignored)</code>.</p>
+<hr />
+<h3 id="q7-how-do-you-check-that-an-element-exists-without-exceptions">Q7. How do you check that an element exists without exceptions?</h3>
+<p><strong>Dịch:</strong> Kiểm tra tồn tại không dùng exception?</p>
+<p><strong>Sample answer:</strong> <code>!driver.findElements(by).isEmpty()</code>. It returns an empty list instead of throwing.</p>
+<p><strong>Giải thích:</strong> Nhưng nếu có Implicit Wait, vẫn chờ hết giờ.</p>
+<p><strong>Ví dụ:</strong> Ex6 xác nhận danh sách nút Delete rỗng.</p>
+<p><strong>Đào sâu:</strong> <em>What if the element is added asynchronously?</em> → chờ trước.</p>
+<hr />
+<h3 id="q8-what-is-the-difference-between-an-assertion-failure-and-a-selenium-exception">Q8. What is the difference between an assertion failure and a Selenium exception?</h3>
+<p><strong>Dịch:</strong> <code>AssertionError</code> khác exception Selenium?</p>
+<p><strong>Sample answer:</strong> An <code>AssertionError</code> means the actual result differs from the expected one; the test ran to the end of that step. A Selenium exception means the test could not continue, for example the element was not found or not clickable. They need different investigation: application behavior versus locator, synchronization or environment.</p>
+<p><strong>Giải thích:</strong> Phân loại giúp tìm nguyên nhân nhanh.</p>
+<p><strong>Ví dụ:</strong> Ex3 sai dữ liệu bảng ⇒ AssertionError; sai XPath ⇒ NoSuchElementException.</p>
+<p><strong>Đào sâu:</strong> <em>How is each shown in Surefire?</em> → Failures vs Errors.</p>
+<hr />
+<h3 id="q9-how-do-you-make-sure-the-browser-closes-even-when-a-test-fails">Q9. How do you make sure the browser closes even when a test fails?</h3>
+<p><strong>Dịch:</strong> Đảm bảo đóng browser khi test fail?</p>
+<p><strong>Sample answer:</strong> In TestNG I use <code>@AfterMethod</code> which runs even after failures, with a null check before <code>quit()</code>. In a plain <code>main</code> I use <code>try/finally</code>.</p>
+<p><strong>Giải thích:</strong> <code>alwaysRun = true</code> giúp khi có phụ thuộc/nhóm.</p>
+<p><strong>Ví dụ:</strong> <code>BaseTest.tearDown()</code> và <code>main()</code> trong Exercise.</p>
+<p><strong>Đào sâu:</strong> <em>What if <code>setup()</code> fails?</em> → <code>driver</code> null ⇒ cần kiểm tra null.</p>
+<hr />
+<h3 id="q10-how-do-you-debug-an-unexpected-exception">Q10. How do you debug an unexpected exception?</h3>
+<p><strong>Dịch:</strong> Debug exception bất ngờ?</p>
+<p><strong>Sample answer:</strong> I read the exception name and message, find the first line in my own code in the stack trace, reproduce it by running the single test, check the locator in DevTools, capture a screenshot and page source, and look at timing issues. Then I fix the root cause.</p>
+<p><strong>Giải thích:</strong> Quy trình có thứ tự.</p>
+<p><strong>Ví dụ:</strong> <code>.\mvnw.cmd test "-Dtest=Exercise07_InfiniteScrollTest"</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How do you capture evidence automatically?</em> → listener + <code>TakesScreenshot</code>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="scenario-based-interview.html"><small>← Bài trước</small><span>Scenario-based — Interview</span></a><a class="next" href="wait-interview.html"><small>Bài tiếp theo →</small><span>Wait và Synchronization — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/selenium-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

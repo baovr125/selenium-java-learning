@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selenium: Locators (cách tìm phần tử) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/03-locators" data-root="../" data-lesson="1" data-title="Selenium: Locators (cách tìm phần tử)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="selenium-locators-cách-tìm-phần-tử">Selenium: Locators (cách tìm phần tử)</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 15 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="02-webdriver.html">WebDriver Fundamentals</a> · ➡️ <a href="04-webelement.html">Selenium: WebElement API</a></p>
+<p>Chapter 15 · Liên quan: <a href="README.html">README chương</a> · <a href="04-webelement.html">WebElement</a> · <a href="../08-practical-project/labs/02-locator-practice.html">Practice</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Viết 8 loại locator</li>
+<li>Viết CSS Selector và XPath (tương đối, trục, vị trí)</li>
+<li>Chọn locator ổn định, dễ bảo trì</li>
+<li>Kiểm tra locator bằng DevTools</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="02-webdriver.html">WebDriver</a></li>
+</ul>
+<h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
+<p><code>By</code> là class tiện ích tạo locator; locator nên là <code>private final By</code> trong Page Object.</p>
+<h2 id="1-by-và-findelement">1. <code>By</code> và <code>findElement</code></h2>
+<ul>
+<li><strong>Locator</strong> (bộ định vị) mô tả cách tìm một phần tử trong DOM: <code>By.id("username")</code>.</li>
+<li><code>driver.findElement(by)</code> → trả <strong>một</strong> <code>WebElement</code> (phần tử <strong>đầu tiên</strong> khớp) hoặc ném <code>NoSuchElementException</code>.</li>
+<li><code>driver.findElements(by)</code> → trả <code>List&lt;WebElement&gt;</code>; <strong>rỗng nếu không tìm thấy</strong>, không ném exception.</li>
+<li><code>webElement.findElement(by)</code> → tìm <strong>bên trong</strong> phần tử đó (phạm vi hẹp hơn).</li>
+</ul>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a>, <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03_WebTablesTest</a> (dùng <code>row.findElements(By.tagName("td"))</code>).</p>
+<h2 id="2-tám-loại-locator">2. Tám loại locator</h2>
+<p>Dựa trên HTML của trang login (the-internet):</p>
+<div class="code" data-lang="html"><div class="code-head"><span class="lang">html</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">&lt;input type=&quot;text&quot; name=&quot;username&quot; id=&quot;username&quot;&gt;
+&lt;input type=&quot;password&quot; name=&quot;password&quot; id=&quot;password&quot;&gt;
+&lt;button class=&quot;radius&quot; type=&quot;submit&quot;&gt;&lt;i class=&quot;fa fa-2x fa-sign-in&quot;&gt; Login&lt;/i&gt;&lt;/button&gt;
+&lt;div id=&quot;flash&quot; class=&quot;flash success&quot;&gt;You logged into a secure area!&lt;/div&gt;</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Locator</th>
+<th>Ví dụ</th>
+<th>Điểm mạnh</th>
+<th>Điểm yếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>ID</strong></td>
+<td><code>By.id("username")</code></td>
+<td>Nhanh, thường duy nhất, ổn định</td>
+<td>Không phải phần tử nào cũng có; ID sinh động (<code>id="ember123"</code>) thì vô dụng</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Name</strong></td>
+<td><code>By.name("password")</code></td>
+<td>Ổn định với form</td>
+<td>Có thể trùng (radio button cùng name)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>ClassName</strong></td>
+<td><code>By.className("radius")</code></td>
+<td>Ngắn</td>
+<td><strong>Chỉ nhận MỘT tên class</strong> (không có khoảng trắng); class hay đổi/không duy nhất</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>TagName</strong></td>
+<td><code>By.tagName("td")</code></td>
+<td>Tốt để lấy danh sách (<code>td</code>, <code>a</code>, <code>li</code>)</td>
+<td>Quá chung chung cho một phần tử cụ thể</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>LinkText</strong></td>
+<td><code>By.linkText("Elemental Selenium")</code></td>
+<td>Dễ đọc</td>
+<td>Chỉ cho <code>&lt;a&gt;</code>; khớp <strong>toàn bộ</strong> chữ, nhạy hoa/thường; đổi ngôn ngữ thì hỏng</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>PartialLinkText</strong></td>
+<td><code>By.partialLinkText("Elemental")</code></td>
+<td>Linh hoạt</td>
+<td>Có thể khớp nhiều link</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>CSS Selector</strong></td>
+<td><code>By.cssSelector("#checkboxes input[type='checkbox']")</code></td>
+<td>Mạnh, nhanh, ngắn, đọc được</td>
+<td>Không đi <strong>lên</strong> cha; không chọn theo text</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>XPath</strong></td>
+<td><code>By.xpath("//button[@type='submit']")</code></td>
+<td>Mạnh nhất: đi lên/xuống, theo text, vị trí</td>
+<td>Dài, dễ gãy, chậm hơn CSS một chút</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Dự án dùng: <code>id</code>, <code>name</code>, <code>className</code>, <code>xpath</code>, <code>cssSelector</code>, <code>tagName</code>. Chưa dùng <code>linkText</code>, <code>partialLinkText</code>.</p>
+<h3 id="-cạm-bẫy-của-classname">⚠️ Cạm bẫy của <code>className</code></h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;flash success&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// ❌ InvalidSelectorException: compound class names not permitted</span>
+<span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">// ✅</span>
+<span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.flash.success&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">// ✅ cách đúng để khớp cả hai class</span></code></pre></div>
+<h2 id="3-css-selector--cú-pháp-cần-thuộc">3. CSS Selector — cú pháp cần thuộc</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục đích</th>
+<th>CSS</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Theo id</td>
+<td><code>#id</code></td>
+<td><code>#username</code></td>
+</tr>
+<tr>
+<td>Theo class</td>
+<td><code>.class</code></td>
+<td><code>.radius</code></td>
+</tr>
+<tr>
+<td>Nhiều class</td>
+<td><code>.a.b</code></td>
+<td><code>.flash.success</code></td>
+</tr>
+<tr>
+<td>Theo tag</td>
+<td><code>tag</code></td>
+<td><code>td</code></td>
+</tr>
+<tr>
+<td>Theo thuộc tính</td>
+<td><code>[attr='v']</code></td>
+<td><code>input[type='checkbox']</code></td>
+</tr>
+<tr>
+<td>Chứa chuỗi</td>
+<td><code>[attr*='v']</code></td>
+<td><code>a[href*='download']</code></td>
+</tr>
+<tr>
+<td>Bắt đầu / kết thúc</td>
+<td><code>[attr^='v']</code> / <code>[attr$='v']</code></td>
+<td><code>img[src$='.png']</code></td>
+</tr>
+<tr>
+<td>Con trực tiếp</td>
+<td><code>A &gt; B</code></td>
+<td><code>#checkbox-example &gt; button</code></td>
+</tr>
+<tr>
+<td>Hậu duệ</td>
+<td><code>A B</code></td>
+<td><code>#checkboxes input</code></td>
+</tr>
+<tr>
+<td>Phần tử thứ n</td>
+<td><code>:nth-child(n)</code></td>
+<td><code>table tr:nth-child(2)</code></td>
+</tr>
+<tr>
+<td>Phần tử cuối</td>
+<td><code>:last-child</code></td>
+<td><code>tr:last-child</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Ví dụ trong dự án: <code>#checkboxes input[type='checkbox']</code>, <code>.figcaption h5</code>, <code>#input-example button</code>, <code>.modal-title h3</code>.</p>
+<h2 id="4-xpath--cú-pháp-cần-thuộc">4. XPath — cú pháp cần thuộc</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục đích</th>
+<th>XPath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tuyệt đối (<strong>tránh</strong>)</td>
+<td><code>/html/body/div[2]/...</code></td>
+</tr>
+<tr>
+<td>Tương đối</td>
+<td><code>//input[@id='username']</code></td>
+</tr>
+<tr>
+<td>Theo text chính xác</td>
+<td><code>//button[text()='Add Element']</code> 🧩</td>
+</tr>
+<tr>
+<td>Chứa text</td>
+<td><code>//a[contains(text(),'Elemental')]</code> hoặc <code>//a[contains(.,'Elemental')]</code></td>
+</tr>
+<tr>
+<td>Chứa thuộc tính</td>
+<td><code>//div[contains(@class,'flash')]</code></td>
+</tr>
+<tr>
+<td>Nhiều điều kiện</td>
+<td><code>//input[@type='text' and @name='username']</code></td>
+</tr>
+<tr>
+<td>Vị trí</td>
+<td><code>(//input)[2]</code>, <code>//tr[1]</code>, <code>//tr[last()]</code>, <code>//tr[last()-1]</code> 🧩</td>
+</tr>
+<tr>
+<td>Đi lên cha</td>
+<td><code>//input[@id='username']/..</code> hoặc <code>/parent::div</code></td>
+</tr>
+<tr>
+<td>Anh em kế tiếp</td>
+<td><code>//label[text()='Name']/following-sibling::input</code></td>
+</tr>
+<tr>
+<td>Tổ tiên</td>
+<td><code>//td/ancestor::table</code></td>
+</tr>
+<tr>
+<td>Bên trong phần tử đã tìm</td>
+<td><code>.//td</code> (<strong>có dấu chấm</strong>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03</a>: <code>//table[@id='table1']/tbody/tr[last()-1]</code>.</p>
+<p>⚠️ <strong>Lỗi XPath kinh điển:</strong> trong <code>row.findElement(By.xpath("//td"))</code>, dấu <code>//</code> bắt đầu từ <strong>gốc tài liệu</strong>, không phải từ <code>row</code>. Phải viết <code>.//td</code>.</p>
+<p>⚠️ <code>contains(text(), '...')</code> chỉ xét text node <strong>trực tiếp đầu tiên</strong>; khi text bị tách bởi thẻ con, <code>contains(., '...')</code> an toàn hơn.</p>
+<h2 id="5-selenium-4-relative-locators">5. Selenium 4: Relative Locators</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import static</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.locators.RelativeLocator.with</span><span class="p">;</span>
+
+<span class="n">WebElement</span><span class="w"> </span><span class="n">pwd</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">));</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">with</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;input&quot;</span><span class="p">)).</span><span class="na">above</span><span class="p">(</span><span class="n">pwd</span><span class="p">));</span></code></pre></div>
+<p>Các method: <code>above</code>, <code>below</code>, <code>toLeftOf</code>, <code>toRightOf</code>, <code>near</code>. Dùng khi phần tử không có thuộc tính tốt nhưng vị trí tương đối với phần tử khác ổn định. Không thay thế CSS/XPath tốt.</p>
+<h2 id="6-so-sánh-css-vs-xpath">6. So sánh CSS vs XPath</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>CSS</th>
+<th>XPath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đọc</td>
+<td>Ngắn gọn</td>
+<td>Dài</td>
+</tr>
+<tr>
+<td>Tốc độ</td>
+<td>Thường nhanh hơn một chút</td>
+<td>Hơi chậm</td>
+</tr>
+<tr>
+<td>Chọn theo text</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Đi lên cha</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Hỗ trợ trình duyệt</td>
+<td>Tốt</td>
+<td>Tốt</td>
+</tr>
+<tr>
+<td>Khuyến nghị</td>
+<td><strong>Ưu tiên</strong> khi đủ dùng</td>
+<td>Dùng khi cần text/cha/anh em</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-chọn-locator-ổn-định-và-dễ-bảo-trì">7. Chọn locator ổn định và dễ bảo trì</h2>
+<p><strong>Thứ tự ưu tiên khuyến nghị:</strong></p>
+<ol>
+<li><code>id</code> ổn định (không sinh ngẫu nhiên)</li>
+<li>thuộc tính dành cho test: <code>data-testid</code>, <code>data-test</code>, <code>data-qa</code> (nhờ dev thêm — <strong>tốt nhất</strong>)</li>
+<li><code>name</code></li>
+<li>CSS có nghĩa: <code>form#login button[type='submit']</code></li>
+<li>XPath theo thuộc tính/text ổn định</li>
+<li>❌ Tránh: XPath tuyệt đối, <code>nth-child</code> sâu, class do framework sinh (<code>css-1x2y3z</code>), locator theo vị trí khi dữ liệu có thể đổi thứ tự</li>
+</ol>
+<p><strong>Nguyên tắc:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nguyên tắc</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ngắn nhất mà vẫn duy nhất</td>
+<td>Ít gãy khi DOM đổi</td>
+</tr>
+<tr>
+<td>Dựa vào ý nghĩa, không dựa vào cấu trúc</td>
+<td>Layout đổi thường xuyên</td>
+</tr>
+<tr>
+<td>Kiểm tra tính duy nhất trong DevTools (<code>$$("css")</code>, <code>$x("xpath")</code>)</td>
+<td>Tránh khớp nhầm</td>
+</tr>
+<tr>
+<td>Gom locator vào một chỗ (Page Object)</td>
+<td>Sửa 1 nơi</td>
+</tr>
+<tr>
+<td>Tránh text hiển thị nếu web đa ngôn ngữ</td>
+<td>Text đổi theo locale</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 So sánh trong dự án: <code>By.xpath("//button[text()='Add Element']")</code> rất dễ đọc, nhưng gãy nếu đổi nhãn nút; một <code>data-testid</code> sẽ bền hơn.</p>
+<h2 id="8-kiểm-tra-locator-bằng-devtools">8. Kiểm tra locator bằng DevTools</h2>
+<ol>
+<li>F12 → tab Elements → Ctrl+F gõ CSS hoặc XPath → xem "1 of 1".</li>
+<li>Console: <code>$$("#checkboxes input")</code> (CSS, trả mảng), <code>$x("//button")</code> (XPath).</li>
+<li>Phải trả về <strong>đúng</strong> số phần tử bạn muốn.</li>
+</ol>
+<h2 id="9--phân-tích-bảng-locator-của-exercise-1">9. 🧩 Phân tích bảng locator của Exercise 1</h2>
+<p>Bảng trong Javadoc của <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phần tử</th>
+<th>id</th>
+<th>name</th>
+<th>class</th>
+<th>xpath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Username</td>
+<td><code>username</code></td>
+<td><code>username</code></td>
+<td>—</td>
+<td><code>//input[@id='username']</code></td>
+</tr>
+<tr>
+<td>Password</td>
+<td><code>password</code></td>
+<td><code>password</code></td>
+<td>—</td>
+<td><code>//input[@id='password']</code></td>
+</tr>
+<tr>
+<td>Login button</td>
+<td>—</td>
+<td>—</td>
+<td><code>radius</code></td>
+<td><code>//button[@type='submit']</code></td>
+</tr>
+<tr>
+<td>Flash</td>
+<td><code>flash</code></td>
+<td>—</td>
+<td><code>flash</code></td>
+<td><code>//div[@id='flash']</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Nhận xét: nút Login không có <code>id</code>/<code>name</code> ⇒ phải dùng <code>class</code> (<code>radius</code> — class kiểu giao diện, dễ đổi) hoặc XPath/CSS theo <code>type='submit'</code> (ổn định hơn). Test còn <strong>kiểm chứng</strong> mọi locator trỏ về <strong>cùng</strong> một <code>WebElement</code> bằng <code>assertSameElement</code>.</p>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Ưu tiên <code>id</code>/<code>data-testid</code>; CSS trước XPath.</li>
+<li>Locator duy nhất, ngắn, có nghĩa.</li>
+<li>Lưu <code>By</code>, không lưu <code>WebElement</code> lâu.</li>
+<li>Kiểm tra locator trong DevTools trước khi đưa vào code.</li>
+<li>Dùng <code>findElements(...).isEmpty()</code> để kiểm tra tồn tại.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoSuchElementException</code></td>
+<td>Locator sai / chưa load / nằm trong iframe</td>
+<td>Kiểm tra DevTools; Wait; <code>switchTo().frame</code></td>
+</tr>
+<tr>
+<td><code>InvalidSelectorException</code></td>
+<td>Cú pháp CSS/XPath sai; <code>className</code> có khoảng trắng</td>
+<td>Sửa cú pháp</td>
+</tr>
+<tr>
+<td>Bấm nhầm phần tử</td>
+<td>Locator khớp nhiều, lấy cái đầu</td>
+<td>Làm locator duy nhất</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td>Handle cũ</td>
+<td>Tìm lại</td>
+</tr>
+<tr>
+<td><code>getText()</code> rỗng</td>
+<td>Phần tử ẩn hoặc là <code>input</code></td>
+<td>Chờ visible / dùng <code>getAttribute("value")</code></td>
+</tr>
+<tr>
+<td>XPath <code>//td</code> trong phần tử trả về cả trang</td>
+<td>Thiếu <code>.</code></td>
+<td><code>.//td</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết 4 locator (id, name, css, xpath) cho ô password trên <code>/login</code>.</p>
+<p><strong>Input:</strong> <code>&lt;input type="password" name="password" id="password"&gt;</code></p>
+<p><strong>Expected Output:</strong> 4 locator</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> id/name/CSS/XPath.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết CSS lấy hai checkbox ở <code>/checkboxes</code> và XPath lấy hàng kế cuối bảng ở <code>/tables</code>.</p>
+<p><strong>Input:</strong> Trang <code>/checkboxes</code>, <code>/tables</code></p>
+<p><strong>Expected Output:</strong> 2 locator</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>#checkboxes input[type='checkbox']</code>; <code>tr[last()-1]</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Nút Login không có id/name. Đề xuất locator ổn định nhất và giải thích vì sao tốt hơn <code>By.className("radius")</code>.</p>
+<p><strong>Input:</strong> <code>&lt;button class="radius" type="submit"&gt;</code></p>
+<p><strong>Expected Output:</strong> 1 locator + 2 lý do</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Thuộc tính ngữ nghĩa vs class giao diện.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>By.className("flash success")</code> cho kết quả?</p>
+<ul>
+<li>A. Khớp cả hai class</li>
+<li>B. <code>InvalidSelectorException</code> (không nhận class ghép)</li>
+<li>C. Khớp class đầu</li>
+<li>D. Trả null</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dùng CSS <code>.flash.success</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> Trong <code>row.findElement(By.xpath("//td"))</code> vấn đề là?</p>
+<ul>
+<li>A. Không có</li>
+<li>B. <code>//</code> tìm từ gốc tài liệu; phải dùng <code>.//td</code></li>
+<li>C. Sai kiểu</li>
+<li>D. Thiếu <code>By</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dấu <code>.</code> giới hạn trong phần tử.</p>
+</details>
+<p><strong>Câu 3.</strong> Locator ưu tiên hàng đầu?</p>
+<ul>
+<li>A. XPath tuyệt đối</li>
+<li>B. <code>id</code>/<code>data-testid</code> ổn định</li>
+<li>C. <code>nth-child</code> sâu</li>
+<li>D. Class do framework sinh</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Ngắn, duy nhất, có nghĩa.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you choose a stable locator?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Chọn locator ổn định thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> Prefer a unique ID or <code>data-testid</code>, then name, a short CSS selector, then XPath on stable attributes; avoid absolute XPath and generated class names, and verify uniqueness in DevTools.</li>
+<li><strong>Giải thích (VI):</strong> Gom locator vào Page Object.</li>
+<li><strong>Follow-up:</strong> <em>What if IDs are dynamic?</em></li>
+</ul>
+<p><strong>2. CSS vs XPath?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> CSS khác XPath?</li>
+<li><strong>Suggested answer (EN):</strong> CSS is shorter and usually faster but cannot select by text or go to a parent; XPath can use text, axes and positions but is longer and more fragile.</li>
+<li><strong>Giải thích (VI):</strong> Ưu tiên CSS khi đủ dùng.</li>
+<li><strong>Follow-up:</strong> <em>Write an XPath for the last table row.</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>8 loại locator; ưu tiên id/data-testid/CSS</li>
+<li>XPath: <code>//</code>, <code>.//</code>, <code>[last()]</code>, <code>following-sibling</code></li>
+<li>Kiểm tra bằng DevTools <code>$$()</code>/<code>$x()</code></li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>By.id/name/className/tagName/linkText/partialLinkText/cssSelector/xpath</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>className</code> không nhận khoảng trắng</li>
+<li><code>//td</code> ≠ <code>.//td</code></li>
+<li>Relative locator (<code>above</code>, <code>near</code>) không thay CSS/XPath tốt</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="04-webelement.html">Selenium: WebElement API</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">);</span>
+<span class="n">By</span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">);</span>
+<span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;input#password&quot;</span><span class="p">);</span>
+<span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//input[@id=&#39;password&#39;]&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkboxes input[type=&#39;checkbox&#39;]&quot;</span><span class="p">);</span>
+<span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//table[@id=&#39;table1&#39;]/tbody/tr[last()-1]&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<p><code>By.cssSelector("button[type='submit']")</code> (hoặc <code>//button[@type='submit']</code>). <code>type='submit'</code> mang <strong>ý nghĩa chức năng</strong> và ít đổi; <code>radius</code> là class kiểu giao diện, dễ bị đổi khi thiết kế lại. Tốt nhất là nhờ dev thêm <code>data-testid</code>.</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-webdriver.html"><small>← Bài trước</small><span>WebDriver Fundamentals</span></a><a class="next" href="04-webelement.html"><small>Bài tiếp theo →</small><span>Selenium: WebElement API</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/03-locators.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

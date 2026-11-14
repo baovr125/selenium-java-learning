@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wait: 15 tình huống thực tế · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/07-real-world-scenarios" data-root="../" data-lesson="1" data-title="Wait: 15 tình huống thực tế">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="wait-15-tình-huống-thực-tế">Wait: 15 tình huống thực tế</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="06-wait-comparison.html">So sánh các cơ chế chờ (và Thread.sleep)</a> · ➡️ <a href="08-wait-best-practices.html">Wait Best Practices</a></p>
+<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="06-wait-comparison.html">So sánh</a> · Tiếp: <a href="08-wait-best-practices.html">Best Practices</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Áp dụng Wait cho 15 tình huống thực tế</li>
+<li>Nhận ra mẫu "thông báo cũ" và "spinner che nút"</li>
+<li>Viết wait cho alert, tab mới, iframe, stale</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="04-expected-conditions.html">ExpectedConditions</a></li>
+<li><a href="../03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions</a></li>
+</ul>
+<h2 id="1-15-tình-huống-thực-tế">1. 15 tình huống thực tế</h2>
+<p>Mỗi tình huống: <strong>Hiện tượng → Lỗi nếu không chờ → Cách chờ đúng</strong>.</p>
+<h3 id="t1-chuyển-trang-sau-đăng-nhập--ex1">T1. Chuyển trang sau đăng nhập (🧩 Ex1)</h3>
+<ul>
+<li>Lỗi: <code>driver.findElement(By.id("flash"))</code> ngay sau <code>click()</code> ⇒ <code>NoSuchElementException</code>.</li>
+<li>Đúng: <code>wait.until(visibilityOfElementLocated(By.id("flash")))</code>; kèm <code>wait.until(urlContains("/secure"))</code>.</li>
+</ul>
+<h3 id="t2-phần-tử-ẩn-hiện-sau-hover--ex5">T2. Phần tử ẩn hiện sau hover (🧩 Ex5)</h3>
+<ul>
+<li>Lỗi: <code>getText()</code> trả <code>""</code>.</li>
+<li>Đúng: <code>actions.moveToElement(fig).perform(); wait.until(visibilityOf(caption));</code></li>
+</ul>
+<h3 id="t3-nút-delete-được-sinh-ra-sau-khi-bấm-add--ex6">T3. Nút "Delete" được sinh ra sau khi bấm Add (🧩 Ex6)</h3>
+<ul>
+<li>Đúng: <code>wait.until(visibilityOfElementLocated(By.className("added-manually")))</code>; xoá xong: <code>wait.until(numberOfElementsToBe(by, 0))</code>.</li>
+</ul>
+<h3 id="t4-nội-dung-tải-thêm-khi-cuộn--ex7">T4. Nội dung tải thêm khi cuộn (🧩 Ex7)</h3>
+<ul>
+<li>Lỗi: cuộn một lần rồi đếm ⇒ có thể không tăng.</li>
+<li>Đúng: custom wait có cuộn lặp lại (xem <a href="05-fluent-wait.html">Fluent Wait và Custom Wait</a>).</li>
+</ul>
+<h3 id="t5-modal-quảng-cáo-hiện-sau-vài-trăm-ms-rồi-đóng--ex8">T5. Modal quảng cáo hiện sau vài trăm ms rồi đóng (🧩 Ex8)</h3>
+<ul>
+<li>Đúng: <code>visibilityOfElementLocated(By.id("modal"))</code>; đóng xong <code>invisibilityOfElementLocated(By.id("modal"))</code>.</li>
+</ul>
+<h3 id="t6-thông-báo-cũ-vẫn-còn-trên-màn-hình--ex10">T6. Thông báo cũ vẫn còn trên màn hình (🧩 Ex10)</h3>
+<ul>
+<li>Lỗi: chờ <code>visibilityOfElementLocated(#message)</code> — thoả ngay vì "It's gone!" đang hiện ⇒ đọc nhầm.</li>
+<li>Đúng: <code>wait.until(textToBe(messageLocator, "It's enabled!"))</code>.</li>
+</ul>
+<h3 id="t7-spinnerloading-che-nút">T7. Spinner/loading che nút</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.loading-spinner&quot;</span><span class="p">)));</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span></code></pre></div>
+<ul>
+<li>Lỗi nếu bỏ: <code>ElementClickInterceptedException: other element would receive the click</code>.</li>
+</ul>
+<h3 id="t8-bảngdanh-sách-được-vẽ-lại-sau-lọc-stale">T8. Bảng/danh sách được vẽ lại sau lọc (stale)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">oldFirst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#results li&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;filter&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">);</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">stalenessOf</span><span class="p">(</span><span class="n">oldFirst</span><span class="p">));</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">presenceOfAllElementsLocatedBy</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#results li&quot;</span><span class="p">)));</span></code></pre></div>
+<ul>
+<li>Lỗi nếu bỏ: <code>StaleElementReferenceException</code> hoặc đọc dữ liệu cũ.</li>
+</ul>
+<h3 id="t9-js-alert-sau-khi-click">T9. JS alert sau khi click</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsAlert()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
+<span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span></code></pre></div>
+<h3 id="t10-mở-tab-mới">T10. Mở tab mới</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span></code></pre></div>
+<h3 id="t11-iframe-tải-chậm">T11. Iframe tải chậm</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span></code></pre></div>
+<h3 id="t12-kết-quả-tìm-kiếm-ajax-theo-số-lượng">T12. Kết quả tìm kiếm AJAX theo số lượng</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;search&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;selenium&quot;</span><span class="p">);</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBeMoreThan</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.result&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span></code></pre></div>
+<h3 id="t13-trạng-thái-chữ-đổi-processing--done">T13. Trạng thái chữ đổi "Processing" → "Done"</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;status&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Done&quot;</span><span class="p">));</span></code></pre></div>
+<h3 id="t14-nút-bị-khoá-rồi-mở-khoá-disabled-bị-gỡ">T14. Nút bị khoá rồi mở khoá (<code>disabled</code> bị gỡ)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;submit&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// enabled + visible</span>
+<span class="c1">// 🧩 Ex10 dùng đúng cách này cho ô input được bật bởi nút Enable</span></code></pre></div>
+<h3 id="t15-file-tải-xuống-hoàn-tất-không-quan-sát-được-bằng-dom">T15. File tải xuống hoàn tất (không quan sát được bằng DOM)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Path</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">downloadDir</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;report.xlsx&quot;</span><span class="p">);</span>
+<span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">60</span><span class="p">)).</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Files</span><span class="p">.</span><span class="na">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">Files</span><span class="p">.</span><span class="na">exists</span><span class="p">(</span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.crdownload&quot;</span><span class="p">)));</span></code></pre></div>
+<p>(Chrome ghi file tạm <code>.crdownload</code> khi đang tải.)</p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> T6 — thông báo cũ: giải thích vì sao <code>visibilityOfElementLocated(#message)</code> đọc nhầm ở bước Enable của Exercise 10 và sửa.</p>
+<p><strong>Input:</strong> Exercise10</p>
+<p><strong>Expected Output:</strong> <code>textToBe(message, "It's enabled!")</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Thông báo "It's gone!" vẫn đang hiện.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> T7 — spinner che nút: viết trình tự chờ trên <code>/dynamic_loading/2</code> (loading biến mất → đọc kết quả).</p>
+<p><strong>Input:</strong> <code>/dynamic_loading/2</code></p>
+<p><strong>Expected Output:</strong> <code>finish</code> đọc được</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Hai wait liên tiếp.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> T10 — tab mới: viết trình tự chờ số cửa sổ = 2 và chuyển sang tab mới.</p>
+<p><strong>Input:</strong> <code>/windows</code></p>
+<p><strong>Expected Output:</strong> Đang ở tab mới</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>numberOfWindowsToBe(2)</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Mẫu đúng để chờ DOM được vẽ lại?</p>
+<ul>
+<li>A. <code>Thread.sleep</code></li>
+<li>B. Giữ phần tử cũ → hành động → <code>stalenessOf(old)</code> → tìm phần tử mới</li>
+<li>C. Implicit lớn</li>
+<li>D. Bỏ qua</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Tránh đọc dữ liệu cũ.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>getWindowHandles()</code> ngay sau click có thể?</p>
+<ul>
+<li>A. Luôn đủ</li>
+<li>B. Mới có 1 handle (tab mở bất đồng bộ)</li>
+<li>C. Ném lỗi</li>
+<li>D. Trả null</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Chờ <code>numberOfWindowsToBe</code>.</p>
+</details>
+<p><strong>Câu 3.</strong> File tải xong không quan sát được bằng DOM thì dùng?</p>
+<ul>
+<li>A. Implicit</li>
+<li>B. <code>FluentWait</code> với điều kiện file</li>
+<li>C. <code>alertIsPresent</code></li>
+<li>D. Không chờ</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Custom condition.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. The old message is still visible while I wait for a new message. What do you do?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Thông báo cũ vẫn hiện, bạn làm gì?</li>
+<li><strong>Suggested answer (EN):</strong> Visibility passes immediately, so I wait for the exact new text with <code>textToBe</code>, or wait for the old element to be stale and read the new one.</li>
+<li><strong>Giải thích (VI):</strong> Điều kiện đặc trưng cho trạng thái mới.</li>
+<li><strong>Follow-up:</strong> <em>Which exercise shows this?</em></li>
+</ul>
+<p><strong>2. How do you handle a spinner that blocks clicks?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Spinner chặn click?</li>
+<li><strong>Suggested answer (EN):</strong> Wait for the spinner to be invisible and then for the button to be clickable before clicking.</li>
+<li><strong>Giải thích (VI):</strong> Tránh <code>ElementClickInterceptedException</code>.</li>
+<li><strong>Follow-up:</strong> <em>What if the spinner may not appear?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>15 tình huống = 15 mẫu điều kiện chờ</li>
+<li>Đọc dữ liệu mới: điều kiện đặc trưng</li>
+<li>Alert/tab/iframe luôn chờ trước khi chuyển</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>alertIsPresent</code>, <code>numberOfWindowsToBe</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>stalenessOf</code>, <code>textToBe</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Thông báo cũ vs mới</li>
+<li><code>invisibility</code> pass sớm nếu chưa từng hiện</li>
+<li>Handle cũ vs phần tử mới</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="08-wait-best-practices.html">Wait Best Practices</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>#message</code> đang hiển thị "It's gone!" từ bước Remove nên điều kiện visibility thoả ngay. Sửa: <code>wait.until(ExpectedConditions.textToBe(By.id("message"), "It's enabled!"))</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;loading&quot;</span><span class="p">)));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">))).</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Hello World!&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/windows&quot;</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">().</span><span class="na">stream</span><span class="p">().</span><span class="na">filter</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">)).</span><span class="na">findFirst</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">));</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-wait-comparison.html"><small>← Bài trước</small><span>So sánh các cơ chế chờ (và Thread.sleep)</span></a><a class="next" href="08-wait-best-practices.html"><small>Bài tiếp theo →</small><span>Wait Best Practices</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/07-real-world-scenarios.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

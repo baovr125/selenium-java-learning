@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wait và Synchronization — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/wait-interview" data-root="../" data-lesson="0" data-title="Wait và Synchronization — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="wait-và-synchronization--interview">Wait và Synchronization — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h3 id="q1-why-do-we-need-waits-in-selenium">Q1. Why do we need waits in Selenium?</h3>
+<p><strong>Dịch:</strong> Vì sao Selenium cần Wait?</p>
+<p><strong>Sample answer:</strong> Web pages load and update asynchronously, but Selenium runs commands immediately. If an element is not ready yet, we get exceptions like <code>NoSuchElementException</code> or <code>ElementNotInteractableException</code>. Waits synchronize the test with the application by waiting for a condition to become true.</p>
+<p><strong>Giải thích:</strong> Vấn đề đồng bộ hoá (synchronization) — nguyên nhân hàng đầu của flaky test.</p>
+<p><strong>Ví dụ:</strong> Sau khi bấm Login, flash message chỉ xuất hiện khi trang mới tải; Ex1 chờ <code>visibilityOfElementLocated(By.id("flash"))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is a flaky test?</em></p>
+<hr />
+<h3 id="q2-what-types-of-waits-does-selenium-provide">Q2. What types of waits does Selenium provide?</h3>
+<p><strong>Dịch:</strong> Selenium có những loại Wait nào?</p>
+<p><strong>Sample answer:</strong> Three: Implicit Wait, Explicit Wait with <code>WebDriverWait</code> and <code>ExpectedConditions</code>, and Fluent Wait. I also use custom conditions with lambdas. <code>Thread.sleep</code> is not a Selenium wait.</p>
+<p><strong>Giải thích:</strong> Phân biệt phạm vi: implicit (toàn cục), explicit (một điều kiện), fluent (điều kiện + tuỳ chỉnh).</p>
+<p><strong>Ví dụ:</strong> Dự án dùng Explicit Wait và một custom wait (lambda) ở Ex7.</p>
+<p><strong>Đào sâu:</strong> <em>Is <code>pageLoadTimeout</code> a wait?</em> → là giới hạn của <code>get()</code>, không phải wait theo điều kiện.</p>
+<hr />
+<h3 id="q3-how-does-implicit-wait-work-and-what-is-its-scope">Q3. How does Implicit Wait work and what is its scope?</h3>
+<p><strong>Dịch:</strong> Implicit Wait hoạt động thế nào, phạm vi?</p>
+<p><strong>Sample answer:</strong> <code>driver.manage().timeouts().implicitlyWait(Duration)</code> sets a global time for <code>findElement</code> and <code>findElements</code> to keep retrying until the element is present in the DOM. It applies to every find call in the session, and it only waits for presence, not visibility or clickability.</p>
+<p><strong>Giải thích:</strong> Một lần cài, áp dụng mãi. Nhược điểm: <code>findElements</code> không thấy gì vẫn chờ hết giờ.</p>
+<p><strong>Ví dụ:</strong> Dự án cố ý <strong>không</strong> dùng, ghi lý do trong Javadoc <code>BaseTest</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is the default implicit wait?</em> → 0.</p>
+<hr />
+<h3 id="q4-what-is-the-difference-between-implicit-and-explicit-wait">Q4. What is the difference between Implicit and Explicit Wait?</h3>
+<p><strong>Dịch:</strong> Khác nhau giữa Implicit và Explicit Wait?</p>
+<p><strong>Sample answer:</strong> Implicit wait is global and only about finding elements in the DOM. Explicit wait is applied at a specific place for a specific condition, such as visible, clickable, text or URL. Explicit wait is more flexible and predictable, and it stops as soon as the condition is true.</p>
+<p><strong>Giải thích:</strong> Có thể kẻ bảng: phạm vi / điều kiện / dự đoán được.</p>
+<p><strong>Ví dụ:</strong> Ex10: <code>textToBe(messageLocator, "It's enabled!")</code> — điều kiện mà Implicit Wait không làm được.</p>
+<p><strong>Đào sâu:</strong> <em>Which do you prefer and why?</em></p>
+<hr />
+<h3 id="q5-how-is-webdriverwait-different-from-fluentwait">Q5. How is <code>WebDriverWait</code> different from <code>FluentWait</code>?</h3>
+<p><strong>Dịch:</strong> <code>WebDriverWait</code> khác <code>FluentWait</code> thế nào?</p>
+<p><strong>Sample answer:</strong> <code>WebDriverWait</code> extends <code>FluentWait&lt;WebDriver&gt;</code> with sensible defaults: a 500 ms polling interval and ignoring <code>NotFoundException</code>. <code>FluentWait</code> is generic and lets you configure the timeout, polling interval, ignored exceptions and message. In practice <code>WebDriverWait</code> with <code>.ignoring(...)</code> and <code>.pollingEvery(...)</code> can do most of what FluentWait does.</p>
+<p><strong>Giải thích:</strong> WebDriverWait = FluentWait đã cấu hình sẵn cho WebDriver.</p>
+<p><strong>Ví dụ:</strong> Có thể dùng <code>FluentWait&lt;Path&gt;</code> chờ file tải xong (không liên quan WebDriver).</p>
+<p><strong>Đào sâu:</strong> <em>Can FluentWait wait on something that is not a WebDriver?</em> → Có (generic).</p>
+<hr />
+<h3 id="q6-what-is-the-default-polling-interval-of-webdriverwait">Q6. What is the default polling interval of <code>WebDriverWait</code>?</h3>
+<p><strong>Dịch:</strong> Polling interval mặc định của <code>WebDriverWait</code>?</p>
+<p><strong>Sample answer:</strong> 500 milliseconds. I can change it in the constructor <code>new WebDriverWait(driver, timeout, sleep)</code> or with <code>pollingEvery(Duration)</code>.</p>
+<p><strong>Giải thích:</strong> Polling nhỏ ⇒ phản hồi nhanh nhưng nhiều request tới driver.</p>
+<p><strong>Ví dụ:</strong> <code>new WebDriverWait(driver, Duration.ofSeconds(15), Duration.ofMillis(250))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is a sensible value?</em> → 250-500 ms.</p>
+<hr />
+<h3 id="q7-which-exceptions-does-webdriverwait-ignore-by-default">Q7. Which exceptions does <code>WebDriverWait</code> ignore by default?</h3>
+<p><strong>Dịch:</strong> <code>WebDriverWait</code> mặc định bỏ qua exception nào?</p>
+<p><strong>Sample answer:</strong> <code>NotFoundException</code>, which includes <code>NoSuchElementException</code>. Other exceptions, such as <code>StaleElementReferenceException</code>, are thrown unless I add them with <code>ignoring(...)</code>; many <code>ExpectedConditions</code> handle stale elements internally.</p>
+<p><strong>Giải thích:</strong> Exception không trong danh sách ignore sẽ nổ ngay, không chờ tiếp.</p>
+<p><strong>Ví dụ:</strong> <code>wait.ignoring(StaleElementReferenceException.class)</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why ignore exceptions at all?</em> → vì lúc chờ phần tử chưa có là bình thường.</p>
+<hr />
+<h3 id="q8-if-the-timeout-is-15-seconds-does-the-test-always-wait-15-seconds">Q8. If the timeout is 15 seconds, does the test always wait 15 seconds?</h3>
+<p><strong>Dịch:</strong> Timeout 15 giây có nghĩa luôn chờ 15 giây?</p>
+<p><strong>Sample answer:</strong> No. The timeout is an upper limit. <code>until()</code> returns as soon as the condition is satisfied; it only waits the full time and throws <code>TimeoutException</code> if the condition never becomes true.</p>
+<p><strong>Giải thích:</strong> Khác biệt cốt lõi với <code>Thread.sleep</code>.</p>
+<p><strong>Ví dụ:</strong> Flash xuất hiện sau 1 s ⇒ wait chỉ mất ~1 s.</p>
+<p><strong>Đào sâu:</strong> <em>Then why not use a very large timeout?</em> → khi lỗi thật, test treo lâu mới báo.</p>
+<hr />
+<h3 id="q9-what-is-the-difference-between-presence-visibility-and-clickability">Q9. What is the difference between presence, visibility and clickability?</h3>
+<p><strong>Dịch:</strong> Khác nhau giữa presence, visibility, clickability?</p>
+<p><strong>Sample answer:</strong> Presence means the element exists in the DOM, even if hidden. Visibility means it exists and is displayed. Clickability means it is visible and enabled. So presence is the widest, then visibility, then clickability, and none of them guarantees that another element is not covering it.</p>
+<p><strong>Giải thích:</strong> <code>presenceOfElementLocated</code> ⊇ <code>visibilityOfElementLocated</code> ⊇ <code>elementToBeClickable</code>.</p>
+<p><strong>Ví dụ:</strong> Ex5 hover: caption <code>&lt;h5&gt;</code> có trong DOM từ đầu (presence) nhưng ẩn tới khi hover; <code>getText()</code> rỗng ⇒ chờ <code>visibilityOf</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Which would you use before <code>getText()</code>?</em> → visibility.</p>
+<hr />
+<h3 id="q10-what-does-elementtobeclickable-check-and-what-does-it-not-guarantee">Q10. What does <code>elementToBeClickable</code> check, and what does it not guarantee?</h3>
+<p><strong>Dịch:</strong> <code>elementToBeClickable</code> kiểm tra gì, không đảm bảo gì?</p>
+<p><strong>Sample answer:</strong> It checks that the element is displayed and enabled. It does not guarantee that the click will succeed, because another element such as an overlay or spinner may cover it, which causes <code>ElementClickInterceptedException</code>.</p>
+<p><strong>Giải thích:</strong> Giải pháp: chờ overlay <code>invisibilityOfElementLocated</code> trước.</p>
+<p><strong>Ví dụ:</strong> Ex10 dùng nó để biết ô input đã được bật.</p>
+<p><strong>Đào sâu:</strong> <em>How do you handle a loading spinner?</em></p>
+<hr />
+<h3 id="q11-when-does-invisibilityofelementlocated-return-true">Q11. When does <code>invisibilityOfElementLocated</code> return true?</h3>
+<p><strong>Dịch:</strong> Khi nào <code>invisibilityOfElementLocated</code> trả <code>true</code>?</p>
+<p><strong>Sample answer:</strong> When the element is not in the DOM or when it exists but is not displayed. A pitfall is that it is also true if the element never appeared, so it can pass too early; in that case wait for it to appear first.</p>
+<p><strong>Giải thích:</strong> "Biến mất" gồm hai nghĩa: không tồn tại hoặc ẩn.</p>
+<p><strong>Ví dụ:</strong> Ex8: sau khi bấm Close, <code>invisibilityOfElementLocated(By.id("modal"))</code> trả <code>true</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How else can you prove an element is gone?</em> → <code>numberOfElementsToBe(by, 0)</code> (Ex6).</p>
+<hr />
+<h3 id="q12-when-do-you-use-stalenessof">Q12. When do you use <code>stalenessOf</code>?</h3>
+<p><strong>Dịch:</strong> Khi nào dùng <code>stalenessOf</code>?</p>
+<p><strong>Sample answer:</strong> When I want to be sure the old element has been detached from the DOM, for example after a refresh or an AJAX re-render. I wait for the old element to become stale and then find the new element, which avoids reading old data or getting <code>StaleElementReferenceException</code>.</p>
+<p><strong>Giải thích:</strong> Mẫu: giữ phần tử cũ → hành động → <code>stalenessOf(old)</code> → tìm phần tử mới.</p>
+<p><strong>Ví dụ:</strong> Bảng được vẽ lại sau khi lọc.</p>
+<p><strong>Đào sâu:</strong> <em>What causes a stale element?</em></p>
+<hr />
+<h3 id="q13-what-two-things-does-frametobeavailableandswitchtoit-do">Q13. What two things does <code>frameToBeAvailableAndSwitchToIt</code> do?</h3>
+<p><strong>Dịch:</strong> <code>frameToBeAvailableAndSwitchToIt</code> làm hai việc gì?</p>
+<p><strong>Sample answer:</strong> It waits until the frame is available and then switches the driver context into it. I leave the frame later with <code>switchTo().defaultContent()</code>.</p>
+<p><strong>Giải thích:</strong> Tiện hơn <code>switchTo().frame()</code> vì có chờ.</p>
+<p><strong>Ví dụ:</strong> Trang <code>/iframe</code> của the-internet với editor trong iframe.</p>
+<p><strong>Đào sâu:</strong> <em>What happens if you forget to switch back?</em></p>
+<hr />
+<h3 id="q14-why-should-we-not-mix-implicit-and-explicit-waits">Q14. Why should we not mix Implicit and Explicit Waits?</h3>
+<p><strong>Dịch:</strong> Vì sao không nên trộn hai loại?</p>
+<p><strong>Sample answer:</strong> Selenium documentation advises against it because the resulting wait time becomes unpredictable. For example, with an implicit wait of 10 seconds, every <code>findElements</code> inside an explicit wait loop may wait up to 10 seconds before returning an empty list, so the total time becomes much longer than expected.</p>
+<p><strong>Giải thích:</strong> Hai bộ đếm lồng nhau. Chọn một: Explicit.</p>
+<p><strong>Ví dụ:</strong> Javadoc <code>BaseTest</code>: "làm test chậm thêm 10 giây". README dự án cũng ghi.</p>
+<p><strong>Đào sâu:</strong> <em>Can you show an example where it hurts?</em></p>
+<hr />
+<h3 id="q15-why-is-threadsleep-discouraged">Q15. Why is <code>Thread.sleep()</code> discouraged?</h3>
+<p><strong>Dịch:</strong> Vì sao không khuyến khích <code>Thread.sleep()</code>?</p>
+<p><strong>Sample answer:</strong> It waits a fixed time regardless of the application state. If the page is ready earlier we waste time; if it is slower we still fail. It makes test suites slow and flaky. A condition-based explicit wait returns as soon as the condition is true.</p>
+<p><strong>Giải thích:</strong> Cứng nhắc: chậm khi nhanh, hỏng khi chậm.</p>
+<p><strong>Ví dụ:</strong> Dự án không có <code>Thread.sleep</code> nào.</p>
+<p><strong>Đào sâu:</strong> <em>Is there any acceptable use?</em> → debug tạm thời, hoặc tín hiệu không quan sát được từ DOM (có chú thích).</p>
+<hr />
+<h3 id="q16-how-do-you-write-a-custom-wait">Q16. How do you write a custom wait?</h3>
+<p><strong>Dịch:</strong> Viết Custom Wait thế nào?</p>
+<p><strong>Sample answer:</strong> I pass a lambda or an <code>ExpectedCondition</code> to <code>wait.until(...)</code>. It returns <code>true</code> or a non-null object when satisfied and <code>false</code> or <code>null</code> otherwise. For example <code>wait.until(d -&gt; d.findElements(By.className("item")).size() &gt; before)</code>.</p>
+<p><strong>Giải thích:</strong> <code>until(Function&lt;WebDriver, V&gt;)</code>. Nên viết <code>toString()</code> cho thông báo lỗi dễ đọc khi dùng <code>ExpectedCondition</code> tường minh.</p>
+<p><strong>Ví dụ:</strong> Ex7 Infinite Scroll — cuộn lặp trong wait cho tới khi số đoạn văn tăng:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">scrollToBottom</span><span class="p">(</span><span class="n">jsExecutor</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">PARAGRAPH_LOCATOR</span><span class="p">).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">countBeforeScroll</span><span class="p">;</span><span class="w"> </span><span class="p">});</span></code></pre></div>
+<p><strong>Đào sâu:</strong> <em>Why must <code>countBeforeScroll</code> be final?</em> → lambda chỉ capture biến effectively final.</p>
+<hr />
+<h3 id="q17-what-is-the-difference-between-texttobe-and-texttobepresentinelement">Q17. What is the difference between <code>textToBe</code> and <code>textToBePresentInElement</code>?</h3>
+<p><strong>Dịch:</strong> <code>textToBe</code> khác <code>textToBePresentInElement</code>?</p>
+<p><strong>Sample answer:</strong> <code>textToBe</code> requires the text to equal the expected string exactly, while <code>textToBePresentInElement</code> checks that the text contains it. I use <code>textToBe</code> when I need the exact message and <code>...PresentInElement</code> for a partial match.</p>
+<p><strong>Giải thích:</strong> Chặt vs lỏng.</p>
+<p><strong>Ví dụ:</strong> Ex10 dùng <code>textToBe(messageLocator, "It's enabled!")</code> để tránh đọc nhầm thông báo cũ "It's gone!".</p>
+<p><strong>Đào sâu:</strong> <em>Why is waiting for visibility not enough in Ex10?</em> → thông báo cũ vẫn đang hiện.</p>
+<hr />
+<h3 id="q18-how-do-you-verify-that-an-element-has-disappeared">Q18. How do you verify that an element has disappeared?</h3>
+<p><strong>Dịch:</strong> Kiểm tra phần tử đã biến mất thế nào?</p>
+<p><strong>Sample answer:</strong> I wait with <code>invisibilityOfElementLocated</code>, or with <code>numberOfElementsToBe(by, 0)</code> to prove it is removed from the DOM. I avoid <code>findElements</code> right after an action without a wait, because the DOM may not have updated yet.</p>
+<p><strong>Giải thích:</strong> Chứng minh "không còn" cần chờ — không phải đọc một lần.</p>
+<p><strong>Ví dụ:</strong> Ex6: sau khi bấm Delete, <code>wait.until(numberOfElementsToBe(deleteButtonLocator, 0))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What if the element never existed?</em></p>
+<hr />
+<h3 id="q19-what-is-the-difference-between-timeoutexception-and-nosuchelementexception">Q19. What is the difference between <code>TimeoutException</code> and <code>NoSuchElementException</code>?</h3>
+<p><strong>Dịch:</strong> <code>TimeoutException</code> khác <code>NoSuchElementException</code>?</p>
+<p><strong>Sample answer:</strong> <code>NoSuchElementException</code> is thrown by <code>findElement</code> when the element is not present at that moment. <code>TimeoutException</code> is thrown when an explicit wait runs out of time because the condition never became true, or when a page load exceeds the timeout. Inside a wait, <code>NoSuchElementException</code> is ignored and retried until the timeout.</p>
+<p><strong>Giải thích:</strong> Một cái là "lúc này không thấy", cái kia là "đã chờ đủ lâu mà không đạt".</p>
+<p><strong>Ví dụ:</strong> Sai locator trong <code>visibilityOfElementLocated</code> ⇒ <code>TimeoutException</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How would you debug a TimeoutException?</em></p>
+<hr />
+<h3 id="q20-a-test-passes-sometimes-and-fails-sometimes-how-do-you-investigate">Q20. A test passes sometimes and fails sometimes. How do you investigate?</h3>
+<p><strong>Dịch:</strong> Test lúc pass lúc fail, bạn điều tra thế nào?</p>
+<p><strong>Sample answer:</strong> I rerun it a few times and in isolation to confirm it is flaky. I read the exception: stale, intercepted, not found or timeout usually point to synchronization. I check the locator in DevTools, then replace any fixed sleeps with a condition that is specific to the new state. I also check dependencies between tests, animations, window size and network. I fix the root cause and run it repeatedly; I do not hide it with retries.</p>
+<p><strong>Giải thích:</strong> Quy trình có hệ thống, không đoán mò.</p>
+<p><strong>Ví dụ:</strong> Ex7 từng <code>TimeoutException</code> (dấu vết <code>test-output/testng-failed.xml</code>); nguyên nhân gốc là sự kiện scroll bị bỏ qua khi jScroll đang tải; sửa bằng cuộn lặp trong custom wait chứ không tăng timeout.</p>
+<p><strong>Đào sâu:</strong> <em>When is retry acceptable?</em></p>
+<hr />
+<h2 id="bonus-3-câu-viết-code-hay-gặp">Bonus: 3 câu viết code hay gặp</h2>
+<p><strong>B1.</strong> <em>Write code to wait for a button to be clickable and click it.</em></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span></code></pre></div>
+<p><strong>B2.</strong> <em>Write a FluentWait with 30 s timeout, 2 s polling, ignoring <code>NoSuchElementException</code>.</em></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Wait</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fluent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">)).</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fluent</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;result&quot;</span><span class="p">)));</span></code></pre></div>
+<p><strong>B3.</strong> <em>How do you wait for a new window and switch to it?</em></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">().</span><span class="na">stream</span><span class="p">().</span><span class="na">filter</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">)).</span><span class="na">findFirst</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">));</span></code></pre></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="selenium-interview.html"><small>← Bài trước</small><span>Selenium (Fundamentals, Locators, Exceptions) — Interview</span></a><a class="next" href="../progress/README.html"><small>Bài tiếp theo →</small><span>Progress — Theo dõi học tập</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/wait-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

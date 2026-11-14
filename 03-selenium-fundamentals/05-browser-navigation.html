@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Browser Navigation · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/05-browser-navigation" data-root="../" data-lesson="1" data-title="Browser Navigation">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="browser-navigation">Browser Navigation</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 14 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="04-webelement.html">Selenium: WebElement API</a> · ➡️ <a href="06-element-interactions.html">Web Element Interactions</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-locators.html">Trước: Locators</a> · <a href="06-element-interactions.html">Sau: Element Interactions</a> · <a href="07-browser-interactions.html">Window/Frame</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Dùng <code>get</code>, <code>navigate().to/back/forward/refresh</code></li>
+<li>Dùng <code>getTitle</code>, <code>getCurrentUrl</code>, <code>getPageSource</code></li>
+<li>Phân biệt <code>close()</code> và <code>quit()</code></li>
+<li>Đợi điều hướng bằng điều kiện thay vì đọc ngay</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="02-webdriver.html">WebDriver</a></li>
+</ul>
+<h2 id="1-bảng-method">1. Bảng method</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Trả về</th>
+<th>Ý nghĩa</th>
+<th>🧩 Trong dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get(String url)</code></td>
+<td>void</td>
+<td>Mở URL; <strong>chờ trang load</strong> theo <code>PageLoadStrategy</code></td>
+<td>Tất cả Exercise</td>
+</tr>
+<tr>
+<td><code>navigate().to(String url)</code></td>
+<td>void</td>
+<td>Giống <code>get()</code>, thuộc nhóm <code>Navigation</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>navigate().to(URL url)</code></td>
+<td>void</td>
+<td>Nhận đối tượng <code>java.net.URL</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>navigate().back()</code></td>
+<td>void</td>
+<td>Quay lại trang trước (nút Back)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>navigate().forward()</code></td>
+<td>void</td>
+<td>Tiến tới (nút Forward)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>navigate().refresh()</code></td>
+<td>void</td>
+<td>Tải lại trang (F5)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>getTitle()</code></td>
+<td><code>String</code></td>
+<td><code>&lt;title&gt;</code> của trang</td>
+<td><code>EnvironmentCheckTest</code></td>
+</tr>
+<tr>
+<td><code>getCurrentUrl()</code></td>
+<td><code>String</code></td>
+<td>URL hiện tại</td>
+<td>Ex 1 (kiểm tra <code>/secure</code>)</td>
+</tr>
+<tr>
+<td><code>getPageSource()</code></td>
+<td><code>String</code></td>
+<td>HTML hiện tại (sau khi JS chạy)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>close()</code></td>
+<td>void</td>
+<td>Đóng cửa sổ/tab hiện tại</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>quit()</code></td>
+<td>void</td>
+<td>Đóng mọi cửa sổ, kết thúc session</td>
+<td><code>BaseTest.tearDown()</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-get-vs-navigateto">2. <code>get()</code> vs <code>navigate().to()</code></h2>
+<p>Về chức năng gần như <strong>giống nhau</strong>: cả hai tải URL và chờ load. Khác biệt:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>get()</code></th>
+<th><code>navigate().to()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thuộc</td>
+<td><code>WebDriver</code></td>
+<td><code>Navigation</code></td>
+</tr>
+<tr>
+<td>Nhận</td>
+<td><code>String</code></td>
+<td><code>String</code> hoặc <code>URL</code></td>
+</tr>
+<tr>
+<td>Dùng</td>
+<td>Mở trang ban đầu</td>
+<td>Khi chuỗi điều hướng (<code>to → back → forward</code>)</td>
+</tr>
+<tr>
+<td>Hành vi</td>
+<td>Cùng cơ chế bên dưới</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Quy ước thực tế: <code>get()</code> cho lần mở đầu; <code>navigate()</code> khi thao tác lịch sử.</p>
+<h2 id="3-ví-dụ-chuỗi-điều-hướng">3. Ví dụ chuỗi điều hướng</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">   </span><span class="c1">// → /secure</span>
+
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">back</span><span class="p">();</span><span class="w">       </span><span class="c1">// về /login</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">forward</span><span class="p">();</span><span class="w">    </span><span class="c1">// lại /secure</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">refresh</span><span class="p">();</span><span class="w">    </span><span class="c1">// tải lại /secure</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">());</span><span class="w">   </span><span class="c1">// .../secure</span></code></pre></div>
+<p>⚠️ Sau <code>back()</code>/<code>refresh()</code> mọi <code>WebElement</code> tìm trước đó đều <strong>stale</strong> (<a href="04-webelement.html#3-stale-element">02</a>) — phải tìm lại.</p>
+<h2 id="4-gettitle-và-getcurrenturl--dùng-để-xác-minh">4. <code>getTitle()</code> và <code>getCurrentUrl()</code> — dùng để xác minh</h2>
+<p>🧩 <a href="../../../../src/test/java/tests/EnvironmentCheckTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">EnvironmentCheckTest</a>: <code>Assert.assertEquals(driver.getTitle(), "The Internet")</code>.
+🧩 <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a>: <code>driver.getCurrentUrl().endsWith("/secure")</code>.</p>
+<p>⚠️ Đọc <code>getCurrentUrl()</code>/<code>getTitle()</code> ngay sau <code>click()</code> có thể trả giá trị <strong>cũ</strong> nếu trang chưa chuyển. Đúng cách:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">titleIs</span><span class="p">(</span><span class="s">&quot;Secure Area&quot;</span><span class="p">));</span></code></pre></div>
+<p>(Xem <a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>.)</p>
+<h2 id="5-getpagesource">5. <code>getPageSource()</code></h2>
+<p>Trả HTML <strong>hiện tại của DOM</strong> (đã được JavaScript thay đổi), <strong>không phải</strong> HTML gốc server gửi. Dùng để debug, hoặc kiểm tra một chuỗi xuất hiện: <code>driver.getPageSource().contains("Welcome")</code>. Không nên dùng làm cách chính để assert (chậm, dễ lệch); ưu tiên locator.</p>
+<h2 id="6-close-vs-quit">6. <code>close()</code> vs <code>quit()</code></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>close()</code></th>
+<th><code>quit()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đóng</td>
+<td>Cửa sổ/tab <strong>đang focus</strong></td>
+<td><strong>Toàn bộ</strong> cửa sổ của session</td>
+</tr>
+<tr>
+<td>Session</td>
+<td>Còn nếu còn cửa sổ khác</td>
+<td><strong>Kết thúc</strong></td>
+</tr>
+<tr>
+<td>Process driver (<code>chromedriver</code>)</td>
+<td>Có thể còn chạy</td>
+<td><strong>Dừng</strong></td>
+</tr>
+<tr>
+<td>Giải phóng tài nguyên</td>
+<td>Một phần</td>
+<td>Đầy đủ</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Đóng tab phụ rồi <code>switchTo().window(main)</code></td>
+<td><code>@AfterMethod</code>/<code>@AfterClass</code></td>
+</tr>
+<tr>
+<td>Sau khi gọi</td>
+<td>Phải <code>switchTo().window(...)</code> sang cửa sổ còn lại, nếu không lệnh sau lỗi <code>NoSuchWindowException</code></td>
+<td>Không dùng được <code>driver</code> nữa</td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="c1">// ... mở tab mới, làm việc ...</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">close</span><span class="p">();</span><span class="w">                          </span><span class="c1">// đóng tab phụ</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">main</span><span class="p">);</span><span class="w">          </span><span class="c1">// PHẢI chuyển lại</span>
+<span class="p">...</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w">                           </span><span class="c1">// cuối test</span></code></pre></div>
+<p>🧩 <code>BaseTest.tearDown()</code> dùng <code>quit()</code> (đúng). Nếu thay bằng <code>close()</code> khi chỉ có 1 cửa sổ, Chrome đóng nhưng process <code>chromedriver.exe</code> có thể sót lại trong Task Manager (rò rỉ tài nguyên khi chạy nhiều test).</p>
+<h2 id="7-mở-tabcửa-sổ-mới-selenium-4">7. Mở tab/cửa sổ mới (Selenium 4)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">newWindow</span><span class="p">(</span><span class="n">WindowType</span><span class="p">.</span><span class="na">TAB</span><span class="p">);</span><span class="w">       </span><span class="c1">// tab mới và tự chuyển sang</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/windows&quot;</span><span class="p">);</span></code></pre></div>
+<p>Chi tiết <a href="07-browser-interactions.html">06</a>.</p>
+<h2 id="8-page-load-và-đồng-bộ-hoá-điều-hướng">8. Page load và đồng bộ hoá điều hướng</h2>
+<ul>
+<li><code>get()</code> chặn (block) đến khi load xong (mặc định <code>NORMAL</code>) hoặc đến <code>pageLoadTimeout</code> (🧩 30 s) ⇒ quá hạn ném <code>TimeoutException</code>.</li>
+<li>Với <strong>SPA</strong> (React/Angular) chuyển trang bằng JS, trình duyệt không "load" lại ⇒ Selenium không biết đã xong ⇒ phải tự chờ bằng <code>urlContains</code>, <code>visibilityOfElementLocated</code>...</li>
+<li>Click link gây điều hướng: Selenium (Chrome) thường chờ trang mới load khi <code>click()</code> thuộc dạng điều hướng, nhưng đừng dựa vào đó cho trang phức tạp.</li>
+</ul>
+<h2 id="9--best-practices">9. ✅ Best Practices</h2>
+<ol>
+<li><code>get()</code> cho mở trang; chờ điều kiện (URL/element) sau khi điều hướng bằng click.</li>
+<li>Không <code>Thread.sleep()</code> sau <code>get()</code>.</li>
+<li>Luôn <code>quit()</code> trong teardown.</li>
+<li>Sau <code>back/refresh</code> tìm lại phần tử.</li>
+<li>Dùng hằng số cho URL (🧩 <code>private static final String LOGIN_URL</code>).</li>
+</ol>
+<h2 id="10--lỗi-thường-gặp">10. ⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TimeoutException</code> ở <code>get()</code></td>
+<td>Trang chậm/ngoại lệ mạng</td>
+<td>Tăng <code>pageLoadTimeout</code>, <code>PageLoadStrategy.EAGER</code>, kiểm tra mạng</td>
+</tr>
+<tr>
+<td><code>NoSuchWindowException</code></td>
+<td>Dùng <code>driver</code> sau khi <code>close()</code> cửa sổ</td>
+<td><code>switchTo().window()</code></td>
+</tr>
+<tr>
+<td>Assert URL sai</td>
+<td>Đọc quá sớm</td>
+<td><code>wait.until(urlContains(...))</code></td>
+</tr>
+<tr>
+<td><code>InvalidArgumentException: invalid argument</code></td>
+<td>URL thiếu <code>https://</code></td>
+<td>Dùng URL đầy đủ</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Mở <code>/login</code> và in <code>title</code>, <code>currentUrl</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Title và URL</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>getTitle</code>, <code>getCurrentUrl</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Đăng nhập rồi <code>back()</code>, <code>forward()</code>, <code>refresh()</code>; vì sao phần tử tìm trước đó stale?</p>
+<p><strong>Input:</strong> Tài khoản demo</p>
+<p><strong>Expected Output:</strong> URL đổi theo <code>/login</code> ↔ <code>/secure</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>urlContains</code> để chờ.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Mở tab mới, mở trang khác, đóng tab bằng <code>close()</code> và quay lại tab chính.</p>
+<p><strong>Input:</strong> Hai URL bất kỳ</p>
+<p><strong>Expected Output:</strong> Driver quay về tab chính, không ném <code>NoSuchWindowException</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>switchTo().newWindow(WindowType.TAB)</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>get()</code> và <code>navigate().to()</code>?</p>
+<ul>
+<li>A. Hoàn toàn khác</li>
+<li>B. Gần như giống nhau (cùng tải URL, chờ load)</li>
+<li>C. <code>get</code> không chờ</li>
+<li>D. <code>to</code> chỉ nhận URL object</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>navigate()</code> thêm <code>back/forward/refresh</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> Sau <code>driver.close()</code> cửa sổ duy nhất, process driver?</p>
+<ul>
+<li>A. Luôn dừng</li>
+<li>B. Có thể còn sống</li>
+<li>C. Tự khởi động lại</li>
+<li>D. Không liên quan</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dùng <code>quit()</code> để giải phóng đầy đủ.</p>
+</details>
+<p><strong>Câu 3.</strong> Đọc <code>getCurrentUrl()</code> ngay sau <code>click()</code> có thể?</p>
+<ul>
+<li>A. Luôn đúng</li>
+<li>B. Trả URL cũ nếu trang chưa chuyển</li>
+<li>C. Ném lỗi</li>
+<li>D. Trả null</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dùng <code>wait.until(urlContains(...))</code>.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is the difference between close() and quit()?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> <code>close()</code> khác <code>quit()</code>?</li>
+<li><strong>Suggested answer (EN):</strong> <code>close()</code> closes the current window or tab; <code>quit()</code> closes all windows and ends the session and driver process. I use <code>quit()</code> in teardown.</li>
+<li><strong>Giải thích (VI):</strong> Sau <code>close()</code> phải <code>switchTo().window(...)</code>.</li>
+<li><strong>Follow-up:</strong> <em>What leaks if you only call close()?</em></li>
+</ul>
+<p><strong>2. Why not read getCurrentUrl() right after a click?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao không đọc <code>getCurrentUrl()</code> ngay sau click?</li>
+<li><strong>Suggested answer (EN):</strong> Navigation may not have finished, so I wait with <code>urlContains</code> or <code>titleIs</code> before asserting.</li>
+<li><strong>Giải thích (VI):</strong> Đồng bộ hoá.</li>
+<li><strong>Follow-up:</strong> <em>What about single-page apps?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>get</code>, <code>navigate()</code> (to/back/forward/refresh)</li>
+<li><code>getTitle</code>, <code>getCurrentUrl</code>, <code>getPageSource</code></li>
+<li><code>close</code> đóng cửa sổ, <code>quit</code> kết thúc session</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>urlContains</code>, <code>titleIs</code>, <code>switchTo().newWindow</code>, <code>getWindowHandle</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>close</code> ≠ <code>quit</code></li>
+<li><code>back/refresh</code> làm phần tử cũ stale</li>
+<li><code>getPageSource</code> là HTML hiện tại, không phải HTML gốc</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="06-element-interactions.html">Web Element Interactions</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; | &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">());</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">back</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">forward</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">refresh</span><span class="p">();</span></code></pre></div>
+<p>Sau <code>back/refresh</code> trang được nạp lại nên các <code>WebElement</code> cũ bị stale — phải tìm lại.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">newWindow</span><span class="p">(</span><span class="n">WindowType</span><span class="p">.</span><span class="na">TAB</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">close</span><span class="p">();</span><span class="w">                       </span><span class="c1">// đóng tab phụ</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">main</span><span class="p">);</span><span class="w">       </span><span class="c1">// PHẢI quay lại</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-webelement.html"><small>← Bài trước</small><span>Selenium: WebElement API</span></a><a class="next" href="06-element-interactions.html"><small>Bài tiếp theo →</small><span>Web Element Interactions</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/05-browser-navigation.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

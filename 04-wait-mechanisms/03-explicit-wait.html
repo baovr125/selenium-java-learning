@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explicit Wait và WebDriverWait · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/03-explicit-wait" data-root="../" data-lesson="1" data-title="Explicit Wait và WebDriverWait">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="explicit-wait-và-webdriverwait">Explicit Wait và WebDriverWait</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="02-implicit-wait.html">Implicit Wait</a> · ➡️ <a href="04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a></p>
+<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="02-implicit-wait.html">Implicit Wait</a> · Tiếp: <a href="04-expected-conditions.html">ExpectedConditions</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Dùng <code>WebDriverWait.until(ExpectedConditions...)</code></li>
+<li>Cấu hình timeout, polling interval, ignored exceptions, message</li>
+<li>Đọc <code>TimeoutException</code> để debug</li>
+<li>Giải thích Wait đang dùng trong <code>Selenium1</code></li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-wait-introduction.html">Wait Introduction</a></li>
+<li><a href="../01-java-fundamentals/11-lambda-and-generics.html">Java Lambda &amp; Generics</a></li>
+</ul>
+<h2 id="1-explicit-wait-webdriverwait">1. Explicit Wait: <code>WebDriverWait</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.WebDriverWait</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.ExpectedConditions</span><span class="p">;</span>
+
+<span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span><span class="w">          </span><span class="c1">// 🧩 BaseTest</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// 🧩 Ex1</span></code></pre></div>
+<p>Cách <code>until(condition)</code> hoạt động:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">bắt đầu đếm timeout (15 s)
+loop:
+    kết quả = condition.apply(driver)
+    nếu kết quả là truthy (không null và không false) → TRẢ kết quả, kết thúc
+    nếu ném exception thuộc danh sách &quot;ignore&quot; (mặc định NotFoundException) → bỏ qua, coi như chưa đạt
+    nếu ném exception khác → NÉM NGAY ra ngoài
+    nếu đã hết timeout → ném TimeoutException
+    ngủ polling interval (500 ms) rồi lặp lại</code></pre></div>
+<p>Điểm quan trọng:</p>
+<ul>
+<li><strong>Trả ngay khi đúng</strong> — không chờ hết 15 s. 15 s là <strong>giới hạn trên</strong>, không phải thời gian chờ cố định. Đây là ưu điểm lớn so với <code>Thread.sleep</code>.</li>
+<li>Điều kiện trả về <code>WebElement</code>/<code>Boolean</code>/<code>Alert</code>/<code>WebDriver</code>... tuỳ loại, dùng được tiếp (ví dụ <code>flash.getText()</code>).</li>
+<li>Hết giờ ⇒ <code>org.openqa.selenium.TimeoutException</code> với thông báo mô tả điều kiện, dạng: <code>Expected condition failed: waiting for visibility of element located by By.id: flash (tried for 15 second(s) with 500 milliseconds interval)</code> (câu chữ có thể khác đôi chút giữa các phiên bản).</li>
+</ul>
+<p>🧩 Một <code>WebDriverWait</code> dùng chung (<code>protected WebDriverWait wait;</code> trong <code>BaseTest</code>) cho cả class con. Thay đổi timeout riêng cho điều kiện chậm:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">60</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;report-ready&quot;</span><span class="p">)));</span></code></pre></div>
+<h2 id="2-timeout-polling-interval-ignored-exceptions">2. Timeout, Polling Interval, Ignored Exceptions</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khái niệm</th>
+<th>Ý nghĩa</th>
+<th>Mặc định <code>WebDriverWait</code></th>
+<th>Cách đổi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Timeout</strong></td>
+<td>Tối đa chờ tổng cộng</td>
+<td>Bắt buộc truyền vào</td>
+<td>Constructor</td>
+</tr>
+<tr>
+<td><strong>Polling interval</strong></td>
+<td>Khoảng cách giữa 2 lần kiểm tra</td>
+<td><strong>500 ms</strong></td>
+<td><code>new WebDriverWait(driver, timeout, Duration.ofMillis(200))</code> hoặc <code>.pollingEvery(Duration)</code></td>
+</tr>
+<tr>
+<td><strong>Ignored exceptions</strong></td>
+<td>Exception coi như "chưa đạt, thử lại"</td>
+<td><code>NotFoundException</code> (gồm <code>NoSuchElementException</code>)</td>
+<td><code>.ignoring(Class...)</code></td>
+</tr>
+<tr>
+<td><strong>Message</strong></td>
+<td>Thông báo khi timeout</td>
+<td>Mô tả điều kiện</td>
+<td><code>.withMessage("...")</code></td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">),</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">250</span><span class="p">));</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">StaleElementReferenceException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">withMessage</span><span class="p">(</span><span class="s">&quot;Nút Save không bấm được sau 15 giây&quot;</span><span class="p">);</span></code></pre></div>
+<p>Chọn timeout:</p>
+<ul>
+<li>Quá ngắn ⇒ test fail oan khi mạng chậm.</li>
+<li>Quá dài ⇒ khi thật sự lỗi, test treo lâu (nhưng <strong>không</strong> làm test thành công chậm hơn, vì Wait trả ngay khi đúng).</li>
+<li>Thực tế: 10-20 s cho UI thông thường; tác vụ nặng (báo cáo, upload) dùng Wait riêng dài hơn.</li>
+</ul>
+<p>Chọn polling: 500 ms thường đủ; giảm xuống 100-250 ms nếu cần phản hồi nhanh; quá nhỏ ⇒ spam lệnh tới driver.</p>
+<h2 id="3-wait-trong-dự-án-selenium1">3. Wait trong dự án Selenium1</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>Wait dùng</th>
+<th>Vì sao</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex1 Login</a></td>
+<td><code>visibilityOfElementLocated(By.id("flash"))</code></td>
+<td>Flash xuất hiện sau khi chuyển trang</td>
+</tr>
+<tr>
+<td><a href="../../../../src/test/java/tests/Exercise05_HoverTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex5 Hover</a></td>
+<td><code>visibilityOf(captionHeader)</code></td>
+<td>Caption ẩn tới khi hover</td>
+</tr>
+<tr>
+<td><a href="../../../../src/test/java/tests/Exercise06_AddRemoveElementsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex6 Add/Remove</a></td>
+<td><code>visibilityOfElementLocated(...)</code>, <code>numberOfElementsToBe(by, 0)</code></td>
+<td>Phần tử sinh động; chứng minh biến mất</td>
+</tr>
+<tr>
+<td><a href="../../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex7 Infinite Scroll</a></td>
+<td><code>presenceOfElementLocated</code> + <code>wait.until(lambda)</code></td>
+<td>Nội dung tải khi cuộn; custom wait</td>
+</tr>
+<tr>
+<td><a href="../../../../src/test/java/tests/Exercise08_EntryAdModalTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex8 Modal</a></td>
+<td><code>visibilityOfElementLocated</code>, <code>invisibilityOfElementLocated</code></td>
+<td>Modal hiện sau độ trễ; đóng</td>
+</tr>
+<tr>
+<td><a href="../../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex10 Dynamic</a></td>
+<td><code>visibilityOfElementLocated</code>, <code>invisibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>textToBe</code></td>
+<td>AJAX có độ trễ</td>
+</tr>
+<tr>
+<td>Cấu hình</td>
+<td><code>new WebDriverWait(driver, Duration.ofSeconds(15))</code> trong <code>BaseTest</code></td>
+<td>Một Wait dùng chung</td>
+</tr>
+<tr>
+<td><code>pageLoadTimeout(30s)</code></td>
+<td>Không phải Wait; giới hạn <code>driver.get()</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Các Wait <strong>chưa dùng</strong> trong dự án: <code>FluentWait</code>, <code>alertIsPresent</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>numberOfWindowsToBe</code>, <code>stalenessOf</code>, <code>textToBePresentInElement</code>. Có mô phỏng ở các tình huống dưới.</p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Tạo <code>WebDriverWait</code> 10 s và chờ <code>#flash</code> hiện sau khi đăng nhập.</p>
+<p><strong>Input:</strong> Tài khoản demo</p>
+<p><strong>Expected Output:</strong> Flash chứa <code>secure area</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>visibilityOfElementLocated</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Gây <code>TimeoutException</code> có chủ đích với timeout 1 s và locator sai; đọc message.</p>
+<p><strong>Input:</strong> Locator <code>By.id("khong-co")</code></p>
+<p><strong>Expected Output:</strong> <code>TimeoutException</code> mô tả điều kiện</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>withMessage(...)</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Đo thời gian chờ thực tế trên <code>/dynamic_loading/2</code> và chứng minh nhỏ hơn timeout 15 s.</p>
+<p><strong>Input:</strong> <code>/dynamic_loading/2</code></p>
+<p><strong>Expected Output:</strong> In <code>Đã chờ N ms</code> với N &lt; 15000</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>System.nanoTime()</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Polling interval mặc định của <code>WebDriverWait</code>?</p>
+<ul>
+<li>A. 100 ms</li>
+<li>B. 500 ms</li>
+<li>C. 1 s</li>
+<li>D. 5 s</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Đổi bằng constructor hoặc <code>pollingEvery</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>WebDriverWait</code> mặc định bỏ qua exception nào?</p>
+<ul>
+<li>A. <code>NotFoundException</code> (gồm <code>NoSuchElementException</code>)</li>
+<li>B. Mọi exception</li>
+<li>C. <code>TimeoutException</code></li>
+<li>D. Không</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Exception khác (vd <code>StaleElementReferenceException</code>) cần <code>ignoring(...)</code>.</p>
+</details>
+<p><strong>Câu 3.</strong> Timeout 15 s: test luôn chờ 15 s?</p>
+<ul>
+<li>A. Có</li>
+<li>B. Không, chỉ khi điều kiện không bao giờ đúng</li>
+<li>C. Tuỳ OS</li>
+<li>D. Chỉ trên CI</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>until</code> trả ngay khi điều kiện đúng.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is the default polling interval and which exceptions are ignored?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Polling mặc định và exception bị bỏ qua?</li>
+<li><strong>Suggested answer (EN):</strong> 500 milliseconds, and <code>NotFoundException</code> (which includes <code>NoSuchElementException</code>).</li>
+<li><strong>Giải thích (VI):</strong> Có thể đổi bằng <code>pollingEvery</code>, <code>ignoring</code>.</li>
+<li><strong>Follow-up:</strong> <em>How do you ignore stale elements?</em></li>
+</ul>
+<p><strong>2. Does a 15 second timeout mean the test always waits 15 seconds?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Timeout 15 s có luôn chờ 15 s?</li>
+<li><strong>Suggested answer (EN):</strong> No; it is an upper limit and <code>until</code> returns as soon as the condition is true; it only waits the full time before throwing <code>TimeoutException</code>.</li>
+<li><strong>Giải thích (VI):</strong> Khác <code>Thread.sleep</code>.</li>
+<li><strong>Follow-up:</strong> <em>Why not use a huge timeout?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Explicit Wait chờ <strong>một điều kiện cụ thể</strong></li>
+<li>Timeout, polling (500 ms), ignored exceptions, message</li>
+<li><code>TimeoutException</code> mô tả điều kiện đang chờ</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>new WebDriverWait(driver, Duration)</code>, <code>until</code>, <code>pollingEvery</code>, <code>ignoring</code>, <code>withMessage</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Timeout ≠ thời gian chờ cố định</li>
+<li><code>WebDriverWait</code> ≠ <code>pageLoadTimeout</code></li>
+<li>Quên gán giá trị trả về của <code>until</code></li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait10</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">String</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait10</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">))).</span><span class="na">getText</span><span class="p">();</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;secure area&quot;</span><span class="p">));</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">WebDriverWait</span><span class="w"> </span><span class="n">shortWait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">shortWait</span><span class="p">.</span><span class="na">withMessage</span><span class="p">(</span><span class="s">&quot;Không thấy phần tử demo&quot;</span><span class="p">);</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">shortWait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-co&quot;</span><span class="p">)));</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TimeoutException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+<span class="p">}</span></code></pre></div>
+<p>Message chứa <code>Không thấy phần tử demo</code> và mô tả điều kiện chờ.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>
+<span class="kt">long</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="p">;</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Đã chờ &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; ms&quot;</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">ms</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">15_000</span><span class="p">);</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-implicit-wait.html"><small>← Bài trước</small><span>Implicit Wait</span></a><a class="next" href="04-expected-conditions.html"><small>Bài tiếp theo →</small><span>ExpectedConditions (và Presence vs Visibility vs Clickability)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/03-explicit-wait.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Roadmap — Selenium Java cho Junior Automation Test Engineer · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="LEARNING_ROADMAP" data-root="" data-lesson="0" data-title="Learning Roadmap — Selenium Java cho Junior Automation Test Engineer">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="learning-roadmap--selenium-java-cho-junior-automation-test-engineer">Learning Roadmap — Selenium Java cho Junior Automation Test Engineer</h1>
+<blockquote>
+<p>Quay lại <a href="index.html">README</a> · Theo dõi: <a href="LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a> · Báo cáo thiết kế lại: <a href="UPDATE_REPORT.html">UPDATE_REPORT.md</a></p>
+</blockquote>
+<h2 id="1-nguyên-tắc-học">1. Nguyên tắc học</h2>
+<ol>
+<li><strong>Mỗi bài một chủ đề nhỏ</strong>: đọc khái niệm → chạy ví dụ → tự làm bài tập → kiểm tra → xem câu phỏng vấn.</li>
+<li><strong>Chạy trước, hiểu sau, viết lại sau cùng</strong>: chạy ví dụ, sửa thử cho hỏng, rồi tự viết lại không nhìn.</li>
+<li><strong>Java gắn với Selenium</strong>: mỗi bài Java có mục "Ứng dụng trong Selenium" dẫn về code thật của <code>Selenium1</code>.</li>
+<li><strong>Lời giải ở cuối bài</strong> — chỉ mở sau khi đã tự làm.</li>
+<li><strong>Không đánh dấu Completed</strong> trước khi có bằng chứng (bài tập đã chạy, kiểm tra đã đúng) — xem <a href="progress/README.html">progress/</a>.</li>
+</ol>
+<h2 id="2-sơ-đồ-phụ-thuộc">2. Sơ đồ phụ thuộc</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Phase 1 Java ─► Phase 2 Maven ─► Phase 3 Selenium ─► Phase 4 Wait ─► Phase 5 TestNG ─► Phase 6 POM/Framework
+      │               │                                                                      │
+      └───────────────┴──────────────► Phase 7 Git ◄───────────────────────────────────────┘
+                                                  └──────────► Phase 8 Dự án thực tế ──► Phỏng vấn</code></pre></div>
+<h2 id="3-các-phase">3. Các Phase</h2>
+<blockquote>
+<p>Thời lượng là <strong>ước tính</strong> cho người mới (~1–2 giờ/bài gồm cả bài tập); hãy giãn hoặc nén theo tốc độ của bạn.</p>
+</blockquote>
+<h3 id="phase-1--java-fundamentals-chapter-0108">Phase 1 — Java Fundamentals <em>(Chapter 01–08)</em></h3>
+<p><strong>Mục tiêu:</strong> đủ Java để đọc hiểu và viết Selenium script. Ưu tiên theo nhãn Essential/Important/Optional trong từng bài.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td><a href="01-java-fundamentals/00-environment-setup.html">Environment Setup</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>01</td>
+<td><a href="01-java-fundamentals/01-getting-started.html">Getting Started</a> (Intro, Syntax, Output, Comments)</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="01-java-fundamentals/02-variables-and-data-types.html">Variables &amp; Data Types</a> (+ Type Casting)</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="01-java-fundamentals/03-operators-and-strings.html">Operators &amp; Strings</a> (+ Math, Booleans)</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="01-java-fundamentals/04-control-flow.html">Control Flow</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="01-java-fundamentals/05-arrays.html">Arrays</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="01-java-fundamentals/06-methods.html">Methods</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="01-java-fundamentals/07-classes-and-objects.html">Classes &amp; Objects</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="01-java-fundamentals/08-oop-concepts.html">OOP Concepts</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="01-java-fundamentals/09-collections.html">Collections</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>10</td>
+<td><a href="01-java-fundamentals/10-exception-handling.html">Exception Handling</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>11</td>
+<td><a href="01-java-fundamentals/11-lambda-and-generics.html">Lambda &amp; Generics</a> (+ Annotations, RegEx, Threads)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>12</td>
+<td><a href="01-java-fundamentals/12-file-handling.html">File Handling &amp; Properties</a></td>
+<td>Essential</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đạt khi:</strong> đọc hiểu <a href="../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a> và một Exercise không cần tra từ khoá; làm đủ 3 bài tập mỗi bài.
+<strong>Phỏng vấn:</strong> <a href="interview/java-interview.html">java-interview</a>.</p>
+<h3 id="phase-2--maven-and-project-management-chapter-0912">Phase 2 — Maven and Project Management <em>(Chapter 09–12)</em></h3>
+<p><strong>Mục tiêu:</strong> khởi tạo, cấu hình và làm việc với dự án Selenium Java trong nhóm.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Chapter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td><a href="02-maven-and-project/00-project-initialization.html">Project Initialization</a></td>
+<td>09</td>
+</tr>
+<tr>
+<td>01</td>
+<td><a href="02-maven-and-project/01-maven-fundamentals.html">Maven Fundamentals</a></td>
+<td>09</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-maven-and-project/02-pom-xml.html">pom.xml</a></td>
+<td>09</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="02-maven-and-project/03-maven-wrapper.html"><strong>Maven Wrapper</strong></a> ⭐</td>
+<td>10</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="02-maven-and-project/04-maven-wrapper-in-team-and-git.html"><strong>Wrapper trong team và Git</strong></a> ⭐</td>
+<td>10</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="02-maven-and-project/05-maven-lifecycle.html">Maven Lifecycle</a></td>
+<td>11</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="02-maven-and-project/06-dependency-management.html">Dependency Management</a></td>
+<td>09</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="02-maven-and-project/07-build-and-test-execution.html">Build &amp; Test Execution</a> (Surefire/Failsafe)</td>
+<td>11</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="02-maven-and-project/08-working-in-team.html">Working in Team</a></td>
+<td>12</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="02-maven-and-project/09-maven-troubleshooting.html">Troubleshooting</a></td>
+<td>12</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đạt khi:</strong> chạy <code>.\mvnw.cmd clean test</code> trên máy không cài Maven; giải thích được Wrapper. <strong>Phỏng vấn:</strong> <a href="interview/maven-interview.html">maven-interview</a>.</p>
+<h3 id="phase-3--selenium-fundamentals-chapter-1318">Phase 3 — Selenium Fundamentals <em>(Chapter 13–18)</em></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Chapter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="03-selenium-fundamentals/01-selenium-introduction.html">Selenium Introduction</a></td>
+<td>13</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="03-selenium-fundamentals/02-webdriver.html">WebDriver</a></td>
+<td>14</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-selenium-fundamentals/03-locators.html">Locators</a></td>
+<td>15</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="03-selenium-fundamentals/04-webelement.html">WebElement</a></td>
+<td>16</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="03-selenium-fundamentals/05-browser-navigation.html">Browser Navigation</a></td>
+<td>14</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="03-selenium-fundamentals/06-element-interactions.html">Element Interactions</a> (+ Dropdown)</td>
+<td>17</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions</a> (Alert/Frame/Window)</td>
+<td>18</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="03-selenium-fundamentals/08-mouse-and-keyboard-actions.html">Mouse &amp; Keyboard Actions</a></td>
+<td>18</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="03-selenium-fundamentals/09-javascript-executor.html">JavaScript Executor</a></td>
+<td>18</td>
+</tr>
+<tr>
+<td>10</td>
+<td><a href="03-selenium-fundamentals/10-selenium-exceptions.html">Selenium Exceptions</a></td>
+<td>16</td>
+</tr>
+<tr>
+<td>11</td>
+<td><a href="03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging &amp; Best Practices</a></td>
+<td>16</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đạt khi:</strong> tự viết lại Exercise 1–5 của dự án không nhìn đáp án. <strong>Phỏng vấn:</strong> <a href="interview/selenium-interview.html">selenium-interview</a>.</p>
+<h3 id="phase-4--wait-and-synchronization--chapter-19--độ-ưu-tiên-cao">Phase 4 — Wait and Synchronization ⭐ <em>(Chapter 19)</em> — độ ưu tiên cao</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="04-wait-mechanisms/01-wait-introduction.html">Wait Introduction</a></td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="04-wait-mechanisms/02-implicit-wait.html">Implicit Wait</a></td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="04-wait-mechanisms/03-explicit-wait.html">Explicit Wait</a></td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-wait-mechanisms/04-expected-conditions.html">ExpectedConditions</a></td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="04-wait-mechanisms/05-fluent-wait.html">Fluent Wait &amp; Custom Wait</a></td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="04-wait-mechanisms/06-wait-comparison.html">So sánh các Wait (và Thread.sleep)</a></td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="04-wait-mechanisms/07-real-world-scenarios.html">15 tình huống thực tế</a></td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="04-wait-mechanisms/08-wait-best-practices.html">Best Practices</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đạt khi:</strong> trả lời 20 câu <a href="interview/wait-interview.html">wait-interview</a> không nhìn đáp án; giải thích Exercise 10 (<code>textToBe</code>) và Exercise 7 (custom wait).</p>
+<h3 id="phase-5--testing-framework-chapter-20">Phase 5 — Testing Framework <em>(Chapter 20)</em></h3>
+<p><a href="05-testing-framework/01-testng-fundamentals.html">TestNG</a> → <a href="05-testing-framework/02-junit-fundamentals.html">JUnit (so sánh)</a> → <a href="05-testing-framework/03-assertions-and-verification.html">Assertions</a> → <a href="05-testing-framework/04-test-setup-and-teardown.html">Setup/Teardown</a> → <a href="05-testing-framework/05-test-data-and-configuration.html">Data &amp; Config</a> → <a href="05-testing-framework/06-test-execution-and-reports.html">Execution &amp; Reports</a>.
+<strong>Phỏng vấn:</strong> <a href="interview/framework-interview.html">framework-interview</a>.</p>
+<h3 id="phase-6--page-object-model--framework-design-chapter-2122">Phase 6 — Page Object Model &amp; Framework Design <em>(Chapter 21–22)</em></h3>
+<p><a href="06-automation-framework/01-page-object-model.html">POM</a> → <a href="06-automation-framework/02-automation-framework-architecture.html">Architecture</a> → <a href="06-automation-framework/03-reusable-components.html">Reusable Components</a> → <a href="06-automation-framework/04-configuration-management.html">Configuration</a> → <a href="06-automation-framework/05-maintainable-test-framework.html">Maintainable Framework</a>.</p>
+<h3 id="phase-7--git-and-team-collaboration-chapter-23">Phase 7 — Git and Team Collaboration <em>(Chapter 23)</em></h3>
+<p><a href="07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals</a> → <a href="07-git-and-team-workflow/02-branch-merge-rebase.html">Branch/Merge/Rebase</a> → <a href="07-git-and-team-workflow/03-pull-request-and-conflicts.html">PR &amp; Conflicts</a> → <a href="07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">.gitignore &amp; Maven project</a>. <strong>Phỏng vấn:</strong> <a href="interview/git-interview.html">git-interview</a>.</p>
+<h3 id="phase-8--real-world-automation-project-chapter-24">Phase 8 — Real-world Automation Project <em>(Chapter 24)</em></h3>
+<p><a href="08-practical-project/01-requirements-and-test-design.html">Requirements &amp; Test Design</a> → <a href="08-practical-project/02-build-the-project.html">Build the Project</a> → <a href="08-practical-project/03-run-debug-report-and-git.html">Run, Debug, Report, Git</a>; thực hành với <a href="08-practical-project/labs/README.html">8 Labs</a>. <strong>Phỏng vấn:</strong> <a href="interview/scenario-based-interview.html">scenario-based-interview</a>.</p>
+<h2 id="4-gợi-ý-nhịp-học">4. Gợi ý nhịp học</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tuần</th>
+<th>Trọng tâm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1–2</td>
+<td>Phase 1 (Java)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Phase 2 (Maven &amp; Wrapper)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Phase 3 (Selenium cơ bản)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Phase 4 (Wait) + ôn phỏng vấn Wait</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Phase 5 (TestNG)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Phase 6 (POM &amp; Framework)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Phase 7 (Git)</td>
+</tr>
+<tr>
+<td>9–10</td>
+<td>Phase 8 (dự án) + ôn phỏng vấn tổng hợp</td>
+</tr>
+</tbody>
+</table></div>
+<p>Đã có Java nền: rút gọn Phase 1 (chỉ làm bài tập các bài Essential bạn còn yếu).</p>
+<h2 id="5-bảng-tự-đánh-giá">5. Bảng tự đánh giá</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Năng lực</th>
+<th>Mức 1 (biết)</th>
+<th>Mức 2 (làm được)</th>
+<th>Mức 3 (giải thích được)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java cho automation</td>
+<td>Đọc được code</td>
+<td>Viết method/class/collection</td>
+<td>Giải thích đa hình qua <code>WebDriver</code></td>
+</tr>
+<tr>
+<td>Maven &amp; mvnw</td>
+<td>Chạy <code>mvnw test</code></td>
+<td>Chạy 1 class/1 method</td>
+<td>Giải thích Wrapper, commit gì</td>
+</tr>
+<tr>
+<td>Locator</td>
+<td><code>By.id</code></td>
+<td>CSS/XPath ổn định</td>
+<td>Chọn locator có lý do</td>
+</tr>
+<tr>
+<td><strong>Wait</strong></td>
+<td>Biết <code>Thread.sleep</code></td>
+<td><code>WebDriverWait</code> đúng điều kiện</td>
+<td>Giải thích không trộn implicit/explicit</td>
+</tr>
+<tr>
+<td>TestNG</td>
+<td><code>@Test</code></td>
+<td>DataProvider, groups</td>
+<td>Cấu hình <code>testng.xml</code>, parallel</td>
+</tr>
+<tr>
+<td>POM</td>
+<td>Khái niệm</td>
+<td>Viết Page Class</td>
+<td>Tránh lỗi thiết kế POM</td>
+</tr>
+<tr>
+<td>Git</td>
+<td><code>add/commit/push</code></td>
+<td>Branch, PR</td>
+<td>Giải quyết conflict, <code>.gitignore</code>, <code>mvnw</code> mode</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-khi-bị-kẹt">6. Khi bị kẹt</h2>
+<ol>
+<li>Dòng đầu tiên của stacktrace + tên exception → <a href="03-selenium-fundamentals/10-selenium-exceptions.html">Selenium Exceptions</a>.</li>
+<li>Lỗi Maven → <a href="02-maven-and-project/09-maven-troubleshooting.html">Troubleshooting</a>.</li>
+<li>"Lúc được lúc không" → gần như chắc chắn là đồng bộ hoá → <a href="04-wait-mechanisms/01-wait-introduction.html">Wait Introduction</a>.</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="index.html"><small>← Bài trước</small><span>Giáo trình Selenium Java — từ Java cơ bản đến Junior Automation Test Engineer</span></a><a class="next" href="LEARNING_PROGRESS.html"><small>Bài tiếp theo →</small><span>Learning Progress</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/LEARNING_ROADMAP.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="assets/nav.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

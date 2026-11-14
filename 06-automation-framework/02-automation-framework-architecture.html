@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiến trúc Automation Framework · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="06-automation-framework/02-automation-framework-architecture" data-root="../" data-lesson="1" data-title="Kiến trúc Automation Framework">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="kiến-trúc-automation-framework">Kiến trúc Automation Framework</h1>
+<blockquote>
+<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="01-page-object-model.html">Page Object Model (POM)</a> · ➡️ <a href="03-reusable-components.html">Reusable Components</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="01-page-object-model.html">Trước: POM</a> · <a href="03-reusable-components.html">Sau: Reusable Components</a> · <a href="../05-testing-framework/04-test-setup-and-teardown.html">Setup/Teardown</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Mô tả các tầng của framework và quy tắc phụ thuộc</li>
+<li>Đối chiếu kiến trúc với <code>Selenium1</code></li>
+<li>Theo dõi luồng một lần chạy <code>mvnw clean test</code></li>
+<li>Chọn mức độ framework phù hợp quy mô</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-page-object-model.html">Page Object Model</a></li>
+</ul>
+<h2 id="1-framework-là-gì">1. Framework là gì?</h2>
+<p><strong>Automation Framework</strong> = bộ khung quy ước + mã dùng chung để viết test <strong>nhất quán, dễ bảo trì, dễ mở rộng</strong>. Không chỉ là "một đống test": nó quyết định driver được tạo ở đâu, locator đặt đâu, cấu hình đọc từ đâu, báo cáo ghi thế nào.</p>
+<h2 id="2-các-tầng-của-framework">2. Các tầng của framework</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">┌──────────────────────────────────────────────────────────────────┐
+│ 1. Test layer         tests/*Test.java        (kịch bản + assert) │
+├──────────────────────────────────────────────────────────────────┤
+│ 2. Page layer         pages/*Page.java        (hành vi trang)     │
+├──────────────────────────────────────────────────────────────────┤
+│ 3. Core layer         BasePage, BaseTest, DriverFactory, Waits    │
+├──────────────────────────────────────────────────────────────────┤
+│ 4. Support layer      Config, TestData, Utils, Logger, Screenshot │
+├──────────────────────────────────────────────────────────────────┤
+│ 5. Infrastructure     Selenium, TestNG, Maven/mvnw, CI, Reports   │
+└──────────────────────────────────────────────────────────────────┘</code></pre></div>
+<p>Quy tắc phụ thuộc: tầng trên gọi tầng dưới, <strong>không ngược lại</strong> (Page không biết Test; Core không biết Page cụ thể).</p>
+<h2 id="3-đối-chiếu-với-selenium1">3. Đối chiếu với <code>Selenium1</code></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Có trong dự án?</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test layer</td>
+<td>✅</td>
+<td><code>src/test/java/tests/*</code></td>
+</tr>
+<tr>
+<td>Base Test (setup/teardown)</td>
+<td>✅</td>
+<td><a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a></td>
+</tr>
+<tr>
+<td>Page layer / Base Page</td>
+<td>❌</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Driver Factory</td>
+<td>❌ (<code>new ChromeDriver()</code> trực tiếp)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Configuration Manager</td>
+<td>❌ (hằng hard-code)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Test data</td>
+<td>❌ (trong test)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Utility classes</td>
+<td>◐ (helper <code>private</code> trong từng test: <code>scrollToBottom</code>, <code>getRowData</code>, <code>assertSameElement</code>)</td>
+<td>các Exercise</td>
+</tr>
+<tr>
+<td>Logging</td>
+<td>◐ (<code>System.out.println</code>)</td>
+<td>các Exercise</td>
+</tr>
+<tr>
+<td>Reporting</td>
+<td>✅ mặc định (Surefire/TestNG HTML)</td>
+<td><code>target/surefire-reports/</code></td>
+</tr>
+<tr>
+<td>Screenshot khi fail</td>
+<td>❌</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Test execution config</td>
+<td>✅</td>
+<td><a href="../../../../testng.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">testng.xml</a>, <a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a></td>
+</tr>
+<tr>
+<td>Dependency management</td>
+<td>✅</td>
+<td><a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a>, <a href="../02-maven-and-project/03-maven-wrapper.html">Wrapper</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Điều đáng giá: các helper <code>private</code> trong từng Exercise (ví dụ <code>getRowData</code>, <code>scrollToBottom</code>) chính là <strong>mầm của Utility/Page method</strong> — khi bị lặp ở ≥ 2 nơi thì kéo ra chỗ dùng chung.</p>
+<h2 id="4-cấu-trúc-thư-mục-đề-xuất">4. Cấu trúc thư mục đề xuất</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">src/test/java/
+├── base/
+│   └── BaseTest.java                 # vòng đời driver
+├── core/
+│   ├── DriverFactory.java            # tạo WebDriver theo cấu hình
+│   └── Waits.java                    # (tuỳ chọn) hàm chờ dùng chung
+├── config/
+│   └── Config.java                   # đọc config.properties/-D
+├── pages/
+│   ├── BasePage.java
+│   ├── LoginPage.java
+│   └── ...
+├── data/
+│   └── LoginData.java                # record/POJO dữ liệu
+├── utils/
+│   ├── Screenshots.java
+│   └── Log.java
+├── listeners/
+│   └── TestListener.java             # chụp ảnh khi fail, ghi report
+└── tests/
+    └── LoginTest.java ...
+src/test/resources/
+├── config.properties
+└── testdata/login.csv</code></pre></div>
+<h2 id="5-các-thành-phần-liên-kết-với-nhau-như-thế-nào">5. Các thành phần liên kết với nhau như thế nào</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">testng.xml ─► Surefire ─► TestNG ─► (đọc) TestListener
+                             │
+                             ▼
+                        BaseTest.setup()
+                          ├─ Config  ◄── config.properties / -Dbrowser=...
+                          ├─ DriverFactory.create(browser) ──► WebDriver (ThreadLocal)
+                          └─ WebDriverWait(timeout từ Config)
+                             │
+                             ▼
+                        LoginTest.@Test
+                          ├─ new LoginPage(driver) ─ extends BasePage ─ (wait, click, type)
+                          ├─ Page trả dữ liệu ──► Assert (TestNG)
+                          └─ DataProvider ◄── TestData (CSV/JSON)
+                             │
+                             ▼
+                        BaseTest.tearDown(result)
+                          ├─ nếu fail: Screenshots.take(driver) ──► target/screenshots/
+                          └─ driver.quit()</code></pre></div>
+<p>Luồng một lần chạy <code>./mvnw clean test</code>:</p>
+<ol>
+<li><code>mvnw</code> (Wrapper) ⇒ đúng Maven 3.9.16.</li>
+<li>Maven phân giải dependency theo <code>pom.xml</code> ⇒ biên dịch <code>src/test</code>.</li>
+<li>Surefire đọc <code>testng.xml</code> ⇒ TestNG tạo test.</li>
+<li>Với mỗi test: <code>setup()</code> → test (qua Page) → <code>tearDown()</code>.</li>
+<li>Kết quả ghi vào <code>target/surefire-reports/</code>.</li>
+</ol>
+<h2 id="6-nguyên-tắc-thiết-kế">6. Nguyên tắc thiết kế</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nguyên tắc</th>
+<th>Ý nghĩa</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Separation of Concerns</strong></td>
+<td>Mỗi lớp một trách nhiệm</td>
+<td>Test = kịch bản; Page = cách thao tác</td>
+</tr>
+<tr>
+<td><strong>DRY</strong></td>
+<td>Không lặp</td>
+<td><code>BasePage.click</code> dùng lại</td>
+</tr>
+<tr>
+<td><strong>Single Source of Truth</strong></td>
+<td>Một nơi định nghĩa</td>
+<td>URL, timeout ở Config</td>
+</tr>
+<tr>
+<td><strong>Composition over Inheritance</strong></td>
+<td>Ưu tiên ghép thành phần</td>
+<td><code>Page</code> có <code>Header</code></td>
+</tr>
+<tr>
+<td><strong>Fail fast, fail clear</strong></td>
+<td>Lỗi sớm và rõ</td>
+<td>Message assert; kiểm tra config</td>
+</tr>
+<tr>
+<td><strong>Independent tests</strong></td>
+<td>Test không phụ thuộc nhau</td>
+<td><code>@BeforeMethod</code> mở browser mới</td>
+</tr>
+<tr>
+<td><strong>Convention over configuration</strong></td>
+<td>Quy ước tên/vị trí</td>
+<td><code>*Test</code>, <code>*Page</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-mức-độ-vừa-đủ">7. Mức độ "vừa đủ"</h2>
+<p>Đừng dựng framework khổng lồ cho 10 test. Gợi ý:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Quy mô</th>
+<th>Nên có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≤ 10 test, học tập (🧩 hiện tại)</td>
+<td><code>BaseTest</code>, test rõ ràng, Explicit Wait</td>
+</tr>
+<tr>
+<td>10–50 test</td>
+<td>+ Page Object, <code>BasePage</code>, <code>Config</code></td>
+</tr>
+<tr>
+<td>50+ test, nhóm</td>
+<td>+ DriverFactory, DataProvider, Listener, Logging, Report, CI, parallel</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>YAGNI</strong> (You Aren't Gonna Need It): chỉ thêm khi có nhu cầu thật.</p>
+<h2 id="8-rủi-ro-khi-thiết-kế-framework">8. Rủi ro khi thiết kế framework</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rủi ro</th>
+<th>Biểu hiện</th>
+<th>Cách tránh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Over-engineering</td>
+<td>Nhiều lớp trừu tượng không dùng</td>
+<td>Bắt đầu nhỏ, refactor khi lặp</td>
+</tr>
+<tr>
+<td>Tight coupling</td>
+<td>Sửa 1 chỗ vỡ nhiều chỗ</td>
+<td>Tách tầng</td>
+</tr>
+<tr>
+<td>Framework "magic"</td>
+<td>Người mới không hiểu</td>
+<td>Tài liệu + ví dụ</td>
+</tr>
+<tr>
+<td>Không version hoá cấu hình</td>
+<td>"Máy tôi chạy"</td>
+<td><code>pom.xml</code>, Wrapper, config trong Git</td>
+</tr>
+<tr>
+<td>Test phụ thuộc môi trường ngoài</td>
+<td>Flaky</td>
+<td>Dữ liệu ổn định; Wait đúng</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Gắn nhãn từng thành phần của <code>Selenium1</code> vào tầng: <code>testng.xml</code>, <code>BaseTest</code>, <code>Exercise05_HoverTest</code>, <code>pom.xml</code>.</p>
+<p><strong>Input:</strong> Bảng 5 tầng</p>
+<p><strong>Expected Output:</strong> Bảng ánh xạ</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Test / Core / Infrastructure.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Liệt kê 4 thành phần framework mà <code>Selenium1</code> <strong>chưa</strong> có.</p>
+<p><strong>Input:</strong> Phân tích dự án</p>
+<p><strong>Expected Output:</strong> 4 mục</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> POM, Config, Screenshot, Logging...</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Vẽ luồng thực thi từ <code>.\mvnw.cmd clean test</code> đến báo cáo (6 bước).</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 6 bước</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Wrapper → Maven → Surefire → TestNG → test → report.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Quy tắc phụ thuộc giữa các tầng?</p>
+<ul>
+<li>A. Tầng dưới gọi tầng trên</li>
+<li>B. Tầng trên gọi tầng dưới, không ngược lại</li>
+<li>C. Tuỳ ý</li>
+<li>D. Vòng tròn</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Page không biết Test.</p>
+</details>
+<p><strong>Câu 2.</strong> YAGNI nghĩa là?</p>
+<ul>
+<li>A. Luôn thêm tính năng</li>
+<li>B. Chỉ thêm khi có nhu cầu thật</li>
+<li>C. Không bao giờ thêm</li>
+<li>D. Một công cụ</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Tránh over-engineering.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>Selenium1</code> đang ở mức framework nào?</p>
+<ul>
+<li>A. Cấp 0: BaseTest + test</li>
+<li>B. Cấp 4 đầy đủ</li>
+<li>C. Không có</li>
+<li>D. Cấp 2</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Cấp 0 hợp lý cho học tập.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Describe the architecture of an automation framework.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Mô tả kiến trúc automation framework.</li>
+<li><strong>Suggested answer (EN):</strong> Layers of tests, page objects, core utilities such as base classes and driver factory, support services like config and reporting, and infrastructure such as Selenium, TestNG, Maven and CI, with dependencies flowing downward.</li>
+<li><strong>Giải thích (VI):</strong> Có sơ đồ.</li>
+<li><strong>Follow-up:</strong> <em>How big should a framework be?</em></li>
+</ul>
+<p><strong>2. How do components of your framework interact?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Các thành phần liên kết thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> TestNG runs the tests; BaseTest creates the driver using config; tests use page objects that extend BasePage for waits and actions; teardown captures evidence and quits.</li>
+<li><strong>Giải thích (VI):</strong> Luồng một lần chạy.</li>
+<li><strong>Follow-up:</strong> <em>Where do screenshots fit?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>5 tầng: Test, Page, Core, Support, Infrastructure</li>
+<li>Phụ thuộc một chiều xuống dưới</li>
+<li>Quy mô quyết định mức độ</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>BaseTest</code>, <code>BasePage</code>, <code>DriverFactory</code>, <code>Config</code>, Listener</li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Framework ≠ chỉ nhiều class</li>
+<li>Over-engineering ≠ chuyên nghiệp</li>
+<li>Page không chứa kịch bản</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-reusable-components.html">Reusable Components</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>Exercise05_HoverTest</code> → Test; <code>BaseTest</code> → Core; <code>testng.xml</code>, <code>pom.xml</code> → Infrastructure/cấu hình chạy.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<p>Page Object/BasePage, DriverFactory, Config/Test data, Logging/Screenshot/Listener (và CI, song song).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li><code>mvnw</code> đảm bảo Maven 3.9.16. 2. Maven giải quyết dependency, biên dịch <code>src/test</code>. 3. Surefire đọc <code>testng.xml</code>. 4. TestNG chạy <code>setup → test → tearDown</code> cho từng class. 5. Kết quả ghi vào <code>target/surefire-reports/</code>. 6. Người/CI đọc <code>Tests run</code> và báo cáo.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-page-object-model.html"><small>← Bài trước</small><span>Page Object Model (POM)</span></a><a class="next" href="03-reusable-components.html"><small>Bài tiếp theo →</small><span>Reusable Components</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/02-automation-framework-architecture.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

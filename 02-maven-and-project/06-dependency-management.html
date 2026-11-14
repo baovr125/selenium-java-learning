@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dependency Management · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/06-dependency-management" data-root="../" data-lesson="1" data-title="Dependency Management">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="dependency-management">Dependency Management</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 09 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="05-maven-lifecycle.html">Commands và Build Lifecycle</a> · ➡️ <a href="07-build-and-test-execution.html">Build và chạy Automation Test bằng Maven</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="05-maven-lifecycle.html">Trước: Lifecycle</a> · <a href="07-build-and-test-execution.html">Sau: Build và chạy test</a> · <a href="02-pom-xml.html">pom.xml</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Đọc <code>dependency:tree</code> thật của dự án</li>
+<li>Phân biệt direct và transitive dependency</li>
+<li>Giải quyết xung đột phiên bản</li>
+<li>Thêm dependency theo quy trình an toàn</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="02-pom-xml.html">pom.xml</a></li>
+</ul>
+<h2 id="1-dependency-tree-thật-của-dự-án">1. Dependency tree thật của dự án</h2>
+<p>Lệnh đã chạy: <code>.\mvnw.cmd dependency:tree</code> (plugin <code>dependency:3.7.0</code>). Rút gọn:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">com.fresher:SeleniumPractice:jar:1.0-SNAPSHOT
++- org.seleniumhq.selenium:selenium-java:jar:4.52.0:test
+|  +- selenium-api:4.52.0:test
+|  |  \- org.jspecify:jspecify:1.0.1:test
+|  +- selenium-chrome-driver:4.52.0:test
+|  |  +- selenium-chromium-driver, selenium-json, selenium-manager (4.52.0)
+|  +- selenium-devtools-latest, -v154, -v155, -v156 (4.52.0)
+|  +- selenium-edge-driver, -firefox-driver, -ie-driver, -safari-driver (4.52.0)
+|  +- selenium-remote-driver:4.52.0:test
+|  |  +- com.google.guava:guava:33.7.2-jre
+|  |  +- io.opentelemetry:opentelemetry-* :1.67.0   (api, context, sdk, exporter-logging, ...)
+|  |  +- net.bytebuddy:byte-buddy:1.18.15
+|  |  +- selenium-http, selenium-os, org.jetbrains:annotations:26.1.0
+|  \- selenium-support:4.52.0:test        ← WebDriverWait, ExpectedConditions, Select
+\- org.testng:testng:jar:7.10.2:test
+   +- org.slf4j:slf4j-api:1.7.36
+   +- com.beust:jcommander:1.82
+   \- org.webjars:jquery:3.7.1</code></pre></div>
+<p>Bạn khai báo <strong>2</strong> dependency, Maven kéo về khoảng <strong>40 jar</strong> (<code>target/classpath.txt</code> chứa 40 đường dẫn).</p>
+<h2 id="2-direct-và-transitive-dependency">2. Direct và Transitive dependency</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Direct</th>
+<th>Transitive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ai khai báo</td>
+<td>Bạn, trong <code>pom.xml</code></td>
+<td>Thư viện của bạn khai báo trong <code>pom</code> của nó</td>
+</tr>
+<tr>
+<td>Ví dụ</td>
+<td><code>selenium-java</code>, <code>testng</code></td>
+<td><code>guava</code>, <code>jcommander</code>, <code>opentelemetry-sdk</code></td>
+</tr>
+<tr>
+<td>Bạn kiểm soát</td>
+<td>Trực tiếp</td>
+<td>Gián tiếp (qua exclusion / dependencyManagement)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ý nghĩa: Bạn <strong>dùng được</strong> class của thư viện transitive (ví dụ <code>WebDriverWait</code> thuộc <code>selenium-support</code>, một transitive của <code>selenium-java</code>) nhưng <strong>không nên phụ thuộc</strong> vào nó nếu không khai báo. Nếu <code>selenium-java</code> sau này bỏ <code>selenium-support</code>, code của bạn sẽ gãy.</p>
+<h2 id="3-scope-và-truyền-scope">3. Scope và truyền scope</h2>
+<p>Scope <code>test</code> của direct dependency được <strong>truyền xuống</strong> transitive: trong tree trên, mọi thứ đều có hậu tố <code>:test</code>. Quy tắc: transitive thường có scope <strong>không rộng hơn</strong> scope của dependency cha.</p>
+<p>Xem bảng scope ở <a href="02-pom-xml.html#3-dependencies">02</a>.</p>
+<h2 id="4-quản-lý-phiên-bản">4. Quản lý phiên bản</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kỹ thuật</th>
+<th>Ví dụ</th>
+<th>Đánh giá</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ghim phiên bản cụ thể bằng property</td>
+<td><code>&lt;selenium.version&gt;4.52.0&lt;/selenium.version&gt;</code> (dự án đang dùng)</td>
+<td>✅ Tốt nhất: tái lập được</td>
+</tr>
+<tr>
+<td>Version range</td>
+<td><code>[4.0,5.0)</code></td>
+<td>⚠️ Mỗi lần build có thể khác nhau</td>
+</tr>
+<tr>
+<td><code>LATEST</code> / <code>RELEASE</code></td>
+<td></td>
+<td>❌ Đã bị loại bỏ, tránh dùng</td>
+</tr>
+<tr>
+<td><code>-SNAPSHOT</code></td>
+<td><code>1.0-SNAPSHOT</code></td>
+<td>Chỉ cho bản đang phát triển của <strong>chính dự án</strong>; thư viện bên ngoài nên dùng bản release</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dùng tất cả thành phần Selenium <strong>cùng một phiên bản</strong> (dự án để chúng đi qua <code>selenium-java</code>, nên luôn đồng bộ 4.52.0).</p>
+<h2 id="5-dependency-conflicts-xung-đột-phiên-bản">5. Dependency Conflicts (xung đột phiên bản)</h2>
+<p>Nếu hai nhánh phụ thuộc cùng cần thư viện X nhưng khác phiên bản, Maven chọn theo quy tắc <strong>"nearest definition wins"</strong> (gần gốc nhất thắng; ngang nhau thì khai báo <strong>trước</strong> thắng). Có thể dẫn đến:</p>
+<ul>
+<li><code>NoSuchMethodError</code>, <code>ClassNotFoundException</code>, <code>NoClassDefFoundError</code>;</li>
+<li><code>LinkageError</code>;</li>
+<li>hành vi lạ vì bản cũ hơn bị chọn.</li>
+</ul>
+<p>Ví dụ giả định: bạn thêm thư viện A kéo <code>guava 20.0</code> (nằm ở độ sâu 1), còn Selenium cần <code>guava 33.7.2-jre</code> (độ sâu 3). Maven chọn <code>20.0</code> ⇒ Selenium chạy lỗi <code>NoSuchMethodError</code>.</p>
+<h3 id="cách-phát-hiện">Cách phát hiện</h3>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">dependency</span><span class="p">:</span><span class="n">tree</span> <span class="s2">&quot;-Dverbose&quot;</span>                      <span class="c"># hiện cả nhánh bị loại do xung đột</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">dependency</span><span class="p">:</span><span class="n">tree</span> <span class="s2">&quot;-Dincludes=com.google.guava&quot;</span>    <span class="c"># lọc theo groupId[:artifactId]</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">dependency</span><span class="p">:</span><span class="n">analyze</span>                               <span class="c"># phát hiện khai báo thừa/thiếu</span></code></pre></div>
+<p>(Tuỳ phiên bản <code>maven-dependency-plugin</code>, tuỳ chọn <code>-Dverbose</code> có thể hoạt động khác nhau; hãy đọc kết quả <code>omitted for conflict with ...</code>.)</p>
+<h3 id="cách-giải-quyết">Cách giải quyết</h3>
+<ol>
+<li><strong>Ghim phiên bản</strong> trong <code>dependencyManagement</code> (ép toàn dự án dùng một bản):</li>
+</ol>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;dependencyManagement&gt;</span>
+<span class="w">  </span><span class="nt">&lt;dependencies&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">      </span><span class="nt">&lt;groupId&gt;</span>com.google.guava<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">      </span><span class="nt">&lt;artifactId&gt;</span>guava<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">      </span><span class="nt">&lt;version&gt;</span>33.7.2-jre<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/dependencyManagement&gt;</span></code></pre></div>
+<ol start="2">
+<li><strong>Exclusion</strong> — loại một transitive không mong muốn:</li>
+</ol>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;dependency&gt;</span>
+<span class="w">  </span><span class="nt">&lt;groupId&gt;</span>com.example<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;artifactId&gt;</span>library-a<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+<span class="w">  </span><span class="nt">&lt;exclusions&gt;</span>
+<span class="w">    </span><span class="nt">&lt;exclusion&gt;</span>
+<span class="w">      </span><span class="nt">&lt;groupId&gt;</span>com.google.guava<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">      </span><span class="nt">&lt;artifactId&gt;</span>guava<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/exclusion&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></div>
+<ol start="3">
+<li>Nâng/hạ phiên bản của thư viện gây xung đột cho khớp.</li>
+<li>Chạy lại <code>clean test</code> — kiểm chứng bằng test.</li>
+</ol>
+<h2 id="6-thêm-dependency-mới--quy-trình-an-toàn">6. Thêm dependency mới — quy trình an toàn</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước</th>
+<th>Hành động</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Tìm tọa độ chính xác trên trang tìm kiếm Maven Central (không đoán)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Thêm <code>&lt;dependency&gt;</code> vào <code>pom.xml</code>, ưu tiên khai báo version ở <code>&lt;properties&gt;</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Chọn scope đúng (<code>test</code> cho thư viện chỉ dùng trong test)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>.\mvnw.cmd dependency:tree</code> — xem nó kéo gì, có trùng/xung đột không</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>.\mvnw.cmd clean test</code> — mọi test phải xanh</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Commit <strong>chỉ</strong> <code>pom.xml</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Điều gì xảy ra khi bạn thêm dependency vào <code>pom.xml</code>? (câu phỏng vấn kinh điển)</p>
+<ol>
+<li>Chưa gì xảy ra cho tới khi chạy một lệnh Maven (hoặc IDE reload).</li>
+<li>Maven đọc POM, thấy GAV mới ⇒ tìm trong Local Repository.</li>
+<li>Thiếu ⇒ tải <code>.pom</code> rồi <code>.jar</code> từ repository, đệ quy với transitive.</li>
+<li>Giải quyết xung đột, lắp classpath.</li>
+<li>Class trong thư viện mới dùng được trong code (theo scope).</li>
+</ol>
+<h2 id="7-một-số-dependency-thường-gặp-trong-selenium-project">7. Một số dependency thường gặp trong Selenium project</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thư viện</th>
+<th>Tọa độ (groupId:artifactId)</th>
+<th>Khi dùng</th>
+<th>Trong dự án?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Selenium</td>
+<td><code>org.seleniumhq.selenium:selenium-java</code></td>
+<td>Luôn</td>
+<td>✅ 4.52.0</td>
+</tr>
+<tr>
+<td>TestNG</td>
+<td><code>org.testng:testng</code></td>
+<td>Test framework</td>
+<td>✅ 7.10.2</td>
+</tr>
+<tr>
+<td>JUnit 5</td>
+<td><code>org.junit.jupiter:junit-jupiter</code></td>
+<td>Thay cho TestNG</td>
+<td>❌ (trong <code>.mvn/repository</code> có <code>junit-bom</code> nhưng đó là artifact Maven tự kéo về cho plugin, không phải dependency của dự án)</td>
+</tr>
+<tr>
+<td>WebDriverManager</td>
+<td><code>io.github.bonigarcia:webdrivermanager</code></td>
+<td>Quản lý driver (bản Selenium cũ)</td>
+<td>❌ Không cần vì có Selenium Manager</td>
+</tr>
+<tr>
+<td>Log4j2 / SLF4J</td>
+<td><code>org.apache.logging.log4j:log4j-core</code>, <code>org.slf4j:slf4j-simple</code></td>
+<td>Logging</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Báo cáo</td>
+<td>ExtentReports, Allure</td>
+<td>Report đẹp</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Đọc dữ liệu</td>
+<td>Jackson, Apache POI, OpenCSV</td>
+<td>JSON/Excel/CSV</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Assertion</td>
+<td>AssertJ</td>
+<td>Assertion dễ đọc</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Tài liệu này không đề xuất phiên bản cụ thể cho thư viện chưa dùng trong dự án; khi cần, hãy tra phiên bản ổn định mới nhất trên Maven Central và kiểm chứng bằng <code>dependency:tree</code>.</p>
+</blockquote>
+<h2 id="8-dọn-và-làm-mới-dependency">8. Dọn và làm mới dependency</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục đích</th>
+<th>Cách</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tải lại một artifact bị hỏng</td>
+<td>Xoá thư mục artifact trong <code>.mvn/repository/...</code> rồi chạy lại</td>
+</tr>
+<tr>
+<td>Ép tải lại SNAPSHOT/metadata</td>
+<td><code>-U</code></td>
+</tr>
+<tr>
+<td>Tải trước tất cả (để chạy offline)</td>
+<td><code>.\mvnw.cmd dependency:go-offline</code></td>
+</tr>
+<tr>
+<td>Xem phiên bản mới hơn</td>
+<td><code>.\mvnw.cmd versions:display-dependency-updates</code> (plugin <code>versions</code>, cần mạng)</td>
+</tr>
+<tr>
+<td>Xoá cả repository riêng</td>
+<td>Xoá <code>.mvn/repository</code> (sẽ tải lại, mất vài phút)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Ghim phiên bản; không dùng range hoặc <code>LATEST</code>.</li>
+<li>Giữ danh sách direct dependency <strong>tối thiểu</strong>; mỗi thư viện thêm là thêm rủi ro xung đột.</li>
+<li>Luôn xem <code>dependency:tree</code> sau khi thêm.</li>
+<li>Dùng cùng phiên bản cho các module cùng họ (tất cả <code>selenium-*</code>).</li>
+<li>Nâng cấp Selenium: đọc ghi chú phát hành, nâng ở nhánh riêng, chạy toàn bộ test.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Gốc rễ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Could not find artifact</code></td>
+<td>Sai tọa độ/phiên bản; chưa có mạng</td>
+</tr>
+<tr>
+<td><code>NoSuchMethodError</code> lúc chạy</td>
+<td>Xung đột phiên bản</td>
+</tr>
+<tr>
+<td>Cảnh báo <code>SLF4J: Failed to load class StaticLoggerBinder</code></td>
+<td>Có <code>slf4j-api</code> mà thiếu binding (hiện có trong dự án, vô hại)</td>
+</tr>
+<tr>
+<td>IDE đỏ lòm nhưng <code>mvnw</code> chạy được</td>
+<td>IDE chưa reload Maven project</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Chạy <code>dependency:tree</code> và đếm số jar trong <code>target/classpath.txt</code> (hoặc từ tree).</p>
+<p><strong>Input:</strong> Dự án <code>Selenium1</code></p>
+<p><strong>Expected Output:</strong> Khoảng 40 jar từ 2 dependency</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>-o</code> nếu đã có cache.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Giải thích <code>guava</code> đến từ đâu và vì sao nên ghim version khi xung đột.</p>
+<p><strong>Input:</strong> Tree</p>
+<p><strong>Expected Output:</strong> Một đoạn ngắn</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Nhánh <code>selenium-remote-driver</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết quy trình 6 bước thêm một thư viện test mới (ví dụ <code>slf4j-simple</code>) và kiểm chứng không xung đột.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 6 bước</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Tra tọa độ, <code>dependency:tree</code>, <code>clean test</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Scope <code>test</code> nghĩa là?</p>
+<ul>
+<li>A. Có mặt khi biên dịch/chạy test, không trong <code>src/main</code></li>
+<li>B. Chỉ runtime</li>
+<li>C. Chỉ compile</li>
+<li>D. Luôn đóng gói</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Phù hợp Selenium/TestNG trong dự án.</p>
+</details>
+<p><strong>Câu 2.</strong> Transitive dependency là?</p>
+<ul>
+<li>A. Thư viện bạn khai báo</li>
+<li>B. Thư viện được kéo gián tiếp</li>
+<li>C. Plugin</li>
+<li>D. Repository</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Ví dụ <code>guava</code> qua <code>selenium-java</code>.</p>
+</details>
+<p><strong>Câu 3.</strong> Triệu chứng điển hình của xung đột phiên bản?</p>
+<ul>
+<li>A. <code>NoSuchMethodError</code>/<code>ClassNotFoundException</code> lúc chạy</li>
+<li>B. Lỗi cú pháp</li>
+<li>C. Thiếu <code>main</code></li>
+<li>D. Không có</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Phiên bản được chọn thiếu method cần.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you resolve dependency conflicts?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Giải quyết xung đột dependency?</li>
+<li><strong>Suggested answer (EN):</strong> Detect with <code>dependency:tree</code>, then pin the version in <code>dependencyManagement</code>, exclude the unwanted transitive dependency or align versions, and rerun the full tests.</li>
+<li><strong>Giải thích (VI):</strong> Quy tắc nearest wins.</li>
+<li><strong>Follow-up:</strong> <em>Exclusion vs dependencyManagement?</em></li>
+</ul>
+<p><strong>2. What happens when you add a dependency to pom.xml?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Thêm dependency vào <code>pom.xml</code> thì điều gì xảy ra?</li>
+<li><strong>Suggested answer (EN):</strong> At the next Maven run it is resolved from the local repository or downloaded with its transitive dependencies, conflicts are mediated and the classpath is built.</li>
+<li><strong>Giải thích (VI):</strong> IDE cần reload.</li>
+<li><strong>Follow-up:</strong> <em>What if the download fails?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Direct vs transitive</li>
+<li>Ghim phiên bản, tránh range/LATEST</li>
+<li>Luôn xem <code>dependency:tree</code> sau khi thêm</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>dependency:tree</code>, <code>-Dverbose</code>, <code>-Dincludes=</code>, <code>dependency:analyze</code>, <code>-U</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Exclusion ≠ dependencyManagement</li>
+<li>Scope truyền xuống transitive</li>
+<li><code>SNAPSHOT</code> chỉ nên cho dự án của mình</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="07-build-and-test-execution.html">Build và chạy Automation Test bằng Maven</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-o</span> <span class="n">dependency</span><span class="p">:</span><span class="n">tree</span></code></pre></div>
+<p>2 dependency khai báo → ~40 jar (selenium-*, guava, opentelemetry, testng, jcommander, slf4j-api...).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<p><code>guava:33.7.2-jre</code> là transitive của <code>selenium-remote-driver</code> ← <code>selenium-java</code>. Maven chọn "nearest definition wins": nếu thư viện khác kéo <code>guava</code> cũ ở tầng nông hơn, bản cũ thắng và Selenium có thể lỗi <code>NoSuchMethodError</code>. Ghim bằng <code>dependencyManagement</code> hoặc loại trừ bằng <code>exclusion</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Tra tọa độ + phiên bản trên Maven Central.</li>
+<li>Thêm <code>&lt;dependency&gt;</code> (scope <code>test</code>), version trong <code>&lt;properties&gt;</code>.</li>
+<li><code>.\mvnw.cmd dependency:tree</code> — kiểm tra chỉ có <strong>một</strong> <code>slf4j-api</code>.</li>
+<li><code>.\mvnw.cmd clean test</code> — vẫn xanh.</li>
+<li><code>git add pom.xml</code>.</li>
+<li>Commit + PR, ghi lý do thêm.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="05-maven-lifecycle.html"><small>← Bài trước</small><span>Commands và Build Lifecycle</span></a><a class="next" href="07-build-and-test-execution.html"><small>Bài tiếp theo →</small><span>Build và chạy Automation Test bằng Maven</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/06-dependency-management.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

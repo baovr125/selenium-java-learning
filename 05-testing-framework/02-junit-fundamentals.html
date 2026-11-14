@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JUnit Fundamentals (so sánh với TestNG) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="05-testing-framework/02-junit-fundamentals" data-root="../" data-lesson="1" data-title="JUnit Fundamentals (so sánh với TestNG)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="junit-fundamentals-so-sánh-với-testng">JUnit Fundamentals (so sánh với TestNG)</h1>
+<blockquote>
+<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Optional</strong>
+⬅️ <a href="01-testng-fundamentals.html">TestNG Fundamentals</a> · ➡️ <a href="03-assertions-and-verification.html">Assertions và Verification</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="01-testng-fundamentals.html">Trước: TestNG</a> · <a href="03-assertions-and-verification.html">Sau: Assertions</a> · <a href="../interview/framework-interview.html">Phỏng vấn</a>
+⚠️ <strong>Dự án <code>Selenium1</code> không dùng JUnit.</strong> Tài liệu này để bạn hiểu và so sánh, vì nhiều công ty dùng JUnit 5. Ví dụ code <strong>không được biên dịch trong dự án</strong>; hãy thử trong thư mục thực hành riêng.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Ánh xạ annotation TestNG ↔ JUnit 5</li>
+<li>Viết <code>@ParameterizedTest</code> cơ bản</li>
+<li>Nhớ thứ tự tham số <code>assertEquals</code> khác nhau</li>
+<li>Biết dự án này <strong>không</strong> dùng JUnit</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-testng-fundamentals.html">TestNG Fundamentals</a></li>
+</ul>
+<h2 id="1-junit-là-gì">1. JUnit là gì?</h2>
+<p><strong>JUnit</strong> là framework kiểm thử đơn vị phổ biến nhất của Java. Hiện tại là <strong>JUnit 5</strong> (JUnit Platform + Jupiter + Vintage). Package: <code>org.junit.jupiter.api</code>. <strong>JUnit 4</strong> (package <code>org.junit</code>) vẫn còn trong nhiều dự án cũ.</p>
+<p>Tọa độ Maven (JUnit 5, bạn tự tra phiên bản ổn định mới nhất và ghim trong <code>&lt;properties&gt;</code>):</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>org.junit.jupiter<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>junit-jupiter<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>${junit.version}<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></div>
+<p>Surefire (≥ 2.22) tự nhận JUnit Platform provider.</p>
+<h2 id="2-annotation-junit-5">2. Annotation JUnit 5</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>JUnit 5</th>
+<th>Ý nghĩa</th>
+<th>Tương đương TestNG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Test</code></td>
+<td>Một test</td>
+<td><code>@Test</code></td>
+</tr>
+<tr>
+<td><code>@BeforeEach</code> / <code>@AfterEach</code></td>
+<td>Trước/sau <strong>mỗi</strong> test</td>
+<td><code>@BeforeMethod</code> / <code>@AfterMethod</code></td>
+</tr>
+<tr>
+<td><code>@BeforeAll</code> / <code>@AfterAll</code></td>
+<td>1 lần trước/sau <strong>class</strong> (method <code>static</code>, trừ khi dùng <code>@TestInstance(PER_CLASS)</code>)</td>
+<td><code>@BeforeClass</code> / <code>@AfterClass</code></td>
+</tr>
+<tr>
+<td><code>@Disabled</code></td>
+<td>Bỏ qua</td>
+<td><code>@Test(enabled=false)</code></td>
+</tr>
+<tr>
+<td><code>@DisplayName("...")</code></td>
+<td>Tên hiển thị</td>
+<td><code>description</code></td>
+</tr>
+<tr>
+<td><code>@Tag("smoke")</code></td>
+<td>Nhóm</td>
+<td><code>groups</code></td>
+</tr>
+<tr>
+<td><code>@ParameterizedTest</code> + nguồn</td>
+<td>Data-driven</td>
+<td><code>@DataProvider</code></td>
+</tr>
+<tr>
+<td><code>@RepeatedTest(n)</code></td>
+<td>Lặp</td>
+<td><code>invocationCount</code></td>
+</tr>
+<tr>
+<td><code>@Timeout</code></td>
+<td>Giới hạn thời gian</td>
+<td><code>timeOut</code></td>
+</tr>
+<tr>
+<td><code>@Order</code> + <code>@TestMethodOrder</code></td>
+<td>Thứ tự</td>
+<td><code>priority</code></td>
+</tr>
+<tr>
+<td><code>@ExtendWith</code></td>
+<td>Mở rộng/Listener</td>
+<td><code>ITestListener</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-ví-dụ-tương-đương-basetest-junit-5">3. Ví dụ tương đương <code>BaseTest</code> (JUnit 5)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.junit.jupiter.api.AfterEach</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.junit.jupiter.api.BeforeEach</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseJUnitTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@BeforeEach</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span>
+<span class="w">        </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@AfterEach</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Test login:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">LoginJUnitTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseJUnitTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="nd">@DisplayName</span><span class="p">(</span><span class="s">&quot;Đăng nhập thành công hiển thị thông báo&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">loginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">))).</span><span class="na">getText</span><span class="p">();</span>
+<span class="w">        </span><span class="n">assertTrue</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Thực tế: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Điểm khác: method test không cần <code>public</code> (package-private được), dùng <code>import static org.junit.jupiter.api.Assertions.*</code>.</p>
+<h2 id="4-parameterized-test">4. Parameterized Test</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@ParameterizedTest</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[{index}] user={0}&quot;</span><span class="p">)</span>
+<span class="nd">@CsvSource</span><span class="p">({</span>
+<span class="w">    </span><span class="s">&quot;tomsmith, SuperSecretPassword!, You logged into a secure area!&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s">&quot;tomsmith, wrong,                Your password is invalid!&quot;</span>
+<span class="p">})</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<p>Nguồn khác: <code>@ValueSource</code>, <code>@MethodSource</code>, <code>@CsvFileSource</code>, <code>@EnumSource</code>.</p>
+<h2 id="5-assertions-junit-5">5. Assertions JUnit 5</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">assertEquals</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">actual</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;message&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// ⚠️ thứ tự (expected, actual) — NGƯỢC với TestNG</span>
+<span class="n">assertTrue</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;message&quot;</span><span class="p">);</span>
+<span class="n">assertAll</span><span class="p">(</span><span class="s">&quot;login&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">assertEquals</span><span class="p">(...),</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">assertTrue</span><span class="p">(...));</span><span class="w">   </span><span class="c1">// gom nhiều assertion (soft)</span>
+<span class="n">assertThrows</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)));</span></code></pre></div>
+<h2 id="6-so-sánh-testng-và-junit-5">6. So sánh TestNG và JUnit 5</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th><strong>TestNG</strong> (🧩 dự án)</th>
+<th><strong>JUnit 5</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Package</td>
+<td><code>org.testng</code></td>
+<td><code>org.junit.jupiter.api</code></td>
+</tr>
+<tr>
+<td>Setup mỗi test</td>
+<td><code>@BeforeMethod</code></td>
+<td><code>@BeforeEach</code></td>
+</tr>
+<tr>
+<td>Setup 1 lần/class</td>
+<td><code>@BeforeClass</code></td>
+<td><code>@BeforeAll</code> (static)</td>
+</tr>
+<tr>
+<td>Suite/Test/Class cấp trên</td>
+<td><code>@BeforeSuite</code>, <code>@BeforeTest</code>, <code>testng.xml</code></td>
+<td>Không có khái niệm tương đương trực tiếp</td>
+</tr>
+<tr>
+<td>Cấu hình suite</td>
+<td><strong><code>testng.xml</code></strong> mạnh</td>
+<td>Không có file XML chuẩn; dùng <code>@Suite</code>/Platform Suite</td>
+</tr>
+<tr>
+<td>Nhóm</td>
+<td><code>groups</code></td>
+<td><code>@Tag</code></td>
+</tr>
+<tr>
+<td>Data-driven</td>
+<td><code>@DataProvider</code> (linh hoạt, <code>Object[][]</code>)</td>
+<td><code>@ParameterizedTest</code> (gọn)</td>
+</tr>
+<tr>
+<td>Phụ thuộc test</td>
+<td><code>dependsOnMethods</code></td>
+<td>Không hỗ trợ trực tiếp (chủ ý)</td>
+</tr>
+<tr>
+<td>Thứ tự</td>
+<td><code>priority</code>, theo XML</td>
+<td><code>@Order</code></td>
+</tr>
+<tr>
+<td>Song song</td>
+<td>Cấu hình sẵn trong XML</td>
+<td>Cấu hình qua <code>junit-platform.properties</code></td>
+</tr>
+<tr>
+<td>Thứ tự assertion</td>
+<td><code>assertEquals(actual, expected)</code></td>
+<td><code>assertEquals(expected, actual)</code></td>
+</tr>
+<tr>
+<td>Soft assert</td>
+<td><code>SoftAssert</code></td>
+<td><code>assertAll</code></td>
+</tr>
+<tr>
+<td>Báo cáo</td>
+<td>HTML mặc định</td>
+<td>Dựa vào Surefire/IDE</td>
+</tr>
+<tr>
+<td>Phổ biến</td>
+<td>Rất phổ biến trong automation UI</td>
+<td>Chuẩn de-facto cho unit test; ngày càng nhiều dùng cho UI</td>
+</tr>
+<tr>
+<td>Phù hợp</td>
+<td>Test E2E/UI có suite, parallel, data-driven</td>
+<td>Unit test, tích hợp Spring Boot</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Kết luận thực tế:</strong> với Selenium nhiều team chọn TestNG vì <code>testng.xml</code> + <code>DataProvider</code> + parallel; một số team chọn JUnit 5 cho tính đồng nhất với unit test. Không có lựa chọn "đúng tuyệt đối" — quan trọng là <strong>nhất quán</strong> trong dự án. Khái niệm (setup/teardown, assert, data-driven) chuyển đổi dễ dàng.</p>
+<h2 id="7-cẩn-thận-khi-trộn">7. Cẩn thận khi trộn</h2>
+<ul>
+<li>Không đặt cả TestNG và JUnit trong cùng module nếu không có lý do: Surefire có thể chọn provider không như ý.</li>
+<li><code>import org.junit.Test</code> (JUnit 4) ≠ <code>org.junit.jupiter.api.Test</code> (JUnit 5). Nhầm import ⇒ test không chạy.</li>
+</ul>
+<h2 id="tóm-tắt">Tóm tắt</h2>
+<ul>
+<li>Dự án dùng TestNG; biết JUnit 5 để thích nghi.</li>
+<li>Bảng ánh xạ ở mục 2/6 là thứ cần thuộc cho phỏng vấn.</li>
+<li>Chú ý <strong>thứ tự tham số <code>assertEquals</code></strong> khác nhau giữa hai framework.</li>
+</ul>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Điền bảng tương đương: <code>@BeforeMethod</code>, <code>@AfterMethod</code>, <code>@BeforeClass</code>, <code>@DataProvider</code>, <code>groups</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Bảng 5 hàng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Xem bảng ánh xạ trong bài.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết lại <code>BaseTest</code> theo JUnit 5.</p>
+<p><strong>Input:</strong> BaseTest của dự án</p>
+<p><strong>Expected Output:</strong> Lớp dùng <code>@BeforeEach/@AfterEach</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Giữ <code>if (driver != null)</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết test tham số hoá JUnit 5 cho 2 trường hợp đăng nhập bằng <code>@CsvSource</code>.</p>
+<p><strong>Input:</strong> 2 dòng CSV</p>
+<p><strong>Expected Output:</strong> Test chạy 2 lần</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Tham số khớp thứ tự cột.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Thứ tự <code>assertEquals</code> của JUnit 5?</p>
+<ul>
+<li>A. (actual, expected)</li>
+<li>B. (expected, actual)</li>
+<li>C. Không quan trọng</li>
+<li>D. (a, b, c)</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> TestNG dùng (actual, expected).</p>
+</details>
+<p><strong>Câu 2.</strong> <code>@BeforeEach</code> của JUnit tương đương TestNG?</p>
+<ul>
+<li>A. <code>@BeforeClass</code></li>
+<li>B. <code>@BeforeMethod</code></li>
+<li>C. <code>@BeforeSuite</code></li>
+<li>D. <code>@Test</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Chạy trước mỗi test.</p>
+</details>
+<p><strong>Câu 3.</strong> Dự án <code>Selenium1</code> dùng framework nào?</p>
+<ul>
+<li>A. JUnit 5</li>
+<li>B. TestNG 7.10.2</li>
+<li>C. Cả hai</li>
+<li>D. Không có</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Chỉ TestNG.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. TestNG vs JUnit 5 — main differences?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Khác biệt chính TestNG và JUnit 5?</li>
+<li><strong>Suggested answer (EN):</strong> TestNG has testng.xml suites, groups, dependsOnMethods and DataProvider; JUnit 5 has tags, parameterized tests and a modular platform; lifecycle names and the assertion argument order differ.</li>
+<li><strong>Giải thích (VI):</strong> Nhất quán trong dự án quan trọng hơn.</li>
+<li><strong>Follow-up:</strong> <em>Which would you choose and why?</em></li>
+</ul>
+<p><strong>2. Can you mix TestNG and JUnit in one module?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Trộn hai framework?</li>
+<li><strong>Suggested answer (EN):</strong> It is possible but risky because Surefire may select the wrong provider; avoid unless necessary.</li>
+<li><strong>Giải thích (VI):</strong> Chú ý import <code>org.junit.Test</code> nhầm.</li>
+<li><strong>Follow-up:</strong> <em>What happens with a wrong import?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>@BeforeEach/@AfterEach</code>, <code>@BeforeAll/@AfterAll</code>, <code>@ParameterizedTest</code>, <code>@Tag</code></li>
+<li>Thứ tự <code>assertEquals</code> ngược nhau</li>
+<li>Dự án dùng TestNG</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>assertEquals(expected, actual)</code>, <code>assertAll</code>, <code>assertThrows</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>JUnit 4 (<code>org.junit</code>) ≠ JUnit 5 (<code>org.junit.jupiter</code>)</li>
+<li>TestNG (actual, expected) ≠ JUnit (expected, actual)</li>
+<li><code>@BeforeAll</code> thường cần <code>static</code></li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-assertions-and-verification.html">Assertions và Verification</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>TestNG</th>
+<th>JUnit 5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@BeforeMethod</code></td>
+<td><code>@BeforeEach</code></td>
+</tr>
+<tr>
+<td><code>@AfterMethod</code></td>
+<td><code>@AfterEach</code></td>
+</tr>
+<tr>
+<td><code>@BeforeClass</code></td>
+<td><code>@BeforeAll</code> (static)</td>
+</tr>
+<tr>
+<td><code>@DataProvider</code></td>
+<td><code>@ParameterizedTest</code> + nguồn</td>
+</tr>
+<tr>
+<td><code>groups</code></td>
+<td><code>@Tag</code></td>
+</tr>
+</tbody>
+</table></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseJUnitTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@BeforeEach</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span>
+<span class="w">        </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@AfterEach</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@ParameterizedTest</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[{index}] user={0}&quot;</span><span class="p">)</span>
+<span class="nd">@CsvSource</span><span class="p">({</span>
+<span class="w">    </span><span class="s">&quot;tomsmith, SuperSecretPassword!, You logged into a secure area!&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s">&quot;tomsmith, wrong, Your password is invalid!&quot;</span>
+<span class="p">})</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-testng-fundamentals.html"><small>← Bài trước</small><span>TestNG Fundamentals</span></a><a class="next" href="03-assertions-and-verification.html"><small>Bài tiếp theo →</small><span>Assertions và Verification</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/02-junit-fundamentals.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

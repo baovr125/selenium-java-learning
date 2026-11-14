@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maven Fundamentals · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/01-maven-fundamentals" data-root="../" data-lesson="1" data-title="Maven Fundamentals">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="maven-fundamentals">Maven Fundamentals</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 09 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a> · ➡️ <a href="02-pom-xml.html"><code>pom.xml</code> và Dependencies</a></p>
+<p>Liên quan: <a href="README.html">Mục lục Maven</a> · <a href="02-pom-xml.html">Tiếp: pom.xml</a> · <a href="../interview/maven-interview.html">Phỏng vấn Maven</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích Maven là gì và vì sao cần</li>
+<li>Phân biệt Local, Central, Remote Repository</li>
+<li>Mô tả quy trình Maven tải dependency</li>
+<li>Chỉ ra Local Repository riêng của dự án (<code>.mvn/repository</code>)</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="00-project-initialization.html">Project Initialization</a></li>
+</ul>
+<h2 id="1-maven-là-gì">1. Maven là gì?</h2>
+<p>📘 <strong>Apache Maven</strong> là công cụ <strong>quản lý dự án và tự động hoá build</strong> cho Java. Nó làm ba việc chính:</p>
+<ol>
+<li><strong>Quản lý thư viện (dependency management):</strong> bạn khai báo "tôi cần Selenium 4.52.0", Maven tự tải về cùng mọi thư viện mà Selenium cần.</li>
+<li><strong>Chuẩn hoá build:</strong> mọi dự án Maven đều có cùng cấu trúc thư mục và cùng các lệnh (<code>compile</code>, <code>test</code>, <code>package</code>...).</li>
+<li><strong>Chạy các tác vụ qua plugin:</strong> biên dịch, chạy test, đóng gói, sinh báo cáo.</li>
+</ol>
+<p>Tên gọi hay gặp: <strong>POM</strong> (Project Object Model) là file <code>pom.xml</code> mô tả dự án.</p>
+<h2 id="2-tại-sao-dự-án-java-dùng-maven">2. Tại sao dự án Java dùng Maven?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhu cầu</th>
+<th>Không có Maven</th>
+<th>Có Maven</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lấy thư viện</td>
+<td>Tự tải từng file <code>.jar</code> từ web</td>
+<td>Khai báo 3 dòng trong <code>pom.xml</code></td>
+</tr>
+<tr>
+<td>Thư viện phụ thuộc</td>
+<td>Tự tìm và tải từng cái (Selenium cần ~40 jar!)</td>
+<td>Tự tải đệ quy (transitive)</td>
+</tr>
+<tr>
+<td>Đổi phiên bản</td>
+<td>Xoá jar cũ, tải jar mới, sửa classpath</td>
+<td>Đổi một số trong <code>&lt;selenium.version&gt;</code></td>
+</tr>
+<tr>
+<td>Đưa code cho đồng nghiệp</td>
+<td>Gửi cả thư mục jar (hàng chục MB)</td>
+<td>Chỉ commit <code>pom.xml</code>; mỗi người tự tải</td>
+</tr>
+<tr>
+<td>Chạy test</td>
+<td>Tự gõ <code>javac</code>, <code>java -cp ...</code></td>
+<td><code>.\mvnw.cmd test</code></td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td>Phải viết script riêng</td>
+<td>Một lệnh Maven chuẩn</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Dự án có <code>run-test.ps1</code> — một phiên bản "tự làm thủ công" của build: lấy classpath bằng Maven (<code>dependency:build-classpath</code>), rồi tự gọi <code>javac</code> và <code>java</code>. Nó chạy được nhưng chỉ phục vụ chạy nhanh một class trên máy Windows; <code>mvnw test</code> mới là chuẩn chung cho team và CI.</p>
+<h2 id="3-maven-hoạt-động-như-thế-nào">3. Maven hoạt động như thế nào?</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">pom.xml  ──đọc──►  Maven (core)  ──chạy──►  Lifecycle (các phase)  ──gọi──►  Plugin (goal)
+   │                                                                     compiler, surefire, ...
+   └─ khai báo dependency ──► tìm trong Local Repo ──(thiếu)──► tải từ Remote/Central ──► lưu vào Local Repo</code></pre></div>
+<p>Maven không tự biết biên dịch hay chạy test: <strong>plugin</strong> làm việc đó. Maven core chỉ điều phối: đọc <code>pom.xml</code>, giải quyết dependency, gọi đúng plugin ở đúng phase. Xem <a href="05-maven-lifecycle.html">04</a>.</p>
+<h2 id="4-tọa-độ-coordinates--địa-chỉ-của-thư-viện">4. Tọa độ (coordinates) — "địa chỉ" của thư viện</h2>
+<p>Mỗi thư viện/plugin có địa chỉ gồm 3 phần chính (viết tắt <strong>GAV</strong>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Ý nghĩa</th>
+<th>Ví dụ trong dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>groupId</code></td>
+<td>Tổ chức/nhóm</td>
+<td><code>org.seleniumhq.selenium</code></td>
+</tr>
+<tr>
+<td><code>artifactId</code></td>
+<td>Tên sản phẩm</td>
+<td><code>selenium-java</code></td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>Phiên bản</td>
+<td><code>4.52.0</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Cùng tọa độ ⇒ cùng một file ở mọi máy. Đường dẫn file trong repository suy ra trực tiếp từ GAV:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">org/seleniumhq/selenium/selenium-java/4.52.0/selenium-java-4.52.0.jar</code></pre></div>
+<p>Bạn có thể thấy đúng cấu trúc này trong <code>.mvn/repository/org/seleniumhq/selenium/selenium-java/4.52.0/</code>.</p>
+<h2 id="5-maven-repository">5. Maven Repository</h2>
+<p>📘 <strong>Repository</strong> là nơi lưu các artifact (jar, pom, plugin).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Loại</th>
+<th>Vị trí</th>
+<th>Vai trò</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local Repository</strong></td>
+<td>Mặc định <code>C:\Users\&lt;tên&gt;\.m2\repository</code></td>
+<td>Kho trên máy bạn; Maven luôn tìm ở đây <strong>trước</strong></td>
+</tr>
+<tr>
+<td><strong>Central Repository</strong></td>
+<td><code>https://repo.maven.apache.org/maven2</code></td>
+<td>Kho công cộng chính thức, Maven mặc định kết nối</td>
+</tr>
+<tr>
+<td><strong>Remote Repository</strong></td>
+<td>URL tuỳ ý (Nexus/Artifactory công ty, JitPack...)</td>
+<td>Khai báo trong <code>&lt;repositories&gt;</code> hoặc <code>settings.xml</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 <strong>Khác biệt của dự án:</strong> file <a href="../../../../.mvn/maven.config" class="ext" title="File của dự án (chỉ mở được khi xem local)">.mvn/maven.config</a> chứa</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">-Dmaven.repo.local=.mvn/repository</code></pre></div>
+<p>Nghĩa là <strong>Local Repository của dự án này không nằm ở <code>~/.m2/repository</code></strong> mà ở thư mục <code>.mvn/repository</code> (hiện có 123 file <code>.jar</code>). Lý do được ghi trong README: máy từng có file <code>.pom</code> giả trong <code>~/.m2</code> làm Maven hỏng; repo riêng giúp cô lập. Đổi lại:</p>
+<ul>
+<li>Mỗi lần clone mới, phải tải lại toàn bộ thư viện vào <code>.mvn/repository</code>.</li>
+<li>Thư mục này <strong>không được commit</strong> (đã có <code>.mvn/repository/</code> trong <a href="../../../../.gitignore" class="ext" title="File của dự án (chỉ mở được khi xem local)">.gitignore</a>).</li>
+<li>Thư mục <code>~/.m2/wrapper/dists</code> (nơi <code>mvnw</code> lưu <strong>bản Maven</strong>) vẫn dùng <code>~/.m2</code> — hai thứ này khác nhau: <em>Maven distribution</em> và <em>Local Repository</em>.</li>
+</ul>
+<h2 id="6-quy-trình-maven-tải-và-quản-lý-dependency">6. Quy trình Maven tải và quản lý dependency</h2>
+<p>Khi bạn chạy <code>.\mvnw.cmd test</code>, với mỗi dependency trong <code>pom.xml</code>:</p>
+<ol>
+<li><strong>Đọc</strong> <code>groupId:artifactId:version</code> (ví dụ <code>selenium-java:4.52.0</code>).</li>
+<li><strong>Tìm trong Local Repository.</strong> Có đủ <code>.pom</code> và <code>.jar</code> ⇒ dùng luôn, không cần mạng.</li>
+<li>Nếu <strong>thiếu</strong>, kết nối repository khai báo (mặc định Central) và tải <strong>file <code>.pom</code> trước</strong> để biết thư viện này phụ thuộc gì.</li>
+<li><strong>Đệ quy:</strong> với mỗi dependency của dependency (transitive), lặp lại bước 2-3.</li>
+<li><strong>Giải quyết xung đột phiên bản</strong> (nếu cùng thư viện xuất hiện nhiều phiên bản — "nearest wins").</li>
+<li>Tải <code>.jar</code>, kiểm tra checksum (<code>.sha1</code> đi kèm — bạn thấy các file <code>*.jar.sha1</code> trong <code>.mvn/repository</code>), lưu vào Local Repository.</li>
+<li>Lắp <strong>classpath</strong> từ các jar có scope phù hợp phase hiện tại rồi đưa cho compiler/Surefire.</li>
+</ol>
+<p>Dấu hiệu quan sát được: lần đầu chạy, console in <code>Downloading from central: ...</code>; lần sau không có (đã cache). File <code>_remote.repositories</code> trong mỗi thư mục artifact ghi nhớ artifact lấy từ repository nào.</p>
+<blockquote>
+<p>Kiểm chứng: sau khi tải xong, bạn có thể chạy offline bằng cờ <code>-o</code>: <code>.\mvnw.cmd -o test-compile</code> (đã chạy thật và thành công).</p>
+</blockquote>
+<h2 id="7-build-tool-trong-dự-án-automation-testing">7. Build Tool trong dự án Automation Testing</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Vai trò</th>
+<th>Ví dụ ở <code>Selenium1</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quản lý thư viện test</td>
+<td><code>selenium-java</code>, <code>testng</code></td>
+</tr>
+<tr>
+<td>Biên dịch code test</td>
+<td><code>maven-compiler-plugin</code> → <code>target/test-classes</code></td>
+</tr>
+<tr>
+<td>Chạy test</td>
+<td><code>maven-surefire-plugin</code> → đọc <code>testng.xml</code></td>
+</tr>
+<tr>
+<td>Sinh báo cáo</td>
+<td><code>target/surefire-reports/*.html, *.xml</code></td>
+</tr>
+<tr>
+<td>Tích hợp CI</td>
+<td>CI chỉ cần gọi <code>./mvnw test</code></td>
+</tr>
+<tr>
+<td>Chuẩn hoá giữa các thành viên</td>
+<td><code>pom.xml</code> + Maven Wrapper</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-cấu-trúc-thư-mục-chuẩn-và-đầu-ra">8. Cấu trúc thư mục chuẩn và đầu ra</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thư mục</th>
+<th>Nội dung</th>
+<th>Commit?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/main/java</code></td>
+<td>Mã sản phẩm</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>src/test/java</code></td>
+<td>Mã kiểm thử</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>src/test/resources</code></td>
+<td>Config, dữ liệu test</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>target/</code></td>
+<td>Mọi thứ Maven sinh ra (class, report, jar)</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>.mvn/repository/</code></td>
+<td>Local Repository riêng của dự án</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9-maven-vs-gradle-tham-khảo">9. Maven vs Gradle (tham khảo)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Maven</th>
+<th>Gradle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cấu hình</td>
+<td>XML khai báo (<code>pom.xml</code>)</td>
+<td>Groovy/Kotlin script</td>
+</tr>
+<tr>
+<td>Học</td>
+<td>Dễ, chuẩn hoá mạnh</td>
+<td>Linh hoạt, đường cong học cao hơn</td>
+</tr>
+<tr>
+<td>Phổ biến trong automation test</td>
+<td>Rất phổ biến</td>
+<td>Có nhưng ít hơn</td>
+</tr>
+<tr>
+<td>Dự án này</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Dùng Maven Wrapper để cả nhóm cùng phiên bản Maven (<a href="03-maven-wrapper.html">03</a>).</li>
+<li>Không commit <code>target/</code> và Local Repository.</li>
+<li>Cố định phiên bản trong <code>&lt;properties&gt;</code> (như <code>selenium.version</code>).</li>
+<li>Dùng <code>clean</code> khi nghi ngờ file build cũ.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Gốc rễ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Maven tải mãi không xong"</td>
+<td>Mạng chậm/proxy; lần đầu cần tải ~40 jar Selenium</td>
+</tr>
+<tr>
+<td>"Hôm qua chạy được, hôm nay <code>Could not resolve dependencies</code>"</td>
+<td>Mất mạng và thiếu cache; hoặc đổi <code>maven.repo.local</code></td>
+</tr>
+<tr>
+<td>Thư viện bị hỏng trong repo</td>
+<td>Tải dở; xoá thư mục artifact đó trong repo rồi chạy lại</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Liệt kê 3 lợi ích của Maven so với quản lý jar thủ công.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 3 gạch đầu dòng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Nghĩ tới Selenium cần ~40 jar.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Tìm Local Repository của dự án và đếm số jar.</p>
+<p><strong>Input:</strong> Thư mục dự án <code>Selenium1</code></p>
+<p><strong>Expected Output:</strong> Đường dẫn <code>.mvn/repository</code> và số jar</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Đọc <code>.mvn/maven.config</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Từ tọa độ <code>org.seleniumhq.selenium:selenium-java:4.52.0</code>, suy ra đường dẫn file jar trong repository và kiểm tra tồn tại.</p>
+<p><strong>Input:</strong> GAV của selenium-java</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Đường dẫn dạng `org/seleniumhq/selenium/selenium-java/4.52.0/selenium-java-4.52.0.jar`</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>groupId</code> đổi dấu <code>.</code> thành <code>/</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Maven tìm thư viện ở đâu <strong>trước tiên</strong>?</p>
+<ul>
+<li>A. Central Repository</li>
+<li>B. Local Repository</li>
+<li>C. Trang chủ thư viện</li>
+<li>D. GitHub</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Local trước; thiếu mới tải từ Remote/Central.</p>
+</details>
+<p><strong>Câu 2.</strong> GAV là viết tắt của?</p>
+<ul>
+<li>A. groupId, artifactId, version</li>
+<li>B. group, archive, vendor</li>
+<li>C. git, api, version</li>
+<li>D. Không có</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Tọa độ duy nhất của một thư viện.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>.mvn/maven.config</code> của dự án làm gì?</p>
+<ul>
+<li>A. Đổi Local Repository sang <code>.mvn/repository</code></li>
+<li>B. Đặt phiên bản Java</li>
+<li>C. Khai báo test</li>
+<li>D. Không có tác dụng</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Chứa <code>-Dmaven.repo.local=.mvn/repository</code>.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is Maven and why do Java projects use it?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Maven là gì, vì sao dự án Java dùng?</li>
+<li><strong>Suggested answer (EN):</strong> Maven is a build and dependency management tool: it downloads libraries from repositories, standardizes the build lifecycle and runs plugins for compile, test and package.</li>
+<li><strong>Giải thích (VI):</strong> Ba ý: dependency, chuẩn hoá build, plugin.</li>
+<li><strong>Follow-up:</strong> <em>Maven vs Gradle?</em></li>
+</ul>
+<p><strong>2. Explain local, central and remote repositories.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Giải thích local, central, remote repository.</li>
+<li><strong>Suggested answer (EN):</strong> The local repository is a cache on your machine, central is the public default repository, and a remote repository is any other server such as a company Nexus; Maven looks locally first.</li>
+<li><strong>Giải thích (VI):</strong> Dự án này dùng local repo riêng <code>.mvn/repository</code>.</li>
+<li><strong>Follow-up:</strong> <em>How can you build offline?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Maven = quản lý thư viện + chuẩn hoá build + plugin</li>
+<li>Local → (Remote/Central) khi thiếu</li>
+<li>GAV là tọa độ thư viện</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>-o</code> offline, <code>dependency:tree</code>, <code>-Dmaven.repo.local</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Local Repository ≠ thư mục Maven của Wrapper (<code>~/.m2/wrapper/dists</code>)</li>
+<li>Repository ≠ dependency</li>
+<li>Plugin ≠ dependency</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-pom-xml.html"><code>pom.xml</code> và Dependencies</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<ol>
+<li>Tự tải thư viện <strong>và</strong> thư viện phụ thuộc (transitive).</li>
+<li>Đổi phiên bản bằng một dòng (<code>&lt;selenium.version&gt;</code>).</li>
+<li>Lệnh build/test chuẩn, dùng được trong CI (<code>mvnw test</code>).</li>
+</ol>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Get-Content</span> <span class="p">.</span><span class="n">mvn</span><span class="p">\</span><span class="n">maven</span><span class="p">.</span><span class="n">config</span>            <span class="c"># -Dmaven.repo.local=.mvn/repository</span>
+<span class="p">(</span><span class="nb">Get-ChildItem</span> <span class="p">.</span><span class="n">mvn</span><span class="p">\</span><span class="n">repository</span> <span class="n">-Recurse</span> <span class="n">-Filter</span> <span class="p">*.</span><span class="n">jar</span><span class="p">).</span><span class="n">Count</span></code></pre></div>
+<p>Kết quả đã đo trên dự án: 123 jar.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Test-Path</span> <span class="p">.</span><span class="n">mvn</span><span class="p">\</span><span class="n">repository</span><span class="p">\</span><span class="n">org</span><span class="p">\</span><span class="n">seleniumhq</span><span class="p">\</span><span class="n">selenium</span><span class="p">\</span><span class="n">selenium-java</span><span class="p">\</span><span class="n">4</span><span class="p">.</span><span class="n">52</span><span class="p">.</span><span class="n">0</span><span class="p">\</span><span class="n">selenium-java</span><span class="p">-</span><span class="n">4</span><span class="p">.</span><span class="n">52</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">jar</span></code></pre></div>
+<p>Kỳ vọng <code>True</code> sau khi đã chạy Maven ít nhất một lần.</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="00-project-initialization.html"><small>← Bài trước</small><span>Khởi tạo dự án Selenium Java + Maven + TestNG</span></a><a class="next" href="02-pom-xml.html"><small>Bài tiếp theo →</small><span>pom.xml và Dependencies</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/01-maven-fundamentals.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

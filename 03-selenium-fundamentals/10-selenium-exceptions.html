@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exception Handling · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/10-selenium-exceptions" data-root="../" data-lesson="1" data-title="Exception Handling">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="exception-handling">Exception Handling</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 16 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="09-javascript-executor.html">JavaScript Executor</a> · ➡️ <a href="11-debugging-and-best-practices.html">Debugging và Best Practices</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="09-javascript-executor.html">Trước: JS Executor</a> · <a href="11-debugging-and-best-practices.html">Sau: Debugging</a> · <a href="../interview/selenium-interview.html">Phỏng vấn</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Nhận diện các exception Selenium thường gặp và nguyên nhân</li>
+<li>Phân biệt <code>TimeoutException</code> và <code>NoSuchElementException</code></li>
+<li>Biết khi nào <code>catch</code> có mục đích</li>
+<li>Tránh bẫy import <code>NoSuchElementException</code></li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../01-java-fundamentals/10-exception-handling.html">Java Exception Handling</a></li>
+<li><a href="04-webelement.html">WebElement</a></li>
+</ul>
+<h2 id="1-cây-exception-của-selenium">1. Cây exception của Selenium</h2>
+<p>Tất cả đều là <strong>unchecked</strong> (kế thừa <code>RuntimeException</code>), nên Java <strong>không bắt buộc</strong> <code>try/catch</code>.</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">WebDriverException
+ ├─ NoSuchElementException (NotFoundException)
+ ├─ NoSuchFrameException, NoSuchWindowException, NoAlertPresentException (NotFoundException)
+ ├─ StaleElementReferenceException
+ ├─ ElementNotInteractableException  (InvalidElementStateException)
+ ├─ ElementClickInterceptedException
+ ├─ InvalidSelectorException
+ ├─ TimeoutException
+ ├─ SessionNotCreatedException
+ ├─ UnhandledAlertException
+ └─ JavascriptException ...</code></pre></div>
+<p>Cấu trúc cụ thể có thể khác chút giữa các phiên bản; hãy dùng tên lớp để tra Javadoc của 4.52.0.</p>
+<h2 id="2-bảng-exception-thường-gặp">2. Bảng exception thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Ý nghĩa</th>
+<th>Nguyên nhân hay gặp</th>
+<th>Cách xử lý chuẩn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoSuchElementException</code></td>
+<td><code>findElement</code> không thấy</td>
+<td>Locator sai; chưa load; nằm trong iframe; ẩn trong shadow DOM</td>
+<td>Kiểm tra locator (DevTools); <strong>Wait</strong> <code>visibilityOfElementLocated</code>; <code>switchTo().frame</code></td>
+</tr>
+<tr>
+<td><code>TimeoutException</code></td>
+<td>Hết thời gian chờ (<code>WebDriverWait</code>, page load)</td>
+<td>Điều kiện không bao giờ đúng; locator sai; trang chậm</td>
+<td>Đọc thông báo điều kiện; kiểm tra điều kiện/locator; tăng timeout có cân nhắc</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td><code>WebElement</code> không còn trong DOM</td>
+<td>DOM vẽ lại / refresh / chuyển trang</td>
+<td>Tìm lại phần tử; dùng <code>By</code>; <code>stalenessOf</code></td>
+</tr>
+<tr>
+<td><code>ElementNotInteractableException</code></td>
+<td>Phần tử có nhưng không tương tác được</td>
+<td>Ẩn, disabled, ngoài viewport, kích thước 0</td>
+<td><code>elementToBeClickable</code>; cuộn vào view; kiểm tra enabled</td>
+</tr>
+<tr>
+<td><code>ElementClickInterceptedException</code></td>
+<td>Phần tử khác nhận click</td>
+<td>Overlay/modal/spinner/banner che</td>
+<td>Chờ overlay biến mất; cuộn; đóng popup</td>
+</tr>
+<tr>
+<td><code>InvalidSelectorException</code></td>
+<td>Cú pháp locator sai</td>
+<td><code>By.className("a b")</code>; XPath sai</td>
+<td>Sửa cú pháp; thử trong DevTools</td>
+</tr>
+<tr>
+<td><code>NoSuchWindowException</code> / <code>NoSuchFrameException</code></td>
+<td>Cửa sổ/frame không còn/ chưa có</td>
+<td>Đã <code>close()</code>; frame chưa tải</td>
+<td><code>switchTo().window(...)</code>; chờ frame</td>
+</tr>
+<tr>
+<td><code>NoAlertPresentException</code></td>
+<td>Chưa có alert</td>
+<td>Gọi sớm</td>
+<td><code>alertIsPresent()</code></td>
+</tr>
+<tr>
+<td><code>UnhandledAlertException</code></td>
+<td>Có alert mà gọi lệnh khác</td>
+<td></td>
+<td>Xử lý alert trước</td>
+</tr>
+<tr>
+<td><code>SessionNotCreatedException</code></td>
+<td>Không tạo được session</td>
+<td>Chrome/driver không khớp</td>
+<td>Cập nhật Chrome; kiểm tra mạng</td>
+</tr>
+<tr>
+<td><code>WebDriverException</code> (chung)</td>
+<td>Lỗi driver/trình duyệt</td>
+<td>Browser crash; mất kết nối</td>
+<td>Đọc message; chạy lại; kiểm tra tài nguyên</td>
+</tr>
+<tr>
+<td><code>JavascriptException</code></td>
+<td>JS lỗi trong <code>executeScript</code></td>
+<td>Cú pháp, <code>null</code></td>
+<td>Thử script trong Console</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="-bẫy-import-nosuchelementexception-bị-ambiguous">⚠️ Bẫy import: <code>NoSuchElementException</code> bị "ambiguous"</h3>
+<p>Cả <code>java.util</code> và <code>org.openqa.selenium</code> đều có class tên <code>NoSuchElementException</code>. Nếu bạn dùng import kiểu <code>*</code> cho cả hai, trình biên dịch báo:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">error: reference to NoSuchElementException is ambiguous
+  both class java.util.NoSuchElementException and class org.openqa.selenium.NoSuchElementException match</code></pre></div>
+<p>(Lỗi này đã gặp thật khi kiểm tra các ví dụ của tài liệu.) Cách xử lý: import <strong>tường minh</strong> class của Selenium và tránh <code>import java.util.*;</code> song song với <code>org.openqa.selenium.*</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.NoSuchElementException</span><span class="p">;</span><span class="w">   </span><span class="c1">// đúng class cần dùng</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w">                                </span><span class="c1">// import từng class của java.util</span></code></pre></div>
+<p>Dự án <code>Selenium1</code> tránh được vì import từng class (ví dụ <code>import java.util.List;</code>).</p>
+<h2 id="3-đọc-stacktrace-như-thế-nào">3. Đọc stacktrace như thế nào</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">org.openqa.selenium.NoSuchElementException: no such element: Unable to locate element: {&quot;method&quot;:&quot;css selector&quot;,&quot;selector&quot;:&quot;#flash&quot;}
+  (Session info: chrome=...)
+  ...
+  at tests.Exercise01_LoginTest.testLoginSuccess(Exercise01_LoginTest.java:70)</code></pre></div>
+<ol>
+<li><strong>Tên exception</strong> + <strong>message</strong> (cho biết locator nào).</li>
+<li>Dòng đầu tiên của <strong>code của bạn</strong> (<code>tests....java:70</code>) — chỗ gọi lỗi.</li>
+<li>Bỏ qua phần lớn dòng <code>at org.openqa...</code> (nội bộ Selenium).</li>
+<li>Mở trang thật, thử locator ở bước lỗi.</li>
+</ol>
+<h2 id="4-timeoutexception-vs-nosuchelementexception">4. <code>TimeoutException</code> vs <code>NoSuchElementException</code></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>NoSuchElementException</code></th>
+<th><code>TimeoutException</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nguồn</td>
+<td><code>findElement</code> ngay lúc gọi</td>
+<td><code>wait.until(...)</code> hết giờ (hoặc <code>get()</code> quá hạn)</td>
+</tr>
+<tr>
+<td>Ý nghĩa</td>
+<td>"Bây giờ không thấy"</td>
+<td>"Đã chờ đủ lâu mà điều kiện không đúng"</td>
+</tr>
+<tr>
+<td>Bên trong Wait</td>
+<td><code>WebDriverWait</code> <strong>nuốt</strong> và thử lại</td>
+<td>Ném khi hết giờ (nguyên nhân gốc là <code>NoSuchElement</code>... có trong "caused by")</td>
+</tr>
+<tr>
+<td>Hướng sửa</td>
+<td>Thêm Wait/ sửa locator</td>
+<td>Điều kiện/locator/timeout</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-nên-trycatch-khi-nào">5. Nên <code>try/catch</code> khi nào?</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// ❌ Nuốt lỗi — test pass giả</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">// ✅ Có mục đích: phần tử tuỳ chọn (banner cookie có thể không xuất hiện)</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;accept-cookies&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TimeoutException</span><span class="w"> </span><span class="n">ignored</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// banner không xuất hiện — bình thường</span>
+<span class="p">}</span>
+
+<span class="c1">// ✅ Retry khi stale</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">StaleElementReferenceException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">e</span><span class="p">;</span><span class="w">      </span><span class="c1">// hết lượt thử thì ném lại</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// ✅ Kiểm tra tồn tại mà không dùng exception</span>
+<span class="kt">boolean</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">();</span></code></pre></div>
+<p>Quy tắc:</p>
+<ol>
+<li>Chỉ bắt <strong>loại exception cụ thể</strong>, tránh <code>catch (Exception e)</code> rỗng.</li>
+<li>Bắt thì phải có hành động: thử lại, ghi log, ném lại, hoặc đường đi thay thế <strong>có chủ ý</strong>.</li>
+<li>Không dùng exception thay <code>if</code>. Ưu tiên <code>findElements(...).isEmpty()</code>.</li>
+<li>Trong test, để exception lan ra để TestNG ghi nhận fail; <code>Assert</code> có message rõ ràng.</li>
+</ol>
+<p>🧩 Dự án gần như không <code>catch</code> — chỉ có <code>try/finally</code> trong <code>main()</code> để <code>tearDown()</code>; cách tiếp cận đúng cho test.</p>
+<h2 id="6-tryfinally-trong-main-">6. <code>try/finally</code> trong <code>main()</code> (🧩)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">.</span><span class="na">setup</span><span class="p">();</span>
+<span class="w">    </span><span class="n">test</span><span class="p">.</span><span class="na">testLoginSuccess</span><span class="p">();</span>
+<span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">.</span><span class="na">tearDown</span><span class="p">();</span><span class="w">      </span><span class="c1">// luôn dọn dẹp dù fail</span>
+<span class="p">}</span></code></pre></div>
+<p>Khi chạy bằng TestNG/Maven, <code>@AfterMethod</code> đảm nhận việc này (TestNG gọi <code>tearDown</code> kể cả test fail). Mặc định <code>@AfterMethod</code> <strong>vẫn chạy khi test fail</strong> (trừ khi cấu hình khác).</p>
+<h2 id="7-assertion-error-khác-exception-selenium">7. Assertion Error khác Exception Selenium</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>AssertionError</code> (TestNG <code>Assert</code>)</th>
+<th>Exception Selenium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ý nghĩa</td>
+<td>Kết quả <strong>sai so với kỳ vọng</strong></td>
+<td>Test <strong>không thể tiếp tục</strong> (không thấy/không bấm được...)</td>
+</tr>
+<tr>
+<td>Báo cáo Surefire</td>
+<td><code>Failures</code></td>
+<td><code>Errors</code> (tuỳ provider; TestNG đều coi là fail)</td>
+</tr>
+<tr>
+<td>Hướng điều tra</td>
+<td>Dữ liệu/hành vi ứng dụng</td>
+<td>Locator/đồng bộ hoá/môi trường</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-xử-lý-các-tình-huống-điển-hình">8. Xử lý các tình huống điển hình</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Mô tả</th>
+<th>Giải pháp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flaky <code>NoSuchElementException</code></td>
+<td>Lúc có lúc không</td>
+<td>Wait đúng điều kiện</td>
+</tr>
+<tr>
+<td><code>StaleElement</code> sau AJAX</td>
+<td></td>
+<td>Lưu <code>By</code>; <code>stalenessOf</code>; retry có giới hạn</td>
+</tr>
+<tr>
+<td>Click bị chặn</td>
+<td>Có overlay</td>
+<td>Chờ overlay biến mất</td>
+</tr>
+<tr>
+<td>Phần tử trong iframe</td>
+<td></td>
+<td><code>frameToBeAvailableAndSwitchToIt</code></td>
+</tr>
+<tr>
+<td>Shadow DOM</td>
+<td>Locator thường không xuyên qua</td>
+<td><code>element.getShadowRoot().findElement(...)</code> (Selenium 4)</td>
+</tr>
+<tr>
+<td>Alert bất ngờ</td>
+<td></td>
+<td><code>UnhandledAlertException</code> ⇒ xử lý alert</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Biết <strong>exception nào ⇒ nguyên nhân nào</strong>.</li>
+<li>Fail nhanh, thông báo rõ (<code>Assert</code> có message — 🧩 dự án làm tốt).</li>
+<li>Không nuốt exception.</li>
+<li>Retry chỉ cho lỗi tạm thời đã hiểu (stale), có giới hạn lượt.</li>
+<li>Chụp ảnh màn hình khi fail để điều tra (<a href="11-debugging-and-best-practices.html">10</a>).</li>
+</ol>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Ghép exception với nguyên nhân: <code>StaleElementReferenceException</code>, <code>ElementClickInterceptedException</code>, <code>NoSuchElementException</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 3 cặp</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Handle cũ / overlay / không thấy.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết đoạn xử lý banner cookie <strong>tuỳ chọn</strong> (có thể không xuất hiện) mà không làm test fail.</p>
+<p><strong>Input:</strong> id <code>accept-cookies</code></p>
+<p><strong>Expected Output:</strong> Không ném lỗi nếu banner vắng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>WebDriverWait</code> ngắn + <code>catch TimeoutException</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết retry tối đa 3 lần cho thao tác click khi gặp <code>StaleElementReferenceException</code>, ném lại ở lượt cuối.</p>
+<p><strong>Input:</strong> locator <code>save</code></p>
+<p><strong>Expected Output:</strong> Click thành công hoặc ném lỗi</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Vòng <code>for</code>, <code>if (i == 2) throw e</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Exception Selenium thuộc loại?</p>
+<ul>
+<li>A. Checked</li>
+<li>B. Unchecked</li>
+<li>C. Error</li>
+<li>D. Annotation</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Kế thừa <code>RuntimeException</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>TimeoutException</code> xuất hiện khi?</p>
+<ul>
+<li>A. <code>findElement</code> không thấy</li>
+<li>B. Explicit wait hết giờ hoặc page load quá hạn</li>
+<li>C. Thiếu driver</li>
+<li>D. Sai cú pháp</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>NoSuchElementException</code> bị bỏ qua và thử lại trong lúc chờ.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>import java.util.*;</code> cùng <code>org.openqa.selenium.*;</code> gây?</p>
+<ul>
+<li>A. Không gì</li>
+<li>B. <code>NoSuchElementException</code> bị ambiguous</li>
+<li>C. Lỗi runtime</li>
+<li>D. Cảnh báo</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Import tường minh class của Selenium.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. TimeoutException vs NoSuchElementException?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Khác nhau?</li>
+<li><strong>Suggested answer (EN):</strong> <code>NoSuchElementException</code> is thrown immediately by <code>findElement</code>; <code>TimeoutException</code> is thrown when an explicit wait runs out; inside a wait <code>NoSuchElementException</code> is ignored and retried.</li>
+<li><strong>Giải thích (VI):</strong> Một cái "ngay lúc này", một cái "đã chờ đủ lâu".</li>
+<li><strong>Follow-up:</strong> <em>How would you debug a timeout?</em></li>
+</ul>
+<p><strong>2. Should you catch exceptions in tests?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Có nên catch trong test?</li>
+<li><strong>Suggested answer (EN):</strong> Rarely: only for a clear purpose such as an optional element or a bounded retry; never an empty catch that hides failures.</li>
+<li><strong>Giải thích (VI):</strong> Để test fail đúng chỗ.</li>
+<li><strong>Follow-up:</strong> <em>Give a legitimate example.</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Mọi exception Selenium là unchecked</li>
+<li>Biết cặp <em>exception ⇒ nguyên nhân ⇒ cách xử lý</em></li>
+<li><code>catch</code> chỉ khi có mục đích</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>NoSuchElementException</code>, <code>TimeoutException</code>, <code>StaleElementReferenceException</code>, <code>ElementClickInterceptedException</code>, <code>ElementNotInteractableException</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Timeout ≠ NoSuchElement</li>
+<li>Failure (assert) ≠ Error (exception)</li>
+<li>Bẫy import ambiguous</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="11-debugging-and-best-practices.html">Debugging và Best Practices</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<ul>
+<li>Stale: DOM vẽ lại/refresh → tìm lại phần tử.</li>
+<li>ClickIntercepted: overlay/modal che → chờ biến mất.</li>
+<li>NoSuchElement: locator sai/chưa load/iframe → sửa locator, Wait, switch frame.</li>
+</ul>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="w">            </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;accept-cookies&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">TimeoutException</span><span class="w"> </span><span class="n">ignored</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// banner không xuất hiện: bình thường</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">StaleElementReferenceException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="09-javascript-executor.html"><small>← Bài trước</small><span>JavaScript Executor</span></a><a class="next" href="11-debugging-and-best-practices.html"><small>Bài tiếp theo →</small><span>Debugging và Best Practices</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/10-selenium-exceptions.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

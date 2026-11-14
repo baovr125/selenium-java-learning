@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript Executor · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/09-javascript-executor" data-root="../" data-lesson="1" data-title="JavaScript Executor">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="javascript-executor">JavaScript Executor</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 18 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a> · ➡️ <a href="10-selenium-exceptions.html">Exception Handling</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="08-mouse-and-keyboard-actions.html">Trước: Keyboard &amp; Mouse</a> · <a href="10-selenium-exceptions.html">Sau: Exception Handling</a>
+🧩 Trong dự án: <a href="../../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise07_InfiniteScrollTest</a>.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Dùng <code>JavascriptExecutor.executeScript</code></li>
+<li>Cuộn trang và đọc <code>scrollY</code> đúng kiểu <code>Number</code></li>
+<li>Biết khi nào nên/không nên dùng JS</li>
+<li>Giải thích kỹ thuật của Exercise 7</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="08-mouse-and-keyboard-actions.html">Mouse &amp; Keyboard</a></li>
+<li><a href="../01-java-fundamentals/11-lambda-and-generics.html">Java Lambda &amp; Generics</a></li>
+</ul>
+<h2 id="1-javascriptexecutor-là-gì">1. <code>JavascriptExecutor</code> là gì?</h2>
+<p>Interface cho phép chạy <strong>JavaScript ngay trong trang</strong> đang mở. <code>ChromeDriver</code> implement nó nên bạn ép kiểu:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">     </span><span class="c1">// 🧩 Ex7</span>
+<span class="n">Object</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return document.title;&quot;</span><span class="p">);</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>executeScript(String script, Object... args)</code></td>
+<td>Chạy <strong>đồng bộ</strong>, trả giá trị</td>
+</tr>
+<tr>
+<td><code>executeAsyncScript(String script, Object... args)</code></td>
+<td>Chạy bất đồng bộ, kết thúc khi gọi callback cuối (chịu <code>scriptTimeout</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-truyền-tham-số-và-nhận-kết-quả">2. Truyền tham số và nhận kết quả</h2>
+<ul>
+<li>Tham số trong script là <code>arguments[0]</code>, <code>arguments[1]</code>...</li>
+<li>Truyền <code>WebElement</code> được: Selenium chuyển thành phần tử DOM.</li>
+<li>Giá trị trả về được ánh xạ: số → <code>Long</code>/<code>Double</code>, chuỗi → <code>String</code>, boolean → <code>Boolean</code>, <code>WebElement</code> → <code>WebElement</code>, mảng → <code>List</code>, đối tượng → <code>Map</code>.</li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+<span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;arguments[0].style.border=&#39;3px solid red&#39;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w">           </span><span class="c1">// highlight để debug</span>
+<span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return arguments[0].textContent;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">el</span><span class="p">);</span></code></pre></div>
+<p>⚠️ Kiểu số trả về thường là <code>Long</code> (hoặc <code>Double</code>): ép kiểu bằng <code>Number</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kt">long</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return window.scrollY;&quot;</span><span class="p">)).</span><span class="na">longValue</span><span class="p">();</span><span class="w">   </span><span class="c1">// 🧩 Ex7 làm đúng như vậy</span></code></pre></div>
+<p>Ép thẳng <code>(Long)</code>/<code>(int)</code> có thể ném <code>ClassCastException</code> khi giá trị là <code>Double</code>.</p>
+<h2 id="3-phân-tích-exercise-7">3. Phân tích Exercise 7</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// cuộn xuống đáy + phát lại sự kiện scroll (đảm bảo plugin jScroll nhận được)</span>
+<span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;window.scrollTo(0, document.body.scrollHeight);&quot;</span>
+<span class="w">               </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;window.dispatchEvent(new Event(&#39;scroll&#39;));&quot;</span><span class="p">);</span>
+
+<span class="c1">// cuộn về đầu</span>
+<span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;window.scrollTo(0, 0);&quot;</span><span class="p">);</span>
+
+<span class="c1">// kiểm tra tiêu đề đang nằm trong vùng nhìn thấy</span>
+<span class="n">Boolean</span><span class="w"> </span><span class="n">headingInViewport</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Boolean</span><span class="p">)</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;var r = document.querySelector(&#39;h3&#39;).getBoundingClientRect();&quot;</span>
+<span class="w">  </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;return r.top &gt;= 0 &amp;&amp; r.bottom &lt;= window.innerHeight;&quot;</span><span class="p">);</span></code></pre></div>
+<p>Vì sao dùng JS ở đây?</p>
+<ul>
+<li>Cuộn là thao tác của <strong>trình duyệt</strong>, không có API chuẩn "scroll to bottom" trong WebDriver cũ.</li>
+<li>Cần <strong>phát sự kiện</strong> <code>scroll</code> thủ công khi trang đã ở đáy (trình duyệt không tự sinh sự kiện thêm).</li>
+<li>Cần đọc thông tin <strong>hình học</strong> (<code>getBoundingClientRect</code>, <code>scrollY</code>, <code>innerHeight</code>) mà <code>WebElement</code> không cung cấp trực tiếp.</li>
+</ul>
+<h2 id="4-các-thao-tác-js-hay-dùng">4. Các thao tác JS hay dùng</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục đích</th>
+<th>Script</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cuộn xuống đáy</td>
+<td><code>window.scrollTo(0, document.body.scrollHeight)</code></td>
+</tr>
+<tr>
+<td>Cuộn lên đầu</td>
+<td><code>window.scrollTo(0, 0)</code></td>
+</tr>
+<tr>
+<td>Cuộn tới phần tử</td>
+<td><code>arguments[0].scrollIntoView({block:'center'})</code></td>
+</tr>
+<tr>
+<td>Click bằng JS</td>
+<td><code>arguments[0].click()</code></td>
+</tr>
+<tr>
+<td>Đọc <code>scrollY</code></td>
+<td><code>return window.scrollY;</code></td>
+</tr>
+<tr>
+<td>Đọc trạng thái load</td>
+<td><code>return document.readyState;</code></td>
+</tr>
+<tr>
+<td>Lấy text ẩn</td>
+<td><code>return arguments[0].textContent;</code></td>
+</tr>
+<tr>
+<td>Gán giá trị input</td>
+<td><code>arguments[0].value='abc'</code></td>
+</tr>
+<tr>
+<td>Highlight</td>
+<td><code>arguments[0].style.border='2px solid red'</code></td>
+</tr>
+<tr>
+<td>Xoá thuộc tính <code>readonly</code></td>
+<td><code>arguments[0].removeAttribute('readonly')</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Chờ trang "load xong" bằng JS:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">&quot;complete&quot;</span><span class="p">.</span><span class="na">equals</span><span class="p">(((</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">d</span><span class="p">).</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return document.readyState&quot;</span><span class="p">)));</span></code></pre></div>
+<h2 id="5-khi-nào-nên--không-nên-dùng-js">5. Khi nào nên / không nên dùng JS</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>✅ Nên</th>
+<th>❌ Không nên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cuộn, đọc geometry, scrollY</td>
+<td>Thay <code>click()</code>/<code>sendKeys()</code> vì lười Wait</td>
+</tr>
+<tr>
+<td>Đọc thông tin mà Selenium không có</td>
+<td>Gán giá trị input thay cho gõ phím ⇒ bỏ qua sự kiện <code>keydown/input</code>, có thể bypass validation</td>
+</tr>
+<tr>
+<td>Xoá overlay/banner chặn test (khi môi trường test cho phép)</td>
+<td>Che giấu lỗi thật của giao diện</td>
+</tr>
+<tr>
+<td>Trường hợp đặc biệt đã thử cách chuẩn mà không được (có ghi chú)</td>
+<td>Dùng làm cách mặc định</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Lý do:</strong> <code>click()</code> của Selenium kiểm tra phần tử có nhìn thấy/bấm được như người dùng thật. <code>arguments[0].click()</code> <strong>bỏ qua</strong> kiểm tra đó ⇒ test "pass" dù người dùng thật <strong>không</strong> bấm được (bị che, bị ẩn). Mất tác dụng kiểm thử.</p>
+<h2 id="6-lỗi-thường-gặp">6. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>JavascriptException: javascript error: ...</code></td>
+<td>Script sai cú pháp / <code>null</code></td>
+<td>Thử trước trong Console của DevTools</td>
+</tr>
+<tr>
+<td><code>ClassCastException</code></td>
+<td>Ép sai kiểu kết quả</td>
+<td>Dùng <code>Number</code>, kiểm tra <code>instanceof</code></td>
+</tr>
+<tr>
+<td><code>return</code> bị quên ⇒ kết quả <code>null</code></td>
+<td><code>executeScript</code> chỉ trả giá trị khi script có <code>return</code></td>
+<td>Thêm <code>return</code></td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code> khi truyền <code>arguments[0]</code></td>
+<td>Phần tử đã stale</td>
+<td>Tìm lại</td>
+</tr>
+<tr>
+<td><code>ScriptTimeoutException</code> (async)</td>
+<td>Quên gọi callback</td>
+<td>Gọi <code>arguments[arguments.length-1]()</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Dùng API Selenium trước; JS là phương án cuối, có chú thích lý do.</li>
+<li>Gói thao tác JS trong helper nhỏ (🧩 Ex7: <code>scrollToBottom</code>, <code>getScrollY</code>).</li>
+<li>Không dùng JS để "ép" thành công cho hành động mà người dùng thật không làm được.</li>
+<li>Dùng <code>Number</code> khi nhận số.</li>
+</ol>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Lấy <code>document.title</code> bằng JavaScript và in ra.</p>
+<p><strong>Input:</strong> Trang chủ</p>
+<p><strong>Expected Output:</strong> <code>The Internet</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>(String) js.executeScript("return document.title;")</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Cuộn xuống đáy trang <code>/floating_menu</code> (trang dài), đọc <code>scrollY</code> bằng <code>Number</code> và assert &gt; 0. Giải thích vì sao <strong>không</strong> dùng <code>/infinite_scroll</code> cho phép thử này.</p>
+<p><strong>Input:</strong> <code>/floating_menu</code></p>
+<p><strong>Expected Output:</strong> <code>scrollY &gt; 0</code> (đã đo: 4465 trên máy kiểm chứng)</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Trang <code>/infinite_scroll</code> ban đầu thấp hơn cửa sổ nên chưa cuộn được.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết custom wait cuộn lặp cho tới khi số đoạn <code>.jscroll-added</code> tăng (như Exercise 7) và giải thích vì sao cuộn đặt <strong>trong</strong> điều kiện.</p>
+<p><strong>Input:</strong> <code>/infinite_scroll</code></p>
+<p><strong>Expected Output:</strong> Số đoạn tăng thêm</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Lambda + <code>final</code> cho biến đếm.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Giá trị số trả về từ <code>executeScript</code> nên ép bằng?</p>
+<ul>
+<li>A. <code>(int)</code></li>
+<li>B. <code>(Long)</code></li>
+<li>C. <code>((Number) x).longValue()</code></li>
+<li>D. Không cần</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: C.</strong> Có thể là <code>Long</code> hoặc <code>Double</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> Vì sao tránh <code>arguments[0].click()</code> làm mặc định?</p>
+<ul>
+<li>A. Chậm</li>
+<li>B. Bỏ qua kiểm tra người dùng thật có bấm được không</li>
+<li>C. Không hỗ trợ</li>
+<li>D. Lỗi cú pháp</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Test pass dù người dùng thật không bấm được.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>executeScript</code> trả giá trị khi nào?</p>
+<ul>
+<li>A. Luôn</li>
+<li>B. Khi script có <code>return</code></li>
+<li>C. Khi dùng <code>async</code></li>
+<li>D. Không bao giờ</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Thiếu <code>return</code> ⇒ <code>null</code>.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. When would you use JavascriptExecutor?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Khi nào dùng <code>JavascriptExecutor</code>?</li>
+<li><strong>Suggested answer (EN):</strong> For things WebDriver does not provide natively, such as scrolling, reading geometry or page state; not as a shortcut around waits or real user actions.</li>
+<li><strong>Giải thích (VI):</strong> Ví dụ Exercise 7.</li>
+<li><strong>Follow-up:</strong> <em>Why is JS click risky?</em></li>
+</ul>
+<p><strong>2. Why does Exercise 7 scroll inside the wait condition?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao Exercise 7 cuộn trong điều kiện chờ?</li>
+<li><strong>Suggested answer (EN):</strong> The page ignores scroll events while a load is in progress, so one scroll can be lost; repeating the scroll until the item count grows makes the test robust.</li>
+<li><strong>Giải thích (VI):</strong> Retry đến khi điều kiện đúng.</li>
+<li><strong>Follow-up:</strong> <em>How would you document that side effect?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>JS là phương án sau cùng, có chú thích</li>
+<li>Số trả về dùng <code>Number</code></li>
+<li>Cuộn/geometry là ứng dụng hợp lý nhất</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>executeScript</code>, <code>window.scrollTo</code>, <code>scrollIntoView</code>, <code>getBoundingClientRect</code>, <code>document.readyState</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>executeScript</code> ≠ <code>executeAsyncScript</code></li>
+<li>JS click ≠ click thật</li>
+<li>Quên <code>return</code></li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="10-selenium-exceptions.html">Exception Handling</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return document.title;&quot;</span><span class="p">));</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/floating_menu&quot;</span><span class="p">);</span>
+<span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;window.scrollTo(0, document.body.scrollHeight);&quot;</span><span class="p">);</span>
+<span class="kt">long</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return window.scrollY;&quot;</span><span class="p">)).</span><span class="na">longValue</span><span class="p">();</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></code></pre></div>
+<p>✅ Đã kiểm chứng: <code>/floating_menu</code> cho <code>scrollY = 4465</code>. Còn <code>/infinite_scroll</code> lúc mới tải có <code>document.body.scrollHeight = 707</code> nhỏ hơn <code>window.innerHeight = 889</code> (cửa sổ maximize) nên <code>scrollY</code> vẫn <code>0</code> — vì vậy Exercise07 phải cuộn lặp trong custom wait để trang dài ra.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/infinite_scroll&quot;</span><span class="p">);</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">presenceOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)));</span>
+<span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;window.scrollTo(0, document.body.scrollHeight); window.dispatchEvent(new Event(&#39;scroll&#39;));&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">before</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+<p>Plugin jScroll bỏ qua sự kiện scroll khi đang tải; một lần cuộn có thể "mất" → cuộn lặp trong điều kiện chờ.</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="08-mouse-and-keyboard-actions.html"><small>← Bài trước</small><span>Keyboard và Mouse Actions</span></a><a class="next" href="10-selenium-exceptions.html"><small>Bài tiếp theo →</small><span>Exception Handling</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/09-javascript-executor.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

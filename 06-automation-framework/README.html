@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 6 — Page Object Model và Framework Design (Chapter 21–22) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="06-automation-framework/README" data-root="../" data-lesson="0" data-title="Phase 6 — Page Object Model và Framework Design (Chapter 21–22)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-6--page-object-model-và-framework-design-chapter-2122">Phase 6 — Page Object Model và Framework Design (Chapter 21–22)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/framework-interview.html">framework-interview</a></p>
+<p>🔎 <strong>Hiện trạng <code>Selenium1</code>:</strong> mới có <code>BaseTest</code> (driver + wait). Chưa có Page Object, DriverFactory, Config, Logging, Reporting. Các bài này mô tả <strong>hướng phát triển</strong> — hãy thực hành trong thư mục riêng (<a href="../08-practical-project/labs/06-page-object-model-practice.html">Lab 06</a>).</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Chapter</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="01-page-object-model.html">Page Object Model</a></td>
+<td>21</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-automation-framework-architecture.html">Automation Framework Architecture</a></td>
+<td>22</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-reusable-components.html">Reusable Components</a> (BasePage, DriverFactory, Utils, Screenshot, Logging)</td>
+<td>22</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-configuration-management.html">Configuration Management</a></td>
+<td>22</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="05-maintainable-test-framework.html">Maintainable Test Framework</a></td>
+<td>22</td>
+<td>Important</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="lộ-trình-tiến-hoá-từ-dự-án-hiện-tại">Lộ trình tiến hoá từ dự án hiện tại</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Cấp 0 (hiện tại): 10 Test Class kế thừa BaseTest, locator trong test
+Cấp 1: + Page Object (LoginPage, ...)
+Cấp 2: + BasePage, DriverFactory, Config
+Cấp 3: + Logging, Screenshot, Listener, DataProvider
+Cấp 4: + Report (Extent/Allure), parallel (ThreadLocal), CI</code></pre></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../05-testing-framework/06-test-execution-and-reports.html"><small>← Bài trước</small><span>Chạy test và báo cáo</span></a><a class="next" href="01-page-object-model.html"><small>Bài tiếp theo →</small><span>Page Object Model (POM)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

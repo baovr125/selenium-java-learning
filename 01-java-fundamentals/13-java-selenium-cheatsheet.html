@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java Fundamentals cho Selenium · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="01-java-fundamentals/13-java-selenium-cheatsheet" data-root="../" data-lesson="0" data-title="Java Fundamentals cho Selenium">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="java-fundamentals-cho-selenium">Java Fundamentals cho Selenium</h1>
+<blockquote>
+<p>Mỗi khái niệm Java dưới đây đều gắn với <strong>chỗ nó xuất hiện</strong> trong Selenium và trong dự án.
+Liên quan: <a href="../03-selenium-fundamentals/01-selenium-introduction.html">Trước: Selenium là gì</a> · <a href="00-environment-setup.html">Sau: Cài môi trường</a> · <a href="../interview/java-interview.html">Phỏng vấn Java</a></p>
+</blockquote>
+<h2 id="mục-lục">Mục lục</h2>
+<ol>
+<li><a href="#1-biến-và-kiểu-dữ-liệu">Biến và kiểu dữ liệu</a></li>
+<li><a href="#2-method-và-tham-số">Method và tham số</a></li>
+<li><a href="#3-class-và-object">Class và Object</a></li>
+<li><a href="#4-constructor">Constructor</a></li>
+<li><a href="#5-inheritance-kế-thừa">Inheritance</a></li>
+<li><a href="#6-encapsulation-đóng-gói">Encapsulation</a></li>
+<li><a href="#7-polymorphism-đa-hình">Polymorphism</a></li>
+<li><a href="#8-interface-và-abstract-class">Interface và Abstract Class</a></li>
+<li><a href="#9-static-và-non-static">Static và Non-static</a></li>
+<li><a href="#10-list-set-map">List, Set, Map</a></li>
+<li><a href="#11-exception-handling">Exception Handling</a></li>
+<li><a href="#12-lambda-expressions">Lambda Expressions</a></li>
+<li><a href="#13-generics">Generics</a></li>
+<li><a href="#14-access-modifiers">Access Modifiers</a></li>
+<li><a href="#15-bảng-tổng-hợp">Bảng tổng hợp: Java ↔ Selenium ↔ POM</a></li>
+</ol>
+<hr />
+<h2 id="1-biến-và-kiểu-dữ-liệu">1. Biến và kiểu dữ liệu</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kiểu</th>
+<th>Ví dụ</th>
+<th>Dùng trong Selenium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td><code>int total = 4;</code></td>
+<td>Đếm số dòng bảng, số phần tử</td>
+</tr>
+<tr>
+<td><code>long</code></td>
+<td><code>long y = 0L;</code></td>
+<td>Giá trị <code>window.scrollY</code> trả từ JavaScript</td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td><code>boolean ok = el.isDisplayed();</code></td>
+<td>Trạng thái phần tử</td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td><code>String text = el.getText();</code></td>
+<td>Văn bản, URL, locator</td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td><code>double due = 50.00;</code></td>
+<td>Dữ liệu số tiền (thực tế nên dùng <code>BigDecimal</code>)</td>
+</tr>
+<tr>
+<td>Kiểu tham chiếu</td>
+<td><code>WebElement</code>, <code>List&lt;WebElement&gt;</code></td>
+<td>Đối tượng Selenium</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest.java</a>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">LOGIN_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// hằng số</span>
+<span class="n">String</span><span class="w"> </span><span class="n">actualMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">successMessageElement</span><span class="p">.</span><span class="na">getText</span><span class="p">();</span><span class="w">                              </span><span class="c1">// biến cục bộ</span></code></pre></div>
+<ul>
+<li><code>final</code>: gán một lần, không đổi. <code>static final</code> + <code>UPPER_SNAKE_CASE</code> = hằng số.</li>
+<li>⚠️ So sánh chuỗi bằng <code>.equals()</code>, <strong>không</strong> dùng <code>==</code> (so sánh tham chiếu).</li>
+<li><code>var</code> (Java 10+): <code>var driver = new ChromeDriver();</code> suy luận kiểu <code>ChromeDriver</code> ⇒ mất lợi ích khai báo kiểu <code>WebDriver</code>. Tránh với driver.</li>
+</ul>
+<h2 id="2-method-và-tham-số">2. Method và tham số</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getRowData</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">rowLocator</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// nhận By, trả về List&lt;String&gt;</span></code></pre></div>
+<ul>
+<li><strong>Tham số:</strong> dữ liệu đầu vào. Java truyền <strong>theo giá trị</strong> (với đối tượng là giá trị của tham chiếu).</li>
+<li><strong>Giá trị trả về:</strong> <code>void</code> nếu không trả gì.</li>
+<li><strong>Varargs:</strong> <code>WebElement... others</code> (<a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a> <code>assertSameElement</code>) cho phép truyền số lượng phần tử tuỳ ý.</li>
+<li><strong>Overload:</strong> cùng tên, khác tham số. Ví dụ <code>sendKeys(CharSequence...)</code>; <code>By.xpath(String)</code>.</li>
+</ul>
+<p>✅ Method nhỏ, một việc, tên là động từ (<code>getRowData</code>, <code>clickAndVerifyToggled</code>). Đây là nền của Reusable Methods và Page Methods.</p>
+<h2 id="3-class-và-object">3. Class và Object</h2>
+<ul>
+<li><strong>Class</strong> = bản thiết kế. <strong>Object</strong> = thực thể tạo từ <code>new</code>.</li>
+<li><code>ChromeDriver</code> là class; <code>driver</code> là object. <code>BaseTest</code> là class; mỗi test chạy trên một đối tượng của class con.</li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">button</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;login&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// button là object</span></code></pre></div>
+<p>Trong POM, mỗi <strong>trang web</strong> là <strong>một class</strong> (<code>LoginPage</code>), mỗi <strong>hành động</strong> là <strong>một method</strong> (<code>login(user, pass)</code>), mỗi <strong>phần tử</strong> là <strong>một field</strong>.</p>
+<h2 id="4-constructor">4. Constructor</h2>
+<p>Constructor khởi tạo đối tượng khi <code>new</code>. Trong POM nó nhận <code>WebDriver</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">usernameInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">LoginPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// constructor</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">              </span><span class="c1">// this: field của đối tượng hiện tại</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<ul>
+<li>Nếu không viết constructor, Java sinh sẵn constructor mặc định không tham số.</li>
+<li><code>new WebDriverWait(driver, Duration.ofSeconds(15))</code> — gọi constructor của <code>WebDriverWait</code>.</li>
+<li>⚠️ Constructor <strong>không</strong> có kiểu trả về; nếu thêm <code>void</code> nó trở thành method thường.</li>
+</ul>
+<h2 id="5-inheritance-kế-thừa">5. Inheritance (kế thừa)</h2>
+<p>🧩 Đây là cơ chế cốt lõi của dự án: <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a> <code>extends</code> <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a>.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Exercise01_LoginTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<p>Class con <strong>thừa hưởng</strong> field <code>driver</code>, <code>wait</code> (vì <code>protected</code>) và các method có annotation <code>@BeforeMethod</code>/<code>@AfterMethod</code>. TestNG tự gọi <code>setup()</code> trước từng <code>@Test</code> của class con, dù class con không viết lại.</p>
+<ul>
+<li><code>super(...)</code> gọi constructor cha; <code>super.method()</code> gọi method cha.</li>
+<li>Java chỉ <strong>đơn kế thừa</strong> class, nhưng <strong>đa kế thừa</strong> interface.</li>
+<li>✅ Dùng kế thừa cho quan hệ "là một" (<code>LoginPage</code> là một <code>BasePage</code>). Đừng lạm dụng.</li>
+</ul>
+<h2 id="6-encapsulation-đóng-gói">6. Encapsulation (đóng gói)</h2>
+<p>Giấu dữ liệu nội bộ, chỉ lộ ra hành vi cần thiết:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">usernameInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// locator ẩn khỏi test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">          </span><span class="c1">// test chỉ biết &quot;login&quot;</span>
+<span class="p">}</span></code></pre></div>
+<p>Lợi ích POM: khi website đổi <code>id</code>, chỉ sửa <strong>một</strong> chỗ trong <code>LoginPage</code>; test không đổi. Xem <a href="../06-automation-framework/01-page-object-model.html">framework-design/01</a>.</p>
+<h2 id="7-polymorphism-đa-hình">7. Polymorphism (đa hình)</h2>
+<p>Cùng một kiểu tham chiếu, nhiều hiện thực:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w">   </span><span class="c1">// đổi thành new FirefoxDriver() chỉ sửa dòng này</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">url</span><span class="p">);</span><span class="w">                          </span><span class="c1">// gọi ChromeDriver.get() ở runtime</span></code></pre></div>
+<ul>
+<li><strong>Overriding</strong> (đa hình runtime): class con viết lại method của cha, ví dụ <code>@Override</code>.</li>
+<li><strong>Overloading</strong> (compile time): cùng tên khác tham số.</li>
+</ul>
+<h2 id="8-interface-và-abstract-class">8. Interface và Abstract Class</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Interface</th>
+<th>Abstract class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mục đích</td>
+<td>Hợp đồng "làm được gì"</td>
+<td>Khung chung + một phần hiện thực</td>
+</tr>
+<tr>
+<td>Field</td>
+<td>Chỉ hằng <code>public static final</code></td>
+<td>Field thường</td>
+</tr>
+<tr>
+<td>Kế thừa</td>
+<td>Implement nhiều interface</td>
+<td>Chỉ extend một</td>
+</tr>
+<tr>
+<td>Constructor</td>
+<td>Không</td>
+<td>Có</td>
+</tr>
+<tr>
+<td>Ví dụ Selenium</td>
+<td><code>WebDriver</code>, <code>WebElement</code>, <code>JavascriptExecutor</code>, <code>TakesScreenshot</code>, <code>Alert</code></td>
+<td><code>BasePage</code>, <code>BaseTest</code> (thường abstract)</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 <code>WebDriver</code> là <strong>interface</strong>. <code>ChromeDriver</code> còn implement <code>JavascriptExecutor</code> — vì vậy dự án mới <strong>ép kiểu</strong> được:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">jsExecutor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">   </span><span class="c1">// Exercise07_InfiniteScrollTest</span></code></pre></div>
+<p>Ví dụ abstract class cho POM:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="nf">BasePage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isLoaded</span><span class="p">();</span><span class="w">     </span><span class="c1">// mỗi trang tự định nghĩa</span>
+<span class="p">}</span></code></pre></div>
+<h2 id="9-static-và-non-static">9. Static và Non-static</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>static</th>
+<th>non-static (instance)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thuộc về</td>
+<td>Class</td>
+<td>Từng đối tượng</td>
+</tr>
+<tr>
+<td>Gọi</td>
+<td><code>ClassName.method()</code></td>
+<td><code>object.method()</code></td>
+</tr>
+<tr>
+<td>Ví dụ</td>
+<td><code>Assert.assertEquals(...)</code>, <code>Duration.ofSeconds(15)</code>, <code>By.id(...)</code></td>
+<td><code>driver.get(...)</code>, <code>element.click()</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 <code>main(String[] args)</code> trong các test class là <code>static</code> nên <strong>phải tự <code>new</code></strong> đối tượng rồi gọi <code>setup()</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Exercise01_LoginTest</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Exercise01_LoginTest</span><span class="p">();</span>
+<span class="n">test</span><span class="p">.</span><span class="na">setup</span><span class="p">();</span></code></pre></div>
+<p>⚠️ Dùng <code>static WebDriver driver</code> khiến mọi test dùng chung một driver và <strong>không an toàn khi chạy song song</strong>. Dự án dùng field instance — đúng hướng. Muốn song song, dùng <code>ThreadLocal&lt;WebDriver&gt;</code>.</p>
+<h2 id="10-list-set-map">10. List, Set, Map</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">checkboxes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkboxes input[type=&#39;checkbox&#39;]&quot;</span><span class="p">));</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkboxes</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">          </span><span class="c1">// có thứ tự, cho phép trùng</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Đặc điểm</th>
+<th>Dùng khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>List</code> (<code>ArrayList</code>)</td>
+<td>Có thứ tự, trùng được</td>
+<td>Kết quả <code>findElements</code>, các dòng bảng</td>
+</tr>
+<tr>
+<td><code>Set</code> (<code>HashSet</code>)</td>
+<td>Không trùng</td>
+<td><code>getWindowHandles()</code> trả <code>Set&lt;String&gt;</code></td>
+</tr>
+<tr>
+<td><code>Map</code> (<code>HashMap</code>)</td>
+<td>Cặp key-value</td>
+<td>Dữ liệu form: <code>Map&lt;String,String&gt;</code>; cấu hình</td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">handles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">();</span><span class="w">     </span><span class="c1">// các tab đang mở</span>
+<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Map</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span></code></pre></div>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03_WebTablesTest</a> dùng <code>List&lt;String&gt;</code> và <code>Arrays.asList(...)</code> để so sánh cả hàng.</p>
+<p>⚠️ <code>findElements</code> trả <strong>danh sách rỗng</strong>, không ném exception, nếu không tìm thấy; <code>findElement</code> mới ném <code>NoSuchElementException</code>.</p>
+<h2 id="11-exception-handling">11. Exception Handling</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">.</span><span class="na">setup</span><span class="p">();</span>
+<span class="w">    </span><span class="n">test</span><span class="p">.</span><span class="na">testLoginSuccess</span><span class="p">();</span>
+<span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">test</span><span class="p">.</span><span class="na">tearDown</span><span class="p">();</span><span class="w">      </span><span class="c1">// luôn chạy</span>
+<span class="p">}</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khái niệm</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>try / catch / finally</code></td>
+<td>Bắt và xử lý lỗi; <code>finally</code> luôn chạy</td>
+</tr>
+<tr>
+<td>Checked exception</td>
+<td>Phải khai báo/bắt (ví dụ <code>IOException</code>, <code>InterruptedException</code> của <code>Thread.sleep</code>)</td>
+</tr>
+<tr>
+<td>Unchecked (<code>RuntimeException</code>)</td>
+<td>Không bắt buộc. Mọi exception Selenium (<code>NoSuchElementException</code>, <code>TimeoutException</code>...) là unchecked</td>
+</tr>
+<tr>
+<td><code>throw</code> / <code>throws</code></td>
+<td>Ném / khai báo</td>
+</tr>
+</tbody>
+</table></div>
+<p>✅ Chỉ <code>catch</code> khi bạn có hành động hợp lý (thử lại, ghi log). <strong>Đừng nuốt lỗi</strong> bằng <code>catch (Exception e) {}</code> — test sẽ "pass giả". Xem <a href="../03-selenium-fundamentals/10-selenium-exceptions.html">selenium/09</a>.</p>
+<h2 id="12-lambda-expressions">12. Lambda Expressions</h2>
+<p>Lambda là cách viết ngắn một <strong>hàm ẩn danh</strong> để truyền như tham số. Selenium dùng nhiều nhất trong Wait vì <code>Wait.until(Function&lt;? super T, V&gt;)</code>.</p>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise07_InfiniteScrollTest</a>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">scrollToBottom</span><span class="p">(</span><span class="n">jsExecutor</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">PARAGRAPH_LOCATOR</span><span class="p">).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">countBeforeScroll</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+<ul>
+<li><code>d</code> là tham số (kiểu <code>WebDriver</code>, do compiler suy ra).</li>
+<li><code>until</code> gọi lại hàm này theo chu kỳ (mặc định mỗi 500 ms) cho đến khi trả về giá trị <strong>truthy</strong> (khác <code>null</code>/<code>false</code>) hoặc hết timeout.</li>
+<li>⚠️ Biến cục bộ dùng trong lambda phải là <strong>final hoặc effectively final</strong> — vì vậy code dự án khai báo <code>final int countBeforeScroll = currentCount;</code>.</li>
+</ul>
+<p>Lambda khác: <code>list.forEach(e -&gt; System.out.println(e.getText()))</code>, Stream: <code>elements.stream().map(WebElement::getText).toList()</code>.</p>
+<h2 id="13-generics">13. Generics</h2>
+<p>Generics cho phép khai báo kiểu tham số hoá, bắt lỗi kiểu tại compile time.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">items</span><span class="p">;</span><span class="w">            </span><span class="c1">// chỉ chứa WebElement</span>
+<span class="n">Wait</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span><span class="w">              </span><span class="c1">// Wait làm việc với kiểu WebDriver</span>
+<span class="n">FluentWait</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fluent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span><span class="w">   </span><span class="c1">// &lt;&gt; diamond</span></code></pre></div>
+<p><code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code>. <code>until</code> có chữ ký <code>&lt;V&gt; V until(Function&lt;? super T, V&gt; isTrue)</code> — kết quả có kiểu <code>V</code> tuỳ điều kiện: <code>visibilityOfElementLocated</code> trả <code>WebElement</code>, <code>invisibilityOfElementLocated</code> trả <code>Boolean</code>.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span>
+<span class="n">Boolean</span><span class="w"> </span><span class="n">gone</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;modal&quot;</span><span class="p">)));</span></code></pre></div>
+<h2 id="14-access-modifiers">14. Access Modifiers</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Class</th>
+<th>Package</th>
+<th>Class con</th>
+<th>Mọi nơi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td><code>protected</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✖</td>
+</tr>
+<tr>
+<td>(mặc định)</td>
+<td>✔</td>
+<td>✔</td>
+<td>✖</td>
+<td>✖</td>
+</tr>
+<tr>
+<td><code>private</code></td>
+<td>✔</td>
+<td>✖</td>
+<td>✖</td>
+<td>✖</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Trong dự án:</p>
+<ul>
+<li><code>protected WebDriver driver;</code> — <code>BaseTest</code> nằm package <code>base</code>, test nằm package <code>tests</code>. Class con <strong>khác package</strong> vẫn truy cập được nhờ <code>protected</code> (nếu để mặc định thì không).</li>
+<li><code>private static final String LOGIN_URL</code> — chỉ riêng class dùng.</li>
+<li><code>public void setup()</code> — public để <code>main()</code> và TestNG gọi được.</li>
+</ul>
+<h2 id="15-bảng-tổng-hợp">15. Bảng tổng hợp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khái niệm Java</th>
+<th>Xuất hiện trong dự án</th>
+<th>Vai trò trong POM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inheritance</td>
+<td><code>ExerciseXX extends BaseTest</code></td>
+<td><code>LoginPage extends BasePage</code></td>
+</tr>
+<tr>
+<td>Interface</td>
+<td><code>WebDriver</code>, <code>JavascriptExecutor</code></td>
+<td><code>Page</code> contract (tuỳ chọn)</td>
+</tr>
+<tr>
+<td>Encapsulation</td>
+<td><code>private</code> helper, hằng URL</td>
+<td>Locator <code>private</code>, method <code>public</code></td>
+</tr>
+<tr>
+<td>Constructor</td>
+<td><code>new WebDriverWait(driver, ...)</code></td>
+<td><code>LoginPage(WebDriver driver)</code></td>
+</tr>
+<tr>
+<td>Collections</td>
+<td><code>List&lt;WebElement&gt;</code></td>
+<td>Trả về danh sách dữ liệu bảng</td>
+</tr>
+<tr>
+<td>Lambda</td>
+<td><code>wait.until(d -&gt; ...)</code></td>
+<td>Custom wait trong Page</td>
+</tr>
+<tr>
+<td>Generics</td>
+<td><code>wait.until(...)</code> trả <code>WebElement</code>/<code>Boolean</code></td>
+<td><code>BasePage</code> method tái sử dụng</td>
+</tr>
+<tr>
+<td>Exception</td>
+<td><code>try/finally</code>, <code>Assert</code></td>
+<td>Bắt <code>TimeoutException</code> có chủ đích</td>
+</tr>
+<tr>
+<td>static</td>
+<td><code>main()</code>, <code>Assert.*</code></td>
+<td><code>DriverFactory.create()</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="bài-tập-tự-kiểm-tra">Bài tập tự kiểm tra</h2>
+<ol>
+<li>Vì sao <code>driver</code> khai báo kiểu <code>WebDriver</code> mà không phải <code>ChromeDriver</code>?</li>
+<li>Nếu đổi <code>protected</code> thành <code>private</code> trong <code>BaseTest</code>, chuyện gì xảy ra ở <code>Exercise01_LoginTest</code>?</li>
+<li>Vì sao biến <code>countBeforeScroll</code> phải <code>final</code>?</li>
+<li><code>findElement</code> và <code>findElements</code> khác nhau thế nào khi không tìm thấy?</li>
+<li>Viết <code>BasePage</code> có constructor nhận <code>WebDriver</code> và method <code>protected WebElement waitVisible(By by)</code>.</li>
+</ol>
+<details>
+<summary>Gợi ý đáp án</summary>
+<ol>
+<li>Đa hình, dễ đổi browser, không bị buộc vào API riêng của <code>ChromeDriver</code>.</li>
+<li>Lỗi biên dịch: class con khác package không truy cập được <code>driver</code>/<code>wait</code>.</li>
+<li>Lambda chỉ capture biến final / effectively final.</li>
+<li><code>findElement</code> ném <code>NoSuchElementException</code>; <code>findElements</code> trả <code>List</code> rỗng.</li>
+<li>Xem mục 8, thêm <code>protected WebElement waitVisible(By by) { return wait.until(ExpectedConditions.visibilityOfElementLocated(by)); }</code>.</li>
+</ol>
+</details>
+<p>➡️ Tiếp: <a href="00-environment-setup.html">Cài đặt môi trường</a></p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="12-file-handling.html"><small>← Bài trước</small><span>Java: File Handling, Properties và Configuration</span></a><a class="next" href="../02-maven-and-project/README.html"><small>Bài tiếp theo →</small><span>Phase 2 — Maven and Project Management (Chapter 09–12)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/13-java-selenium-cheatsheet.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

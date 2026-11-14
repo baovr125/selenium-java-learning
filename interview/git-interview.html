@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git và Team Workflow — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/git-interview" data-root="../" data-lesson="0" data-title="Git và Team Workflow — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="git-và-team-workflow--interview">Git và Team Workflow — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h3 id="q1-what-is-the-difference-between-git-and-github">Q1. What is the difference between Git and GitHub?</h3>
+<p><strong>Dịch:</strong> Git khác GitHub?</p>
+<p><strong>Sample answer:</strong> Git is a distributed version control system that runs locally. GitHub is a hosting platform for Git repositories with collaboration features such as pull requests, issues and CI.</p>
+<p><strong>Giải thích:</strong> Git = công cụ; GitHub/GitLab/Bitbucket = dịch vụ.</p>
+<p><strong>Ví dụ:</strong> Clone dự án từ GitHub rồi chạy <code>.\mvnw.cmd clean test</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is a remote?</em></p>
+<hr />
+<h3 id="q2-explain-the-basic-git-workflow">Q2. Explain the basic Git workflow.</h3>
+<p><strong>Dịch:</strong> Quy trình Git cơ bản?</p>
+<p><strong>Sample answer:</strong> <code>git clone</code>, create a branch with <code>git checkout -b feature/x</code>, make changes, <code>git status</code>, <code>git add &lt;files&gt;</code>, <code>git commit -m "..."</code>, <code>git push -u origin feature/x</code>, open a pull request, review, merge, then <code>git pull</code> on main.</p>
+<p><strong>Giải thích:</strong> Tránh commit thẳng vào <code>main</code>.</p>
+<p><strong>Ví dụ:</strong> Nhánh <code>feature/add-logging</code> chỉ sửa <code>pom.xml</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What does <code>git pull</code> do?</em> → <code>fetch</code> + <code>merge</code>.</p>
+<hr />
+<h3 id="q3-what-should-and-should-not-be-committed-in-a-selenium-maven-project">Q3. What should and should not be committed in a Selenium Maven project?</h3>
+<p><strong>Dịch:</strong> Nên/không nên commit gì?</p>
+<p><strong>Sample answer:</strong> Commit source code, <code>pom.xml</code>, <code>testng.xml</code>, <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/</code> and shared config, and <code>.gitignore</code>. Do not commit <code>target/</code>, <code>test-output/</code>, the local Maven repository, IDE files or secrets.</p>
+<p><strong>Giải thích:</strong> Đã có trong <code>.gitignore</code> của dự án.</p>
+<p><strong>Ví dụ:</strong> <code>.gitignore</code>: <code>target/</code>, <code>test-output/</code>, <code>.mvn/repository/</code>, <code>.idea/</code>, <code>*.iml</code>...</p>
+<p><strong>Đào sâu:</strong> <em>What if someone committed <code>target/</code> by mistake?</em> → <code>git rm -r --cached target</code>.</p>
+<hr />
+<h3 id="q4-what-is-gitignore-and-how-do-you-check-it-works">Q4. What is <code>.gitignore</code> and how do you check it works?</h3>
+<p><strong>Dịch:</strong> <code>.gitignore</code> là gì, kiểm tra thế nào?</p>
+<p><strong>Sample answer:</strong> It lists patterns of files Git should not track. I check with <code>git status</code> and <code>git check-ignore -v &lt;path&gt;</code> which prints the rule that matches.</p>
+<p><strong>Giải thích:</strong> <code>.gitignore</code> chỉ tác dụng với file <strong>chưa</strong> được track.</p>
+<p><strong>Ví dụ:</strong> <code>git check-ignore -v .mvn/repository</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why is the file still tracked after adding to <code>.gitignore</code>?</em> → <code>git rm --cached</code>.</p>
+<hr />
+<h3 id="q5-how-do-you-resolve-a-merge-conflict-in-pomxml">Q5. How do you resolve a merge conflict in <code>pom.xml</code>?</h3>
+<p><strong>Dịch:</strong> Giải quyết conflict ở <code>pom.xml</code>?</p>
+<p><strong>Sample answer:</strong> I open the conflicted file, read both sides between the markers, keep the valid changes from both, for example both new dependencies, remove the markers, run <code>mvnw dependency:tree</code> and <code>mvnw clean test</code>, and then commit the merge.</p>
+<p><strong>Giải thích:</strong> Kiểm chứng bằng build, không chỉ "hết dấu <code>&lt;&lt;&lt;&lt;</code>".</p>
+<p><strong>Ví dụ:</strong> Hai người cùng thêm dependency: giữ cả hai nếu hợp lệ.</p>
+<p><strong>Đào sâu:</strong> <em>What if both changed the same version property?</em> → thống nhất với nhóm.</p>
+<hr />
+<h3 id="q6-what-is-a-pull-request-and-what-do-you-check-when-reviewing-test-code">Q6. What is a pull request and what do you check when reviewing test code?</h3>
+<p><strong>Dịch:</strong> Pull request; review code test cần kiểm tra gì?</p>
+<p><strong>Sample answer:</strong> A PR proposes merging a branch and enables review and CI. In review I check assertions are meaningful, waits are condition-based without <code>sleep</code>, locators are stable, tests are independent, no hard-coded secrets, <code>clean test</code> is green with the right number of tests, and nothing generated is committed.</p>
+<p><strong>Giải thích:</strong> Checklist ở <a href="../06-automation-framework/05-maintainable-test-framework.html#7-review-code-test">framework-design/05</a>.</p>
+<p><strong>Ví dụ:</strong> PR thêm dependency cần kèm <code>dependency:tree</code> và kết quả test.</p>
+<p><strong>Đào sâu:</strong> <em>What if CI fails but local passes?</em></p>
+<hr />
+<h3 id="q7-why-should-mvnw-be-executable-in-git-and-how-do-you-set-it">Q7. Why should <code>mvnw</code> be executable in Git, and how do you set it?</h3>
+<p><strong>Dịch:</strong> Vì sao <code>mvnw</code> cần quyền thực thi, đặt thế nào?</p>
+<p><strong>Sample answer:</strong> On Linux and macOS, <code>./mvnw</code> needs the executable bit. Git stores it as mode 100755. On Windows I can check with <code>git ls-files --stage mvnw</code> and set it with <code>git update-index --chmod=+x mvnw</code>.</p>
+<p><strong>Giải thích:</strong> Lỗi <code>Permission denied</code>. Bổ sung <code>.gitattributes</code> để LF.</p>
+<p><strong>Ví dụ:</strong> CI Linux fail <code>Permission denied: ./mvnw</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Line endings?</em> → LF cho <code>mvnw</code>.</p>
+<hr />
+<h3 id="q8-how-do-you-keep-the-team-on-the-same-maven-and-library-versions">Q8. How do you keep the team on the same Maven and library versions?</h3>
+<p><strong>Dịch:</strong> Giữ cả nhóm cùng phiên bản?</p>
+<p><strong>Sample answer:</strong> Commit the Maven Wrapper so Maven is pinned, pin library and plugin versions in <code>pom.xml</code> properties, and avoid version ranges and SNAPSHOT for external libraries. The wrapper does not pin the JDK or Chrome, so the README states the required JDK, and CI uses a fixed JDK.</p>
+<p><strong>Giải thích:</strong> Wrapper khoá Maven, không khoá JDK/Chrome.</p>
+<p><strong>Ví dụ:</strong> <code>selenium.version=4.52.0</code>, <code>testng.version=7.10.2</code>, Maven 3.9.16.</p>
+<p><strong>Đào sâu:</strong> <em>How to enforce JDK version?</em> → Maven Enforcer plugin (tuỳ chọn).</p>
+<hr />
+<h3 id="q9-a-teammate-cannot-build-after-you-pushed-how-do-you-help">Q9. A teammate cannot build after you pushed. How do you help?</h3>
+<p><strong>Dịch:</strong> Đồng đội build lỗi sau khi bạn push?</p>
+<p><strong>Sample answer:</strong> Ask for the exact command, the first error and <code>mvnw -version</code>. Ask them to <code>git pull</code>, run <code>mvnw clean test</code>, and compare JDK and network. I try to reproduce it in a fresh clone. If a file was missing from the commit I add it.</p>
+<p><strong>Giải thích:</strong> Thu thập thông tin trước khi đoán.</p>
+<p><strong>Ví dụ:</strong> Quên commit <code>mvnw.cmd</code> hoặc <code>.mvn/wrapper</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How would you prevent it?</em> → CI trên máy sạch.</p>
+<hr />
+<h3 id="q10-what-are-good-commit-messages">Q10. What are good commit messages?</h3>
+<p><strong>Dịch:</strong> Commit message tốt?</p>
+<p><strong>Sample answer:</strong> Short, imperative, explaining what and why, for example "Add explicit wait for modal in entry ad test". One logical change per commit.</p>
+<p><strong>Giải thích:</strong> Giúp review và <code>git blame</code>.</p>
+<p><strong>Ví dụ:</strong> "Update Maven configuration" là quá chung chung; nên nói rõ cấu hình nào.</p>
+<p><strong>Đào sâu:</strong> <em>Conventional commits?</em></p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="framework-interview.html"><small>← Bài trước</small><span>Testing Framework và Page Object Model — Interview</span></a><a class="next" href="java-interview.html"><small>Bài tiếp theo →</small><span>Java for Automation — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/git-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

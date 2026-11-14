@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 01: Khởi tạo dự án và bài test đầu tiên (Bài 1 + Bài 2) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/01-first-selenium-test" data-root="../../" data-lesson="0" data-title="Lab 01: Khởi tạo dự án và bài test đầu tiên (Bài 1 + Bài 2)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-01-khởi-tạo-dự-án-và-bài-test-đầu-tiên-bài-1--bài-2">Lab 01: Khởi tạo dự án và bài test đầu tiên (Bài 1 + Bài 2)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../02-maven-and-project/00-project-initialization.html">04 Project initialization</a> · <a href="../../02-maven-and-project/02-pom-xml.html">maven/02 pom.xml</a></p>
+</blockquote>
+<hr />
+<h2 id="bài-1-khởi-tạo-dự-án-selenium-java">Bài 1. Khởi tạo dự án Selenium Java</h2>
+<p><strong>Mục tiêu:</strong> Dựng một dự án Maven mới có cấu trúc chuẩn và chạy được một test Selenium.</p>
+<p><strong>Kiến thức cần dùng:</strong> cấu trúc thư mục Maven (<a href="../../02-maven-and-project/01-maven-fundamentals.html">maven/01</a>), <code>BaseTest</code>, TestNG <code>@Test</code>.</p>
+<p><strong>Yêu cầu:</strong></p>
+<ol>
+<li>Tạo thư mục <code>B:\Fresher\SeleniumLab</code> (độc lập với <code>Selenium1</code>).</li>
+<li>Có <code>src/test/java/base/BaseTest.java</code>, <code>src/test/java/tests/HomePageTest.java</code>.</li>
+<li>Test mở <code>https://the-internet.herokuapp.com/</code> và kiểm tra <code>title</code> bằng <code>"The Internet"</code>.</li>
+</ol>
+<p><strong>Các bước:</strong></p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">mkdir</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span>
+<span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span>
+<span class="n">mkdir</span> <span class="n">src</span><span class="p">\</span><span class="n">test</span><span class="p">\</span><span class="n">java</span><span class="p">\</span><span class="n">base</span><span class="p">,</span> <span class="n">src</span><span class="p">\</span><span class="n">test</span><span class="p">\</span><span class="n">java</span><span class="p">\</span><span class="n">tests</span><span class="p">,</span> <span class="n">src</span><span class="p">\</span><span class="n">test</span><span class="p">\</span><span class="n">resources</span></code></pre></div>
+<ol>
+<li>Tạo <code>pom.xml</code> (Bài 2).</li>
+<li>Tạo <code>BaseTest</code> và <code>HomePageTest</code> theo <a href="../../02-maven-and-project/00-project-initialization.html#5-viết-basetest">04 mục 5-6</a>.</li>
+<li>Chạy (sau khi có Wrapper ở Bài 3): <code>.\mvnw.cmd test</code>.</li>
+</ol>
+<p><strong>Code tham khảo:</strong> xem <a href="../../02-maven-and-project/00-project-initialization.html">04-project-initialization.md</a> (đủ <code>BaseTest</code> và <code>HomePageTest</code>).</p>
+<p><strong>Kết quả mong đợi:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[INFO] Running tests.HomePageTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS</code></pre></div>
+<p><strong>Lỗi thường gặp:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tests run: 0</code></td>
+<td>Class không tên <code>*Test</code>, hoặc nằm ngoài <code>src/test/java</code></td>
+<td>Đổi tên/vị trí</td>
+</tr>
+<tr>
+<td><code>package org.testng does not exist</code></td>
+<td>Thiếu dependency</td>
+<td>Kiểm tra <code>pom.xml</code></td>
+</tr>
+<tr>
+<td><code>SessionNotCreatedException</code></td>
+<td>Chrome cũ/ mất mạng</td>
+<td>Cập nhật Chrome, kiểm tra mạng</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Mở rộng:</strong> Thêm test thứ hai kiểm tra <code>driver.getCurrentUrl()</code> bằng <code>https://the-internet.herokuapp.com/</code>.</p>
+<hr />
+<h2 id="bài-2-cấu-hình-maven-pomxml">Bài 2. Cấu hình Maven (<code>pom.xml</code>)</h2>
+<p><strong>Mục tiêu:</strong> Viết <code>pom.xml</code> đúng, hiểu từng khối, và so sánh với <code>pom.xml</code> của <code>Selenium1</code>.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>groupId/artifactId/version</code>, <code>properties</code>, <code>dependencies</code>, scope, <code>plugins</code> (<a href="../../02-maven-and-project/02-pom-xml.html">maven/02</a>).</p>
+<p><strong>Yêu cầu:</strong></p>
+<ol>
+<li><code>groupId = com.fresher</code>, <code>artifactId = SeleniumLab</code>, <code>version = 1.0-SNAPSHOT</code>.</li>
+<li><code>maven.compiler.release = 21</code>, <code>selenium.version = 4.52.0</code>, <code>testng.version = 7.10.2</code> (cùng phiên bản dự án gốc để so sánh).</li>
+<li>Hai dependency với scope <code>test</code>.</li>
+<li><code>maven-compiler-plugin 3.13.0</code>, <code>maven-surefire-plugin 3.5.2</code>.</li>
+<li><strong>Tự trả lời bằng văn bản</strong> (viết vào file ghi chú): vì sao scope <code>test</code>? Điều gì xảy ra nếu code Selenium đặt trong <code>src/main</code>?</li>
+</ol>
+<p><strong>Các bước:</strong> chép khung ở <a href="../../02-maven-and-project/00-project-initialization.html#3-viết-pomxml">04 mục 3</a>, rồi <strong>đối chiếu từng dòng</strong> với <a href="../../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a> của dự án gốc; ghi lại điểm khác (ví dụ: bản gốc có <code>suiteXmlFile</code>).</p>
+<p><strong>Kiểm tra:</strong></p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">validate</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">dependency</span><span class="p">:</span><span class="n">tree</span></code></pre></div>
+<p><strong>Kết quả mong đợi:</strong> <code>BUILD SUCCESS</code>; <code>dependency:tree</code> thấy <code>selenium-java:4.52.0:test</code>, <code>testng:7.10.2:test</code> và các transitive (<code>selenium-support</code>, <code>guava</code>, <code>jcommander</code>...).</p>
+<p><strong>Lỗi thường gặp:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Non-parseable POM</code></td>
+<td>XML sai (thiếu đóng thẻ)</td>
+<td>Kiểm tra thẻ</td>
+</tr>
+<tr>
+<td><code>Could not find artifact</code></td>
+<td>Sai tọa độ/ phiên bản</td>
+<td>So với <code>pom.xml</code> gốc</td>
+</tr>
+<tr>
+<td><code>release version 21 not supported</code></td>
+<td>JDK &lt; 21</td>
+<td>Dùng JDK ≥ 21</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Câu hỏi tự kiểm tra:</strong></p>
+<ol>
+<li><code>${selenium.version}</code> được thay ở đâu?</li>
+<li><code>&lt;scope&gt;test&lt;/scope&gt;</code> ảnh hưởng gì tới <code>compile</code>?</li>
+<li>Vì sao ghim <code>maven-surefire-plugin</code>?</li>
+</ol>
+<details>
+<summary>Đáp án gợi ý</summary>
+<ol>
+<li>Maven thay biến bằng giá trị trong <code>&lt;properties&gt;</code> khi đọc POM.</li>
+<li>Thư viện không có trong classpath của <code>src/main</code>; chỉ có khi biên dịch/chạy test.</li>
+<li>Để build lặp lại được, không phụ thuộc phiên bản mặc định có thể đổi theo phiên bản Maven.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Practical Exercises — Mục lục</span></a><a class="next" href="02-locator-practice.html"><small>Bài tiếp theo →</small><span>Lab 02: Locator Practice (Bài 5)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/01-first-selenium-test.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

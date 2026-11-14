@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cài đặt môi trường · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="01-java-fundamentals/00-environment-setup" data-root="../" data-lesson="1" data-title="Cài đặt môi trường">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="cài-đặt-môi-trường">Cài đặt môi trường</h1>
+<blockquote>
+<p>🧭 Phase 1 · Java Fundamentals · Chapter 01 · Mức ưu tiên: <strong>Essential</strong>
+➡️ <a href="01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a></p>
+<p>Mục tiêu: máy của bạn chạy được <code>.\mvnw.cmd test</code>. <strong>Không cần cài Maven</strong> vì dự án có Maven Wrapper.
+Liên quan: <a href="13-java-selenium-cheatsheet.html">Trước</a> · <a href="../02-maven-and-project/00-project-initialization.html">Sau: Khởi tạo dự án</a> · <a href="../02-maven-and-project/03-maven-wrapper.html">Maven Wrapper</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Cài và kiểm tra JDK (≥ 21) cùng Chrome</li>
+<li>Phân biệt <code>JAVA_HOME</code>, <code>PATH</code>, JDK và JRE</li>
+<li>Chạy <code>mvnw.cmd -version</code> và test kiểm tra môi trường mà không cần cài Maven</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li>Không cần kiến thức lập trình trước</li>
+</ul>
+<h2 id="1-danh-sách-cần-có">1. Danh sách cần có</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Bắt buộc?</th>
+<th>Phiên bản</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK (không phải chỉ JRE)</td>
+<td>✅</td>
+<td><strong>21 trở lên</strong></td>
+<td>Dự án <code>--release 21</code>. Máy tác giả: JDK 25.0.1 vẫn biên dịch được</td>
+</tr>
+<tr>
+<td>Google Chrome</td>
+<td>✅</td>
+<td>Bản mới</td>
+<td>Selenium Manager tự tải ChromeDriver khớp</td>
+</tr>
+<tr>
+<td>Internet</td>
+<td>✅ lần đầu</td>
+<td></td>
+<td>Tải Maven, thư viện, ChromeDriver, và truy cập website test</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>❌</td>
+<td></td>
+<td><code>mvnw</code>/<code>mvnw.cmd</code> tự tải Maven 3.9.16</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>Nên có</td>
+<td>2.x</td>
+<td>Làm việc nhóm</td>
+</tr>
+<tr>
+<td>IDE</td>
+<td>Nên có</td>
+<td>VS Code / IntelliJ IDEA / Eclipse</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-cài-và-kiểm-tra-jdk">2. Cài và kiểm tra JDK</h2>
+<ol>
+<li>Tải JDK 21 (hoặc mới hơn): Eclipse Temurin, Microsoft Build of OpenJDK, Oracle JDK...</li>
+<li>Kiểm tra:</li>
+</ol>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">java</span> <span class="n">-version</span>
+<span class="n">javac</span> <span class="n">-version</span></code></pre></div>
+<ul>
+<li><code>javac</code> báo "not recognized" ⇒ bạn mới cài <strong>JRE</strong>, cần cài <strong>JDK</strong>.</li>
+<li>Phiên bản phải ≥ 21, nếu thấy <code>1.8</code> hay <code>11</code>, <code>17</code> ⇒ biên dịch sẽ lỗi <code>release version 21 not supported</code>.</li>
+</ul>
+<ol start="3">
+<li><strong>(Nên làm)</strong> Đặt <code>JAVA_HOME</code>:</li>
+</ol>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c"># Thay đường dẫn cho đúng máy bạn</span>
+<span class="no">[Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;JAVA_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;C:\Program Files\Java\jdk-25&quot;</span><span class="p">,</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span></code></pre></div>
+<p>Đóng và mở lại terminal rồi kiểm tra:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">echo </span><span class="nv">$env:JAVA_HOME</span></code></pre></div>
+<p>🔎 <strong>Thực tế trên máy này:</strong> <code>JAVA_HOME</code> <strong>trống</strong> nhưng <code>mvnw.cmd</code> vẫn chạy bình thường vì <code>java</code> có trong <code>PATH</code> (đã kiểm chứng: <code>.\mvnw.cmd -version</code> in <code>Java version: 25.0.1</code>). Tuy vậy vẫn nên đặt <code>JAVA_HOME</code>: nhiều công cụ (IDE, CI, script) kỳ vọng nó, và nó giúp chọn đúng JDK khi máy có nhiều phiên bản.</p>
+<h2 id="3-cài-chrome">3. Cài Chrome</h2>
+<p>Cài từ trang chính thức. Xem phiên bản tại <code>chrome://version</code>. Không cần tải <code>chromedriver.exe</code>.</p>
+<h2 id="4-kiểm-tra-maven-wrapper-không-cần-cài-maven">4. Kiểm tra Maven Wrapper (không cần cài Maven)</h2>
+<p>Mở PowerShell tại thư mục dự án (nơi có <code>pom.xml</code>):</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
+<p>Kết quả mong đợi (rút gọn, đã chạy thật):</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Apache Maven 3.9.16 (...)
+Maven home: C:\Users\&lt;tên&gt;\.m2\wrapper\dists\apache-maven-3.9.16\&lt;hash&gt;
+Java version: 25.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java\jdk-25</code></pre></div>
+<p>Lần chạy <strong>đầu tiên</strong> trên máy mới, wrapper sẽ in <code>Downloading ... apache-maven-3.9.16-bin.zip</code> rồi giải nén vào <code>C:\Users\&lt;tên&gt;\.m2\wrapper\dists\</code>. Các lần sau dùng lại, không tải nữa.</p>
+<p>Nếu muốn dùng Maven cài sẵn để so sánh: tải bản Binary zip từ trang Apache Maven, giải nén, thêm <code>bin</code> vào <code>PATH</code>, kiểm tra <code>mvn -version</code>. Trong dự án này <strong>không bắt buộc</strong>, và nên dùng <code>mvnw</code> để cả nhóm cùng phiên bản.</p>
+<h2 id="5-chọn-ide">5. Chọn IDE</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>IDE</th>
+<th>Cách mở dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS Code</td>
+<td>Cài <strong>Extension Pack for Java</strong>; mở thư mục; có sẵn <code>.vscode/tasks.json</code> (Ctrl+Shift+B chạy test của file đang mở)</td>
+</tr>
+<tr>
+<td>IntelliJ IDEA</td>
+<td><code>File → Open</code> chọn <code>pom.xml</code> → <em>Open as Project</em>; Maven tự import</td>
+</tr>
+<tr>
+<td>Eclipse</td>
+<td><code>Import → Existing Maven Projects</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Dù dùng IDE nào, hãy kiểm chứng bằng dòng lệnh <code>.\mvnw.cmd test</code> — kết quả này mới là chuẩn chung của nhóm/CI.</p>
+<h2 id="6-kiểm-tra-toàn-bộ-môi-trường">6. Kiểm tra toàn bộ môi trường</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">java</span> <span class="n">-version</span>            <span class="c"># &gt;= 21</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span>      <span class="c"># Maven 3.9.16</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=EnvironmentCheckTest&quot;</span>   <span class="c"># mở Chrome, kiểm tra title &quot;The Internet&quot;</span></code></pre></div>
+<p>Kết quả mong đợi của lệnh cuối (đã chạy thật):</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[INFO] Running tests.EnvironmentCheckTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, ...
+[INFO] BUILD SUCCESS</code></pre></div>
+<blockquote>
+<p>Cảnh báo <code>SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"</code> là bình thường (TestNG kéo <code>slf4j-api</code> nhưng chưa có logging binding).</p>
+</blockquote>
+<h2 id="7-lỗi-môi-trường-thường-gặp">7. Lỗi môi trường thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Triệu chứng</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'javac' is not recognized</code></td>
+<td>Chỉ có JRE hoặc JDK chưa trong <code>PATH</code></td>
+<td>Cài JDK, thêm <code>%JAVA_HOME%\bin</code> vào <code>PATH</code></td>
+</tr>
+<tr>
+<td><code>release version 21 not supported</code></td>
+<td>JDK &lt; 21</td>
+<td>Cài JDK ≥ 21, đặt <code>JAVA_HOME</code> đúng</td>
+</tr>
+<tr>
+<td><code>SessionNotCreatedException</code></td>
+<td>Chrome quá cũ / Selenium Manager không tải được driver</td>
+<td>Cập nhật Chrome; kiểm tra Internet/proxy</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd</code> không nhận ra</td>
+<td>Đang đứng sai thư mục</td>
+<td><code>cd</code> vào thư mục chứa <code>mvnw.cmd</code>; trong PowerShell phải có <code>.\</code></td>
+</tr>
+<tr>
+<td>Tiếng Việt hiện <code>?</code></td>
+<td>Console không phải UTF-8</td>
+<td><code>chcp 65001</code> hoặc chạy qua <code>run-test.ps1</code></td>
+</tr>
+<tr>
+<td>Wrapper không tải được Maven</td>
+<td>Mạng/proxy/firewall chặn <code>repo.maven.apache.org</code></td>
+<td>Xem <a href="../02-maven-and-project/09-maven-troubleshooting.html">maven/08</a></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Chạy lệnh kiểm tra phiên bản Java và ghi lại kết quả.</p>
+<p><strong>Input:</strong> Không có</p>
+<p><strong>Expected Output:</strong> Hai dòng phiên bản, JDK ≥ 21</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>java -version</code> và <code>javac -version</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Kiểm tra <code>JAVA_HOME</code> và phân biệt ba trường hợp: trống, đúng, sai.</p>
+<p><strong>Input:</strong> Terminal PowerShell</p>
+<p><strong>Expected Output:</strong> In ra giá trị <code>JAVA_HOME</code> và <code>True/False</code> cho <code>javac.exe</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>Test-Path</code> với <code>$env:JAVA_HOME\bin\javac.exe</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Trong một <strong>bản sao</strong> của dự án, chạy test kiểm tra môi trường và ghi lại 3 dòng: phiên bản Maven, phiên bản Java, kết quả <code>Tests run</code>.</p>
+<p><strong>Input:</strong> Bản sao dự án <code>Selenium1</code></p>
+<p><strong>Expected Output:</strong> <code>Tests run: 1, Failures: 0, Errors: 0, Skipped: 0</code> và <code>BUILD SUCCESS</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>-Dtest=EnvironmentCheckTest</code> (class này không nằm trong <code>testng.xml</code>).</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> JDK khác JRE ở điểm nào?</p>
+<ul>
+<li>A. JDK có trình biên dịch <code>javac</code>, JRE chỉ để chạy</li>
+<li>B. JRE có <code>javac</code>, JDK thì không</li>
+<li>C. Hai thứ giống hệt nhau</li>
+<li>D. JDK chỉ dùng cho Android</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> JDK = JRE + công cụ phát triển (<code>javac</code>...). Để biên dịch test cần JDK.</p>
+</details>
+<p><strong>Câu 2.</strong> Dự án chạy được <code>.\mvnw.cmd</code> dù <code>JAVA_HOME</code> trống vì sao?</p>
+<ul>
+<li>A. Wrapper tự cài JDK</li>
+<li>B. Maven dùng <code>java</code> có trong <code>PATH</code></li>
+<li>C. Chrome cung cấp Java</li>
+<li>D. Không thể chạy được</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Khi <code>JAVA_HOME</code> trống, Maven tìm <code>java</code> trong <code>PATH</code> (đã kiểm chứng). Nhưng nếu <code>JAVA_HOME</code> được đặt <strong>sai</strong> thì lỗi.</p>
+</details>
+<p><strong>Câu 3.</strong> Có cần tải <code>chromedriver.exe</code> thủ công cho dự án Selenium 4.52.0?</p>
+<ul>
+<li>A. Có, bắt buộc</li>
+<li>B. Không, Selenium Manager tự tải</li>
+<li>C. Chỉ cần với Firefox</li>
+<li>D. Chỉ trên Linux</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Từ Selenium 4.6, Selenium Manager tự phát hiện Chrome và tải driver khớp (cần Internet).</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Do you need to install Maven to run a Maven project?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Có cần cài Maven để chạy dự án Maven không?</li>
+<li><strong>Suggested answer (EN):</strong> Not if the project has the Maven Wrapper. <code>mvnw</code> downloads the pinned Maven version automatically. You still need a JDK and, the first time, internet access.</li>
+<li><strong>Giải thích (VI):</strong> Wrapper thay việc cài Maven nhưng không thay JDK.</li>
+<li><strong>Follow-up:</strong> <em>What does the wrapper store, and where?</em></li>
+</ul>
+<p><strong>2. What is the difference between JDK and JRE?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> JDK khác JRE thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> The JDK contains the compiler and development tools such as <code>javac</code> plus the runtime; the JRE only contains what is needed to run Java programs.</li>
+<li><strong>Giải thích (VI):</strong> Làm automation cần JDK vì phải biên dịch code test.</li>
+<li><strong>Follow-up:</strong> <em>Which one does Maven need to compile?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Cần JDK ≥ 21 (dự án <code>--release 21</code>); JDK mới hơn vẫn biên dịch được</li>
+<li><code>mvnw</code> thay việc cài Maven, <strong>không</strong> thay JDK</li>
+<li>Selenium Manager tự tải driver nên cần Internet lần đầu</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>java -version</code>, <code>javac -version</code>, <code>.\mvnw.cmd -version</code></li>
+<li><code>$env:JAVA_HOME</code>, <code>Test-Path</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>JAVA_HOME</code> trống (OK) ≠ <code>JAVA_HOME</code> sai (lỗi)</li>
+<li>JRE ≠ JDK</li>
+<li>Maven ≠ Maven Wrapper</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">java</span> <span class="n">-version</span>
+<span class="n">javac</span> <span class="n">-version</span></code></pre></div>
+<p>Nếu <code>javac</code> báo "not recognized" nghĩa là bạn mới có JRE hoặc chưa đặt PATH. Cần phiên bản ≥ 21 (dự án dùng <code>--release 21</code>).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">echo </span><span class="nv">$env:JAVA_HOME</span>
+<span class="nb">Test-Path</span> <span class="s2">&quot;$env:JAVA_HOME\bin\javac.exe&quot;</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
+<ul>
+<li>Trống: vẫn chạy được nếu <code>java</code> có trong <code>PATH</code> (đã kiểm chứng trên máy dự án).</li>
+<li>Đúng: Maven dùng JDK đó.</li>
+<li><strong>Sai</strong> (trỏ nhầm thư mục): lỗi <code>JAVA_HOME ... not defined correctly</code> — hoặc đặt đúng, hoặc để trống hẳn.</li>
+</ul>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=EnvironmentCheckTest&quot;</span></code></pre></div>
+<p>Ghi chú mẫu: <code>Apache Maven 3.9.16</code> · <code>Java version: 25.0.1</code> · <code>Tests run: 1, Failures: 0</code>.</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 1 — Java Fundamentals (Chapter 01–08)</span></a><a class="next" href="01-getting-started.html"><small>Bài tiếp theo →</small><span>Java: Getting Started (Introduction, Syntax, Output, Comments)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/00-environment-setup.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

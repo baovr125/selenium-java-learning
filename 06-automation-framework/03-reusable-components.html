@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reusable Components · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="06-automation-framework/03-reusable-components" data-root="../" data-lesson="1" data-title="Reusable Components">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="reusable-components">Reusable Components</h1>
+<blockquote>
+<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="02-automation-framework-architecture.html">Kiến trúc Automation Framework</a> · ➡️ <a href="04-configuration-management.html">Configuration Management</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="02-automation-framework-architecture.html">Trước: Kiến trúc</a> · <a href="04-configuration-management.html">Sau: Configuration</a> · <a href="../03-selenium-fundamentals/06-element-interactions.html">selenium/04</a>
+Mọi code dưới đây là <strong>ví dụ tham khảo</strong> để bạn tự viết trong thư mục thực hành (không thêm vào <code>Selenium1</code>). Đã dùng API Selenium 4.52 / TestNG 7.10.2 / Java 21.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Viết <code>BasePage</code>, <code>DriverFactory</code>, <code>Config</code>, utilities</li>
+<li>Thêm screenshot và Listener</li>
+<li>Biết khi nào kéo code ra dùng chung</li>
+<li>Tránh <code>static</code> giữ trạng thái driver</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-page-object-model.html">Page Object Model</a></li>
+<li><a href="../01-java-fundamentals/12-file-handling.html">Java File Handling</a></li>
+</ul>
+<h2 id="1-danh-sách-thành-phần">1. Danh sách thành phần</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Trách nhiệm</th>
+<th>Nguồn gốc trong dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BasePage</code></td>
+<td>click/type/text/wait dùng lại</td>
+<td>Lặp ở các Exercise (<code>wait.until(...)</code>)</td>
+</tr>
+<tr>
+<td><code>DriverFactory</code></td>
+<td>Tạo <code>WebDriver</code> theo browser</td>
+<td><code>new ChromeDriver()</code> trong BaseTest</td>
+</tr>
+<tr>
+<td><code>Config</code></td>
+<td>Đọc cấu hình</td>
+<td>Hằng hard-code</td>
+</tr>
+<tr>
+<td><code>Waits</code> / hàm chờ</td>
+<td>Điều kiện chờ tuỳ chỉnh</td>
+<td><code>wait.until(d -&gt; ...)</code> ở Ex7</td>
+</tr>
+<tr>
+<td><code>ScrollUtils</code>, <code>JsUtils</code></td>
+<td>Thao tác JS</td>
+<td><code>scrollToBottom</code>, <code>getScrollY</code> ở Ex7</td>
+</tr>
+<tr>
+<td><code>TableUtils</code></td>
+<td>Đọc bảng</td>
+<td><code>getRowData</code> ở Ex3</td>
+</tr>
+<tr>
+<td><code>Screenshots</code></td>
+<td>Chụp ảnh</td>
+<td>(chưa có)</td>
+</tr>
+<tr>
+<td><code>Log</code></td>
+<td>Ghi log</td>
+<td><code>System.out.println</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-basepage">2. <code>BasePage</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">pages</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.*</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.*</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.time.Duration</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="nf">BasePage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// --- chờ ---</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="nf">waitVisible</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="nf">waitClickable</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">by</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">waitInvisible</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">waitCount</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBe</span><span class="p">(</span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">expected</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">waitText</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">expected</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// --- hành động ---</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">click</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w">               </span><span class="p">{</span><span class="w"> </span><span class="n">waitClickable</span><span class="p">(</span><span class="n">by</span><span class="p">).</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">);</span><span class="w"> </span><span class="n">el</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span><span class="w"> </span><span class="n">el</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">text</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w">              </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">).</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w">             </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">).</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isPresent</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">by</span><span class="p">).</span><span class="na">isEmpty</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">all</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">by</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">hover</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">openqa</span><span class="p">.</span><span class="na">selenium</span><span class="p">.</span><span class="na">interactions</span><span class="p">.</span><span class="na">Actions</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">)).</span><span class="na">perform</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Điểm mấu chốt:</p>
+<ul>
+<li><strong>Wait nằm trong <code>BasePage</code></strong> ⇒ Page và Test không phải lo đồng bộ hoá.</li>
+<li><code>protected</code> — chỉ Page con dùng; test không gọi thẳng.</li>
+<li>Lấy <code>By</code> (không lưu <code>WebElement</code>) ⇒ ít stale.</li>
+<li>Dùng đúng 🧩 các <code>ExpectedConditions</code> của dự án (<code>visibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>invisibilityOfElementLocated</code>, <code>numberOfElementsToBe</code>, <code>textToBe</code>).</li>
+</ul>
+<h2 id="3-driverfactory">3. <code>DriverFactory</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">core</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.WebDriver</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeDriver</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeOptions</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.edge.EdgeDriver</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.firefox.FirefoxDriver</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DriverFactory</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">DriverFactory</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">browser</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">headless</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">browser</span><span class="p">.</span><span class="na">toLowerCase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">ChromeOptions</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeOptions</span><span class="p">();</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">headless</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--headless=new&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;--window-size=1920,1080&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ChromeDriver</span><span class="p">(</span><span class="n">o</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;firefox&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FirefoxDriver</span><span class="p">();</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;edge&quot;</span><span class="w">    </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EdgeDriver</span><span class="p">();</span>
+<span class="w">            </span><span class="k">default</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">&quot;Browser không hỗ trợ: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">browser</span><span class="p">);</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Mẫu thiết kế: <strong>Factory</strong>. Lợi ích: thêm browser ở một nơi; <code>BaseTest</code> chỉ gọi <code>DriverFactory.create(...)</code>. <code>switch</code> expression + <code>yield</code> là Java 14+ (🧩 dự án <code>release 21</code> hỗ trợ). Selenium Manager tự tải driver tương ứng cho Firefox/Edge.</p>
+<h2 id="4-threadlocal-driver-để-chạy-song-song">4. <code>ThreadLocal</code> driver (để chạy song song)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRIVER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="nf">driver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">DriverFactory</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">Config</span><span class="p">.</span><span class="na">browser</span><span class="p">(),</span><span class="w"> </span><span class="n">Config</span><span class="p">.</span><span class="na">headless</span><span class="p">()));</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">().</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@AfterMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">().</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">remove</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Mỗi luồng có <code>WebDriver</code> riêng. Nhớ <code>DRIVER.remove()</code>.</p>
+<h2 id="5-utility-bảng">5. Utility: bảng</h2>
+<p>Rút từ 🧩 <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03</a>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TableUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">TableUtils</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="cm">/** Đọc text mọi ô trong một hàng, bỏ n cột cuối (ví dụ cột Action). */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">rowTexts</span><span class="p">(</span><span class="n">WebElement</span><span class="w"> </span><span class="n">row</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">skipLastColumns</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cells</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;td&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">cells</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">skipLastColumns</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">data</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">cells</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h2 id="6-utility-cuộn-bằng-javascript">6. Utility: cuộn bằng JavaScript</h2>
+<p>Rút từ 🧩 <a href="../../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise07</a>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ScrollUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">ScrollUtils</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">toBottom</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">((</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">executeScript</span><span class="p">(</span>
+<span class="w">            </span><span class="s">&quot;window.scrollTo(0, document.body.scrollHeight);&quot;</span>
+<span class="w">          </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;window.dispatchEvent(new Event(&#39;scroll&#39;));&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">scrollY</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="p">((</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return window.scrollY;&quot;</span><span class="p">)).</span><span class="na">longValue</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h2 id="7-utility-chụp-ảnh">7. Utility: chụp ảnh</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Screenshots</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">Screenshots</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Path</span><span class="w"> </span><span class="nf">take</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">File</span><span class="w"> </span><span class="n">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">TakesScreenshot</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">getScreenshotAs</span><span class="p">(</span><span class="n">OutputType</span><span class="p">.</span><span class="na">FILE</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Path</span><span class="w"> </span><span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;target&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;screenshots&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Files</span><span class="p">.</span><span class="na">createDirectories</span><span class="p">(</span><span class="n">dir</span><span class="p">);</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Files</span><span class="p">.</span><span class="na">copy</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="na">toPath</span><span class="p">(),</span><span class="w"> </span><span class="n">dir</span><span class="p">.</span><span class="na">resolve</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.png&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">StandardCopyOption</span><span class="p">.</span><span class="na">REPLACE_EXISTING</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">IOException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UncheckedIOException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h2 id="8-logging">8. Logging</h2>
+<p>Đơn giản nhất: SLF4J.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Logger</span><span class="w"> </span><span class="n">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">LoginPage</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;Đăng nhập với user {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">username</span><span class="p">);</span><span class="w">        </span><span class="c1">// KHÔNG log mật khẩu</span></code></pre></div>
+<p>Cần thêm một binding (ví dụ <code>slf4j-simple</code> cùng dòng 1.7.x như <code>slf4j-api 1.7.36</code> mà TestNG kéo vào) — xem <a href="../02-maven-and-project/02-pom-xml.html#6-ví-dụ-pomxml-mở-rộng-cho-dự-án-selenium-java-minh-hoạ--không-phải-cấu-hình-của-dự-án">maven/02</a>.</p>
+<h2 id="9-listener-kết-nối-chụp-ảnh-với-testng">9. Listener (kết nối chụp ảnh với TestNG)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TestListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ITestListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onTestFailure</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getInstance</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">instance</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="n">bt</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">bt</span><span class="p">.</span><span class="na">driver</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Screenshots</span><span class="p">.</span><span class="na">take</span><span class="p">(</span><span class="n">bt</span><span class="p">.</span><span class="na">driver</span><span class="p">(),</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Đăng ký trong <code>testng.xml</code>:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;listeners&gt;&lt;listener</span><span class="w"> </span><span class="na">class-name=</span><span class="s">&quot;listeners.TestListener&quot;</span><span class="nt">/&gt;&lt;/listeners&gt;</span></code></pre></div>
+<p>⚠️ Thứ tự: <code>onTestFailure</code> chạy <strong>trước</strong> <code>@AfterMethod</code> ⇒ driver còn sống để chụp ảnh.</p>
+<h2 id="10-tiêu-chí-khi-nào-kéo-code-ra-dùng-chung">10. Tiêu chí: khi nào kéo code ra dùng chung?</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Lặp lần 1 → để yên.   Lặp lần 2 → cân nhắc.   Lặp lần 3 → refactor thành component.</code></pre></div>
+<p>Đừng trừu tượng hoá sớm: một helper dùng đúng 1 nơi nên ở lại <code>private</code> (như 🧩 <code>assertSameElement</code>).</p>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Wait đặt trong <code>BasePage</code>/helper, test không gọi <code>Thread.sleep</code>.</li>
+<li>Helper nhỏ, một việc, tên là động từ.</li>
+<li>Không để <code>static</code> giữ trạng thái driver.</li>
+<li>Không log bí mật.</li>
+<li>Có test (hoặc ít nhất ví dụ dùng) cho helper phức tạp.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Helper quá "thông minh" nuốt lỗi</td>
+<td><code>try/catch</code> rỗng</td>
+<td>Để exception lan, hoặc ném lại rõ ràng</td>
+</tr>
+<tr>
+<td>Utility giữ <code>static WebDriver</code></td>
+<td>Không song song được</td>
+<td>Truyền <code>driver</code> làm tham số</td>
+</tr>
+<tr>
+<td><code>BasePage</code> phình to</td>
+<td>Nhét mọi thứ</td>
+<td>Tách <code>Waits</code>, <code>JsUtils</code>, component</td>
+</tr>
+<tr>
+<td>Screenshot trong <code>@AfterMethod</code> sau <code>quit()</code></td>
+<td>Driver đã đóng</td>
+<td>Chụp trước <code>quit()</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>TableUtils.rowTexts(WebElement row, int skipLastColumns)</code> từ <code>getRowData</code> của Exercise03.</p>
+<p><strong>Input:</strong> Hàng <code>&lt;tr&gt;</code></p>
+<p><strong>Expected Output:</strong> Danh sách text các ô</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>row.findElements(By.tagName("td"))</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>ScrollUtils.toBottom(driver)</code> và <code>scrollY(driver)</code> từ Exercise07.</p>
+<p><strong>Input:</strong> <code>driver</code></p>
+<p><strong>Expected Output:</strong> Hai method tĩnh</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>Number.longValue()</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>TestListener</code> chụp ảnh khi test fail (trước <code>@AfterMethod</code>).</p>
+<p><strong>Input:</strong> <code>BaseTest.driver()</code> công khai</p>
+<p><strong>Expected Output:</strong> Ảnh theo tên test</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>ITestListener.onTestFailure</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Khi nào refactor thành component dùng chung?</p>
+<ul>
+<li>A. Lặp lần 1</li>
+<li>B. Lặp lần 3</li>
+<li>C. Không bao giờ</li>
+<li>D. Ngay từ đầu mọi thứ</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Lặp 1 để yên, 2 cân nhắc, 3 refactor.</p>
+</details>
+<p><strong>Câu 2.</strong> Vì sao Listener chụp ảnh chạy được trước <code>quit()</code>?</p>
+<ul>
+<li>A. Do <code>onTestFailure</code> chạy trước <code>@AfterMethod</code></li>
+<li>B. Do Maven</li>
+<li>C. Do JDK</li>
+<li>D. Không đúng</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Driver còn sống.</p>
+</details>
+<p><strong>Câu 3.</strong> Utility giữ <code>static WebDriver</code> có vấn đề gì?</p>
+<ul>
+<li>A. Không</li>
+<li>B. Không an toàn khi chạy song song</li>
+<li>C. Chậm</li>
+<li>D. Lỗi cú pháp</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Truyền <code>driver</code> làm tham số.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What reusable components would you add first?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Thành phần dùng lại nào thêm trước?</li>
+<li><strong>Suggested answer (EN):</strong> A BasePage with wait, click and type helpers, a DriverFactory, a Config class and a screenshot helper hooked into a listener.</li>
+<li><strong>Giải thích (VI):</strong> Theo giá trị/công sức.</li>
+<li><strong>Follow-up:</strong> <em>How do you avoid over-engineering?</em></li>
+</ul>
+<p><strong>2. Why should a driver factory exist?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao cần DriverFactory?</li>
+<li><strong>Suggested answer (EN):</strong> It centralizes browser creation and options, supports several browsers and headless mode from configuration, and keeps BaseTest clean.</li>
+<li><strong>Giải thích (VI):</strong> Pattern Factory.</li>
+<li><strong>Follow-up:</strong> <em>How does it relate to polymorphism?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>BasePage</code>, <code>DriverFactory</code>, <code>Config</code>, <code>Utils</code>, <code>Screenshots</code>, <code>Listener</code></li>
+<li>Quy tắc lặp 3 lần</li>
+<li>Không <code>static</code> driver</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>ITestListener.onTestFailure</code>, <code>TakesScreenshot</code>, <code>ThreadLocal</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Helper dùng 1 chỗ nên ở <code>private</code></li>
+<li><code>BasePage</code> phình to → tách</li>
+<li>Chụp ảnh sau <code>quit()</code> hỏng</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="04-configuration-management.html">Configuration Management</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TableUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">TableUtils</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">rowTexts</span><span class="p">(</span><span class="n">WebElement</span><span class="w"> </span><span class="n">row</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">skipLastColumns</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cells</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;td&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">cells</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">skipLastColumns</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">data</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">cells</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ScrollUtils</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">ScrollUtils</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">toBottom</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">((</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">executeScript</span><span class="p">(</span>
+<span class="w">                </span><span class="s">&quot;window.scrollTo(0, document.body.scrollHeight); window.dispatchEvent(new Event(&#39;scroll&#39;));&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">scrollY</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="p">((</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return window.scrollY;&quot;</span><span class="p">)).</span><span class="na">longValue</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TestListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ITestListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onTestFailure</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getInstance</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">instance</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">CheckBaseTest</span><span class="w"> </span><span class="n">bt</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">bt</span><span class="p">.</span><span class="na">driver</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Screenshots</span><span class="p">.</span><span class="na">take</span><span class="p">(</span><span class="n">bt</span><span class="p">.</span><span class="na">driver</span><span class="p">(),</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-automation-framework-architecture.html"><small>← Bài trước</small><span>Kiến trúc Automation Framework</span></a><a class="next" href="04-configuration-management.html"><small>Bài tiếp theo →</small><span>Configuration Management</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/03-reusable-components.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

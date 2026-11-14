@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selenium: WebElement API · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/04-webelement" data-root="../" data-lesson="1" data-title="Selenium: WebElement API">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="selenium-webelement-api">Selenium: WebElement API</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 16 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="03-locators.html">Selenium: Locators (cách tìm phần tử)</a> · ➡️ <a href="05-browser-navigation.html">Browser Navigation</a></p>
+<p>Chapter 16 · Liên quan: <a href="README.html">README chương</a> · <a href="03-locators.html">Locators</a> · <a href="06-element-interactions.html">Element Interactions</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Dùng <code>findElement</code>/<code>findElements</code> đúng</li>
+<li>Dùng <code>click</code>, <code>sendKeys</code>, <code>clear</code>, <code>getText</code>, <code>getAttribute</code></li>
+<li>Dùng <code>isDisplayed</code>, <code>isEnabled</code>, <code>isSelected</code></li>
+<li>Hiểu và xử lý <code>StaleElementReferenceException</code></li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="03-locators.html">Locators</a></li>
+<li><a href="../01-java-fundamentals/09-collections.html">Java Collections</a></li>
+</ul>
+<h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
+<p><code>findElements</code> trả <code>List&lt;WebElement&gt;</code> (Java Collections); <code>getText()</code> trả <code>String</code>; <code>isDisplayed()</code> trả <code>boolean</code>.</p>
+<h2 id="1-webelement-api">1. <code>WebElement</code> API</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Trả về</th>
+<th>Ý nghĩa</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>click()</code></td>
+<td>void</td>
+<td>Click chuột trái</td>
+<td>Cần visible + enabled + không bị che</td>
+</tr>
+<tr>
+<td><code>sendKeys(CharSequence...)</code></td>
+<td>void</td>
+<td>Gõ chữ / phím đặc biệt (<code>Keys.ENTER</code>)</td>
+<td>Cần visible + enabled</td>
+</tr>
+<tr>
+<td><code>clear()</code></td>
+<td>void</td>
+<td>Xoá nội dung <code>input</code>/<code>textarea</code></td>
+<td>Chỉ cho phần tử nhập được</td>
+</tr>
+<tr>
+<td><code>getText()</code></td>
+<td><code>String</code></td>
+<td>Văn bản <strong>đang hiển thị</strong> (đã trim đầu/cuối, bỏ qua phần tử ẩn)</td>
+<td>Ẩn ⇒ <code>""</code></td>
+</tr>
+<tr>
+<td><code>getAttribute(name)</code></td>
+<td><code>String</code></td>
+<td>Giá trị thuộc tính <strong>hoặc</strong> property</td>
+<td>Xem bên dưới</td>
+</tr>
+<tr>
+<td><code>getDomAttribute(name)</code></td>
+<td><code>String</code></td>
+<td>Chỉ <strong>attribute</strong> trong HTML</td>
+<td>Selenium 4</td>
+</tr>
+<tr>
+<td><code>getDomProperty(name)</code></td>
+<td><code>String</code></td>
+<td><strong>Property</strong> của DOM (ví dụ <code>value</code> hiện tại)</td>
+<td>Selenium 4</td>
+</tr>
+<tr>
+<td><code>getCssValue(name)</code></td>
+<td><code>String</code></td>
+<td>Giá trị CSS tính toán (<code>color</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>getTagName()</code></td>
+<td><code>String</code></td>
+<td>Tên thẻ</td>
+<td></td>
+</tr>
+<tr>
+<td><code>getSize()</code>, <code>getLocation()</code>, <code>getRect()</code></td>
+<td></td>
+<td>Kích thước/vị trí</td>
+<td></td>
+</tr>
+<tr>
+<td><code>isDisplayed()</code></td>
+<td><code>boolean</code></td>
+<td>Đang hiển thị trên trang</td>
+<td>Không ném lỗi khi ẩn</td>
+</tr>
+<tr>
+<td><code>isEnabled()</code></td>
+<td><code>boolean</code></td>
+<td>Không bị <code>disabled</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>isSelected()</code></td>
+<td><code>boolean</code></td>
+<td>Checkbox/radio/option đang chọn</td>
+<td></td>
+</tr>
+<tr>
+<td><code>submit()</code></td>
+<td>void</td>
+<td>Gửi form</td>
+<td>Ít dùng; ưu tiên click nút</td>
+</tr>
+<tr>
+<td><code>findElement(s)</code></td>
+<td></td>
+<td>Tìm trong phần tử</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="gettext-vs-getattributevalue"><code>getText()</code> vs <code>getAttribute("value")</code></h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example input&quot;</span><span class="p">));</span>
+<span class="n">input</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Selenium&quot;</span><span class="p">);</span>
+<span class="n">input</span><span class="p">.</span><span class="na">getText</span><span class="p">();</span><span class="w">                  </span><span class="c1">// &quot;&quot;        — input không có &quot;text node&quot;</span>
+<span class="n">input</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">);</span><span class="w">      </span><span class="c1">// &quot;Selenium&quot; — 🧩 Exercise10 dùng đúng cách này</span></code></pre></div>
+<h3 id="isdisplayed--isenabled--isselected--dùng-khi-nào"><code>isDisplayed</code> / <code>isEnabled</code> / <code>isSelected</code> — dùng khi nào</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Ví dụ thực tế</th>
+<th>🧩 Trong dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isDisplayed()</code></td>
+<td>Modal, flash message có hiện không</td>
+<td>Ex 1, 5, 6, 8</td>
+</tr>
+<tr>
+<td><code>isEnabled()</code></td>
+<td>Ô input bị khoá trước khi Enable</td>
+<td>Ex 4 (lọc option disabled), Ex 10</td>
+</tr>
+<tr>
+<td><code>isSelected()</code></td>
+<td>Checkbox đã tick chưa</td>
+<td>Ex 2</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><code>isDisplayed()</code> trả <code>false</code> nếu phần tử <strong>tồn tại nhưng ẩn</strong>; nhưng ném <code>NoSuchElementException</code> nếu phần tử <strong>không tồn tại</strong> (vì bạn phải <code>findElement</code> trước). Để kiểm tra "không tồn tại" hãy dùng <code>findElements(by).isEmpty()</code> hoặc <code>invisibilityOfElementLocated</code>.</p>
+</blockquote>
+<h2 id="2-findelement-vs-findelements">2. <code>findElement</code> vs <code>findElements</code></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>findElement</code></th>
+<th><code>findElements</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trả về</td>
+<td>1 <code>WebElement</code> (đầu tiên)</td>
+<td><code>List&lt;WebElement&gt;</code></td>
+</tr>
+<tr>
+<td>Không thấy</td>
+<td><strong><code>NoSuchElementException</code></strong></td>
+<td><strong>List rỗng</strong></td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Chắc chắn có đúng 1</td>
+<td>Đếm, duyệt, kiểm tra tồn tại</td>
+</tr>
+<tr>
+<td>🧩</td>
+<td>Ex 1, 4...</td>
+<td>Ex 2, 3, 5, 6, 7</td>
+</tr>
+</tbody>
+</table></div>
+<p>Kỹ thuật kiểm tra "có/không" an toàn:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kt">boolean</span><span class="w"> </span><span class="n">exists</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">();</span></code></pre></div>
+<p>⚠️ Nếu có Implicit Wait, <code>findElements</code> rỗng vẫn <strong>chờ đủ thời gian implicit</strong> mới trả về — lý do dự án cấm Implicit Wait (comment trong <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a>). Bạn có thể kiểm chứng: bật <code>implicitlyWait(10s)</code> rồi gọi <code>findElements</code> cho phần tử không tồn tại ⇒ mất 10 giây.</p>
+<h2 id="3-stale-element">3. Stale Element</h2>
+<p><code>WebElement</code> là <em>handle</em>. Nếu DOM bị thay (làm mới trang, AJAX vẽ lại), handle cũ <strong>hết hiệu lực</strong> ⇒ <code>StaleElementReferenceException</code>.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">refresh</span><span class="p">();</span>
+<span class="n">btn</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w">                     </span><span class="c1">// ❌ StaleElementReferenceException</span>
+<span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">));</span><span class="w"> </span><span class="c1">// ✅ tìm lại</span></code></pre></div>
+<p>Giải pháp: lưu <strong><code>By</code></strong> thay vì <code>WebElement</code> để tìm lại khi cần (cách POM chuẩn); hoặc <code>wait.until(ExpectedConditions.stalenessOf(old))</code> rồi tìm lại. Xem <a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>, <a href="10-selenium-exceptions.html">09</a>.</p>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise04_DropdownTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise04_DropdownTest</a> có chú thích: lấy trước text/value dạng <strong>chuỗi</strong> để "không phụ thuộc vào trạng thái phần tử khi duyệt" — chính là phòng tránh stale.</p>
+<h2 id="lỗi-thường-gặp-với-webelement">Lỗi thường gặp với WebElement</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getText()</code> rỗng với <code>&lt;input&gt;</code></td>
+<td>Input không có text node</td>
+<td><code>getAttribute("value")</code> / <code>getDomProperty("value")</code></td>
+</tr>
+<tr>
+<td><code>getText()</code> rỗng với phần tử ẩn</td>
+<td><code>getText()</code> chỉ trả text đang hiển thị</td>
+<td>Chờ visible; hoặc <code>getAttribute("textContent")</code></td>
+</tr>
+<tr>
+<td><code>NoSuchElementException</code> khi dùng <code>findElement</code> để kiểm tra tồn tại</td>
+<td><code>findElement</code> ném lỗi</td>
+<td><code>findElements(by).isEmpty()</code></td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td>Dùng lại <code>WebElement</code> cũ sau khi DOM đổi</td>
+<td>Tìm lại; lưu <code>By</code> thay vì <code>WebElement</code></td>
+</tr>
+<tr>
+<td><code>isDisplayed()</code> assert quá sớm</td>
+<td>Chưa chờ phần tử hiện</td>
+<td>Wait trước, assert sau</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Sau khi <code>sendKeys("abc")</code> vào một <code>&lt;input&gt;</code>, vì sao <code>getText()</code> rỗng và dùng gì thay?</p>
+<p><strong>Input:</strong> input trên <code>/dynamic_controls</code></p>
+<p><strong>Expected Output:</strong> Giải thích + lệnh</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>getAttribute("value")</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết đoạn kiểm tra: ô input ở <code>/dynamic_controls</code> ban đầu bị khoá (<code>isEnabled() == false</code>).</p>
+<p><strong>Input:</strong> Trang <code>/dynamic_controls</code></p>
+<p><strong>Expected Output:</strong> Assert pass</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Selector <code>#input-example input</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Kiểm tra <em>không tồn tại</em> của <code>#flash</code> trên <code>/login</code> (trước khi đăng nhập) mà không dùng exception.</p>
+<p><strong>Input:</strong> Trang <code>/login</code></p>
+<p><strong>Expected Output:</strong> Assert <code>findElements</code> rỗng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>findElements(...).isEmpty()</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>findElement</code> khi không thấy?</p>
+<ul>
+<li>A. Trả <code>null</code></li>
+<li>B. Ném <code>NoSuchElementException</code></li>
+<li>C. Trả list rỗng</li>
+<li>D. Trả <code>false</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>findElements</code> mới trả list rỗng.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>getAttribute("value")</code> dùng để?</p>
+<ul>
+<li>A. Lấy text hiển thị</li>
+<li>B. Lấy giá trị hiện tại của input</li>
+<li>C. Lấy tag</li>
+<li>D. Xoá nội dung</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dùng cho <code>&lt;input&gt;</code>.</p>
+</details>
+<p><strong>Câu 3.</strong> Nguyên nhân <code>StaleElementReferenceException</code>?</p>
+<ul>
+<li>A. Sai locator</li>
+<li>B. Phần tử không còn gắn với DOM (đã vẽ lại/refresh)</li>
+<li>C. Thiếu JDK</li>
+<li>D. Thiếu mạng</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Tìm lại phần tử hoặc dùng <code>By</code>.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is the difference between findElement and findElements?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> <code>findElement</code> khác <code>findElements</code>?</li>
+<li><strong>Suggested answer (EN):</strong> <code>findElement</code> returns the first match or throws <code>NoSuchElementException</code>; <code>findElements</code> returns a list and an empty list when nothing matches.</li>
+<li><strong>Giải thích (VI):</strong> Dùng <code>isEmpty()</code> kiểm tra tồn tại.</li>
+<li><strong>Follow-up:</strong> <em>How does implicit wait affect findElements?</em></li>
+</ul>
+<p><strong>2. How do you handle StaleElementReferenceException?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Xử lý <code>StaleElementReferenceException</code>?</li>
+<li><strong>Suggested answer (EN):</strong> Find the element again, store the <code>By</code> instead of the element, wait for <code>stalenessOf</code> the old one, or use a bounded retry.</li>
+<li><strong>Giải thích (VI):</strong> WebElement là handle.</li>
+<li><strong>Follow-up:</strong> <em>What causes it?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>findElement</code> (1, có thể ném lỗi) vs <code>findElements</code> (list, rỗng nếu không thấy)</li>
+<li><code>getText</code> cho text hiển thị, <code>getAttribute("value")</code> cho input</li>
+<li><code>isDisplayed/isEnabled/isSelected</code> chỉ là trạng thái tức thời</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>click</code>, <code>sendKeys</code>, <code>clear</code>, <code>getText</code>, <code>getAttribute</code>, <code>getDomProperty</code>, <code>isDisplayed</code>, <code>isEnabled</code>, <code>isSelected</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>getText</code> ≠ <code>getAttribute("value")</code></li>
+<li>Tồn tại ≠ hiển thị ≠ bấm được</li>
+<li>Handle cũ ≠ phần tử mới</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="05-browser-navigation.html">Browser Navigation</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>&lt;input&gt;</code> không có text node, nên <code>getText()</code> trả <code>""</code>. Dùng <code>getAttribute("value")</code> (hoặc <code>getDomProperty("value")</code>) — như <code>Exercise10</code> làm.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_controls&quot;</span><span class="p">);</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example input&quot;</span><span class="p">));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="na">isEnabled</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Ban đầu input phải bị khoá&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Chưa có flash trước khi đăng nhập&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-locators.html"><small>← Bài trước</small><span>Selenium: Locators (cách tìm phần tử)</span></a><a class="next" href="05-browser-navigation.html"><small>Bài tiếp theo →</small><span>Browser Navigation</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/04-webelement.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

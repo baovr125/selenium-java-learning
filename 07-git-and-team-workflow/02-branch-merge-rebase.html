@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git: Branch, Merge và Rebase · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="07-git-and-team-workflow/02-branch-merge-rebase" data-root="../" data-lesson="1" data-title="Git: Branch, Merge và Rebase">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="git-branch-merge-và-rebase">Git: Branch, Merge và Rebase</h1>
+<blockquote>
+<p>🧭 Phase 7 · Git and Team Collaboration · Chapter 23
+⬅️ <a href="01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a> · ➡️ <a href="03-pull-request-and-conflicts.html">Git: Pull Request và Giải quyết Conflict</a></p>
+<p>Phase 7 · Chapter 23 (tiếp) · Mức ưu tiên: <strong>Essential</strong> (branch, merge), <strong>Important</strong> (rebase)</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>branch</code>, <code>switch</code>/<code>checkout</code></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td><code>merge</code> (fast-forward, 3-way)</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td><code>rebase</code></td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Quy ước đặt tên nhánh</td>
+<td>Important</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Tạo và chuyển nhánh</li>
+<li>Gộp bằng <code>merge</code> và hiểu <code>rebase</code></li>
+<li>Nhớ quy tắc vàng của rebase</li>
+<li>Dùng quy ước đặt tên nhánh</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-git-fundamentals.html">Git Fundamentals</a></li>
+</ul>
+<h2 id="1-khái-niệm">1. Khái niệm</h2>
+<p><strong>Branch</strong> cho phép làm một việc <strong>tách biệt</strong> khỏi <code>main</code>. Xong thì <strong>gộp</strong> (merge) lại.</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">main:      A ── B ───────── M          M = merge commit (3-way)
+                 \         /
+feature/login:    C ── D ─┘</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cách gộp</th>
+<th>Kết quả</th>
+<th>Khi dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Merge</strong></td>
+<td>Giữ nguyên lịch sử, thêm một commit gộp (hoặc fast-forward nếu <code>main</code> không đổi)</td>
+<td>Mặc định, an toàn</td>
+</tr>
+<tr>
+<td><strong>Rebase</strong></td>
+<td><strong>Viết lại</strong> commit của bạn lên đầu nhánh đích → lịch sử thẳng</td>
+<td>Làm gọn nhánh cá nhân <strong>trước khi</strong> chia sẻ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Quy tắc vàng của rebase:</strong> <strong>không rebase nhánh đã push và người khác đang dùng</strong> (viết lại lịch sử sẽ làm đồng đội hỏng).</p>
+<h2 id="2-syntax">2. Syntax</h2>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>branch<span class="w">                        </span><span class="c1"># liệt kê nhánh</span>
+git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>feature/add-logging<span class="w"> </span><span class="c1"># tạo và chuyển sang nhánh mới (hoặc: git checkout -b ...)</span>
+git<span class="w"> </span>switch<span class="w"> </span>main<span class="w">                   </span><span class="c1"># chuyển nhánh</span>
+git<span class="w"> </span>merge<span class="w"> </span>feature/add-logging<span class="w">     </span><span class="c1"># gộp nhánh vào nhánh HIỆN TẠI</span>
+git<span class="w"> </span>rebase<span class="w"> </span>main<span class="w">                   </span><span class="c1"># đặt commit của nhánh hiện tại lên đầu main</span>
+git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>feature/add-logging<span class="w"> </span><span class="c1"># xoá nhánh đã gộp</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>feature/add-logging</code></pre></div>
+<p>Quy ước tên nhánh: <code>feature/&lt;mô-tả&gt;</code>, <code>fix/&lt;mô-tả&gt;</code>, <code>chore/&lt;mô-tả&gt;</code> (ví dụ <code>feature/page-object-login</code>, <code>fix/stale-element-ex10</code>).</p>
+<h2 id="3-ví-dụ-đã-chạy-thật">3. Ví dụ (đã chạy thật)</h2>
+<h3 id="ví-dụ-1--nhánh-phân-kỳ">Ví dụ 1 — Nhánh phân kỳ</h3>
+<p>Từ commit đầu <code>26ba9ac</code>, nhánh <code>feature/a</code> và <code>main</code> cùng sửa <strong>một dòng</strong> <code>pom.xml</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>--graph<span class="w"> </span>--all</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">* cf8c370 Bump selenium to 4.54.0 (main)
+| * fd28a31 Bump selenium to 4.53.0 (A)
+|/
+* 26ba9ac Initial commit: Maven project with wrapper</code></pre></div>
+<h3 id="ví-dụ-2--merge-sinh-conflict">Ví dụ 2 — Merge sinh conflict</h3>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>checkout<span class="w"> </span>main
+git<span class="w"> </span>merge<span class="w"> </span>feature/a</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Auto-merging pom.xml
+CONFLICT (content): Merge conflict in pom.xml
+Automatic merge failed; fix conflicts and then commit the result.</code></pre></div>
+<p>Cách xử lý: xem <a href="03-pull-request-and-conflicts.html">Pull Request và Conflicts</a>. Nếu muốn <strong>huỷ</strong> gộp và quay lại trạng thái cũ: <code>git merge --abort</code>.</p>
+<h3 id="ví-dụ-3--rebase-cũng-có-thể-conflict">Ví dụ 3 — Rebase cũng có thể conflict</h3>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>checkout<span class="w"> </span>feature/a
+git<span class="w"> </span>rebase<span class="w"> </span>main</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Could not apply fd28a31... Bump selenium to 4.53.0 (A)
+interactive rebase in progress; onto cf8c370</code></pre></div>
+<p>Khi rebase dừng vì conflict: sửa file → <code>git add &lt;file&gt;</code> → <code>git rebase --continue</code>; hoặc bỏ cuộc: <code>git rebase --abort</code>.</p>
+<h3 id="ví-dụ-4--luồng-làm-việc-nhóm-thường-dùng">Ví dụ 4 — Luồng làm việc nhóm thường dùng</h3>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>switch<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w">                 </span><span class="c1"># 1. main mới nhất</span>
+git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>feature/page-object-login<span class="w">     </span><span class="c1"># 2. nhánh riêng</span>
+<span class="c1"># ... code, .\mvnw.cmd clean test ...</span>
+git<span class="w"> </span>add<span class="w"> </span>src/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add LoginPage and LoginPomTest&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>feature/page-object-login
+<span class="c1"># 3. mở Pull Request, review, merge vào main</span>
+git<span class="w"> </span>switch<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>feature/page-object-login</code></pre></div>
+<h2 id="4-ứng-dụng-với-dự-án-selenium-maven-real-world">4. Ứng dụng với dự án Selenium Maven (Real-world)</h2>
+<ul>
+<li>Mỗi thay đổi <code>pom.xml</code> (nâng Selenium, thêm thư viện) nên <strong>một nhánh/PR riêng</strong> — dễ review, dễ hoàn tác.</li>
+<li>Conflict phổ biến nhất của team automation: <code>pom.xml</code> (hai người cùng thêm dependency hoặc đổi <code>selenium.version</code>) và <code>testng.xml</code> (cùng thêm class). Cách giải quyết ở bài kế.</li>
+<li>Sau merge luôn chạy <code>.\mvnw.cmd clean test</code> để chắc kết quả gộp vẫn xanh.</li>
+<li>Không commit trực tiếp lên <code>main</code> khi có CI/branch protection.</li>
+</ul>
+<h2 id="5-lỗi-thường-gặp">5. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commit nhầm lên <code>main</code></td>
+<td>Quên tạo nhánh</td>
+<td><code>git switch -c feature/x</code> (giữ commit), sau đó đưa <code>main</code> về lại bằng cách hỏi mentor/<code>git reset</code> cẩn thận</td>
+</tr>
+<tr>
+<td><code>Your local changes would be overwritten by merge</code></td>
+<td>Có thay đổi chưa commit</td>
+<td><code>commit</code> hoặc <code>git stash</code> trước</td>
+</tr>
+<tr>
+<td>Rebase nhánh đã push rồi <code>push</code> bị từ chối</td>
+<td>Lịch sử bị viết lại</td>
+<td>Chỉ rebase nhánh cá nhân; nếu buộc, <code>git push --force-with-lease</code> và báo cả nhóm</td>
+</tr>
+<tr>
+<td>Quên đang ở nhánh nào</td>
+<td></td>
+<td><code>git branch --show-current</code>, <code>git status -sb</code></td>
+</tr>
+<tr>
+<td>Merge xong test đỏ</td>
+<td>Hai thay đổi đúng riêng, sai khi gộp</td>
+<td><code>clean test</code> sau mỗi merge</td>
+</tr>
+<tr>
+<td>Nhánh sống quá lâu</td>
+<td>Conflict khổng lồ</td>
+<td>Merge/rebase <code>main</code> thường xuyên</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Tạo nhánh <code>feature/add-logging</code>, commit một thay đổi, quay lại <code>main</code>.</p>
+<p><strong>Input:</strong> Repo thử</p>
+<p><strong>Expected Output:</strong> <code>git branch</code> thấy hai nhánh</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>git switch -c</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Gộp nhánh vào <code>main</code> và xem lịch sử dạng đồ thị.</p>
+<p><strong>Input:</strong> Nhánh đã commit</p>
+<p><strong>Expected Output:</strong> <code>git log --oneline --graph</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>git merge</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Giải thích khi nào KHÔNG được rebase.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Một câu quy tắc</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Nhánh đã chia sẻ.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>merge</code> khác <code>rebase</code>?</p>
+<ul>
+<li>A. Giống nhau</li>
+<li>B. <code>merge</code> giữ lịch sử và thêm commit gộp; <code>rebase</code> viết lại lịch sử</li>
+<li>C. <code>rebase</code> xoá nhánh</li>
+<li>D. <code>merge</code> chỉ trên Windows</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Merge an toàn hơn cho nhánh chia sẻ.</p>
+</details>
+<p><strong>Câu 2.</strong> Gộp nhánh A vào <code>main</code> cần đang đứng ở?</p>
+<ul>
+<li>A. Nhánh A</li>
+<li>B. <code>main</code></li>
+<li>C. Bất kỳ</li>
+<li>D. Remote</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Merge vào nhánh <strong>hiện tại</strong>.</p>
+</details>
+<p><strong>Câu 3.</strong> Tên nhánh theo quy ước?</p>
+<ul>
+<li>A. <code>feature/page-object-login</code></li>
+<li>B. <code>aaa</code></li>
+<li>C. <code>test</code></li>
+<li>D. <code>123</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Mô tả mục đích.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Merge vs rebase?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Merge hay rebase?</li>
+<li><strong>Suggested answer (EN):</strong> Merge keeps history and adds a merge commit, rebase rewrites my commits on top of the target for linear history; I rebase only my own unpublished branches.</li>
+<li><strong>Giải thích (VI):</strong> Quy tắc vàng.</li>
+<li><strong>Follow-up:</strong> <em>What if a rebase conflicts?</em></li>
+</ul>
+<p><strong>2. Why use feature branches?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao dùng nhánh tính năng?</li>
+<li><strong>Suggested answer (EN):</strong> They isolate work, enable review through pull requests and keep main stable.</li>
+<li><strong>Giải thích (VI):</strong> CI chạy trên PR.</li>
+<li><strong>Follow-up:</strong> <em>How long should a branch live?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Nhánh tách việc; merge giữ lịch sử; rebase làm thẳng lịch sử</li>
+<li>Không rebase nhánh đã chia sẻ</li>
+<li>Sau merge luôn <code>clean test</code></li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>switch -c</code>, <code>branch</code>, <code>merge</code>, <code>rebase</code>, <code>merge --abort</code>, <code>rebase --abort</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Merge vào nhánh <strong>hiện tại</strong></li>
+<li>Rebase viết lại lịch sử</li>
+<li>Nhánh sống lâu → conflict lớn</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-pull-request-and-conflicts.html">Git: Pull Request và Giải quyết Conflict</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>feature/add-logging
+git<span class="w"> </span>commit<span class="w"> </span>-am<span class="w"> </span><span class="s2">&quot;Add logging dependency&quot;</span>
+git<span class="w"> </span>switch<span class="w"> </span>main
+git<span class="w"> </span>branch</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>switch<span class="w"> </span>main
+git<span class="w"> </span>merge<span class="w"> </span>feature/add-logging
+git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>--graph<span class="w"> </span>--all</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<p>Không rebase nhánh <strong>đã push và người khác đang dùng</strong>: rebase viết lại lịch sử, đồng đội sẽ gặp lịch sử khác. Chỉ rebase nhánh cá nhân trước khi chia sẻ.</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-git-fundamentals.html"><small>← Bài trước</small><span>Git Fundamentals (clone, status, add, commit, push, fetch, pull)</span></a><a class="next" href="03-pull-request-and-conflicts.html"><small>Bài tiếp theo →</small><span>Git: Pull Request và Giải quyết Conflict</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/07-git-and-team-workflow/02-branch-merge-rebase.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

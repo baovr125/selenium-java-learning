@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/04-maven-and-mvnw-practice" data-root="../../" data-lesson="0" data-title="Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-04-maven-và-maven-wrapper-bài-3--bài-4">Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../02-maven-and-project/03-maven-wrapper.html">maven/03 Wrapper</a> · <a href="../../02-maven-and-project/05-maven-lifecycle.html">maven/04 Lifecycle</a> · <a href="../../interview/maven-interview.html">Interview 03</a></p>
+<p>Thực hành trên <strong>bản sao</strong> của dự án (để thử <code>clean</code>, <code>package</code>, sửa file mà không ảnh hưởng bản gốc) hoặc trên <code>SeleniumLab</code>.</p>
+</blockquote>
+<hr />
+<h2 id="bài-3-sử-dụng-maven-wrapper">Bài 3. Sử dụng Maven Wrapper</h2>
+<p><strong>Mục tiêu:</strong> Hiểu và quan sát Maven Wrapper hoạt động; tự tạo Wrapper cho dự án mới.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/maven-wrapper.properties</code>, <code>~/.m2/wrapper/dists</code>.</p>
+<h3 id="phần-a-quan-sát-wrapper-của-selenium1">Phần A. Quan sát Wrapper của <code>Selenium1</code></h3>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span>
+<span class="nb">Get-Content</span> <span class="p">.</span><span class="n">mvn</span><span class="p">\</span><span class="n">wrapper</span><span class="p">\</span><span class="n">maven-wrapper</span><span class="p">.</span><span class="n">properties</span>
+<span class="n">mvn</span> <span class="n">-version</span>              <span class="c"># kỳ vọng: lỗi &quot;not recognized&quot; (nếu máy bạn chưa cài Maven)</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span>       <span class="c"># kỳ vọng: Apache Maven 3.9.16</span></code></pre></div>
+<p>Trả lời (viết ra):</p>
+<ol>
+<li><code>wrapperVersion</code> và phiên bản Maven là hai con số nào?</li>
+<li><code>distributionType=only-script</code> nghĩa là gì? Vì sao không có <code>maven-wrapper.jar</code>?</li>
+<li>Maven được lưu ở đâu trên máy bạn? (dòng <code>Maven home:</code>)</li>
+<li>Dự án có <code>distributionSha256Sum</code> không? Hệ quả?</li>
+</ol>
+<h3 id="phần-b-quan-sát-tải-maven-lần-đầu-tuỳ-chọn">Phần B. Quan sát tải Maven lần đầu (tuỳ chọn)</h3>
+<p>Đổi tên thư mục cache để mô phỏng "máy mới" (<strong>không xoá</strong>):</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Rename-Item</span> <span class="s2">&quot;$HOME\.m2\wrapper\dists\apache-maven-3.9.16&quot;</span> <span class="s2">&quot;apache-maven-3.9.16.bak&quot;</span>
+<span class="nv">$env:MVNW_VERBOSE</span> <span class="p">=</span> <span class="s2">&quot;true&quot;</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span>        <span class="c"># sẽ thấy quá trình tải</span>
+<span class="nb">Remove-Item</span> <span class="n">Env</span><span class="p">:</span><span class="n">MVNW_VERBOSE</span></code></pre></div>
+<p>Sau khi xong, có thể xoá thư mục <code>.bak</code> nếu bản mới đã tải đủ, hoặc đổi tên lại. Yêu cầu có Internet.</p>
+<h3 id="phần-c-tạo-wrapper-cho-seleniumlab">Phần C. Tạo Wrapper cho <code>SeleniumLab</code></h3>
+<p>Cách 1 (đã có <code>mvnw</code> trong <code>Selenium1</code>): chép <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn\wrapper</code> sang <code>SeleniumLab</code>.</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Copy-Item</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span><span class="p">\</span><span class="n">mvnw</span><span class="p">,</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span><span class="p">\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">\</span>
+<span class="nb">Copy-Item</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span><span class="p">\.</span><span class="n">mvn</span><span class="p">\</span><span class="n">wrapper</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">\.</span><span class="n">mvn</span><span class="p">\</span><span class="n">wrapper</span> <span class="n">-Recurse</span>
+<span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
+<p>(Nếu thư mục <code>.mvn</code> chưa tồn tại, tạo trước: <code>mkdir .mvn</code>.)</p>
+<p>Cách 2 (tạo bằng Maven): <code>.\mvnw.cmd wrapper:wrapper "-Dmaven=3.9.16" "-Dtype=only-script"</code> (cần chạy ở thư mục có <code>pom.xml</code>).</p>
+<h3 id="kết-quả-mong-đợi">Kết quả mong đợi</h3>
+<ul>
+<li><code>.\mvnw.cmd -version</code> trong <code>SeleniumLab</code> in Maven 3.9.16.</li>
+<li>Bạn trả lời được 4 câu hỏi Phần A.</li>
+</ul>
+<h3 id="lỗi-thường-gặp">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'.\mvnw.cmd' is not recognized</code></td>
+<td>Sai thư mục/ thiếu <code>.\</code></td>
+<td><code>cd</code>; dùng <code>.\</code></td>
+</tr>
+<tr>
+<td>Tải Maven thất bại</td>
+<td>Mạng/proxy</td>
+<td><a href="../../02-maven-and-project/09-maven-troubleshooting.html">maven/08</a></td>
+</tr>
+<tr>
+<td><code>wrapper:wrapper</code> không tìm thấy <code>pom.xml</code></td>
+<td>Chạy sai thư mục</td>
+<td>Chạy ở thư mục có <code>pom.xml</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="bài-4-chạy-selenium-test-bằng-mvnwcmd">Bài 4. Chạy Selenium Test bằng <code>mvnw.cmd</code></h2>
+<p><strong>Mục tiêu:</strong> Chạy test ở nhiều mức (toàn bộ, 1 class, 1 method), đọc kết quả, phân biệt 5 trạng thái.</p>
+<h3 id="các-bước">Các bước</h3>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span>
+
+<span class="c"># 1. Biên dịch, không mở Chrome</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="nb">test-compile</span>
+
+<span class="c"># 2. Chạy 1 class không có trong testng.xml</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=EnvironmentCheckTest&quot;</span>
+
+<span class="c"># 3. Chạy 1 method</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=Exercise02_CheckboxesTest#testSelectBothCheckboxes&quot;</span>
+
+<span class="c"># 4. Chạy 1 nhóm bằng wildcard</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=Exercise0*&quot;</span>
+
+<span class="c"># 5. Chạy toàn bộ suite (theo testng.xml)</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">clean</span> <span class="n">test</span>
+
+<span class="c"># 6. Đọc kết quả</span>
+<span class="nb">Get-Content</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">TestSuite</span><span class="p">.</span><span class="n">txt</span>
+<span class="nb">Start-Process</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">emailable-report</span><span class="p">.</span><span class="n">html</span></code></pre></div>
+<h3 id="bảng-quan-sát-điền">Bảng quan sát (điền)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th><code>Tests run</code></th>
+<th>Có mở Chrome?</th>
+<th>Thời gian</th>
+<th>Nhận xét</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test-compile</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-Dtest=EnvironmentCheckTest</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-Dtest=...#testSelectBothCheckboxes</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-Dtest=Exercise0*</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>clean test</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="thí-nghiệm-tests-run-0">Thí nghiệm "Tests run: 0"</h3>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=NoSuchTest&quot;</span></code></pre></div>
+<p>Ghi lại: <code>Tests run: ?</code> và <code>BUILD ?</code>. Giải thích vì sao nguy hiểm trong CI và cách phát hiện.</p>
+<h3 id="thí-nghiệm-lifecycle">Thí nghiệm lifecycle</h3>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">package</span> <span class="s2">&quot;-DskipTests&quot;</span>
+<span class="nb">Get-ChildItem</span> <span class="n">target</span><span class="p">\*.</span><span class="n">jar</span></code></pre></div>
+<p>Ghi lại: log có dòng <code>Tests are skipped.</code>? Có <code>JAR will be empty</code>? Vì sao jar chỉ ~2 KB?</p>
+<h3 id="kết-quả-mong-đợi_1">Kết quả mong đợi</h3>
+<ul>
+<li><code>-Dtest=EnvironmentCheckTest</code>: <code>Tests run: 1 ... BUILD SUCCESS</code>.</li>
+<li><code>clean test</code>: <code>Tests run: 10, Failures: 0, Errors: 0, Skipped: 0</code>.</li>
+<li><code>-Dtest=NoSuchTest</code>: <code>Tests run: 0 ... BUILD SUCCESS</code> (cảnh báo bẫy).</li>
+</ul>
+<h3 id="lỗi-thường-gặp_1">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PowerShell tách tham số tại dấu <code>.</code></td>
+<td>Thiếu nháy</td>
+<td><code>"-Dtest=..."</code></td>
+</tr>
+<tr>
+<td><code>-o clean</code> lỗi <code>has not been downloaded</code></td>
+<td>Chưa từng tải plugin clean</td>
+<td>Bỏ <code>-o</code> (cần mạng một lần)</td>
+</tr>
+<tr>
+<td><code>Tests run: 10</code> nhưng không mở Chrome</td>
+<td>Chrome ẩn/ nền</td>
+<td>Kiểm tra thời gian ~90 s</td>
+</tr>
+<tr>
+<td>Test fail do mạng</td>
+<td>the-internet chậm</td>
+<td>Chạy lại; xem report</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>⚠️ <code>clean</code> xoá <code>target/</code> của dự án bạn đang thực hành. Với <code>Selenium1</code> gốc, báo cáo mẫu 10/10 vẫn còn trong <code>ket-qua/</code>; vẫn nên thực hành trên bản sao.</p>
+</blockquote>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-wait-practice.html"><small>← Bài trước</small><span>Lab 03: Wait Practice (Bài 8 + Bài 9)</span></a><a class="next" href="05-form-automation.html"><small>Bài tiếp theo →</small><span>Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/04-maven-and-mvnw-practice.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

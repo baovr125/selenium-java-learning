@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 02: Locator Practice (Bài 5) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/02-locator-practice" data-root="../../" data-lesson="0" data-title="Lab 02: Locator Practice (Bài 5)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-02-locator-practice-bài-5">Lab 02: Locator Practice (Bài 5)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../03-selenium-fundamentals/03-locators.html">selenium/02 Locators</a> · <a href="../../interview/selenium-interview.html">Interview 04</a>
+Đối chiếu: <a href="../../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a>, <a href="../../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03_WebTablesTest</a></p>
+</blockquote>
+<h2 id="bài-5-tìm-phần-tử-bằng-locator">Bài 5. Tìm phần tử bằng Locator</h2>
+<p><strong>Mục tiêu:</strong> Viết và so sánh nhiều loại locator cho cùng một phần tử; chọn locator ổn định; kiểm chứng bằng code.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>By.id/name/className/tagName/linkText/partialLinkText/cssSelector/xpath</code>, <code>findElement(s)</code>, <code>WebElement</code> API.</p>
+<h3 id="phần-a-bảng-locator-làm-trước-trên-giấydevtools">Phần A. Bảng locator (làm trước trên giấy/DevTools)</h3>
+<p>Mở <code>https://the-internet.herokuapp.com/login</code>, F12, điền bảng (đối chiếu đáp án ở cuối):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phần tử</th>
+<th>By.id</th>
+<th>By.name</th>
+<th>By.className</th>
+<th>CSS</th>
+<th>XPath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Username</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr>
+<td>Password</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr>
+<td>Nút Login</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr>
+<td>Flash message (sau login)</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phần-b-viết-test">Phần B. Viết test</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">tests</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">base.BaseTest</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.By</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.WebElement</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.Assert</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.Test</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LocatorPracticeTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">allLocatorsPointToSameElement</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">byId</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">byName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">byCss</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;input#username&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">byXpath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//input[@name=&#39;username&#39;]&quot;</span><span class="p">));</span>
+
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">byName</span><span class="p">,</span><span class="w"> </span><span class="n">byId</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name phải trỏ cùng phần tử với id&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">byCss</span><span class="p">,</span><span class="w"> </span><span class="n">byId</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">byXpath</span><span class="p">,</span><span class="w"> </span><span class="n">byId</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">linkLocators</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">full</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Checkboxes&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">partial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">partialLinkText</span><span class="p">(</span><span class="s">&quot;Checkbox&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">partial</span><span class="p">,</span><span class="w"> </span><span class="n">full</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">countAndTagName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/tables&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#table1 tbody tr&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">rows</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Example 1 có 4 dòng dữ liệu&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cellsOfFirstRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rows</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;td&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// tìm CON của hàng</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">cellsOfFirstRow</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">xpathAxesAndPosition</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/tables&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">lastRowLastName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//table[@id=&#39;table1&#39;]/tbody/tr[last()]/td[1]&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">nextToLast</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//table[@id=&#39;table1&#39;]/tbody/tr[last()-1]/td[1]&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Hàng cuối: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lastRowLastName</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; | Kế cuối: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">nextToLast</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// đi từ ô email lên hàng cha rồi lấy ô Last Name của cùng hàng</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">owner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span>
+<span class="w">                </span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//td[text()=&#39;jsmith@gmail.com&#39;]/preceding-sibling::td[2]&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Chủ email jsmith@gmail.com: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">owner</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">missingElementBehaviour</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;findElements trả list rỗng&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// driver.findElement(By.id(&quot;khong-ton-tai&quot;));  // bỏ comment để xem NoSuchElementException</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="phần-c-thử-thách">Phần C. Thử thách</h3>
+<ol>
+<li>Viết CSS và XPath cho: link <strong>"Elemental Selenium"</strong> ở chân trang; checkbox đầu tiên ở <code>/checkboxes</code>; nút <strong>"Add Element"</strong> ở <code>/add_remove_elements/</code>.</li>
+<li>Viết XPath lấy <strong>email</strong> của người có <strong>Last Name = "Doe"</strong> trong bảng (dùng anh em <code>following-sibling</code>).</li>
+<li>Cố tình viết <code>By.className("flash success")</code> và đọc exception; sửa lại bằng CSS <code>.flash.success</code> (sau khi login thành công).</li>
+<li>Mở <code>/hovers</code>: lấy toàn bộ <code>h5</code> bằng <code>findElements</code>, in text (lưu ý ẩn ⇒ rỗng) rồi chọn cách đúng (xem <a href="../../../../../src/test/java/tests/Exercise05_HoverTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Ex5</a>).</li>
+</ol>
+<h3 id="kết-quả-mong-đợi">Kết quả mong đợi</h3>
+<ul>
+<li>4 test của Phần B pass.</li>
+<li>Bạn giải thích được vì sao nên ưu tiên <code>id</code>/CSS, khi nào cần XPath.</li>
+</ul>
+<h3 id="lỗi-thường-gặp">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>InvalidSelectorException</code></td>
+<td><code>className</code> có khoảng trắng; cú pháp sai</td>
+<td>CSS <code>.a.b</code></td>
+</tr>
+<tr>
+<td><code>NoSuchElementException</code></td>
+<td>Locator sai/chưa load</td>
+<td>DevTools; Wait</td>
+</tr>
+<tr>
+<td>XPath <code>//td</code> trong <code>row.findElement</code> trả cả trang</td>
+<td>Thiếu <code>.</code></td>
+<td><code>.//td</code></td>
+</tr>
+<tr>
+<td><code>assertEquals(WebElement, WebElement)</code> fail</td>
+<td>Hai locator khác phần tử</td>
+<td>Kiểm tra DevTools</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="đáp-án-phần-a">Đáp án Phần A</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phần tử</th>
+<th>id</th>
+<th>name</th>
+<th>class</th>
+<th>CSS</th>
+<th>XPath</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Username</td>
+<td><code>username</code></td>
+<td><code>username</code></td>
+<td>—</td>
+<td><code>#username</code></td>
+<td><code>//input[@id='username']</code></td>
+</tr>
+<tr>
+<td>Password</td>
+<td><code>password</code></td>
+<td><code>password</code></td>
+<td>—</td>
+<td><code>#password</code></td>
+<td><code>//input[@id='password']</code></td>
+</tr>
+<tr>
+<td>Login</td>
+<td>—</td>
+<td>—</td>
+<td><code>radius</code></td>
+<td><code>button[type='submit']</code></td>
+<td><code>//button[@type='submit']</code></td>
+</tr>
+<tr>
+<td>Flash</td>
+<td><code>flash</code></td>
+<td>—</td>
+<td><code>flash</code></td>
+<td><code>#flash</code></td>
+<td><code>//div[@id='flash']</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>(Khớp bảng trong Javadoc của <a href="../../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a>.)</p>
+<details>
+<summary>Gợi ý Phần C</summary>
+<ol>
+<li><code>a[href*='elementalselenium']</code>; <code>#checkboxes input:first-of-type</code>; <code>//button[text()='Add Element']</code>.</li>
+<li><code>//td[text()='Doe']/following-sibling::td[contains(text(),'@')]</code> — bảng có nhiều hàng "Doe" (kết quả là nhiều phần tử); hãy dùng <code>findElements</code> hoặc thêm điều kiện First Name.</li>
+<li><code>InvalidSelectorException: compound class names not permitted</code>.</li>
+<li>Chờ <code>visibilityOf</code> sau hover.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-first-selenium-test.html"><small>← Bài trước</small><span>Lab 01: Khởi tạo dự án và bài test đầu tiên (Bài 1 + Bài 2)</span></a><a class="next" href="03-wait-practice.html"><small>Bài tiếp theo →</small><span>Lab 03: Wait Practice (Bài 8 + Bài 9)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/02-locator-practice.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

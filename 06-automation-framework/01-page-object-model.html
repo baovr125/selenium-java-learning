@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page Object Model (POM) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="06-automation-framework/01-page-object-model" data-root="../" data-lesson="1" data-title="Page Object Model (POM)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="page-object-model-pom">Page Object Model (POM)</h1>
+<blockquote>
+<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 21 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="../05-testing-framework/06-test-execution-and-reports.html">Chạy test và báo cáo</a> · ➡️ <a href="02-automation-framework-architecture.html">Kiến trúc Automation Framework</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="02-automation-framework-architecture.html">Sau: Kiến trúc</a> · <a href="../08-practical-project/labs/06-page-object-model-practice.html">Practice POM</a> · <a href="../interview/framework-interview.html">Phỏng vấn POM</a>
+🔎 <code>Selenium1</code> <strong>chưa dùng POM</strong>: locator và thao tác nằm ngay trong test (ví dụ <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a>). Đây là điểm khởi đầu hợp lý cho người học, và cũng là chỗ POM sẽ phát huy tác dụng.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích POM và lợi ích</li>
+<li>Thiết kế Page Class (locator <code>private</code>, method nghiệp vụ, không assert)</li>
+<li>Kết nối Page với Test qua <code>driver</code></li>
+<li>Nhận diện lỗi thiết kế POM</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../01-java-fundamentals/08-oop-concepts.html">Java OOP Concepts</a></li>
+<li><a href="../04-wait-mechanisms/03-explicit-wait.html">Explicit Wait</a></li>
+</ul>
+<h2 id="1-pom-là-gì">1. POM là gì?</h2>
+<p><strong>Page Object Model</strong> là mẫu thiết kế: <strong>mỗi trang (hoặc thành phần UI) là một class Java</strong>. Class đó:</p>
+<ul>
+<li><strong>Che giấu locator</strong> (là <code>private</code>);</li>
+<li><strong>Cung cấp hành động có nghĩa nghiệp vụ</strong> (<code>login(user, pass)</code>, <code>getFlashMessage()</code>);</li>
+<li><strong>Không chứa assertion</strong> (hoặc rất ít) — assertion thuộc về test.</li>
+</ul>
+<p>Test chỉ nói <strong>"làm gì"</strong>, Page Object nói <strong>"làm thế nào"</strong>.</p>
+<h2 id="2-vì-sao-cần-pom">2. Vì sao cần POM?</h2>
+<p>Giả sử website đổi <code>id="username"</code> thành <code>id="user-name"</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Không POM</th>
+<th>Có POM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Số chỗ phải sửa</td>
+<td><strong>Mọi test</strong> dùng ô username</td>
+<td><strong>1</strong> dòng trong <code>LoginPage</code></td>
+</tr>
+<tr>
+<td>Đọc test</td>
+<td>Đầy <code>By.id(...)</code>, <code>sendKeys</code></td>
+<td>Đọc như kịch bản: <code>loginPage.login(...)</code></td>
+</tr>
+<tr>
+<td>Tái sử dụng</td>
+<td>Copy-paste</td>
+<td>Gọi lại method</td>
+</tr>
+<tr>
+<td>Rủi ro</td>
+<td>Sửa sót ⇒ test hỏng ngẫu nhiên</td>
+<td>Tập trung, dễ kiểm soát</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-trước-và-sau-khi-áp-dụng-pom">3. Trước và sau khi áp dụng POM</h2>
+<h3 id="trước-kiểu-của-exercise01-rút-gọn">Trước (kiểu của <code>Exercise01</code>, rút gọn)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Exercise01_LoginTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLoginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">usernameTextbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">usernameTextbox</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+<span class="w">        </span><span class="n">usernameTextbox</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">passwordTextbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">passwordTextbox</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+<span class="w">        </span><span class="n">passwordTextbox</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//button[@type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">flash</span><span class="p">.</span><span class="na">getText</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="sau-đề-xuất">Sau (đề xuất)</h3>
+<p><code>pages/LoginPage.java</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">pages</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">usernameInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">passwordInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">loginButton</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">flashMessage</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">LoginPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">super</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">LoginPage</span><span class="w"> </span><span class="nf">open</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">PATH</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">SecureAreaPage</span><span class="w"> </span><span class="nf">loginAs</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">type</span><span class="p">(</span><span class="n">usernameInput</span><span class="p">,</span><span class="w"> </span><span class="n">username</span><span class="p">);</span>
+<span class="w">        </span><span class="n">type</span><span class="p">(</span><span class="n">passwordInput</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">);</span>
+<span class="w">        </span><span class="n">click</span><span class="p">(</span><span class="n">loginButton</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SecureAreaPage</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span><span class="w">          </span><span class="c1">// trang tiếp theo (fluent / chaining)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">LoginPage</span><span class="w"> </span><span class="nf">loginWithInvalid</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">type</span><span class="p">(</span><span class="n">usernameInput</span><span class="p">,</span><span class="w"> </span><span class="n">username</span><span class="p">);</span>
+<span class="w">        </span><span class="n">type</span><span class="p">(</span><span class="n">passwordInput</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">);</span>
+<span class="w">        </span><span class="n">click</span><span class="p">(</span><span class="n">loginButton</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getFlashMessage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">text</span><span class="p">(</span><span class="n">flashMessage</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// trang sai vẫn ở /login</span>
+<span class="p">}</span></code></pre></div>
+<blockquote>
+<p>✅ Bộ <code>BasePage</code> + <code>LoginPage</code> + <code>SecureAreaPage</code> + <code>LoginPomTest</code> ở mục này đã được biên dịch và chạy thật (2 test pass) trong một bản sao của dự án.</p>
+</blockquote>
+<p><code>pages/SecureAreaPage.java</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SecureAreaPage</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">flashMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">SecureAreaPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">super</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getFlashMessage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">text</span><span class="p">(</span><span class="n">flashMessage</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w">       </span><span class="c1">// chờ visible rồi đọc</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isAtSecureArea</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">().</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p><code>tests/LoginTest.java</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shouldLoginWithValidCredentials</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">SecureAreaPage</span><span class="w"> </span><span class="n">secure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">open</span><span class="p">().</span><span class="na">loginAs</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">secure</span><span class="p">.</span><span class="na">getFlashMessage</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">secure</span><span class="p">.</span><span class="na">isAtSecureArea</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;URL phải kết thúc bằng /secure&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Test giờ ngắn, đọc như tiếng người. Assertion ở <strong>test</strong>, locator ở <strong>page</strong>.</p>
+<p><code>BasePage</code> (xem <a href="03-reusable-components.html">03</a>):</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="nf">BasePage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">click</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">by</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">));</span>
+<span class="w">        </span><span class="n">el</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+<span class="w">        </span><span class="n">el</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h2 id="4-quy-tắc-thiết-kế-page-class">4. Quy tắc thiết kế Page Class</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Quy tắc</th>
+<th>Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 trang/thành phần = 1 class</td>
+<td><code>LoginPage</code>, <code>SecureAreaPage</code>, <code>NavigationBar</code></td>
+</tr>
+<tr>
+<td>Locator <code>private</code></td>
+<td>Test không biết cách tìm</td>
+</tr>
+<tr>
+<td>Method theo <strong>hành vi nghiệp vụ</strong></td>
+<td><code>loginAs(...)</code> chứ không <code>typeUsername</code>, <code>clickLogin</code> rời rạc (trừ khi cần)</td>
+</tr>
+<tr>
+<td>Method trả về <strong>Page tiếp theo</strong></td>
+<td>Chuỗi gọi mượt, dễ phát hiện luồng</td>
+</tr>
+<tr>
+<td>Trả <strong>dữ liệu</strong> (String, int, List) để test assert</td>
+<td>Page không assert</td>
+</tr>
+<tr>
+<td>Không có <code>Thread.sleep</code>; chờ nằm trong Page/BasePage</td>
+<td>Test sạch</td>
+</tr>
+<tr>
+<td>Không giữ <code>WebElement</code> lâu; giữ <code>By</code></td>
+<td>Tránh stale</td>
+</tr>
+<tr>
+<td>Một phương thức "đã tải xong" (<code>isLoaded</code>)</td>
+<td>Xác nhận đang ở đúng trang</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-cách-tổ-chức-locator">5. Cách tổ chức locator</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// 1. Hằng By private (khuyến nghị) — luôn tìm lại khi dùng ⇒ ít stale</span>
+<span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">usernameInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span>
+
+<span class="c1">// 2. @FindBy + PageFactory (kiểu cũ)</span>
+<span class="nd">@FindBy</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">)</span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="n">usernameInput</span><span class="p">;</span>
+<span class="c1">// PageFactory.initElements(driver, this);   → cần init; proxy lazy</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>By</code> field</th>
+<th><code>@FindBy</code> + <code>PageFactory</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đơn giản</td>
+<td>✅</td>
+<td>Cần <code>initElements</code></td>
+</tr>
+<tr>
+<td>Stale</td>
+<td>Ít (tìm lại mỗi lần)</td>
+<td>Proxy tìm lại mỗi lần gọi (cũng ổn) nhưng khó debug</td>
+</tr>
+<tr>
+<td>Phổ biến hiện nay</td>
+<td>Xu hướng ưa chuộng</td>
+<td>Còn trong dự án cũ</td>
+</tr>
+<tr>
+<td>Selenium 4</td>
+<td>Đầy đủ</td>
+<td><code>PageFactory</code> vẫn có</td>
+</tr>
+</tbody>
+</table></div>
+<p>Khuyến nghị cho người mới: <strong>dùng <code>By</code> field</strong>; biết <code>@FindBy</code> để đọc code cũ.</p>
+<h2 id="6-kết-nối-page-class-với-test-class">6. Kết nối Page Class với Test Class</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Test class  ──new LoginPage(driver)──►  Page class  ──dùng──►  BasePage (wait/click/type)
+   │ có driver từ BaseTest                                         │
+   └─ assertion                                                    └─ WebDriver</code></pre></div>
+<ul>
+<li><code>BaseTest</code> tạo <code>driver</code> ⇒ test truyền <code>driver</code> vào constructor Page.</li>
+<li>Mỗi test tạo Page <strong>mới</strong> (nhẹ); Page không lưu trạng thái.</li>
+</ul>
+<h2 id="7-ưu-điểm-và-nhược-điểm">7. Ưu điểm và nhược điểm</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ưu điểm</th>
+<th>Nhược điểm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bảo trì 1 chỗ</td>
+<td>Tốn công ban đầu (thêm class)</td>
+</tr>
+<tr>
+<td>Test dễ đọc</td>
+<td>Với dự án rất nhỏ có thể "quá mức"</td>
+</tr>
+<tr>
+<td>Tái sử dụng</td>
+<td>Dễ thiết kế sai thành "God Page"</td>
+</tr>
+<tr>
+<td>Tách "cái gì" và "như thế nào"</td>
+<td>Cần kỷ luật (assertion để ở test)</td>
+</tr>
+<tr>
+<td>Dễ cộng tác nhóm</td>
+<td>Khi UI đổi lớn vẫn phải sửa</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-lỗi-thiết-kế-pom-thường-gặp">8. Lỗi thiết kế POM thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Hậu quả</th>
+<th>Cách tránh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Assertion trong Page</strong></td>
+<td>Page khó tái sử dụng, test kém rõ</td>
+<td>Page trả dữ liệu, test assert</td>
+</tr>
+<tr>
+<td><strong>Locator <code>public</code></strong></td>
+<td>Test lại đi tìm phần tử ⇒ mất ý nghĩa POM</td>
+<td><code>private</code></td>
+</tr>
+<tr>
+<td><strong>God Page</strong> (1 class cho cả site)</td>
+<td>Khó bảo trì</td>
+<td>Mỗi trang/component 1 class</td>
+</tr>
+<tr>
+<td><strong>Method quá thấp</strong> (<code>clickButton1</code>, <code>clickButton2</code>)</td>
+<td>Test lại là chuỗi click</td>
+<td>Method theo nghiệp vụ</td>
+</tr>
+<tr>
+<td><strong>Không trả Page tiếp theo</strong></td>
+<td>Mất tính "luồng"</td>
+<td><code>return new NextPage(driver)</code></td>
+</tr>
+<tr>
+<td><strong><code>Thread.sleep</code> trong Page</strong></td>
+<td>Chậm + flaky</td>
+<td>Wait trong BasePage</td>
+</tr>
+<tr>
+<td><strong>Lưu <code>WebElement</code> làm field lâu dài</strong></td>
+<td>Stale</td>
+<td>Lưu <code>By</code></td>
+</tr>
+<tr>
+<td><strong>Page biết về test data</strong></td>
+<td>Gắn chặt</td>
+<td>Truyền tham số</td>
+</tr>
+<tr>
+<td><strong>Lặp locator ở nhiều page</strong></td>
+<td>Sửa nhiều chỗ</td>
+<td>Component (header, menu) dùng chung</td>
+</tr>
+<tr>
+<td><strong>Lạm dụng kế thừa sâu</strong></td>
+<td>Rối</td>
+<td>Composition: <code>Header</code> là field của Page</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9-áp-dụng-pom-cho-10-exercise-của-dự-án-gợi-ý">9. Áp dụng POM cho 10 Exercise của dự án (gợi ý)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>Page Class gợi ý</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Login</td>
+<td><code>LoginPage</code>, <code>SecureAreaPage</code></td>
+<td><code>loginAs</code>, <code>getFlashMessage</code></td>
+</tr>
+<tr>
+<td>2 Checkboxes</td>
+<td><code>CheckboxesPage</code></td>
+<td><code>setChecked(int index, boolean)</code>, <code>isChecked(int)</code></td>
+</tr>
+<tr>
+<td>3 Tables</td>
+<td><code>TablesPage</code></td>
+<td><code>getRow(int)</code>, <code>getRowCount()</code></td>
+</tr>
+<tr>
+<td>4 Dropdown</td>
+<td><code>DropdownPage</code></td>
+<td><code>select(String)</code>, <code>getSelected()</code>, <code>getOptions()</code></td>
+</tr>
+<tr>
+<td>5 Hover</td>
+<td><code>HoversPage</code></td>
+<td><code>hoverUser(int)</code>, <code>getCaption(int)</code></td>
+</tr>
+<tr>
+<td>6 Add/Remove</td>
+<td><code>AddRemovePage</code></td>
+<td><code>addElement()</code>, <code>deleteElement()</code>, <code>getDeleteCount()</code></td>
+</tr>
+<tr>
+<td>7 Infinite Scroll</td>
+<td><code>InfiniteScrollPage</code></td>
+<td><code>scrollDownUntilMore()</code>, <code>scrollToTop()</code></td>
+</tr>
+<tr>
+<td>8 Entry Ad</td>
+<td><code>EntryAdPage</code></td>
+<td><code>waitForModal()</code>, <code>getModalTitle()</code>, <code>closeModal()</code></td>
+</tr>
+<tr>
+<td>9 Drag&amp;Drop</td>
+<td><code>DragDropPage</code></td>
+<td><code>dragAToB()</code>, <code>getHeaderA()</code></td>
+</tr>
+<tr>
+<td>10 Dynamic</td>
+<td><code>DynamicControlsPage</code></td>
+<td><code>removeCheckbox()</code>, <code>enableInput()</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Thực hành: <a href="../08-practical-project/labs/06-page-object-model-practice.html">practice/06</a>.</p>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Page: locator private + hành vi + trả dữ liệu/Page.</li>
+<li>Assertion ở test.</li>
+<li>Wait nằm trong BasePage.</li>
+<li>Đặt tên Page theo trang thật.</li>
+<li>Component dùng lại (header, footer, modal) tách class riêng.</li>
+</ol>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Chỉ ra 3 điểm trong <code>Exercise01_LoginTest</code> mà POM sẽ cải thiện.</p>
+<p><strong>Input:</strong> File <code>Exercise01_LoginTest.java</code></p>
+<p><strong>Expected Output:</strong> 3 điểm</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Locator, hành động, bảo trì.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>LoginPage</code> (locator private, <code>open()</code>, <code>loginAs</code>, <code>getFlashMessage</code>).</p>
+<p><strong>Input:</strong> BasePage có <code>type</code>, <code>click</code>, <code>text</code></p>
+<p><strong>Expected Output:</strong> Trang dùng được trong test</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Trả <code>SecureAreaPage</code> ở <code>loginAs</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>DropdownPage</code> cho <code>/dropdown</code> với <code>select(String)</code> và <code>getSelectedText()</code>.</p>
+<p><strong>Input:</strong> <code>#dropdown</code></p>
+<p><strong>Expected Output:</strong> Test không còn <code>By.</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Bọc <code>Select</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Page Object nên chứa assertion?</p>
+<ul>
+<li>A. Luôn</li>
+<li>B. Thường không; trả dữ liệu để test assert</li>
+<li>C. Chỉ khi fail</li>
+<li>D. Bắt buộc</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Giữ Page tái sử dụng.</p>
+</details>
+<p><strong>Câu 2.</strong> Locator trong Page nên là?</p>
+<ul>
+<li>A. <code>public</code></li>
+<li>B. <code>private</code></li>
+<li>C. <code>static</code> toàn cục</li>
+<li>D. Không cần</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Test không biết cách tìm.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>By</code> field hay <code>@FindBy</code>?</p>
+<ul>
+<li>A. Chỉ <code>@FindBy</code></li>
+<li>B. <code>By</code> field đơn giản, tìm lại mỗi lần (ít stale)</li>
+<li>C. Không dùng được</li>
+<li>D. Giống hệt</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>PageFactory</code> vẫn có nhưng khó debug hơn.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is the Page Object Model and why use it?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> POM là gì, vì sao dùng?</li>
+<li><strong>Suggested answer (EN):</strong> A design pattern where each page is a class holding its locators and exposing user actions; tests use those actions so a UI change is fixed in one class and tests stay readable.</li>
+<li><strong>Giải thích (VI):</strong> Dự án chưa dùng POM.</li>
+<li><strong>Follow-up:</strong> <em>What are the disadvantages?</em></li>
+</ul>
+<p><strong>2. Should page objects contain assertions?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Page có chứa assertion không?</li>
+<li><strong>Suggested answer (EN):</strong> Generally no; they return data or state and the test asserts, keeping pages reusable.</li>
+<li><strong>Giải thích (VI):</strong> <code>isLoaded()</code> nhỏ là chấp nhận được.</li>
+<li><strong>Follow-up:</strong> <em>What about waits?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>1 trang = 1 class; locator <code>private</code>; method nghiệp vụ</li>
+<li>Assertion ở test; wait trong BasePage</li>
+<li>Trả Page tiếp theo hoặc dữ liệu</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>extends BasePage</code>, <code>new XxxPage(driver)</code>, <code>loginAs(...)</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>God Page</li>
+<li>Locator <code>public</code></li>
+<li>Lưu <code>WebElement</code> làm field → stale</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-automation-framework-architecture.html">Kiến trúc Automation Framework</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<ol>
+<li>Locator <code>By.id("username")</code>... nằm trong test → đổi UI phải sửa nhiều test. 2. Chuỗi <code>clear/sendKeys/click</code> lặp. 3. Test dài, khó đọc như kịch bản.</li>
+</ol>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">usernameInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">passwordInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">loginButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">flashMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">LoginPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">super</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">LoginPage</span><span class="w"> </span><span class="nf">open</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">SecureAreaPage</span><span class="w"> </span><span class="nf">loginAs</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">type</span><span class="p">(</span><span class="n">usernameInput</span><span class="p">,</span><span class="w"> </span><span class="n">username</span><span class="p">);</span>
+<span class="w">        </span><span class="n">type</span><span class="p">(</span><span class="n">passwordInput</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">);</span>
+<span class="w">        </span><span class="n">click</span><span class="p">(</span><span class="n">loginButton</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SecureAreaPage</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getFlashMessage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">text</span><span class="p">(</span><span class="n">flashMessage</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DropdownPage</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">dropdown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;dropdown&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">DropdownPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">super</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">DropdownPage</span><span class="w"> </span><span class="nf">open</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dropdown&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">DropdownPage</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">visibleText</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">waitVisible</span><span class="p">(</span><span class="n">dropdown</span><span class="p">)).</span><span class="na">selectByVisibleText</span><span class="p">(</span><span class="n">visibleText</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getSelectedText</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">waitVisible</span><span class="p">(</span><span class="n">dropdown</span><span class="p">)).</span><span class="na">getFirstSelectedOption</span><span class="p">().</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 6 — Page Object Model và Framework Design (Chapter 21–22)</span></a><a class="next" href="02-automation-framework-architecture.html"><small>Bài tiếp theo →</small><span>Kiến trúc Automation Framework</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/01-page-object-model.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

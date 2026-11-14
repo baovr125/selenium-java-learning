@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenario-based — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/scenario-based-interview" data-root="../" data-lesson="0" data-title="Scenario-based — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="scenario-based--interview">Scenario-based — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h3 id="s1-a-test-fails-randomly-the-element-is-sometimes-not-found-what-do-you-do">S1. A test fails randomly: the element is sometimes not found. What do you do?</h3>
+<p><strong>Dịch:</strong> Test lúc fail lúc pass vì không thấy phần tử.</p>
+<p><strong>Sample answer:</strong> I suspect synchronization. I rerun it several times, read the exception, check the locator in DevTools and see whether the element appears after an AJAX call or animation. I replace any sleeps with an explicit wait for a condition specific to the new state, for example visibility or exact text, then run it repeatedly. I do not just increase the timeout.</p>
+<p><strong>Giải thích:</strong> Quy trình có hệ thống; tăng timeout là phương án vá.</p>
+<p><strong>Ví dụ:</strong> Ex10: thông báo cũ vẫn hiện nên phải <code>textToBe</code> thay vì <code>visibility</code>.</p>
+<p><strong>Follow-up:</strong> <em>What if the locator itself is unstable?</em></p>
+<hr />
+<h3 id="s2-the-page-has-a-spinner-that-blocks-clicks-how-do-you-handle-it">S2. The page has a spinner that blocks clicks. How do you handle it?</h3>
+<p><strong>Dịch:</strong> Spinner chặn click.</p>
+<p><strong>Sample answer:</strong> Wait for the spinner to be invisible with <code>invisibilityOfElementLocated</code>, then wait for the button to be clickable, then click. If the spinner might not appear immediately, wait for it to appear first so I don't pass too early.</p>
+<p><strong>Giải thích:</strong> <code>elementToBeClickable</code> không biết có overlay.</p>
+<p><strong>Ví dụ:</strong> Ex8: modal phải đóng hoàn toàn (<code>invisibilityOfElementLocated</code>) trước khi thao tác tiếp.</p>
+<p><strong>Follow-up:</strong> <em>What exception do you see otherwise?</em> → <code>ElementClickInterceptedException</code>.</p>
+<hr />
+<h3 id="s3-you-must-verify-a-message-that-changes-after-an-ajax-call-but-an-old-message-is-still-visible">S3. You must verify a message that changes after an AJAX call, but an old message is still visible.</h3>
+<p><strong>Dịch:</strong> Thông báo cũ vẫn hiện khi chờ thông báo mới.</p>
+<p><strong>Sample answer:</strong> Waiting for visibility passes immediately because the old text is visible. I wait for the exact new text with <code>textToBe</code> or <code>textToBePresentInElement</code>, or wait for the old element to become stale and then read the new one.</p>
+<p><strong>Giải thích:</strong> Điều kiện chờ phải <strong>đặc trưng cho trạng thái mới</strong>.</p>
+<p><strong>Ví dụ:</strong> <code>Exercise10_DynamicControlsTest</code> — <code>wait.until(ExpectedConditions.textToBe(messageLocator, "It's enabled!"))</code>.</p>
+<p><strong>Follow-up:</strong> <em>How do you wait for attribute change?</em> → <code>attributeToBe</code>.</p>
+<hr />
+<h3 id="s4-infinite-scroll-does-not-load-new-content-in-your-test">S4. Infinite scroll does not load new content in your test.</h3>
+<p><strong>Dịch:</strong> Infinite scroll không tải thêm.</p>
+<p><strong>Sample answer:</strong> The page loads content on scroll events and may ignore events during a load. A single scroll can be lost. I scroll inside the wait condition, repeating until the number of items increases, and I also dispatch a scroll event.</p>
+<p><strong>Giải thích:</strong> Custom wait với hành động lặp.</p>
+<p><strong>Ví dụ:</strong> Ex7 — <code>wait.until(d -&gt; { scrollToBottom(js); return d.findElements(...).size() &gt; before; })</code>; test từng fail (<code>testng-failed.xml</code>).</p>
+<p><strong>Follow-up:</strong> <em>Why not <code>Thread.sleep(5000)</code>?</em></p>
+<hr />
+<h3 id="s5-a-drag-and-drop-works-manually-but-not-with-selenium">S5. A drag-and-drop works manually but not with Selenium.</h3>
+<p><strong>Dịch:</strong> Kéo thả thủ công được nhưng Selenium không.</p>
+<p><strong>Sample answer:</strong> The page may use HTML5 drag and drop which does not respond to the default synthesized mouse events in some browser versions. I try <code>clickAndHold</code>, <code>moveToElement</code>, <code>release</code> with small offsets, and as a last resort a JavaScript implementation that dispatches the drag events, documenting the reason. I verify the result by content, not just "no error".</p>
+<p><strong>Giải thích:</strong> Thao tác dễ flaky; luôn kiểm chứng kết quả.</p>
+<p><strong>Ví dụ:</strong> Ex9 <code>dragAndDrop(columnA, columnB)</code> rồi kiểm tra header đổi chỗ.</p>
+<p><strong>Follow-up:</strong> <em>Why avoid JS first?</em> → bỏ qua hành vi người dùng thật.</p>
+<hr />
+<h3 id="s6-you-clone-a-project-and-nothing-runs-tests-run-0-build-success">S6. You clone a project and nothing runs: <code>Tests run: 0, BUILD SUCCESS</code>.</h3>
+<p><strong>Dịch:</strong> <code>Tests run: 0</code> mà build thành công.</p>
+<p><strong>Sample answer:</strong> I check how tests are selected: <code>-Dtest</code> pattern typo, class naming, <code>testng.xml</code> content, <code>@Test</code> imports (TestNG vs JUnit), and the Surefire configuration in <code>pom.xml</code>. I look for the <code>Running &lt;Class&gt;</code> lines. In CI I add a check that fails when zero tests ran.</p>
+<p><strong>Giải thích:</strong> Bẫy thật của dự án: <code>-Dtest=NoSuchTest</code> ⇒ SUCCESS.</p>
+<p><strong>Ví dụ:</strong> Đã tái hiện bằng <code>.\mvnw.cmd test "-Dtest=NoSuchTest"</code>.</p>
+<p><strong>Follow-up:</strong> <em>Does <code>failIfNoSpecifiedTests</code> help?</em> → Đã thử: không, với cấu hình này.</p>
+<hr />
+<h3 id="s7-tests-pass-locally-but-fail-in-ci">S7. Tests pass locally but fail in CI.</h3>
+<p><strong>Dịch:</strong> Local pass, CI fail.</p>
+<p><strong>Sample answer:</strong> I compare JDK version, browser version, headless mode, window size, locale/timezone and network speed. I read the CI logs and artifacts such as screenshots and surefire reports, reproduce in a clean clone, and review waits because CI machines are slower.</p>
+<p><strong>Giải thích:</strong> Wrapper khoá Maven, chưa đủ để giống hệt môi trường.</p>
+<p><strong>Ví dụ:</strong> Dự án chưa có headless/<code>--window-size</code>: cần thêm cho CI Linux.</p>
+<p><strong>Follow-up:</strong> <em>How do you get screenshots from CI?</em> → upload artifact.</p>
+<hr />
+<h3 id="s8-login-is-needed-by-50-tests-and-it-makes-the-suite-slow-what-do-you-do">S8. Login is needed by 50 tests and it makes the suite slow. What do you do?</h3>
+<p><strong>Dịch:</strong> 50 test cùng cần đăng nhập, suite chậm.</p>
+<p><strong>Sample answer:</strong> Keep one UI login test, and for others set up authentication faster, for example by reusing a session cookie or calling a login API and injecting the cookie, then navigate directly. Also consider parallel execution with <code>ThreadLocal</code> drivers.</p>
+<p><strong>Giải thích:</strong> Tư duy kim tự tháp kiểm thử và tối ưu thời gian.</p>
+<p><strong>Ví dụ:</strong> 10 test hiện mất ~91 s vì mỗi test mở Chrome mới.</p>
+<p><strong>Follow-up:</strong> <em>What are the risks of shortcuts?</em> → không kiểm thử luồng login thật nữa (nên giữ 1 test).</p>
+<hr />
+<h3 id="s9-a-teammate-adds-a-library-and-your-build-fails-with-nosuchmethoderror">S9. A teammate adds a library and your build fails with <code>NoSuchMethodError</code>.</h3>
+<p><strong>Dịch:</strong> Đồng đội thêm thư viện, bạn gặp <code>NoSuchMethodError</code>.</p>
+<p><strong>Sample answer:</strong> It is probably a version conflict. I run <code>mvnw dependency:tree</code> and look for a library, such as Guava, resolved to a different version than Selenium needs. I pin the version in <code>dependencyManagement</code> or exclude the transitive dependency, run <code>clean test</code>, and tell the team.</p>
+<p><strong>Giải thích:</strong> Quy tắc "nearest wins".</p>
+<p><strong>Ví dụ:</strong> Selenium cần <code>guava 33.7.2-jre</code> (dependency tree thật).</p>
+<p><strong>Follow-up:</strong> <em>How to prevent?</em> → xem <code>dependency:tree</code> trước khi merge.</p>
+<hr />
+<h3 id="s10-how-would-you-decide-what-to-automate">S10. How would you decide what to automate?</h3>
+<p><strong>Dịch:</strong> Quyết định tự động hoá cái gì?</p>
+<p><strong>Sample answer:</strong> I automate repetitive, stable, high-value and regression-prone scenarios, with clear expected results and data. I avoid automating one-off checks, rapidly changing UI and highly subjective checks. I start with a small smoke suite on critical flows like login and checkout and expand based on risk.</p>
+<p><strong>Giải thích:</strong> Tiêu chí: tần suất, ổn định, giá trị, chi phí bảo trì.</p>
+<p><strong>Ví dụ:</strong> Login (Ex1) là ứng viên smoke điển hình.</p>
+<p><strong>Follow-up:</strong> <em>What is your automation ROI view?</em></p>
+<hr />
+<h3 id="s11-a-locator-breaks-every-sprint-because-the-front-end-changes-what-do-you-do">S11. A locator breaks every sprint because the front-end changes. What do you do?</h3>
+<p><strong>Dịch:</strong> Locator gãy mỗi sprint.</p>
+<p><strong>Sample answer:</strong> Move locators into page objects so there is one place to fix, prefer stable attributes, ask developers to add <code>data-testid</code>, avoid positional or long XPath, and review UI changes with the team. I also add a quick locator health check in smoke tests.</p>
+<p><strong>Giải thích:</strong> Vấn đề tổ chức + kỹ thuật.</p>
+<p><strong>Ví dụ:</strong> Nút Login không có id/name ⇒ dùng <code>//button[@type='submit']</code>.</p>
+<p><strong>Follow-up:</strong> <em>What is a relative locator?</em></p>
+<hr />
+<h3 id="s12-you-are-asked-to-run-the-suite-on-firefox-and-chrome-how-do-you-design-it">S12. You are asked to run the suite on Firefox and Chrome. How do you design it?</h3>
+<p><strong>Dịch:</strong> Chạy trên Firefox và Chrome.</p>
+<p><strong>Sample answer:</strong> Use a <code>DriverFactory</code> that returns the right <code>WebDriver</code> from a <code>browser</code> parameter, passed via <code>testng.xml</code> <code>&lt;parameter&gt;</code> or <code>-Dbrowser=firefox</code>. Use <code>ThreadLocal</code> for parallel runs, and keep all browser-specific options in the factory. Selenium Manager handles the drivers.</p>
+<p><strong>Giải thích:</strong> Factory + cấu hình ngoài code.</p>
+<p><strong>Ví dụ:</strong> Hiện <code>BaseTest</code> ghi cứng <code>new ChromeDriver()</code>; đề xuất ở <a href="../06-automation-framework/03-reusable-components.html">framework-design/03</a>.</p>
+<p><strong>Follow-up:</strong> <em>How do you run across many machines?</em> → Selenium Grid.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="maven-interview.html"><small>← Bài trước</small><span>Maven và Maven Wrapper — Interview</span></a><a class="next" href="selenium-interview.html"><small>Bài tiếp theo →</small><span>Selenium (Fundamentals, Locators, Exceptions) — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/scenario-based-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

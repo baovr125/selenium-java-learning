@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 2 — Maven and Project Management (Chapter 09–12) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/README" data-root="../" data-lesson="0" data-title="Phase 2 — Maven and Project Management (Chapter 09–12)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-2--maven-and-project-management-chapter-0912">Phase 2 — Maven and Project Management (Chapter 09–12)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/maven-interview.html">maven-interview</a></p>
+</blockquote>
+<h2 id="danh-sách-bài">Danh sách bài</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Chapter</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td><a href="00-project-initialization.html">Project Initialization</a></td>
+<td>09</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>01</td>
+<td><a href="01-maven-fundamentals.html">Maven Fundamentals</a></td>
+<td>09</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-pom-xml.html">pom.xml</a></td>
+<td>09</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-maven-wrapper.html"><strong>Maven Wrapper</strong> (<code>mvnw</code>, <code>mvnw.cmd</code>)</a> ⭐</td>
+<td>10</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-maven-wrapper-in-team-and-git.html"><strong>Wrapper: làm việc nhóm, Git, lỗi thường gặp</strong></a> ⭐</td>
+<td>10</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="05-maven-lifecycle.html">Maven Lifecycle &amp; Commands</a></td>
+<td>11</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="06-dependency-management.html">Dependency Management</a></td>
+<td>09</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="07-build-and-test-execution.html">Build &amp; Test Execution</a> (Surefire, Failsafe)</td>
+<td>11</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="08-working-in-team.html">Working in Team (quy trình 9 bước)</a></td>
+<td>12</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="09-maven-troubleshooting.html">Troubleshooting</a></td>
+<td>12</td>
+<td>Essential</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Các bài này <strong>giữ nguyên</strong> nội dung đã xây dựng ở lần trước (đã kiểm chứng bằng lệnh thật), chỉ được sắp lại theo chương, tách file dài (<code>Maven Wrapper</code> thành 2 bài) và bổ sung mục tiêu, bài tập, câu hỏi, phỏng vấn, tổng kết.</p>
+</blockquote>
+<h2 id="dự-án-đang-dùng-gì-đã-xác-minh">Dự án đang dùng gì? (đã xác minh)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục</th>
+<th>Giá trị</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maven (qua Wrapper)</td>
+<td>3.9.16</td>
+</tr>
+<tr>
+<td>Wrapper</td>
+<td>3.3.4, <code>distributionType=only-script</code> (không có <code>maven-wrapper.jar</code>, không có <code>distributionSha256Sum</code>)</td>
+</tr>
+<tr>
+<td>Local Repository</td>
+<td><code>.mvn/repository</code> (đặt bởi <code>.mvn/maven.config</code>)</td>
+</tr>
+<tr>
+<td>Plugin</td>
+<td>maven-compiler-plugin 3.13.0, maven-surefire-plugin 3.5.2 (Failsafe: chưa dùng)</td>
+</tr>
+<tr>
+<td>Dependency</td>
+<td>selenium-java 4.52.0, testng 7.10.2 (scope <code>test</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="bảng-lệnh-nhanh-windows-powershell">Bảng lệnh nhanh (Windows PowerShell)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục đích</th>
+<th>Lệnh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phiên bản</td>
+<td><code>.\mvnw.cmd -version</code></td>
+</tr>
+<tr>
+<td>Xoá build cũ</td>
+<td><code>.\mvnw.cmd clean</code></td>
+</tr>
+<tr>
+<td>Biên dịch code test</td>
+<td><code>.\mvnw.cmd test-compile</code></td>
+</tr>
+<tr>
+<td>Chạy toàn bộ test (theo <code>testng.xml</code>)</td>
+<td><code>.\mvnw.cmd test</code></td>
+</tr>
+<tr>
+<td>Sạch + test</td>
+<td><code>.\mvnw.cmd clean test</code></td>
+</tr>
+<tr>
+<td>Một class</td>
+<td><code>.\mvnw.cmd test "-Dtest=Exercise01_LoginTest"</code></td>
+</tr>
+<tr>
+<td>Một method</td>
+<td><code>.\mvnw.cmd test "-Dtest=Exercise01_LoginTest#testLoginSuccess"</code></td>
+</tr>
+<tr>
+<td>Cây dependency</td>
+<td><code>.\mvnw.cmd dependency:tree</code></td>
+</tr>
+<tr>
+<td>Đóng gói (có chạy test)</td>
+<td><code>.\mvnw.cmd package</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Linux/macOS: <code>./mvnw</code> (cần <code>chmod +x</code>).</p>
+<h2 id="tích-hợp-với-git">Tích hợp với Git</h2>
+<p>Quản lý <code>mvnw</code>, <code>.mvn/wrapper</code>, <code>target/</code>... bằng Git: <a href="04-maven-wrapper-in-team-and-git.html">bài 04</a> và <a href="../07-git-and-team-workflow/README.html">Phase 7</a>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../01-java-fundamentals/13-java-selenium-cheatsheet.html"><small>← Bài trước</small><span>Java Fundamentals cho Selenium</span></a><a class="next" href="00-project-initialization.html"><small>Bài tiếp theo →</small><span>Khởi tạo dự án Selenium Java + Maven + TestNG</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 7 — Git và Team Collaboration (Chapter 23) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="07-git-and-team-workflow/README" data-root="../" data-lesson="0" data-title="Phase 7 — Git và Team Collaboration (Chapter 23)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-7--git-và-team-collaboration-chapter-23">Phase 7 — Git và Team Collaboration (Chapter 23)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/git-interview.html">git-interview</a>
+ℹ️ <code>Selenium1</code> hiện <strong>chưa là Git repository</strong> (đã có <code>.gitignore</code>). Mọi lệnh Git trong phase này đã chạy thật trên một <strong>repo thử nghiệm</strong> (Git 2.49.0, Windows); hãy thực hành trên bản sao.</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="01-git-fundamentals.html">Git Fundamentals</a> (clone, status, add, commit, push, fetch, pull)</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-branch-merge-rebase.html">Branch, Merge, Rebase</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-pull-request-and-conflicts.html">Pull Request và Conflicts</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-gitignore-and-selenium-maven-project.html"><code>.gitignore</code> và quản lý dự án Maven + Selenium</a></td>
+<td>Essential</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="liên-quan-đã-có-ở-phase-2">Liên quan (đã có ở Phase 2)</h2>
+<ul>
+<li><a href="../02-maven-and-project/04-maven-wrapper-in-team-and-git.html">Maven Wrapper trong team và Git</a> — commit gì, <code>mvnw</code> mode, line ending.</li>
+<li><a href="../02-maven-and-project/08-working-in-team.html">Working in Team (quy trình 9 bước)</a> — từ clone đến đồng đội pull.</li>
+</ul>
+<h2 id="hai-phát-hiện-thật-khi-thử-trên-windows">Hai phát hiện thật khi thử trên Windows</h2>
+<ol>
+<li><code>mvnw</code> được commit với mode <strong>100644</strong> (không thực thi) ⇒ Linux/CI báo <code>Permission denied</code> ⇒ sửa bằng <code>git update-index --chmod=+x mvnw</code>.</li>
+<li>Cảnh báo <code>LF will be replaced by CRLF</code> ⇒ dùng <code>.gitattributes</code> (<code>/mvnw text eol=lf</code>, <code>/mvnw.cmd text eol=crlf</code>).</li>
+</ol>
+<p>Chi tiết và lệnh kiểm chứng: <a href="04-gitignore-and-selenium-maven-project.html">bài 04</a>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../06-automation-framework/05-maintainable-test-framework.html"><small>← Bài trước</small><span>Maintainable Test Framework</span></a><a class="next" href="01-git-fundamentals.html"><small>Bài tiếp theo →</small><span>Git Fundamentals (clone, status, add, commit, push, fetch, pull)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/07-git-and-team-workflow/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

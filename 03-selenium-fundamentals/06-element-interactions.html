@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web Element Interactions · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/06-element-interactions" data-root="../" data-lesson="1" data-title="Web Element Interactions">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="web-element-interactions">Web Element Interactions</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 17 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="05-browser-navigation.html">Browser Navigation</a> · ➡️ <a href="07-browser-interactions.html">Browser Interactions: Alert, Frame/iFrame, Window/Tab</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="05-browser-navigation.html">Trước: Navigation</a> · <a href="../04-wait-mechanisms/01-wait-introduction.html">Sau: Wait Mechanisms</a> · <a href="../08-practical-project/labs/05-form-automation.html">Practice: Form</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Nhập liệu, click, tick checkbox/radio, xử lý form</li>
+<li>Dùng <code>Select</code> cho dropdown và multi-select</li>
+<li>Xử lý phần tử động bằng Explicit Wait</li>
+<li>Đọc dữ liệu bảng</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="04-webelement.html">WebElement</a></li>
+<li><a href="../01-java-fundamentals/04-control-flow.html">Control Flow</a></li>
+</ul>
+<h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
+<p>Vòng <code>for-each</code> + <code>if</code> để duyệt <code>List&lt;WebElement&gt;</code>; <code>List&lt;String&gt;</code> lưu text option để tránh stale (Exercise04).</p>
+<h2 id="1-điều-kiện-để-selenium-tương-tác-được">1. Điều kiện để Selenium tương tác được</h2>
+<p>Trước khi <code>click()</code>/<code>sendKeys()</code>, Selenium kiểm tra phần tử có <strong>thể tương tác</strong> không (<em>actionability</em>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Điều kiện</th>
+<th>Nếu không thoả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Có trong DOM</td>
+<td><code>NoSuchElementException</code></td>
+</tr>
+<tr>
+<td>Hiển thị (visible)</td>
+<td><code>ElementNotInteractableException</code></td>
+</tr>
+<tr>
+<td>Bật (enabled)</td>
+<td><code>ElementNotInteractableException</code> (với <code>sendKeys</code>/<code>clear</code> trên phần tử disabled) hoặc click không tác dụng</td>
+</tr>
+<tr>
+<td>Không bị phần tử khác che</td>
+<td><code>ElementClickInterceptedException</code></td>
+</tr>
+<tr>
+<td>Kích thước &gt; 0, trong viewport (Selenium tự cuộn vào view)</td>
+<td><code>MoveTargetOutOfBoundsException</code>...</td>
+</tr>
+</tbody>
+</table></div>
+<p>⇒ Phần lớn lỗi "không bấm được" là vấn đề <strong>đồng bộ hoá</strong>: phần tử chưa sẵn sàng. Giải pháp: Wait (<a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>).</p>
+<h2 id="2-click">2. <code>click()</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//button[@type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">   </span><span class="c1">// 🧩 Ex 1</span></code></pre></div>
+<ul>
+<li>Cuộn phần tử vào vùng nhìn (nếu cần), click vào <strong>tâm</strong> phần tử.</li>
+<li>Nếu một phần tử khác nằm đè (modal, banner, cookie bar) ⇒ <code>ElementClickInterceptedException</code> (thông báo nói rõ phần tử nào che).</li>
+<li>Chờ tốt nhất: <code>wait.until(ExpectedConditions.elementToBeClickable(by)).click();</code></li>
+</ul>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise02_CheckboxesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise02</a>: click checkbox và kiểm tra <code>isSelected()</code> <strong>đổi trạng thái</strong> (không click mù).</p>
+<p>Phương án dự phòng (cẩn thận, vì <strong>bỏ qua</strong> kiểm tra người dùng thật): <code>((JavascriptExecutor) driver).executeScript("arguments[0].click();", el)</code> — chỉ dùng khi hiểu rõ (xem <a href="09-javascript-executor.html">08</a>).</p>
+<h2 id="3-sendkeys">3. <code>sendKeys()</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+<span class="n">user</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span><span class="w">                         </span><span class="c1">// gõ chữ</span>
+<span class="n">user</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">TAB</span><span class="p">);</span><span class="w">                           </span><span class="c1">// phím đặc biệt</span>
+<span class="n">user</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">chord</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">CONTROL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">));</span><span class="w">      </span><span class="c1">// tổ hợp phím (Ctrl+A)</span>
+<span class="n">fileInput</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;C:\\data\\avatar.png&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// upload: input type=file, đường dẫn tuyệt đối</span></code></pre></div>
+<ul>
+<li>Gõ nối vào nội dung hiện có (không xoá cũ) ⇒ nên <code>clear()</code> trước. 🧩 Ex 1 làm đúng: <code>usernameTextbox.clear(); usernameTextbox.sendKeys(...)</code>.</li>
+<li><code>Keys.ENTER</code> có thể thay cho click nút submit trong một số form.</li>
+<li>Upload file: <strong>không</strong> mở hộp thoại hệ điều hành; gửi trực tiếp đường dẫn vào <code>&lt;input type="file"&gt;</code>.</li>
+</ul>
+<h2 id="4-clear">4. <code>clear()</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">usernameTextbox</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span></code></pre></div>
+<ul>
+<li>Chỉ dùng cho phần tử <code>input</code>/<code>textarea</code> <strong>có thể nhập, đang enabled</strong>.</li>
+<li>Một số ô (React controlled input, ô có mask) không phản ứng với <code>clear()</code>. Cách thay thế: <code>sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE)</code>.</li>
+</ul>
+<h2 id="5-gettext">5. <code>getText()</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">actual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">successMessageElement</span><span class="p">.</span><span class="na">getText</span><span class="p">();</span><span class="w">    </span><span class="c1">// 🧩 Ex 1, 8, 10</span></code></pre></div>
+<ul>
+<li>Trả văn bản <strong>hiển thị</strong> cho người dùng: đã chuẩn hoá khoảng trắng, <strong>phần tử ẩn trả <code>""</code></strong>, theo <code>text-transform</code> của CSS (ví dụ nếu CSS chuyển hoa, nhận chữ HOA).</li>
+<li>🧩 <a href="../../../../src/test/java/tests/Exercise08_EntryAdModalTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise08</a> dùng <code>.toUpperCase()</code> khi so tiêu đề vì lý do này.</li>
+<li>🧩 <a href="../../../../src/test/java/tests/Exercise05_HoverTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise05</a>: caption ẩn cho tới khi hover ⇒ nếu <code>getText()</code> quá sớm sẽ rỗng; dự án chờ <code>visibilityOf(captionHeader)</code> trước.</li>
+<li>Lấy text bất kể ẩn hay không: <code>getAttribute("textContent")</code> (hoặc <code>getDomProperty("textContent")</code>).</li>
+<li>Nên <code>trim()</code> khi so sánh để tránh khoảng trắng thừa (🧩 dự án làm).</li>
+</ul>
+<h2 id="6-getattribute-getdomattribute-getdomproperty">6. <code>getAttribute()</code>, <code>getDomAttribute()</code>, <code>getDomProperty()</code></h2>
+<p>HTML <code>&lt;input value="abc"&gt;</code> — <em>attribute</em> <code>value</code> là giá trị <strong>khởi tạo</strong>; <em>property</em> <code>value</code> là giá trị <strong>hiện tại</strong> (sau khi người dùng gõ).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getAttribute("value")</code></td>
+<td>Ưu tiên <strong>property</strong> hiện tại, nếu không có thì attribute (hành vi "gộp", tiện nhưng dễ nhầm)</td>
+</tr>
+<tr>
+<td><code>getDomProperty("value")</code></td>
+<td>Property của DOM (giá trị hiện tại)</td>
+</tr>
+<tr>
+<td><code>getDomAttribute("value")</code></td>
+<td>Chỉ attribute viết trong HTML</td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">input</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Selenium Dynamic Controls OK&quot;</span><span class="p">);</span>
+<span class="n">input</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// 🧩 Ex 10 — giá trị đã gõ</span>
+<span class="n">input</span><span class="p">.</span><span class="na">getDomAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// null/&quot;&quot; nếu HTML gốc không có value</span>
+<span class="n">input</span><span class="p">.</span><span class="na">getDomProperty</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// giá trị đã gõ</span></code></pre></div>
+<p>✅ <code>getAttribute</code> vẫn dùng được trong Selenium 4.52 (🧩 dự án dùng); <code>getDomAttribute</code>/<code>getDomProperty</code> rõ nghĩa hơn khi cần phân biệt.</p>
+<p>Các thuộc tính hay đọc: <code>value</code>, <code>href</code>, <code>src</code>, <code>class</code>, <code>disabled</code>, <code>checked</code>, <code>placeholder</code>, <code>title</code>.</p>
+<h2 id="7-isdisplayed-isenabled-isselected">7. <code>isDisplayed()</code>, <code>isEnabled()</code>, <code>isSelected()</code></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Dùng cho</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isDisplayed()</code></td>
+<td>Mọi phần tử</td>
+<td><code>false</code> nếu <code>display:none</code>, <code>visibility:hidden</code>, kích thước 0, hoặc <code>&lt;input type=hidden&gt;</code></td>
+</tr>
+<tr>
+<td><code>isEnabled()</code></td>
+<td>Control (<code>input</code>, <code>button</code>, <code>option</code>...)</td>
+<td><code>false</code> nếu có thuộc tính <code>disabled</code></td>
+</tr>
+<tr>
+<td><code>isSelected()</code></td>
+<td><code>checkbox</code>, <code>radio</code>, <code>option</code></td>
+<td>Trả trạng thái chọn hiện tại</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Ex 10: <code>Assert.assertFalse(textInput.isEnabled())</code> trước khi bấm Enable, <code>assertTrue</code> sau khi bấm.
+🧩 Ex 4: <code>option.isEnabled()</code> để loại placeholder bị <code>disabled</code>.</p>
+<p>⚠️ Chúng chỉ trả <strong>trạng thái tức thời</strong>. Đừng viết <code>assertTrue(el.isDisplayed())</code> ngay sau hành động bất đồng bộ; hãy <code>wait.until(visibility...)</code> rồi mới assert.</p>
+<h2 id="8-submit-gettagname-getcssvalue">8. <code>submit()</code>, <code>getTagName()</code>, <code>getCssValue()</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">form</span><span class="p">.</span><span class="na">submit</span><span class="p">();</span><span class="w">                              </span><span class="c1">// ít dùng; ưu tiên click nút</span>
+<span class="n">el</span><span class="p">.</span><span class="na">getTagName</span><span class="p">();</span><span class="w">                            </span><span class="c1">// &quot;input&quot;</span>
+<span class="n">el</span><span class="p">.</span><span class="na">getCssValue</span><span class="p">(</span><span class="s">&quot;background-color&quot;</span><span class="p">);</span><span class="w">         </span><span class="c1">// &quot;rgba(...)&quot; — dùng kiểm tra giao diện</span>
+<span class="n">el</span><span class="p">.</span><span class="na">getRect</span><span class="p">();</span><span class="w">                               </span><span class="c1">// x, y, width, height</span></code></pre></div>
+<h2 id="9-tương-tác-với-bảng-web-table">9. Tương tác với bảng (Web Table)</h2>
+<p>🧩 <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03</a> là mẫu tốt:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//table[@id=&#39;table1&#39;]/tbody/tr[last()-1]&quot;</span><span class="p">));</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cells</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;td&quot;</span><span class="p">));</span><span class="w">     </span><span class="c1">// tìm CON của row</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">cells</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                      </span><span class="c1">// bỏ cột Action cuối</span>
+<span class="w">    </span><span class="n">data</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">cells</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">());</span>
+<span class="p">}</span></code></pre></div>
+<p>Mẹo: lấy cả bảng thành <code>List&lt;List&lt;String&gt;&gt;</code> (dùng stream) để dễ assert và sắp xếp.</p>
+<h2 id="10-làm-việc-với-danh-sách">10. Làm việc với danh sách</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">checkboxes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkboxes input[type=&#39;checkbox&#39;]&quot;</span><span class="p">));</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">WebElement</span><span class="w"> </span><span class="n">cb</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">checkboxes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cb</span><span class="p">.</span><span class="na">isSelected</span><span class="p">())</span><span class="w"> </span><span class="n">cb</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// idempotent: chỉ click khi cần</span></code></pre></div>
+<p>Với Java Stream:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.figcaption h5&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">map</span><span class="p">(</span><span class="n">WebElement</span><span class="p">::</span><span class="n">getText</span><span class="p">).</span><span class="na">toList</span><span class="p">();</span></code></pre></div>
+<p>⚠️ Danh sách <code>WebElement</code> có thể <strong>stale</strong> nếu DOM thay đổi trong lúc duyệt ⇒ lấy dữ liệu (chuỗi) trước, như 🧩 Ex 4.</p>
+<h2 id="11-mẫu-hành-động-an-toàn">11. Mẫu hành động "an toàn"</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">safeType</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">WebElement</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">));</span>
+<span class="w">    </span><span class="n">el</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
+<span class="w">    </span><span class="n">el</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">safeClick</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">by</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="p">}</span></code></pre></div>
+<p>Đây chính là các <strong>Reusable Method</strong> của <code>BasePage</code> — <a href="../06-automation-framework/03-reusable-components.html">framework-design/03</a>.</p>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Chờ phần tử sẵn sàng <strong>trước</strong> khi tương tác; không <code>Thread.sleep()</code>.</li>
+<li><code>clear()</code> trước <code>sendKeys()</code> khi ghi đè.</li>
+<li>Assert trạng thái <strong>trước và sau</strong> hành động (như Ex 2).</li>
+<li><code>trim()</code> khi so sánh text.</li>
+<li>Dùng <code>getAttribute("value")</code> cho input, không <code>getText()</code>.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ElementNotInteractableException</code></td>
+<td>Ẩn/disabled/ngoài viewport</td>
+<td>Chờ <code>elementToBeClickable</code>; cuộn vào view</td>
+</tr>
+<tr>
+<td><code>ElementClickInterceptedException</code></td>
+<td>Bị che bởi modal/overlay</td>
+<td>Đóng overlay/ chờ <code>invisibilityOfElementLocated</code></td>
+</tr>
+<tr>
+<td><code>getText()</code> rỗng với input</td>
+<td>Dùng sai method</td>
+<td><code>getAttribute("value")</code></td>
+</tr>
+<tr>
+<td>Click checkbox đã tick ⇒ bỏ tick</td>
+<td>Không kiểm tra trạng thái</td>
+<td>Kiểm tra <code>isSelected()</code></td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td>DOM đổi</td>
+<td>Tìm lại</td>
+</tr>
+<tr>
+<td>Gõ bị nối vào chữ cũ</td>
+<td>Quên <code>clear()</code></td>
+<td><code>clear()</code> trước</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="dropdown-select-và-multi-select">Dropdown (<code>&lt;select&gt;</code>) và Multi-select</h2>
+<h3 id="dropdown-1-lớp-select">Dropdown 1. Lớp <code>Select</code></h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.Select</span><span class="p">;</span>
+
+<span class="n">Select</span><span class="w"> </span><span class="n">dropdown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;dropdown&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// 🧩 Ex4</span></code></pre></div>
+<p><code>Select</code> chỉ bọc thẻ <code>&lt;select&gt;</code> thật. Truyền phần tử khác ⇒ <code>UnexpectedTagNameException</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selectByVisibleText("Option 1")</code></td>
+<td>Chọn theo chữ hiển thị (🧩 Ex4) — <strong>dễ đọc nhất</strong></td>
+</tr>
+<tr>
+<td><code>selectByValue("1")</code></td>
+<td>Chọn theo thuộc tính <code>value</code> — ổn định khi chữ đổi ngôn ngữ</td>
+</tr>
+<tr>
+<td><code>selectByIndex(1)</code></td>
+<td>Chọn theo vị trí (0-based) — mong manh nếu danh sách đổi</td>
+</tr>
+<tr>
+<td><code>getOptions()</code></td>
+<td><code>List&lt;WebElement&gt;</code> mọi option</td>
+</tr>
+<tr>
+<td><code>getFirstSelectedOption()</code></td>
+<td>Option đang chọn (🧩 Ex4)</td>
+</tr>
+<tr>
+<td><code>getAllSelectedOptions()</code></td>
+<td>Dành cho multi-select</td>
+</tr>
+<tr>
+<td><code>isMultiple()</code></td>
+<td>Có phải <code>&lt;select multiple&gt;</code></td>
+</tr>
+<tr>
+<td><code>deselectAll()</code>, <code>deselectByValue/Index/VisibleText</code></td>
+<td>Chỉ với multi-select</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="dropdown-2-phân-tích-ex4">Dropdown 2. Phân tích Ex4</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">defaultSelected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dropdown</span><span class="p">.</span><span class="na">getFirstSelectedOption</span><span class="p">().</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">();</span><span class="w">   </span><span class="c1">// placeholder</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">WebElement</span><span class="w"> </span><span class="n">option</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">dropdown</span><span class="p">.</span><span class="na">getOptions</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">option</span><span class="p">.</span><span class="na">isEnabled</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">                          </span><span class="c1">// bỏ &quot;Please select an option&quot; (disabled)</span>
+<span class="w">        </span><span class="n">optionTexts</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">option</span><span class="p">.</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">());</span>
+<span class="w">        </span><span class="n">optionValues</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">option</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">dropdown</span><span class="p">.</span><span class="na">selectByVisibleText</span><span class="p">(</span><span class="n">expectedText</span><span class="p">);</span><span class="w">            </span><span class="c1">// chọn</span>
+<span class="n">dropdown</span><span class="p">.</span><span class="na">getFirstSelectedOption</span><span class="p">().</span><span class="na">getText</span><span class="p">();</span><span class="w">            </span><span class="c1">// kiểm chứng</span></code></pre></div>
+<p>Điểm hay: thu thập text/value dạng <strong>chuỗi</strong> trước, rồi mới thao tác ⇒ không bị stale.</p>
+<h3 id="dropdown-3-dropdown-tự-chế-không-phải-select">Dropdown 3. Dropdown "tự chế" (không phải <code>&lt;select&gt;</code>)</h3>
+<p>Nhiều site dùng <code>&lt;div&gt;</code>/<code>&lt;ul&gt;</code> làm dropdown (Bootstrap, React-Select). <code>Select</code> <strong>không</strong> dùng được. Cách làm: click mở → chờ danh sách hiện → click mục.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.dropdown-toggle&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.dropdown-menu&quot;</span><span class="p">)));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">xpath</span><span class="p">(</span><span class="s">&quot;//ul[@class=&#39;dropdown-menu&#39;]//a[text()=&#39;Option 2&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span></code></pre></div>
+<h3 id="dropdown-4-lỗi-thường-gặp">Dropdown 4. Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UnexpectedTagNameException</code></td>
+<td>Không phải <code>&lt;select&gt;</code></td>
+<td>Xử lý như dropdown tự chế</td>
+</tr>
+<tr>
+<td><code>NoSuchElementException: Cannot locate option with text</code></td>
+<td>Sai chữ/dư khoảng trắng/ngôn ngữ</td>
+<td><code>getOptions()</code> in text ra kiểm tra; dùng <code>selectByValue</code></td>
+</tr>
+<tr>
+<td>Chọn option <code>disabled</code></td>
+<td></td>
+<td>Kiểm tra <code>isEnabled()</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Đăng nhập trên <code>/login</code> bằng tài khoản demo.</p>
+<p><strong>Input:</strong> <code>tomsmith</code> / <code>SuperSecretPassword!</code></p>
+<p><strong>Expected Output:</strong> URL kết thúc <code>/secure</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>clear()</code> rồi <code>sendKeys</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Đảm bảo <strong>cả hai</strong> checkbox được tích (idempotent: chỉ click khi chưa tích).</p>
+<p><strong>Input:</strong> <code>/checkboxes</code></p>
+<p><strong>Expected Output:</strong> Cả hai <code>isSelected() == true</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Vòng for-each + <code>if</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Chọn từng option <strong>có thể chọn</strong> ở <code>/dropdown</code> và kiểm chứng giá trị đã chọn.</p>
+<p><strong>Input:</strong> <code>/dropdown</code></p>
+<p><strong>Expected Output:</strong> Option 1 → <code>1</code>, Option 2 → <code>2</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Lọc option <code>isEnabled()</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Click vào checkbox đã tích sẽ?</p>
+<ul>
+<li>A. Giữ nguyên</li>
+<li>B. Bỏ tích</li>
+<li>C. Lỗi</li>
+<li>D. Tích đôi</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Luôn kiểm tra <code>isSelected()</code> trước.</p>
+</details>
+<p><strong>Câu 2.</strong> Class <code>Select</code> dùng cho?</p>
+<ul>
+<li>A. Mọi dropdown</li>
+<li>B. Chỉ thẻ <code>&lt;select&gt;</code> thật</li>
+<li>C. Chỉ radio</li>
+<li>D. Alert</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dropdown tự chế bằng <code>div</code> phải click-mở-chọn.</p>
+</details>
+<p><strong>Câu 3.</strong> Phần tử xuất hiện sau AJAX cần?</p>
+<ul>
+<li>A. <code>Thread.sleep</code></li>
+<li>B. Explicit Wait</li>
+<li>C. Implicit Wait lớn</li>
+<li>D. Bỏ qua</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Chờ điều kiện cụ thể.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you handle a dropdown in Selenium?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Xử lý dropdown?</li>
+<li><strong>Suggested answer (EN):</strong> For a native <code>&lt;select&gt;</code> I use the <code>Select</code> class with <code>selectByVisibleText</code>, <code>selectByValue</code> or <code>selectByIndex</code>; for custom dropdowns I click to open, wait for the list and click the item.</li>
+<li><strong>Giải thích (VI):</strong> Ưu tiên text/value hơn index.</li>
+<li><strong>Follow-up:</strong> <em>What if it is not a select tag?</em></li>
+</ul>
+<p><strong>2. How do you make a checkbox step idempotent?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Làm bước tick checkbox idempotent thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> Check <code>isSelected()</code> first and click only if the state differs from the desired one.</li>
+<li><strong>Giải thích (VI):</strong> Dự án <code>Exercise02</code> còn kiểm chứng trạng thái đổi sau click.</li>
+<li><strong>Follow-up:</strong> <em>Why verify the state change?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Nhập: <code>clear()</code> + <code>sendKeys</code></li>
+<li>Checkbox: kiểm tra <code>isSelected()</code> trước khi click</li>
+<li><code>Select</code> chỉ cho <code>&lt;select&gt;</code></li>
+<li>Bảng: <code>row.findElements(By.tagName("td"))</code></li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>Select.selectByVisibleText/Value/Index</code>, <code>getOptions</code>, <code>getFirstSelectedOption</code>, <code>isMultiple</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>&lt;select&gt;</code> ≠ dropdown tự chế</li>
+<li>Click mù ≠ đặt trạng thái mong muốn</li>
+<li><code>getOptions</code> gồm cả option bị disabled</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="07-browser-interactions.html">Browser Interactions: Alert, Frame/iFrame, Window/Tab</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">().</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/checkboxes&quot;</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">WebElement</span><span class="w"> </span><span class="n">cb</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkboxes input[type=&#39;checkbox&#39;]&quot;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cb</span><span class="p">.</span><span class="na">isSelected</span><span class="p">())</span><span class="w"> </span><span class="n">cb</span><span class="p">.</span><span class="na">click</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">WebElement</span><span class="w"> </span><span class="n">cb</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkboxes input[type=&#39;checkbox&#39;]&quot;</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">cb</span><span class="p">.</span><span class="na">isSelected</span><span class="p">());</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dropdown&quot;</span><span class="p">);</span>
+<span class="n">Select</span><span class="w"> </span><span class="n">dropdown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;dropdown&quot;</span><span class="p">)));</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;Option 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Option 2&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dropdown</span><span class="p">.</span><span class="na">selectByVisibleText</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">dropdown</span><span class="p">.</span><span class="na">getFirstSelectedOption</span><span class="p">().</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">(),</span><span class="w"> </span><span class="n">text</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="05-browser-navigation.html"><small>← Bài trước</small><span>Browser Navigation</span></a><a class="next" href="07-browser-interactions.html"><small>Bài tiếp theo →</small><span>Browser Interactions: Alert, Frame/iFrame, Window/Tab</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/06-element-interactions.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Implicit Wait · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/02-implicit-wait" data-root="../" data-lesson="1" data-title="Implicit Wait">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="implicit-wait">Implicit Wait</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a> · ➡️ <a href="03-explicit-wait.html">Explicit Wait và WebDriverWait</a></p>
+<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="01-wait-introduction.html">Wait Introduction</a> · Tiếp: <a href="03-explicit-wait.html">Explicit Wait</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Cài và hiểu phạm vi của Implicit Wait</li>
+<li>Giải thích vì sao dự án cấm Implicit Wait</li>
+<li>Đo được tác hại của <code>findElements</code> rỗng khi có implicit wait</li>
+<li>Giải thích vì sao không trộn Implicit và Explicit</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-wait-introduction.html">Wait Introduction</a></li>
+</ul>
+<h2 id="1-implicit-wait">1. Implicit Wait</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">implicitlyWait</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span></code></pre></div>
+<p>Nghĩa là: <em>"mỗi lần <code>findElement</code>/<code>findElements</code> không thấy phần tử, hãy thử lại tối đa 10 giây rồi mới báo"</em>. Cài <strong>một lần</strong>, áp dụng suốt session.</p>
+<p><strong>Ưu điểm:</strong> đơn giản; ít dòng code.
+<strong>Nhược điểm:</strong></p>
+<ol>
+<li>Chỉ chờ "<strong>có trong DOM</strong>" — không chờ visible/clickable/text ⇒ vẫn lỗi <code>ElementNotInteractableException</code>.</li>
+<li><code>findElements</code> không thấy gì <strong>vẫn chờ đủ 10 giây</strong> rồi trả list rỗng ⇒ kiểm tra "phần tử không tồn tại" <strong>chậm thêm 10 s</strong> mỗi lần.</li>
+<li>Ảnh hưởng <strong>mọi</strong> lệnh tìm, kể cả những chỗ bạn muốn lỗi ngay.</li>
+<li>Khó đoán khi trộn với Explicit Wait (xem mục "Vì sao không trộn" bên dưới).</li>
+<li>Thời gian chờ ẩn, khó debug.</li>
+</ol>
+<p>🧩 <strong>Dự án cố ý không dùng</strong> — Javadoc <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a>:</p>
+<blockquote>
+<p>"KHÔNG dùng Implicit Wait. Selenium khuyến cáo không trộn Implicit Wait với Explicit Wait vì thời gian chờ thực tế trở nên khó đoán (ví dụ: findElements trả về danh sách rỗng vẫn phải chờ hết toàn bộ thời gian implicit, làm test chậm thêm 10 giây)."</p>
+</blockquote>
+<p>Và Exercise06 chọn <code>wait.until(numberOfElementsToBe(locator, 0))</code> thay vì <code>findElements(...)</code> + implicit.</p>
+<p>⚠️ <strong>API cũ:</strong> <code>implicitlyWait(10, TimeUnit.SECONDS)</code> đã bị loại/deprecated ở Selenium 4. Dùng <code>Duration</code>.</p>
+<h2 id="2-vì-sao-không-trộn-implicit-và-explicit">2. Vì sao không trộn Implicit và Explicit</h2>
+<p>Tài liệu Selenium khuyến cáo <strong>không</strong> trộn, vì kết quả thời gian chờ <strong>khó đoán</strong>, có thể lâu hơn mong đợi.</p>
+<p>Ví dụ: implicit = 10 s, explicit = 15 s. <code>wait.until(d -&gt; d.findElements(by).size() == 0)</code>... mỗi lần <code>findElements</code> trong vòng lặp lại <strong>chờ thêm 10 s</strong> nội bộ trước khi trả list rỗng. Một lần kiểm tra ≈ 10 s, nên timeout 15 s chỉ còn ~1-2 lần thử, và thời gian thực tế vượt xa dự kiến. (Cách tính chính xác phụ thuộc driver/phiên bản; điểm cốt lõi là <strong>hai bộ đếm lồng nhau</strong> làm thời gian không còn dự đoán được.)</p>
+<p>✅ Chọn <strong>một</strong>: Explicit Wait. Đặt implicit = 0 (mặc định).</p>
+<p>🧩 Dự án tuân thủ và ghi rõ lý do trong Javadoc <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a> và README mục 6.</p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết dòng cài Implicit Wait 3 giây bằng API <code>Duration</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 1 dòng code</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>driver.manage().timeouts()</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Đo thời gian <code>findElements(By.id("khong-co")).isEmpty()</code> khi <strong>có</strong> implicit wait 3 s và khi <strong>không có</strong>.</p>
+<p><strong>Input:</strong> Trang chủ the-internet</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Không implicit: vài ms (đo được 17 ms); có implicit 3 s: ≈ 3000 ms (đo được 3050 ms)</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>System.nanoTime()</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết 3 lý do (ngắn) vì sao <code>BaseTest</code> của dự án cố ý không dùng Implicit Wait.</p>
+<p><strong>Input:</strong> Javadoc <code>BaseTest</code></p>
+<p><strong>Expected Output:</strong> 3 gạch đầu dòng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Phạm vi toàn cục, chỉ chờ presence, trộn khó đoán.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Implicit Wait áp dụng cho?</p>
+<ul>
+<li>A. Một lệnh</li>
+<li>B. Mọi <code>findElement(s)</code> của session</li>
+<li>C. Chỉ alert</li>
+<li>D. Chỉ page load</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Cài một lần, áp dụng suốt session.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>findElements</code> không thấy gì khi có implicit 10 s?</p>
+<ul>
+<li>A. Trả ngay</li>
+<li>B. Chờ đủ 10 s rồi trả list rỗng</li>
+<li>C. Ném lỗi ngay</li>
+<li>D. Treo vô hạn</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Lý do dự án cấm implicit.</p>
+</details>
+<p><strong>Câu 3.</strong> Mặc định của implicit wait là?</p>
+<ul>
+<li>A. 0</li>
+<li>B. 10 s</li>
+<li>C. 30 s</li>
+<li>D. Không xác định</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Không chờ.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How does implicit wait work and what is its scope?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Implicit Wait hoạt động thế nào, phạm vi?</li>
+<li><strong>Suggested answer (EN):</strong> It sets a global time during which <code>findElement</code> and <code>findElements</code> keep retrying until the element is present in the DOM; it applies to every find call in the session and only waits for presence.</li>
+<li><strong>Giải thích (VI):</strong> Dự án không dùng.</li>
+<li><strong>Follow-up:</strong> <em>What is the default?</em></li>
+</ul>
+<p><strong>2. Why not mix implicit and explicit waits?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao không trộn?</li>
+<li><strong>Suggested answer (EN):</strong> Selenium advises against it because the effective wait time becomes unpredictable; for example every <code>findElements</code> inside an explicit wait loop may itself wait for the implicit time.</li>
+<li><strong>Giải thích (VI):</strong> Chọn Explicit.</li>
+<li><strong>Follow-up:</strong> <em>Can you show an example where it hurts?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Implicit: toàn cục, chỉ chờ presence</li>
+<li>Dự án cố ý không dùng (Javadoc <code>BaseTest</code>)</li>
+<li>Không trộn với Explicit</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>manage().timeouts().implicitlyWait(Duration)</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Implicit ≠ Explicit</li>
+<li><code>implicitlyWait(long, TimeUnit)</code> là API cũ</li>
+<li><code>findElements</code> rỗng vẫn chờ</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-explicit-wait.html">Explicit Wait và WebDriverWait</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đoạn cấu hình)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">implicitlyWait</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span></code></pre></div>
+<p>API cũ <code>implicitlyWait(3, TimeUnit.SECONDS)</code> đã bị loại bỏ.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-co&quot;</span><span class="p">));</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;không implicit: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; ms&quot;</span><span class="p">);</span>
+
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">implicitlyWait</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+<span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-co&quot;</span><span class="p">));</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;có implicit 3s: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; ms&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Áp dụng cho <strong>mọi</strong> <code>findElement(s)</code>, kể cả chỗ muốn lỗi ngay.</li>
+<li>Chỉ chờ phần tử <strong>có trong DOM</strong>, không chờ visible/clickable/text.</li>
+<li>Trộn với Explicit Wait làm thời gian chờ <strong>khó đoán</strong>; <code>findElements</code> rỗng vẫn chờ hết giờ implicit (chậm thêm).</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-wait-introduction.html"><small>← Bài trước</small><span>Wait Introduction: vì sao Selenium cần Wait?</span></a><a class="next" href="03-explicit-wait.html"><small>Bài tiếp theo →</small><span>Explicit Wait và WebDriverWait</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/02-implicit-wait.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

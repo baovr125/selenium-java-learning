@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 4 — Wait and Synchronization (Chapter 19) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/README" data-root="../" data-lesson="0" data-title="Phase 4 — Wait and Synchronization (Chapter 19)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-4--wait-and-synchronization--chapter-19">Phase 4 — Wait and Synchronization ⭐ (Chapter 19)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/wait-interview.html">wait-interview</a> (20 câu) · Độ ưu tiên: <strong>cao</strong>
+Phiên bản áp dụng: <strong>Selenium 4.52.0</strong>.</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Ưu tiên</th>
+<th>Ví dụ riêng cho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="01-wait-introduction.html">Wait Introduction</a></td>
+<td>Essential</td>
+<td>Vì sao cần Wait; 3 cơ chế</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-implicit-wait.html">Implicit Wait</a></td>
+<td>Important</td>
+<td>Vì sao dự án cấm; đo tác hại</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-explicit-wait.html">Explicit Wait</a></td>
+<td>Essential</td>
+<td><code>WebDriverWait</code>, timeout, polling, ignored exceptions</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-expected-conditions.html">ExpectedConditions</a></td>
+<td>Essential</td>
+<td><code>presence</code>, <code>visibility</code>, <code>clickable</code>, <code>invisibility</code>, <code>textToBe</code>, <code>alertIsPresent</code>, <code>frame...</code>, <code>numberOfWindowsToBe</code>, <code>stalenessOf</code></td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="05-fluent-wait.html">Fluent Wait &amp; Custom Wait</a></td>
+<td>Important</td>
+<td><code>FluentWait</code>, lambda, <code>ExpectedCondition</code> tự viết</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="06-wait-comparison.html">So sánh các Wait (và <code>Thread.sleep</code>)</a></td>
+<td>Essential</td>
+<td>Bảng so sánh, sơ đồ quyết định</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="07-real-world-scenarios.html">15 tình huống thực tế</a></td>
+<td>Essential</td>
+<td>Login, hover, spinner, stale, alert, tab, iframe, file</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="08-wait-best-practices.html">Best Practices &amp; 20 câu tự kiểm tra</a></td>
+<td>Essential</td>
+<td>Checklist, lỗi thường gặp</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="wait-trong-dự-án-selenium1-đã-phân-tích">Wait trong dự án <code>Selenium1</code> (đã phân tích)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>Wait dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Login</td>
+<td><code>visibilityOfElementLocated(By.id("flash"))</code></td>
+</tr>
+<tr>
+<td>5 Hover</td>
+<td><code>visibilityOf(captionHeader)</code></td>
+</tr>
+<tr>
+<td>6 Add/Remove</td>
+<td><code>visibilityOfElementLocated</code>, <code>numberOfElementsToBe(by, 0)</code></td>
+</tr>
+<tr>
+<td>7 Infinite Scroll</td>
+<td><code>presenceOfElementLocated</code> + <code>wait.until(lambda)</code> (custom wait)</td>
+</tr>
+<tr>
+<td>8 Modal</td>
+<td><code>visibilityOfElementLocated</code>, <code>invisibilityOfElementLocated</code></td>
+</tr>
+<tr>
+<td>10 Dynamic Controls</td>
+<td><code>visibilityOfElementLocated</code>, <code>invisibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>textToBe</code></td>
+</tr>
+<tr>
+<td>Cấu hình</td>
+<td><code>new WebDriverWait(driver, Duration.ofSeconds(15))</code> trong <code>BaseTest</code>; <strong>không</strong> Implicit Wait; <strong>không</strong> <code>Thread.sleep</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="ba-thông-điệp-cốt-lõi">Ba thông điệp cốt lõi</h2>
+<ol>
+<li>Chờ <strong>điều kiện</strong>, không chờ <strong>thời gian</strong>.</li>
+<li>Điều kiện phải <strong>đặc trưng cho trạng thái mới</strong> (Exercise 10: <code>textToBe</code>, không chỉ <code>visibility</code>).</li>
+<li>Chỉ dùng <strong>Explicit Wait</strong>; Implicit = 0; <code>Thread.sleep</code> chỉ để debug.</li>
+</ol>
+<p>Nội dung các bài được tách từ tài liệu Wait dài ở bản trước (giữ nguyên nội dung đã kiểm chứng, đánh số mục lại) và bổ sung mục tiêu, bài tập, câu hỏi, phỏng vấn.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../03-selenium-fundamentals/11-debugging-and-best-practices.html"><small>← Bài trước</small><span>Debugging và Best Practices</span></a><a class="next" href="01-wait-introduction.html"><small>Bài tiếp theo →</small><span>Wait Introduction: vì sao Selenium cần Wait?</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

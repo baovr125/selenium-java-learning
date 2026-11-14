@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selenium là gì? · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/01-selenium-introduction" data-root="../" data-lesson="1" data-title="Selenium là gì?">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="selenium-là-gì">Selenium là gì?</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 13 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="../02-maven-and-project/09-maven-troubleshooting.html">Troubleshooting</a> · ➡️ <a href="02-webdriver.html">WebDriver Fundamentals</a></p>
+<p>Liên quan: <a href="../01-java-fundamentals/13-java-selenium-cheatsheet.html">Tiếp theo: Java cho Selenium</a> · <a href="02-webdriver.html">WebDriver chi tiết</a> · <a href="../interview/selenium-interview.html">Phỏng vấn</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích Selenium, WebDriver, Browser Driver, Browser</li>
+<li>Mô tả kiến trúc Test → HTTP/JSON (W3C) → Driver → Browser</li>
+<li>Phân biệt WebDriver và WebElement</li>
+<li>Giải thích <code>close()</code> và <code>quit()</code></li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../01-java-fundamentals/08-oop-concepts.html">Java OOP Concepts</a></li>
+<li><a href="../01-java-fundamentals/00-environment-setup.html">Environment Setup</a></li>
+</ul>
+<h2 id="1-automation-testing-và-selenium">1. Automation Testing và Selenium</h2>
+<p>📘 <strong>Automation Testing</strong> là dùng chương trình để thực hiện các bước kiểm thử mà tester thường làm tay: mở trang, nhập dữ liệu, bấm nút, so sánh kết quả.</p>
+<p><strong>Selenium</strong> là một <strong>bộ công cụ mã nguồn mở</strong> để tự động hoá trình duyệt web. Gồm nhiều thành phần:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Vai trò</th>
+<th>Dự án có dùng?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Selenium WebDriver</strong></td>
+<td>API (Java, Python, C#...) điều khiển trình duyệt</td>
+<td>✅ trọng tâm</td>
+</tr>
+<tr>
+<td>Selenium Grid</td>
+<td>Chạy test song song trên nhiều máy/trình duyệt</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Selenium IDE</td>
+<td>Tiện ích ghi/phát lại thao tác</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Selenium Manager</td>
+<td>Tự tìm/tải browser driver (từ 4.6)</td>
+<td>✅ (ngầm định, trong <code>selenium-manager-4.52.0.jar</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Selenium <strong>chỉ</strong> tự động hoá trình duyệt web. Nó không kiểm thử ứng dụng mobile native hay desktop (đó là Appium, WinAppDriver...).</p>
+</blockquote>
+<h2 id="2-selenium-webdriver-là-gì">2. Selenium WebDriver là gì?</h2>
+<p>📘 WebDriver là một <strong>interface</strong> (<code>org.openqa.selenium.WebDriver</code>) mô tả các hành động điều khiển trình duyệt: <code>get(url)</code>, <code>findElement(by)</code>, <code>getTitle()</code>, <code>quit()</code>... Mỗi trình duyệt có một class hiện thực: <code>ChromeDriver</code>, <code>FirefoxDriver</code>, <code>EdgeDriver</code>, <code>SafariDriver</code>.</p>
+<p>🧩 Trong dự án, <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a> khai báo kiểu <strong>interface</strong> nhưng khởi tạo bằng class cụ thể:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">      </span><span class="c1">// kiểu interface (đa hình)</span>
+<span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w">     </span><span class="c1">// đối tượng cụ thể</span></code></pre></div>
+<p>✅ Luôn khai báo biến kiểu <code>WebDriver</code>: sau này đổi sang Firefox chỉ sửa một dòng khởi tạo.</p>
+<h2 id="3-kiến-trúc-selenium-webdriver-selenium-4">3. Kiến trúc Selenium WebDriver (Selenium 4)</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">┌──────────────────┐   W3C WebDriver Protocol    ┌────────────────┐   giao thức    ┌───────────┐
+│ Test code (Java) │ ───── HTTP + JSON ────────► │ Browser Driver │ ─────────────► │  Browser  │
+│  Selenium client │ ◄──────── response ──────── │ (chromedriver) │ ◄───────────── │  (Chrome) │
+└──────────────────┘                             └────────────────┘                └───────────┘</code></pre></div>
+<p>Các bước khi bạn gọi <code>driver.findElement(By.id("username"))</code>:</p>
+<ol>
+<li>Thư viện Selenium Java đóng gói yêu cầu thành <strong>HTTP request JSON</strong> theo chuẩn <strong>W3C WebDriver</strong> (<code>POST /session/{id}/element</code>).</li>
+<li>Gửi tới <strong>chromedriver</strong> (process chạy local, lắng nghe một cổng).</li>
+<li>chromedriver chuyển thành lệnh điều khiển Chrome.</li>
+<li>Chrome thực hiện, kết quả quay ngược lại: JSON → đối tượng <code>WebElement</code> (thực chất chứa một <strong>element id</strong> của browser).</li>
+</ol>
+<p>Hệ quả quan trọng:</p>
+<ul>
+<li>Mỗi lệnh Selenium là <strong>một request qua mạng/loopback</strong> ⇒ có chi phí; tránh gọi thừa.</li>
+<li><code>WebElement</code> <strong>không phải</strong> bản sao DOM; nó chỉ là "tay cầm" (handle) tới phần tử. Nếu DOM đổi, handle có thể hết hạn → <code>StaleElementReferenceException</code>.</li>
+<li>Selenium <strong>không biết</strong> trang đã "xong" theo nghĩa nghiệp vụ (AJAX chưa chạy xong...) ⇒ cần <strong>Wait</strong>. Xem <a href="../04-wait-mechanisms/01-wait-introduction.html">selenium/05</a>.</li>
+</ul>
+<h2 id="4-webdriver-browser-driver-và-browser">4. WebDriver, Browser Driver và Browser</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khái niệm</th>
+<th>Là gì</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WebDriver (API)</td>
+<td>Thư viện bạn gọi trong Java</td>
+<td><code>selenium-java-4.52.0.jar</code></td>
+</tr>
+<tr>
+<td>Browser Driver</td>
+<td>Chương trình trung gian của hãng browser</td>
+<td><code>chromedriver.exe</code>, <code>geckodriver.exe</code>, <code>msedgedriver.exe</code></td>
+</tr>
+<tr>
+<td>Browser</td>
+<td>Trình duyệt thật</td>
+<td>Chrome, Firefox, Edge</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Browser</th>
+<th>Driver</th>
+<th>Class Java</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chrome</td>
+<td>chromedriver</td>
+<td><code>ChromeDriver</code></td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td>geckodriver</td>
+<td><code>FirefoxDriver</code></td>
+</tr>
+<tr>
+<td>Edge</td>
+<td>msedgedriver</td>
+<td><code>EdgeDriver</code></td>
+</tr>
+<tr>
+<td>Safari</td>
+<td>safaridriver (có sẵn trên macOS)</td>
+<td><code>SafariDriver</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Dự án <strong>không</strong> tải <code>chromedriver.exe</code> thủ công và <strong>không</strong> dùng thư viện WebDriverManager. Từ Selenium 4.6, khi chạy <code>new ChromeDriver()</code>, <strong>Selenium Manager</strong> tự phát hiện phiên bản Chrome cài trên máy, tải đúng chromedriver và cache lại. Đó là lý do README ghi "cần Internet" và lỗi <code>SessionNotCreatedException</code> thường xuất hiện khi Chrome cũ hoặc mất mạng.</p>
+<h2 id="5-webdriver-và-webelement">5. WebDriver và WebElement</h2>
+<ul>
+<li><code>WebDriver</code>: đại diện <strong>cả cửa sổ/tab trình duyệt</strong> (điều hướng, tìm phần tử, quản lý cửa sổ, timeout).</li>
+<li><code>WebElement</code>: đại diện <strong>một phần tử trên trang</strong> (click, nhập chữ, đọc text, đọc thuộc tính).</li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// thao tác cấp trình duyệt</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span><span class="w">       </span><span class="c1">// thao tác cấp phần tử</span>
+<span class="n">user</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span></code></pre></div>
+<p>Chi tiết: <a href="03-locators.html">selenium/02</a>.</p>
+<h2 id="6-khởi-tạo-và-đóng-trình-duyệt-browser-session">6. Khởi tạo và đóng trình duyệt, Browser Session</h2>
+<ul>
+<li><code>new ChromeDriver()</code> làm 2 việc: khởi động process <code>chromedriver</code> và tạo một <strong>session</strong> (phiên) — mỗi session có <code>sessionId</code>, cookie, tab, timeout riêng.</li>
+<li><code>driver.quit()</code> kết thúc session, đóng <strong>mọi</strong> cửa sổ và dừng process driver.</li>
+<li><code>driver.close()</code> chỉ đóng <strong>cửa sổ/tab hiện tại</strong>. Nếu là cửa sổ cuối cùng thì trình duyệt đóng nhưng process driver <strong>có thể còn sống</strong>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>close()</code></th>
+<th><code>quit()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phạm vi</td>
+<td>Cửa sổ/tab đang focus</td>
+<td>Toàn bộ session</td>
+</tr>
+<tr>
+<td>Process chromedriver</td>
+<td>Có thể còn</td>
+<td>Dừng</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Đóng tab phụ rồi <code>switchTo().window(...)</code> về tab chính</td>
+<td>Kết thúc test (<code>@AfterMethod</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 <code>BaseTest.tearDown()</code> dùng <code>quit()</code> và kiểm tra <code>driver != null</code> (<a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a>).</p>
+<h2 id="7-một-test-selenium-tối-giản">7. Một test Selenium tối giản</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.WebDriver</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeDriver</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">FirstTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span><span class="w">   </span><span class="c1">// The Internet</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w">                            </span><span class="c1">// luôn giải phóng dù lỗi</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p><code>try/finally</code> quan trọng: nếu có exception mà quên <code>quit()</code>, Chrome vẫn mở. Dự án giải quyết vấn đề này bằng <code>@AfterMethod</code> (TestNG luôn chạy nó kể cả khi test fail).</p>
+<h2 id="8-phạm-vi-và-giới-hạn-của-selenium">8. Phạm vi và giới hạn của Selenium</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Làm tốt</th>
+<th>Không làm tốt / cần công cụ khác</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kiểm thử chức năng UI trên web</td>
+<td>Kiểm thử hiệu năng tải (JMeter, k6)</td>
+</tr>
+<tr>
+<td>Kiểm thử hồi quy lặp lại</td>
+<td>Kiểm thử ứng dụng mobile native (Appium)</td>
+</tr>
+<tr>
+<td>Đa trình duyệt (Grid)</td>
+<td>Đọc nội dung ảnh/captcha (cần OCR/giải pháp khác)</td>
+</tr>
+<tr>
+<td>Chạy trong CI</td>
+<td>Kiểm thử API thuần (REST Assured) hiệu quả hơn qua UI</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9--best-practices-khởi-đầu">9. ✅ Best Practices khởi đầu</h2>
+<ol>
+<li>Khai báo <code>WebDriver</code>, không khai báo <code>ChromeDriver</code>.</li>
+<li>Luôn <code>quit()</code> trong teardown.</li>
+<li>Dùng Explicit Wait, không <code>Thread.sleep()</code> làm cách chờ chính.</li>
+<li>Locator ưu tiên <code>id</code>, <code>name</code>, CSS ổn định.</li>
+<li>Mỗi test độc lập, không phụ thuộc thứ tự chạy.</li>
+</ol>
+<h2 id="tóm-tắt">Tóm tắt</h2>
+<ul>
+<li>Selenium = bộ công cụ; WebDriver = API; Browser Driver = cầu nối; Browser = nơi thực thi.</li>
+<li>Giao tiếp bằng chuẩn W3C qua HTTP/JSON.</li>
+<li><code>WebElement</code> là handle, có thể stale.</li>
+<li>Dự án dùng Selenium 4.52.0 + Selenium Manager (không WebDriverManager).</li>
+</ul>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Vẽ lại luồng khi gọi <code>driver.findElement(By.id("username"))</code> (4 thành phần).</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Chuỗi 4 bước</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Test code → ? → ? → ?</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Chạy <code>EnvironmentCheckTest</code> trên bản sao và trả lời: ai tải ChromeDriver? Khi nào?</p>
+<p><strong>Input:</strong> Bản sao <code>Selenium1</code></p>
+<p><strong>Expected Output:</strong> <code>Tests run: 1</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Selenium Manager.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết test tối thiểu mở trang chủ, in <code>title</code>, <strong>luôn</strong> <code>quit()</code> kể cả khi lỗi.</p>
+<p><strong>Input:</strong> URL trang chủ</p>
+<p><strong>Expected Output:</strong> In <code>The Internet</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>try/finally</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Selenium giao tiếp với browser qua?</p>
+<ul>
+<li>A. Truyền trực tiếp bộ nhớ</li>
+<li>B. HTTP/JSON theo chuẩn W3C WebDriver tới browser driver</li>
+<li>C. Bluetooth</li>
+<li>D. Chỉ qua IDE</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Mỗi lệnh là một HTTP request tới chromedriver.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>close()</code> khác <code>quit()</code>?</p>
+<ul>
+<li>A. Giống nhau</li>
+<li>B. <code>close()</code> đóng cửa sổ hiện tại; <code>quit()</code> kết thúc session</li>
+<li>C. <code>quit()</code> chỉ đóng tab</li>
+<li>D. Không khác</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>quit()</code> đóng mọi cửa sổ và dừng driver.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>WebElement</code> thực chất là?</p>
+<ul>
+<li>A. Bản sao DOM</li>
+<li>B. Một handle tới phần tử trong browser (có thể stale)</li>
+<li>C. Một class HTML</li>
+<li>D. Một file</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> DOM đổi thì handle có thể hết hiệu lực.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Explain the Selenium WebDriver architecture.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Giải thích kiến trúc Selenium WebDriver.</li>
+<li><strong>Suggested answer (EN):</strong> Test code uses the Selenium client library, which sends JSON over HTTP using the W3C WebDriver protocol to a browser driver like chromedriver; the driver controls the browser and returns results the same way.</li>
+<li><strong>Giải thích (VI):</strong> Mỗi lệnh = một request.</li>
+<li><strong>Follow-up:</strong> <em>Why can an element become stale?</em></li>
+</ul>
+<p><strong>2. What does Selenium Manager do?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Selenium Manager làm gì?</li>
+<li><strong>Suggested answer (EN):</strong> Since Selenium 4.6 it detects the installed browser, downloads the matching driver and caches it, so WebDriverManager or manual downloads are not needed.</li>
+<li><strong>Giải thích (VI):</strong> Cần Internet lần đầu.</li>
+<li><strong>Follow-up:</strong> <em>What exception appears if the driver can't be obtained?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Selenium là bộ công cụ; WebDriver là API; driver là cầu nối; browser thực thi</li>
+<li>W3C protocol qua HTTP/JSON</li>
+<li><code>quit()</code> trong teardown</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>new ChromeDriver()</code>, <code>get</code>, <code>getTitle</code>, <code>close</code>, <code>quit</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>WebDriver ≠ Browser Driver ≠ Browser</li>
+<li><code>close()</code> ≠ <code>quit()</code></li>
+<li>Selenium ≠ Appium/Grid</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-webdriver.html">WebDriver Fundamentals</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>Test code (Selenium client) → HTTP/JSON theo chuẩn W3C → Browser Driver (chromedriver) → Browser (Chrome); kết quả quay ngược lại và trở thành <code>WebElement</code> (một handle chứa element id).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=EnvironmentCheckTest&quot;</span></code></pre></div>
+<p>Selenium Manager (trong <code>selenium-manager-4.52.0.jar</code>) tải ChromeDriver khớp phiên bản Chrome khi <code>new ChromeDriver()</code> chạy lần đầu (cần Internet).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.WebDriver</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeDriver</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">FirstTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 3 — Selenium Fundamentals (Chapter 13–18)</span></a><a class="next" href="02-webdriver.html"><small>Bài tiếp theo →</small><span>WebDriver Fundamentals</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/01-selenium-introduction.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

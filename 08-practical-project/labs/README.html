@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical Exercises — Mục lục · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/README" data-root="../../" data-lesson="0" data-title="Practical Exercises — Mục lục">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="practical-exercises--mục-lục">Practical Exercises — Mục lục</h1>
+<blockquote>
+<p>Quay lại: <a href="../../index.html">README chính</a> · <a href="../../LEARNING_ROADMAP.html">Lộ trình</a></p>
+</blockquote>
+<h2 id="-quy-tắc-làm-bài">⚠️ Quy tắc làm bài</h2>
+<ol>
+<li><strong>Không làm trên dự án gốc <code>Selenium1</code>.</strong> Tạo thư mục thực hành riêng, ví dụ <code>B:\Fresher\SeleniumLab</code> (xem <a href="01-first-selenium-test.html">bài 1</a>).</li>
+<li>Dự án gốc dùng làm <strong>tham chiếu đối chiếu</strong>: <code>src/test/java/...</code>, <code>pom.xml</code>, <code>testng.xml</code>.</li>
+<li>Tự viết trước, đối chiếu code tham khảo sau.</li>
+<li>Mỗi bài kết thúc bằng <strong><code>.\mvnw.cmd clean test</code> xanh</strong> và ghi vào <a href="../../LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a>.</li>
+<li>Trang luyện tập: <code>https://the-internet.herokuapp.com</code> (bên thứ ba; nếu giao diện đổi, hãy tự điều chỉnh locator).</li>
+</ol>
+<h2 id="12-bài-tập-theo-mức-độ-tăng-dần">12 bài tập theo mức độ tăng dần</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bài</th>
+<th>Nội dung</th>
+<th>Mức</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Khởi tạo dự án Selenium Java</td>
+<td>★</td>
+<td><a href="01-first-selenium-test.html">01</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Cấu hình Maven (<code>pom.xml</code>)</td>
+<td>★</td>
+<td><a href="01-first-selenium-test.html">01</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Sử dụng Maven Wrapper</td>
+<td>★</td>
+<td><a href="04-maven-and-mvnw-practice.html">04</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Chạy Selenium Test bằng <code>mvnw.cmd</code></td>
+<td>★</td>
+<td><a href="04-maven-and-mvnw-practice.html">04</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Tìm phần tử bằng Locator</td>
+<td>★★</td>
+<td><a href="02-locator-practice.html">02</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Tự động hoá chức năng Login</td>
+<td>★★</td>
+<td><a href="05-form-automation.html">05</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Dropdown, Alert, Frame</td>
+<td>★★</td>
+<td><a href="05-form-automation.html">05</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Explicit Wait</td>
+<td>★★★</td>
+<td><a href="03-wait-practice.html">03</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Dynamic Web Elements</td>
+<td>★★★</td>
+<td><a href="03-wait-practice.html">03</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Page Object Model</td>
+<td>★★★</td>
+<td><a href="06-page-object-model-practice.html">06</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Test Suite bằng TestNG</td>
+<td>★★★</td>
+<td><a href="07-run-tests-with-maven.html">07</a></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Mini Automation Framework</td>
+<td>★★★★</td>
+<td><a href="08-mini-automation-project.html">08</a></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="mẫu-một-bài-tập">Mẫu một bài tập</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Mục tiêu → Kiến thức cần dùng → Yêu cầu → Các bước thực hiện → Code tham khảo → Kết quả mong đợi → Lỗi thường gặp</code></pre></div>
+<h2 id="cách-tự-chấm">Cách tự chấm</h2>
+<ul>
+<li>✅ Test chạy xanh 3 lần liên tiếp (không flaky).</li>
+<li>✅ Không <code>Thread.sleep</code>.</li>
+<li>✅ Mỗi test có assertion có message.</li>
+<li>✅ <code>Tests run</code> đúng số mong đợi, <code>Skipped: 0</code>.</li>
+<li>✅ Không commit <code>target/</code>, <code>.mvn/repository/</code>.</li>
+</ul>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../03-run-debug-report-and-git.html"><small>← Bài trước</small><span>Project Step 9–12: Thực thi Suite, Debug, Báo cáo và Git</span></a><a class="next" href="01-first-selenium-test.html"><small>Bài tiếp theo →</small><span>Lab 01: Khởi tạo dự án và bài test đầu tiên (Bài 1 + Bài 2)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

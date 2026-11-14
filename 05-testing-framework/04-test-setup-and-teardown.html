@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Setup và Teardown · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="05-testing-framework/04-test-setup-and-teardown" data-root="../" data-lesson="1" data-title="Test Setup và Teardown">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="test-setup-và-teardown">Test Setup và Teardown</h1>
+<blockquote>
+<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="03-assertions-and-verification.html">Assertions và Verification</a> · ➡️ <a href="05-test-data-and-configuration.html">Test Data và Configuration</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-assertions-and-verification.html">Trước: Assertions</a> · <a href="05-test-data-and-configuration.html">Sau: Test Data &amp; Config</a> · <a href="../06-automation-framework/03-reusable-components.html">Framework: DriverFactory</a>
+Nguồn: <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Phân tích <code>BaseTest</code> của dự án từng dòng</li>
+<li>Chọn cấp setup (<code>@BeforeMethod</code> vs <code>@BeforeClass</code>)</li>
+<li>Giải thích vòng đời khi test fail</li>
+<li>Đề xuất <code>ThreadLocal</code> + screenshot cho teardown</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../01-java-fundamentals/08-oop-concepts.html">Java OOP Concepts</a></li>
+<li><a href="../03-selenium-fundamentals/02-webdriver.html">WebDriver</a></li>
+</ul>
+<h2 id="1-vì-sao-cần-setupteardown">1. Vì sao cần Setup/Teardown?</h2>
+<p>Mỗi test cần <strong>trạng thái ban đầu sạch</strong> (trình duyệt mới, chưa đăng nhập) và phải <strong>dọn dẹp</strong> sau cùng (đóng trình duyệt) dù pass hay fail. Đặt logic này ở <strong>một chỗ</strong> (<code>BaseTest</code>) để 10 class không lặp lại.</p>
+<h2 id="2-phân-tích-basetest-của-dự-án">2. Phân tích <code>BaseTest</code> của dự án</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">          </span><span class="c1">// field protected: class con dùng trực tiếp</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@BeforeMethod</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">pageLoadTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span>
+<span class="w">        </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@AfterMethod</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Dòng</th>
+<th>Giải thích</th>
+<th>Lý do thiết kế</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>protected</code></td>
+<td>Class con (package khác) truy cập được</td>
+<td>Không cần getter; vẫn không public</td>
+</tr>
+<tr>
+<td><code>@BeforeMethod</code></td>
+<td>Chạy trước <strong>mỗi</strong> <code>@Test</code></td>
+<td>Mỗi test một Chrome mới ⇒ độc lập</td>
+</tr>
+<tr>
+<td><code>window().maximize()</code></td>
+<td>Tránh phần tử bị che do cửa sổ nhỏ</td>
+<td>Ổn định locator/hover</td>
+</tr>
+<tr>
+<td><code>pageLoadTimeout(30s)</code></td>
+<td><code>get()</code> không treo vô hạn</td>
+<td>Fail nhanh khi mạng hỏng</td>
+</tr>
+<tr>
+<td><code>new WebDriverWait(..., 15s)</code></td>
+<td>Một Wait dùng chung</td>
+<td>Không cần tạo lại ở từng test</td>
+</tr>
+<tr>
+<td><code>if (driver != null)</code></td>
+<td><code>setup()</code> có thể fail trước khi gán</td>
+<td>Tránh <code>NullPointerException</code> che lỗi gốc</td>
+</tr>
+<tr>
+<td><code>quit()</code></td>
+<td>Đóng cả session</td>
+<td>Không rò rỉ process</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Không có Implicit Wait</strong> — cố ý (xem Javadoc trong file và <a href="../04-wait-mechanisms/01-wait-introduction.html">selenium/05</a>).</p>
+<h2 id="3-kế-thừa-hoạt-động-thế-nào">3. Kế thừa hoạt động thế nào?</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Exercise01_LoginTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLoginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">LOGIN_URL</span><span class="p">);</span><span class="w">      </span><span class="c1">// dùng driver của BaseTest</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>TestNG quét class con, thấy method kế thừa có <code>@BeforeMethod</code>/<code>@AfterMethod</code> ⇒ gọi tự động quanh <code>testLoginSuccess</code>. Class con <strong>không cần</strong> viết lại.</p>
+<p>Luồng chạy <code>Exercise01_LoginTest</code>:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">BaseTest.setup()  →  Exercise01_LoginTest.testLoginSuccess()  →  BaseTest.tearDown()</code></pre></div>
+<p>Vì vậy 10 test = 10 lần mở Chrome (≈ 91 giây cả bộ — <code>target/surefire-reports/TestSuite.txt</code>).</p>
+<h2 id="4-hai-cách-chạy-testng-và-main">4. Hai cách chạy: TestNG và <code>main()</code></h2>
+<p>Mỗi class có <code>main()</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Exercise01_LoginTest</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Exercise01_LoginTest</span><span class="p">();</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">test</span><span class="p">.</span><span class="na">setup</span><span class="p">();</span><span class="w">                      </span><span class="c1">// gọi tay vì không có TestNG</span>
+<span class="w">        </span><span class="n">test</span><span class="p">.</span><span class="na">testLoginSuccess</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">test</span><span class="p">.</span><span class="na">tearDown</span><span class="p">();</span><span class="w">                   </span><span class="c1">// luôn dọn dẹp</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>TestNG/Maven</th>
+<th><code>main()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ai gọi <code>setup/tearDown</code></td>
+<td>TestNG (annotation)</td>
+<td>Code gọi tay</td>
+</tr>
+<tr>
+<td><code>try/finally</code></td>
+<td>Không cần (TestNG đảm bảo)</td>
+<td>Cần</td>
+</tr>
+<tr>
+<td>Báo cáo</td>
+<td>Surefire/TestNG</td>
+<td>In ra console</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td><code>mvnw test</code>, CI</td>
+<td>Chạy nhanh bằng <code>run-test.ps1</code>/IDE</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-các-cấp-độ-setup">5. Các cấp độ Setup</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cấp</th>
+<th>Annotation</th>
+<th>Khi dùng</th>
+<th>Đánh đổi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mỗi test</td>
+<td><code>@BeforeMethod</code></td>
+<td><strong>Mặc định</strong> — độc lập</td>
+<td>Chậm (mở Chrome mỗi test)</td>
+</tr>
+<tr>
+<td>Mỗi class</td>
+<td><code>@BeforeClass</code></td>
+<td>Nhiều test cùng trang, không phá trạng thái</td>
+<td>Nhanh hơn; test có thể ảnh hưởng nhau</td>
+</tr>
+<tr>
+<td>Cả suite</td>
+<td><code>@BeforeSuite</code></td>
+<td>Khởi tạo report/config 1 lần</td>
+<td></td>
+</tr>
+<tr>
+<td>Mỗi nhóm</td>
+<td><code>@BeforeGroups</code></td>
+<td>Setup riêng cho nhóm</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Ví dụ <code>@BeforeClass</code> (đổi trade-off):</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeClass</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setupClass</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@AfterClass</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDownClass</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">goHome</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w">     </span><span class="c1">// trả về trạng thái đầu</span></code></pre></div>
+<h2 id="6-vòng-đời-khi-test-fail">6. Vòng đời khi test fail</h2>
+<ul>
+<li><code>@AfterMethod</code> <strong>vẫn chạy</strong> khi test fail (mặc định) ⇒ <code>quit()</code> luôn được gọi ⇒ không rò rỉ.</li>
+<li>Nếu <code>@BeforeMethod</code> <strong>fail</strong> (ví dụ không khởi tạo được Chrome): các test sau trong class thường bị <strong>skipped</strong> (cấu hình method fail ⇒ skip), và <code>@AfterMethod</code> có thể vẫn chạy ⇒ vì vậy kiểm tra <code>driver != null</code> là cần thiết.</li>
+<li>Chụp ảnh khi fail: nhận <code>ITestResult</code> trong <code>@AfterMethod</code> (<a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html#3-screenshot-khi-test-fail">selenium/10</a>).</li>
+</ul>
+<h2 id="7-thiết-kế-tốt-hơn-đề-xuất--không-sửa-dự-án">7. Thiết kế tốt hơn (đề xuất — không sửa dự án)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRIVER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="nf">driver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@BeforeMethod</span><span class="p">(</span><span class="n">alwaysRun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@Parameters</span><span class="p">({</span><span class="s">&quot;browser&quot;</span><span class="p">})</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="nd">@Optional</span><span class="p">(</span><span class="s">&quot;chrome&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">browser</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">DriverFactory</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">browser</span><span class="p">));</span><span class="w">          </span><span class="c1">// Factory</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">().</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span>
+<span class="w">        </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">(),</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="n">Config</span><span class="p">.</span><span class="na">timeoutSeconds</span><span class="p">()));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@AfterMethod</span><span class="p">(</span><span class="n">alwaysRun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ITestResult</span><span class="p">.</span><span class="na">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="n">Screenshots</span><span class="p">.</span><span class="na">take</span><span class="p">(</span><span class="n">driver</span><span class="p">(),</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">().</span><span class="na">quit</span><span class="p">();</span>
+<span class="w">            </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">remove</span><span class="p">();</span><span class="w">                                </span><span class="c1">// tránh rò rỉ ThreadLocal</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cải tiến</th>
+<th>Lợi ích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ThreadLocal</code></td>
+<td>Chạy song song an toàn</td>
+</tr>
+<tr>
+<td><code>DriverFactory</code></td>
+<td>Nhiều browser</td>
+</tr>
+<tr>
+<td><code>Config</code></td>
+<td>Không hard-code timeout/URL</td>
+</tr>
+<tr>
+<td><code>alwaysRun = true</code></td>
+<td>Teardown chạy cả khi group/ phụ thuộc bị bỏ qua</td>
+</tr>
+<tr>
+<td>Screenshot khi fail</td>
+<td>Điều tra dễ</td>
+</tr>
+<tr>
+<td><code>DRIVER.remove()</code></td>
+<td>Tránh rò rỉ bộ nhớ trong thread pool</td>
+</tr>
+</tbody>
+</table></div>
+<p>Các thành phần này giải thích ở <a href="../06-automation-framework/README.html">framework-design/</a>.</p>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Một nơi duy nhất tạo/đóng driver.</li>
+<li>Luôn kiểm tra <code>null</code> trước <code>quit()</code>.</li>
+<li><code>quit()</code> không <code>close()</code>.</li>
+<li>Trạng thái ban đầu sạch cho mỗi test.</li>
+<li>Setup không chứa assertion nghiệp vụ.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NullPointerException</code> ở <code>driver.get</code></td>
+<td><code>setup()</code> không chạy (không kế thừa/ sai annotation)</td>
+<td><code>extends BaseTest</code>, import đúng</td>
+</tr>
+<tr>
+<td>Chrome không đóng</td>
+<td><code>tearDown</code> không chạy / quên <code>quit</code></td>
+<td>Kiểm tra annotation</td>
+</tr>
+<tr>
+<td>Test sau dùng nhầm trạng thái của test trước</td>
+<td>Dùng <code>@BeforeClass</code> mà không reset</td>
+<td>Reset hoặc dùng <code>@BeforeMethod</code></td>
+</tr>
+<tr>
+<td>Song song bị hỏng</td>
+<td><code>static driver</code></td>
+<td><code>ThreadLocal</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Trả lời: vì sao <code>tearDown()</code> có <code>if (driver != null)</code>?</p>
+<p><strong>Input:</strong> <code>BaseTest.java</code></p>
+<p><strong>Expected Output:</strong> 1-2 câu</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>setup()</code> có thể fail.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Chuyển <code>BaseTest</code> sang <code>@BeforeClass/@AfterClass</code> và nêu 2 đánh đổi.</p>
+<p><strong>Input:</strong> BaseTest</p>
+<p><strong>Expected Output:</strong> Mở 1 Chrome/class</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Nhanh hơn nhưng test ảnh hưởng nhau.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>tearDown(ITestResult)</code> chụp ảnh khi fail trước <code>quit()</code> và dọn <code>ThreadLocal</code>.</p>
+<p><strong>Input:</strong> Có helper <code>Screenshots.take</code></p>
+<p><strong>Expected Output:</strong> Ảnh trong <code>target/screenshots</code> khi fail</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Chụp <strong>trước</strong> <code>quit()</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>@AfterMethod</code> có chạy khi test fail không?</p>
+<ul>
+<li>A. Không</li>
+<li>B. Có (mặc định)</li>
+<li>C. Chỉ khi <code>alwaysRun</code></li>
+<li>D. Chỉ pass</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Nên có <code>alwaysRun = true</code> khi có nhóm/phụ thuộc.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>protected WebDriver driver</code> cho phép?</p>
+<ul>
+<li>A. Class con khác package dùng</li>
+<li>B. Chỉ cùng class</li>
+<li>C. Không ai</li>
+<li>D. Mọi nơi</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> <code>BaseTest</code> ở <code>base</code>, test ở <code>tests</code>.</p>
+</details>
+<p><strong>Câu 3.</strong> Vì sao cả bộ 10 test mất ~91 s?</p>
+<ul>
+<li>A. Mỗi <code>@Test</code> mở Chrome mới (<code>@BeforeMethod</code>)</li>
+<li>B. Mạng chậm duy nhất</li>
+<li>C. Lỗi Maven</li>
+<li>D. Do TestNG</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Đánh đổi độc lập lấy tốc độ.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Explain your BaseTest.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Giải thích <code>BaseTest</code> của bạn.</li>
+<li><strong>Suggested answer (EN):</strong> It owns the driver and the explicit wait, creates Chrome, maximizes the window and sets the page load timeout in <code>@BeforeMethod</code>, and quits it in <code>@AfterMethod</code> with a null check, so every test gets a clean browser.</li>
+<li><strong>Giải thích (VI):</strong> Không implicit wait.</li>
+<li><strong>Follow-up:</strong> <em>How would you support parallel runs?</em></li>
+</ul>
+<p><strong>2. BeforeMethod vs BeforeClass for the browser?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> BeforeMethod hay BeforeClass cho browser?</li>
+<li><strong>Suggested answer (EN):</strong> BeforeMethod gives isolation but is slower; BeforeClass is faster but tests can affect each other, so state must be reset.</li>
+<li><strong>Giải thích (VI):</strong> Chọn theo nhu cầu.</li>
+<li><strong>Follow-up:</strong> <em>What about failures in setup?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>BaseTest</code>: setup mở browser, teardown <code>quit()</code> có kiểm tra null</li>
+<li><code>@BeforeMethod</code> (độc lập) vs <code>@BeforeClass</code> (nhanh)</li>
+<li>Teardown vẫn chạy khi test fail</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>@BeforeMethod</code>, <code>@AfterMethod(alwaysRun=true)</code>, <code>ITestResult</code>, <code>ThreadLocal</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Chụp ảnh sau <code>quit()</code> thì hỏng</li>
+<li><code>static</code> driver ≠ <code>ThreadLocal</code></li>
+<li><code>close</code> ≠ <code>quit</code></li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="05-test-data-and-configuration.html">Test Data và Configuration</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>Nếu <code>new ChromeDriver()</code> ném lỗi, <code>driver</code> vẫn <code>null</code>; <code>quit()</code> trên <code>null</code> gây <code>NullPointerException</code> che mất lỗi gốc.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeClass</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setupClass</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@AfterClass</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDownClass</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">goHome</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<p>Đánh đổi: nhanh hơn (~mở Chrome 1 lần) nhưng trạng thái (cookie, trang) có thể rò sang test sau → phải reset thủ công.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@AfterMethod</span><span class="p">(</span><span class="n">alwaysRun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ITestResult</span><span class="p">.</span><span class="na">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="n">Screenshots</span><span class="p">.</span><span class="na">take</span><span class="p">(</span><span class="n">driver</span><span class="p">(),</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">().</span><span class="na">quit</span><span class="p">();</span>
+<span class="w">        </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">remove</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-assertions-and-verification.html"><small>← Bài trước</small><span>Assertions và Verification</span></a><a class="next" href="05-test-data-and-configuration.html"><small>Bài tiếp theo →</small><span>Test Data và Configuration</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/04-test-setup-and-teardown.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

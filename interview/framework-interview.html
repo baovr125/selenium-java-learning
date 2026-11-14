@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing Framework và Page Object Model — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/framework-interview" data-root="../" data-lesson="0" data-title="Testing Framework và Page Object Model — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="testing-framework-và-page-object-model--interview">Testing Framework và Page Object Model — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h2 id="phần-1--testng-và-junit">Phần 1 — TestNG và JUnit</h2>
+<h3 id="q1-what-is-testng-and-why-use-it-with-selenium">Q1. What is TestNG and why use it with Selenium?</h3>
+<p><strong>Dịch:</strong> TestNG là gì, vì sao dùng với Selenium?</p>
+<p><strong>Sample answer:</strong> TestNG is a Java testing framework that organizes and runs tests. It offers annotations, grouping, dependencies, data providers, parallel execution, XML suite configuration and HTML reports. Selenium drives the browser; TestNG manages test lifecycle and results.</p>
+<p><strong>Giải thích:</strong> Selenium không có test runner.</p>
+<p><strong>Ví dụ:</strong> Dự án dùng TestNG 7.10.2 với <code>testng.xml</code> liệt kê 10 class.</p>
+<p><strong>Đào sâu:</strong> <em>Can Selenium run without TestNG?</em> → Có (dùng <code>main()</code> như <code>run-test.ps1</code>), nhưng thiếu runner/báo cáo.</p>
+<hr />
+<h3 id="q2-explain-the-testng-annotation-execution-order">Q2. Explain the TestNG annotation execution order.</h3>
+<p><strong>Dịch:</strong> Thứ tự chạy annotation?</p>
+<p><strong>Sample answer:</strong> <code>@BeforeSuite</code>, <code>@BeforeTest</code>, <code>@BeforeClass</code>, <code>@BeforeMethod</code>, the <code>@Test</code>, then <code>@AfterMethod</code>, <code>@AfterClass</code>, <code>@AfterTest</code>, <code>@AfterSuite</code>.</p>
+<p><strong>Giải thích:</strong> Setup từ ngoài vào trong; teardown ngược lại.</p>
+<p><strong>Ví dụ:</strong> <code>BaseTest</code> dùng <code>@BeforeMethod</code>/<code>@AfterMethod</code> ⇒ mỗi test một Chrome (~91 s cho 10 test).</p>
+<p><strong>Đào sâu:</strong> <em>When would you use <code>@BeforeClass</code>?</em> → nhanh hơn, đổi lại test dễ ảnh hưởng nhau.</p>
+<hr />
+<h3 id="q3-what-is-testngxml-and-what-do-suite-test-and-class-mean">Q3. What is <code>testng.xml</code> and what do <code>&lt;suite&gt;</code>, <code>&lt;test&gt;</code> and <code>&lt;class&gt;</code> mean?</h3>
+<p><strong>Dịch:</strong> <code>testng.xml</code> là gì?</p>
+<p><strong>Sample answer:</strong> It is the configuration of what to run. A <code>&lt;suite&gt;</code> contains one or more <code>&lt;test&gt;</code> blocks; each <code>&lt;test&gt;</code> contains classes, packages, methods or groups. A <code>&lt;test&gt;</code> block is not a single test method.</p>
+<p><strong>Giải thích:</strong> Nhầm lẫn kinh điển.</p>
+<p><strong>Ví dụ:</strong> Suite "Selenium Getting Started" → test "Exercises 1-10" → 10 class.</p>
+<p><strong>Đào sâu:</strong> <em>How does Maven use it?</em> → Surefire <code>suiteXmlFile</code> trong <code>pom.xml</code>.</p>
+<hr />
+<h3 id="q4-what-is-a-dataprovider">Q4. What is a DataProvider?</h3>
+<p><strong>Dịch:</strong> DataProvider là gì?</p>
+<p><strong>Sample answer:</strong> A method annotated with <code>@DataProvider</code> that returns <code>Object[][]</code>; each row runs the test once with that row's arguments. It enables data-driven testing, for example multiple login credentials. It can read from CSV, JSON or Excel.</p>
+<p><strong>Giải thích:</strong> Mỗi hàng chạy cả <code>@BeforeMethod</code>/<code>@AfterMethod</code>.</p>
+<p><strong>Ví dụ:</strong> Login hợp lệ/không hợp lệ cho Ex1 (đề xuất cải tiến).</p>
+<p><strong>Đào sâu:</strong> <em>Parallel data provider?</em> → <code>parallel = true</code>.</p>
+<hr />
+<h3 id="q5-what-is-the-difference-between-hard-assert-and-soft-assert">Q5. What is the difference between hard assert and soft assert?</h3>
+<p><strong>Dịch:</strong> Hard assert khác soft assert?</p>
+<p><strong>Sample answer:</strong> A hard assert stops the test at the first failure. A soft assert records failures and continues, and I must call <code>assertAll()</code> at the end, otherwise the test never fails.</p>
+<p><strong>Giải thích:</strong> Soft cho nhiều kiểm tra độc lập.</p>
+<p><strong>Ví dụ:</strong> Dự án dùng hard assert (<code>Assert.assertEquals</code>...).</p>
+<p><strong>Đào sâu:</strong> <em>Pitfall of soft assert?</em> → quên <code>assertAll()</code>.</p>
+<hr />
+<h3 id="q6-what-are-groups-and-how-do-you-run-them">Q6. What are groups and how do you run them?</h3>
+<p><strong>Dịch:</strong> Groups là gì, chạy thế nào?</p>
+<p><strong>Sample answer:</strong> Groups label tests, for example <code>smoke</code> and <code>regression</code>. I select them in <code>testng.xml</code> using <code>&lt;groups&gt;&lt;run&gt;&lt;include name="smoke"/&gt;</code>. This lets CI run a fast smoke suite on every commit and the full regression nightly.</p>
+<p><strong>Giải thích:</strong> Với Maven: suite XML riêng; chú ý <code>-Dtest</code> bỏ qua XML.</p>
+<p><strong>Ví dụ:</strong> Ex1 + EnvironmentCheck là smoke; còn lại regression.</p>
+<p><strong>Đào sâu:</strong> <em>Alternative in JUnit 5?</em> → <code>@Tag</code>.</p>
+<hr />
+<h3 id="q7-how-do-you-run-tests-in-parallel-with-testng-and-selenium">Q7. How do you run tests in parallel with TestNG and Selenium?</h3>
+<p><strong>Dịch:</strong> Chạy song song?</p>
+<p><strong>Sample answer:</strong> Set <code>parallel</code> (methods, classes or tests) and <code>thread-count</code> in <code>testng.xml</code>. Each thread needs its own <code>WebDriver</code>, so I store it in a <code>ThreadLocal&lt;WebDriver&gt;</code> and never use a <code>static</code> driver.</p>
+<p><strong>Giải thích:</strong> Driver không thread-safe.</p>
+<p><strong>Ví dụ:</strong> <code>BaseTest</code> hiện dùng field instance, chạy tuần tự.</p>
+<p><strong>Đào sâu:</strong> <em>What do you do in teardown with ThreadLocal?</em> → <code>remove()</code>.</p>
+<hr />
+<h3 id="q8-testng-vs-junit-5--main-differences">Q8. TestNG vs JUnit 5 — main differences?</h3>
+<p><strong>Dịch:</strong> Khác biệt chính?</p>
+<p><strong>Sample answer:</strong> TestNG has <code>testng.xml</code> suites, groups, <code>dependsOnMethods</code> and <code>@DataProvider</code>; JUnit 5 has <code>@Tag</code>, <code>@ParameterizedTest</code> and a modular platform. Lifecycle annotations differ: <code>@BeforeMethod</code> vs <code>@BeforeEach</code>. Also assertion argument order differs: TestNG <code>(actual, expected)</code>, JUnit <code>(expected, actual)</code>.</p>
+<p><strong>Giải thích:</strong> Bảng ở <a href="../05-testing-framework/02-junit-fundamentals.html#6-so-sánh-testng-và-junit-5">testing-framework/02</a>.</p>
+<p><strong>Ví dụ:</strong> Dự án dùng TestNG, không có JUnit.</p>
+<p><strong>Đào sâu:</strong> <em>Which would you choose for a new project?</em> → theo chuẩn của nhóm; nhất quán quan trọng hơn.</p>
+<hr />
+<h3 id="q9-why-does-mvnw-test-run-only-10-tests-though-there-are-11-test-classes">Q9. Why does <code>mvnw test</code> run only 10 tests though there are 11 test classes?</h3>
+<p><strong>Dịch:</strong> Vì sao <code>mvnw test</code> chạy 10 test dù có 11 class?</p>
+<p><strong>Sample answer:</strong> The Surefire plugin is configured with <code>suiteXmlFile = testng.xml</code>, which lists 10 classes. <code>EnvironmentCheckTest</code> is not listed, so it is only run with <code>-Dtest=EnvironmentCheckTest</code> (which makes Surefire ignore the suite file) or through the script.</p>
+<p><strong>Giải thích:</strong> Câu hỏi kiểm tra bạn hiểu cấu hình thực tế — đã kiểm chứng.</p>
+<p><strong>Ví dụ:</strong> <code>.\mvnw.cmd test "-Dtest=EnvironmentCheckTest"</code> ⇒ <code>Tests run: 1</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How would you add it to smoke?</em> → thêm vào XML hoặc <code>groups</code>.</p>
+<hr />
+<h3 id="q10-what-causes-tests-to-be-skipped-in-testng">Q10. What causes tests to be skipped in TestNG?</h3>
+<p><strong>Dịch:</strong> Nguyên nhân test bị skipped?</p>
+<p><strong>Sample answer:</strong> A failed <code>@BeforeMethod</code>/configuration method, a failed dependency with <code>dependsOnMethods</code>, or a <code>SkipException</code>. Skipped tests do not fail the Maven build, so I always check the <code>Skipped</code> count.</p>
+<p><strong>Giải thích:</strong> <code>BUILD SUCCESS</code> không có nghĩa mọi test đã chạy.</p>
+<p><strong>Ví dụ:</strong> Nếu <code>setup()</code> không tạo được Chrome, các test sau có thể skipped.</p>
+<p><strong>Đào sâu:</strong> <em>How do you get skipped counted as failure?</em> → kiểm tra trong CI.</p>
+<h2 id="phần-2--page-object-model">Phần 2 — Page Object Model</h2>
+<h3 id="q1-what-is-the-page-object-model-and-why-use-it">Q1. What is the Page Object Model and why use it?</h3>
+<p><strong>Dịch:</strong> POM là gì, vì sao dùng?</p>
+<p><strong>Sample answer:</strong> POM is a design pattern where each page, or part of a page, is a class that holds its locators and exposes actions. Tests use these actions instead of locators. When the UI changes I update one class, not every test, and tests become readable.</p>
+<p><strong>Giải thích:</strong> Tách "cái gì" (test) khỏi "như thế nào" (page).</p>
+<p><strong>Ví dụ:</strong> Dự án chưa dùng POM: locator nằm trong test (Ex1). Nếu đổi <code>id="username"</code> phải sửa mọi nơi dùng.</p>
+<p><strong>Đào sâu:</strong> <em>Disadvantages?</em> → tốn công ban đầu, dễ thành "God Page".</p>
+<hr />
+<h3 id="q2-how-do-you-design-a-page-class">Q2. How do you design a page class?</h3>
+<p><strong>Dịch:</strong> Thiết kế page class?</p>
+<p><strong>Sample answer:</strong> One class per page or component. Locators are <code>private</code> <code>By</code> fields. Public methods represent user actions and return either the next page object or data. The class receives <code>WebDriver</code> in the constructor and extends a <code>BasePage</code> with common wait, click and type helpers. Assertions stay in the test.</p>
+<p><strong>Giải thích:</strong> Quy tắc chi tiết ở <a href="../06-automation-framework/01-page-object-model.html#4-quy-tắc-thiết-kế-page-class">framework-design/01</a>.</p>
+<p><strong>Ví dụ:</strong> <code>LoginPage.loginAs(user, pass)</code> trả <code>SecureAreaPage</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why return the next page?</em> → luồng rõ, kiểm tra điều hướng.</p>
+<hr />
+<h3 id="q3-should-page-objects-contain-assertions">Q3. Should page objects contain assertions?</h3>
+<p><strong>Dịch:</strong> Page có chứa assertion không?</p>
+<p><strong>Sample answer:</strong> Generally no. The page returns data or state, like <code>getFlashMessage()</code>, and the test asserts. This keeps pages reusable for different scenarios, including negative ones. A small <code>isLoaded()</code> check is acceptable.</p>
+<p><strong>Giải thích:</strong> Assertion trong Page làm Page gắn với một kịch bản.</p>
+<p><strong>Ví dụ:</strong> <code>Assert.assertTrue(secure.getFlashMessage().contains("You logged into a secure area!"))</code> đặt ở test.</p>
+<p><strong>Đào sâu:</strong> <em>What about waiting inside pages?</em> → có, trong BasePage.</p>
+<hr />
+<h3 id="q4-by-fields-vs-findby-with-pagefactory">Q4. <code>By</code> fields vs <code>@FindBy</code> with PageFactory?</h3>
+<p><strong>Dịch:</strong> <code>By</code> hay <code>@FindBy</code>?</p>
+<p><strong>Sample answer:</strong> I prefer <code>By</code> fields: simple, no initialization, and the element is found fresh on each use, which avoids stale elements. <code>@FindBy</code> with <code>PageFactory.initElements</code> creates lazy proxies; it is common in older code but harder to debug.</p>
+<p><strong>Giải thích:</strong> Cả hai đều dùng được; nhất quán trong dự án.</p>
+<p><strong>Ví dụ:</strong> <code>private final By usernameInput = By.id("username");</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Is PageFactory deprecated?</em> → Vẫn có trong Selenium 4 nhưng ít được khuyến khích; hãy kiểm tra ghi chú phiên bản bạn dùng.</p>
+<hr />
+<h3 id="q5-how-do-you-connect-page-classes-with-test-classes">Q5. How do you connect page classes with test classes?</h3>
+<p><strong>Dịch:</strong> Kết nối Page với Test?</p>
+<p><strong>Sample answer:</strong> <code>BaseTest</code> creates and quits the driver. A test creates a page with <code>new LoginPage(driver)</code> and calls its actions. Page objects do not store test state, so they are cheap to create.</p>
+<p><strong>Giải thích:</strong> Driver sinh ở BaseTest, truyền xuống Page.</p>
+<p><strong>Ví dụ:</strong> <code>new LoginPage(driver).open().loginAs("tomsmith", "SuperSecretPassword!")</code>.</p>
+<p><strong>Đào sâu:</strong> <em>With parallel execution?</em> → <code>ThreadLocal</code> driver.</p>
+<hr />
+<h3 id="q6-what-are-common-pom-design-mistakes">Q6. What are common POM design mistakes?</h3>
+<p><strong>Dịch:</strong> Lỗi thiết kế POM thường gặp?</p>
+<p><strong>Sample answer:</strong> Assertions inside pages, public locators, one huge page class, low-level methods instead of business actions, <code>Thread.sleep</code> in pages, storing <code>WebElement</code> as long-lived fields, and repeated locators across pages instead of shared components.</p>
+<p><strong>Giải thích:</strong> Bảng ở <a href="../06-automation-framework/01-page-object-model.html#8-lỗi-thiết-kế-pom-thường-gặp">framework-design/01</a>.</p>
+<p><strong>Ví dụ:</strong> Header chung nên là component riêng.</p>
+<p><strong>Đào sâu:</strong> <em>How do you model a shared header?</em> → class <code>Header</code> là field của Page (composition).</p>
+<hr />
+<h3 id="q7-how-would-you-apply-pom-to-the-dynamic-controls-exercise">Q7. How would you apply POM to the Dynamic Controls exercise?</h3>
+<p><strong>Dịch:</strong> Áp dụng POM cho Exercise 10?</p>
+<p><strong>Sample answer:</strong> A <code>DynamicControlsPage</code> with private locators for the checkbox, input, buttons and message. Methods <code>removeCheckbox()</code> and <code>enableInput()</code> click and wait for the exact message with <code>textToBe</code>; getters like <code>getMessage()</code> and <code>isInputEnabled()</code>. The test asserts the message and state.</p>
+<p><strong>Giải thích:</strong> Wait nằm trong Page, test sạch.</p>
+<p><strong>Ví dụ:</strong> Bám theo <code>Exercise10_DynamicControlsTest</code>: <code>textToBe(messageLocator, "It's enabled!")</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why <code>textToBe</code> rather than visibility?</em> → thông báo cũ "It's gone!" vẫn đang hiện.</p>
+<hr />
+<h3 id="q8-when-is-pom-overkill">Q8. When is POM overkill?</h3>
+<p><strong>Dịch:</strong> Khi nào POM là quá mức?</p>
+<p><strong>Sample answer:</strong> For tiny throwaway scripts or very few tests, a simple helper may be enough. POM pays off when there are many tests that share pages and the UI changes. I start simple and introduce POM when locators and steps start repeating.</p>
+<p><strong>Giải thích:</strong> YAGNI — thể hiện trưởng thành kỹ thuật.</p>
+<p><strong>Ví dụ:</strong> 10 bài mỗi bài một trang riêng: POM chưa bắt buộc, nhưng là bước học tiếp theo hợp lý.</p>
+<p><strong>Đào sâu:</strong> <em>What is your refactoring trigger?</em> → lặp lần thứ ba.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Interview Preparation — Junior Automation Test Engineer</span></a><a class="next" href="git-interview.html"><small>Bài tiếp theo →</small><span>Git và Team Workflow — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/framework-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

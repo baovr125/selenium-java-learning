@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java for Automation — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/java-interview" data-root="../" data-lesson="0" data-title="Java for Automation — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="java-for-automation--interview">Java for Automation — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h3 id="q1-why-do-we-declare-webdriver-driver--new-chromedriver-and-not-chromedriver-driver--">Q1. Why do we declare <code>WebDriver driver = new ChromeDriver()</code> and not <code>ChromeDriver driver = ...</code>?</h3>
+<p><strong>Dịch:</strong> Vì sao khai báo kiểu <code>WebDriver</code>?</p>
+<p><strong>Sample answer:</strong> <code>WebDriver</code> is an interface, so this uses polymorphism: my code depends on the interface and I can switch to <code>FirefoxDriver</code> by changing one line. It also keeps the code independent of browser-specific methods.</p>
+<p><strong>Giải thích:</strong> Lập trình hướng interface. Khi cần API riêng (ví dụ DevTools) mới dùng class cụ thể.</p>
+<p><strong>Ví dụ:</strong> <code>protected WebDriver driver;</code> trong <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a>.</p>
+<p><strong>Đào sâu:</strong> <em>How do you use JavaScript Executor then?</em> → ép kiểu <code>(JavascriptExecutor) driver</code> (Ex7).</p>
+<hr />
+<h3 id="q2-what-is-inheritance-and-how-is-it-used-in-your-framework">Q2. What is inheritance and how is it used in your framework?</h3>
+<p><strong>Dịch:</strong> Kế thừa là gì, dùng thế nào?</p>
+<p><strong>Sample answer:</strong> Inheritance lets a class reuse the fields and methods of a parent class. All my test classes extend <code>BaseTest</code>, which owns the <code>driver</code> and <code>wait</code> and the setup and teardown methods, so I do not repeat that code.</p>
+<p><strong>Giải thích:</strong> Quan hệ "là một". TestNG tự gọi <code>@BeforeMethod</code> kế thừa.</p>
+<p><strong>Ví dụ:</strong> <code>Exercise01_LoginTest extends BaseTest</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Composition vs inheritance?</em> → ưu tiên composition cho component (Header) trong Page.</p>
+<hr />
+<h3 id="q3-what-is-the-difference-between-an-interface-and-an-abstract-class">Q3. What is the difference between an interface and an abstract class?</h3>
+<p><strong>Dịch:</strong> Interface khác abstract class?</p>
+<p><strong>Sample answer:</strong> An interface defines a contract with no state; a class can implement many. An abstract class can have fields, constructors and partial implementation, but a class can extend only one. <code>WebDriver</code> is an interface; <code>BasePage</code> is often an abstract class.</p>
+<p><strong>Giải thích:</strong> Interface = "làm được gì"; abstract class = khung chung.</p>
+<p><strong>Ví dụ:</strong> <code>ChromeDriver</code> implement cả <code>WebDriver</code> và <code>JavascriptExecutor</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Can an interface have default methods?</em> → Có (Java 8+).</p>
+<hr />
+<h3 id="q4-explain-access-modifiers-and-why-driver-is-protected">Q4. Explain access modifiers and why <code>driver</code> is <code>protected</code>.</h3>
+<p><strong>Dịch:</strong> Access modifier; vì sao <code>driver</code> là <code>protected</code>?</p>
+<p><strong>Sample answer:</strong> <code>public</code> is visible everywhere, <code>protected</code> to the package and subclasses, default to the package, <code>private</code> to the class. <code>driver</code> is <code>protected</code> so subclasses in other packages, like <code>tests</code>, can use it without exposing it publicly.</p>
+<p><strong>Giải thích:</strong> <code>BaseTest</code> ở package <code>base</code>, test ở package <code>tests</code> ⇒ cần <code>protected</code> (default sẽ không truy cập được).</p>
+<p><strong>Ví dụ:</strong> <code>private static final String LOGIN_URL</code> chỉ dùng trong class.</p>
+<p><strong>Đào sâu:</strong> <em>What if it were private?</em> → lỗi biên dịch ở class con.</p>
+<hr />
+<h3 id="q5-what-is-the-difference-between-static-and-non-static-members">Q5. What is the difference between <code>static</code> and non-static members?</h3>
+<p><strong>Dịch:</strong> <code>static</code> khác non-static?</p>
+<p><strong>Sample answer:</strong> Static members belong to the class and are shared; non-static belong to each object. A <code>static WebDriver</code> shared between tests is dangerous in parallel runs because tests overwrite each other's driver. I use an instance field, or <code>ThreadLocal</code> for parallel execution.</p>
+<p><strong>Giải thích:</strong> <code>main()</code> là static nên phải tạo đối tượng rồi gọi <code>setup()</code>.</p>
+<p><strong>Ví dụ:</strong> <code>Exercise01_LoginTest test = new Exercise01_LoginTest(); test.setup();</code> trong <code>main</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is ThreadLocal?</em></p>
+<hr />
+<h3 id="q6-what-is-the-difference-between-list-set-and-map-give-selenium-examples">Q6. What is the difference between <code>List</code>, <code>Set</code> and <code>Map</code>? Give Selenium examples.</h3>
+<p><strong>Dịch:</strong> <code>List</code>, <code>Set</code>, <code>Map</code> khác nhau? Ví dụ trong Selenium.</p>
+<p><strong>Sample answer:</strong> <code>List</code> is ordered and allows duplicates, like the result of <code>findElements</code>. <code>Set</code> has no duplicates, like <code>getWindowHandles()</code>. <code>Map</code> stores key-value pairs, such as form data or configuration.</p>
+<p><strong>Giải thích:</strong> <code>findElements</code> trả list <strong>rỗng</strong> khi không thấy; <code>Set</code> không đảm bảo thứ tự.</p>
+<p><strong>Ví dụ:</strong> Ex3 dùng <code>List&lt;String&gt;</code> so sánh cả hàng của bảng; Ex2 dùng <code>List&lt;WebElement&gt;</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How do you get the text of all elements?</em> → stream <code>map(WebElement::getText)</code>.</p>
+<hr />
+<h3 id="q7-what-is-exception-handling-and-when-would-you-catch-an-exception-in-a-test">Q7. What is exception handling and when would you catch an exception in a test?</h3>
+<p><strong>Dịch:</strong> Xử lý exception; khi nào <code>catch</code> trong test?</p>
+<p><strong>Sample answer:</strong> I use <code>try/catch/finally</code>. Selenium exceptions are unchecked. I catch only for a clear purpose, such as an optional element (a cookie banner), a limited retry for stale elements, or cleanup in <code>finally</code>. I never swallow exceptions silently, since that makes tests pass falsely.</p>
+<p><strong>Giải thích:</strong> <code>finally</code> luôn chạy; checked vs unchecked.</p>
+<p><strong>Ví dụ:</strong> <code>main()</code> trong Exercise: <code>try { setup(); test(); } finally { tearDown(); }</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Checked vs unchecked?</em></p>
+<hr />
+<h3 id="q8-what-is-a-lambda-expression-and-where-do-you-use-it-in-selenium">Q8. What is a lambda expression and where do you use it in Selenium?</h3>
+<p><strong>Dịch:</strong> Lambda là gì, dùng ở đâu?</p>
+<p><strong>Sample answer:</strong> A lambda is a short anonymous function. In Selenium I use it for custom waits, like <code>wait.until(d -&gt; d.findElements(by).size() &gt; n)</code>, and for streams over elements. Variables captured must be effectively final.</p>
+<p><strong>Giải thích:</strong> <code>until</code> nhận <code>Function&lt;WebDriver, V&gt;</code>.</p>
+<p><strong>Ví dụ:</strong> Ex7 <code>wait.until(d -&gt; { scrollToBottom(jsExecutor); return d.findElements(...).size() &gt; countBeforeScroll; })</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why must the captured variable be final?</em></p>
+<hr />
+<h3 id="q9-what-are-generics-give-an-example-in-selenium">Q9. What are generics? Give an example in Selenium.</h3>
+<p><strong>Dịch:</strong> Generics là gì? Ví dụ.</p>
+<p><strong>Sample answer:</strong> Generics let classes and methods work with type parameters and give compile-time type safety. Examples are <code>List&lt;WebElement&gt;</code> and <code>Wait&lt;WebDriver&gt;</code>; also <code>until</code> returns a type depending on the condition: a <code>WebElement</code> for visibility, a <code>Boolean</code> for invisibility.</p>
+<p><strong>Giải thích:</strong> <code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code>.</p>
+<p><strong>Ví dụ:</strong> <code>Boolean closed = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("modal")));</code> (Ex8).</p>
+<p><strong>Đào sâu:</strong> <em>What is the diamond operator?</em></p>
+<hr />
+<h3 id="q10-what-are-constructors-and-how-are-they-used-in-page-objects">Q10. What are constructors and how are they used in Page Objects?</h3>
+<p><strong>Dịch:</strong> Constructor; dùng thế nào trong Page Object?</p>
+<p><strong>Sample answer:</strong> A constructor initializes an object. In a Page Object the constructor receives the <code>WebDriver</code> and stores it, so the page can interact with the browser. <code>this.driver = driver</code> assigns the parameter to the field.</p>
+<p><strong>Giải thích:</strong> Constructor không có kiểu trả về. Dùng <code>super(driver)</code> để truyền lên <code>BasePage</code>.</p>
+<p><strong>Ví dụ:</strong> <code>public LoginPage(WebDriver driver) { super(driver); }</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What if the parent has no default constructor?</em> → class con phải gọi <code>super(...)</code> tường minh.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="git-interview.html"><small>← Bài trước</small><span>Git và Team Workflow — Interview</span></a><a class="next" href="maven-interview.html"><small>Bài tiếp theo →</small><span>Maven và Maven Wrapper — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/java-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

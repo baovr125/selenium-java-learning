@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuration Management · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="06-automation-framework/04-configuration-management" data-root="../" data-lesson="1" data-title="Configuration Management">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="configuration-management">Configuration Management</h1>
+<blockquote>
+<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="03-reusable-components.html">Reusable Components</a> · ➡️ <a href="05-maintainable-test-framework.html">Maintainable Test Framework</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-reusable-components.html">Trước: Reusable Components</a> · <a href="05-maintainable-test-framework.html">Sau: Maintainable Framework</a> · <a href="../05-testing-framework/05-test-data-and-configuration.html">Test data &amp; config</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Phân biệt 4 tầng cấu hình trong dự án</li>
+<li>Truyền <code>-D</code> từ Maven sang JVM test</li>
+<li>Dùng Maven Profile cho môi trường</li>
+<li>Biết <code>.mvn/maven.config</code> ảnh hưởng thế nào</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../05-testing-framework/05-test-data-and-configuration.html">Test Data &amp; Configuration</a></li>
+<li><a href="../02-maven-and-project/02-pom-xml.html">pom.xml</a></li>
+</ul>
+<h2 id="1-mục-tiêu">1. Mục tiêu</h2>
+<p><strong>Một mã nguồn — nhiều cách chạy.</strong> Đổi browser, URL, timeout, headless <strong>mà không sửa code</strong>:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dbrowser=firefox&quot;</span> <span class="s2">&quot;-Dheadless=true&quot;</span> <span class="s2">&quot;-Dbase.url=https://staging.example.com&quot;</span></code></pre></div>
+<h2 id="2-hiện-trạng-selenium1-đã-phân-tích">2. Hiện trạng <code>Selenium1</code> (đã phân tích)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cấu hình</th>
+<th>Giá trị</th>
+<th>Đặt ở đâu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Browser</td>
+<td>Chrome</td>
+<td><code>new ChromeDriver()</code> trong <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a></td>
+</tr>
+<tr>
+<td>Page load timeout</td>
+<td>30 s</td>
+<td><code>BaseTest</code></td>
+</tr>
+<tr>
+<td>Explicit wait</td>
+<td>15 s</td>
+<td><code>BaseTest</code></td>
+</tr>
+<tr>
+<td>URL</td>
+<td>từng class</td>
+<td>hằng <code>private static final</code></td>
+</tr>
+<tr>
+<td>Suite</td>
+<td><code>testng.xml</code></td>
+<td><a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a> (<code>suiteXmlFile</code>)</td>
+</tr>
+<tr>
+<td>Java release</td>
+<td>21</td>
+<td><code>pom.xml</code></td>
+</tr>
+<tr>
+<td>Repo cục bộ</td>
+<td><code>.mvn/repository</code></td>
+<td><code>.mvn/maven.config</code></td>
+</tr>
+<tr>
+<td>JDK</td>
+<td>JDK trong <code>PATH</code></td>
+<td>Môi trường</td>
+</tr>
+</tbody>
+</table></div>
+<p>Có <strong>bốn tầng cấu hình khác nhau</strong> đang tồn tại cùng lúc — hiểu chúng giúp bạn không nhầm:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tầng</th>
+<th>Công cụ</th>
+<th>Quyết định điều gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build</td>
+<td><code>pom.xml</code>, <code>.mvn/maven.config</code>, <code>maven-wrapper.properties</code></td>
+<td>Java release, phiên bản thư viện, Maven, vị trí repo</td>
+</tr>
+<tr>
+<td>Chạy test</td>
+<td><code>testng.xml</code>, <code>-Dtest</code>, groups</td>
+<td>Test nào chạy</td>
+</tr>
+<tr>
+<td>Ứng dụng test</td>
+<td><code>config.properties</code>, <code>-D</code>, biến môi trường</td>
+<td>URL, browser, timeout</td>
+</tr>
+<tr>
+<td>Máy cá nhân</td>
+<td><code>JAVA_HOME</code>, <code>settings.xml</code>, Chrome</td>
+<td>Hạ tầng</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-thiết-kế-config">3. Thiết kế <code>Config</code></h2>
+<p>Xem mã đầy đủ ở <a href="../05-testing-framework/05-test-data-and-configuration.html#4-file-configproperties">testing-framework/05</a>. Nguyên tắc:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">ưu tiên (cao → thấp):
+ -Dkey=value  &gt;  biến môi trường  &gt;  config-&lt;env&gt;.properties  &gt;  config.properties  &gt;  mặc định trong code</code></pre></div>
+<p>Ví dụ lớp bọc (Singleton đơn giản, bất biến):</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">baseUrl</span><span class="p">()</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;base.url&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">browser</span><span class="p">()</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;browser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">headless</span><span class="p">()</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Boolean</span><span class="p">.</span><span class="na">parseBoolean</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;headless&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="nf">timeout</span><span class="p">()</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="n">Long</span><span class="p">.</span><span class="na">parseLong</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;timeout.seconds&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;15&quot;</span><span class="p">)));</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// get(...) đọc theo thứ tự ưu tiên như trên</span>
+<span class="p">}</span></code></pre></div>
+<p>Dùng: <code>new WebDriverWait(driver, Config.timeout())</code>, <code>driver.get(Config.baseUrl() + "/login")</code>.</p>
+<h2 id="4-truyền-cấu-hình-từ-maven-sang-jvm-test">4. Truyền cấu hình từ Maven sang JVM test</h2>
+<p>Surefire chạy test trong <strong>JVM riêng</strong>. <code>-Dbrowser=firefox</code> ở command line là property của <strong>Maven JVM</strong>; Surefire thường <strong>chuyển tiếp</strong> các user property sang JVM test, nhưng để rõ ràng/đảm bảo, khai báo trong POM:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;plugin&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>3.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;configuration&gt;</span>
+<span class="w">        </span><span class="nt">&lt;systemPropertyVariables&gt;</span>
+<span class="w">            </span><span class="nt">&lt;browser&gt;</span>${browser}<span class="nt">&lt;/browser&gt;</span>
+<span class="w">            </span><span class="nt">&lt;base.url&gt;</span>${base.url}<span class="nt">&lt;/base.url&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/systemPropertyVariables&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span></code></pre></div>
+<p>kèm giá trị mặc định trong <code>&lt;properties&gt;</code>:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;browser&gt;</span>chrome<span class="nt">&lt;/browser&gt;</span>
+<span class="w">    </span><span class="nt">&lt;base.url&gt;</span>https://the-internet.herokuapp.com<span class="nt">&lt;/base.url&gt;</span>
+<span class="nt">&lt;/properties&gt;</span></code></pre></div>
+<p>⇒ Không truyền gì thì dùng mặc định POM; truyền <code>-Dbrowser=firefox</code> thì đè. (Ví dụ minh hoạ; chạy thử và in giá trị ra để xác nhận.)</p>
+<h2 id="5-maven-profile-cho-môi-trường">5. Maven Profile cho môi trường</h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;profiles&gt;</span>
+<span class="w">    </span><span class="nt">&lt;profile&gt;</span>
+<span class="w">        </span><span class="nt">&lt;id&gt;</span>staging<span class="nt">&lt;/id&gt;</span>
+<span class="w">        </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">            </span><span class="nt">&lt;base.url&gt;</span>https://staging.example.com<span class="nt">&lt;/base.url&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/profile&gt;</span>
+<span class="w">    </span><span class="nt">&lt;profile&gt;</span>
+<span class="w">        </span><span class="nt">&lt;id&gt;</span>ci<span class="nt">&lt;/id&gt;</span>
+<span class="w">        </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">            </span><span class="nt">&lt;headless&gt;</span>true<span class="nt">&lt;/headless&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/profile&gt;</span>
+<span class="nt">&lt;/profiles&gt;</span></code></pre></div>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="n">-Pstaging</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="n">-Pci</span><span class="p">,</span><span class="n">staging</span></code></pre></div>
+<p>Khi nào dùng Profile vs file properties:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Profile</th>
+<th><code>config-&lt;env&gt;.properties</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nơi định nghĩa</td>
+<td><code>pom.xml</code></td>
+<td><code>src/test/resources</code></td>
+</tr>
+<tr>
+<td>Phạm vi</td>
+<td>Cấu hình build + test</td>
+<td>Chủ yếu test</td>
+</tr>
+<tr>
+<td>Dễ đọc với người không rành Maven</td>
+<td>Trung bình</td>
+<td>Cao</td>
+</tr>
+<tr>
+<td>Lọc tài nguyên (resource filtering)</td>
+<td>✅</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Chọn <strong>một</strong> cách làm chủ đạo để nhóm khỏi lẫn.</p>
+<h2 id="6-quản-lý-bí-mật">6. Quản lý bí mật</h2>
+<ul>
+<li>❌ Mật khẩu thật không vào Git.</li>
+<li>✅ <code>System.getenv("TEST_PASSWORD")</code>.</li>
+<li>✅ CI secret.</li>
+<li>✅ File cấu hình cục bộ vào <code>.gitignore</code>.</li>
+</ul>
+<p>🧩 <code>Selenium1</code> chỉ dùng tài khoản demo công khai của trang luyện tập, nên chấp nhận được.</p>
+<h2 id="7-cấu-hình-maven-wrapper-và-mvn-như-một-phần-của-cấu-hình">7. Cấu hình Maven Wrapper và <code>.mvn/</code> như một phần của cấu hình</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Vai trò</th>
+<th>Commit?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.mvn/wrapper/maven-wrapper.properties</code></td>
+<td>Khoá phiên bản Maven</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>.mvn/maven.config</code></td>
+<td>Tham số Maven mỗi lần chạy (🧩 đặt <code>maven.repo.local</code>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>.mvn/jvm.config</code></td>
+<td>Tham số JVM của Maven (không có)</td>
+<td>✅ nếu dùng</td>
+</tr>
+<tr>
+<td><code>~/.m2/settings.xml</code></td>
+<td>Proxy/mirror cá nhân/ công ty</td>
+<td>❌ (ngoài dự án)</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Cẩn thận với <code>.mvn/maven.config</code>: nó áp dụng cho <strong>mọi</strong> lệnh Maven trong dự án và <strong>dễ bị quên</strong>. Khi hành vi Maven "lạ", đọc file này đầu tiên. Ví dụ của dự án đổi Local Repository sang <code>.mvn/repository</code>.</p>
+</blockquote>
+<h2 id="8-checklist-cấu-hình-tốt">8. Checklist cấu hình tốt</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> Không hard-code URL/timeout/browser trong test.</li>
+<li class="task"><input type="checkbox" disabled> Có giá trị mặc định để <code>git clone</code> rồi chạy được.</li>
+<li class="task"><input type="checkbox" disabled> Ghi đè được bằng <code>-D</code>.</li>
+<li class="task"><input type="checkbox" disabled> Bí mật không nằm trong Git.</li>
+<li class="task"><input type="checkbox" disabled> Mọi file cấu hình chung của nhóm được commit và có tài liệu.</li>
+<li class="task"><input type="checkbox" disabled> In cấu hình hiệu lực ở đầu lần chạy (log) để debug.</li>
+</ul>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Liệt kê 4 tầng cấu hình và ví dụ file của dự án.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Bảng 4 hàng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Build / chạy test / ứng dụng test / máy cá nhân.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Khai báo trong <code>pom.xml</code> để <code>-Dbrowser=firefox</code> tới JVM test với mặc định <code>chrome</code>.</p>
+<p><strong>Input:</strong> <code>&lt;properties&gt;</code></p>
+<p><strong>Expected Output:</strong> Test đọc <code>System.getProperty("browser")</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>systemPropertyVariables</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết hai profile <code>staging</code> và <code>ci</code> (đổi <code>base.url</code>, bật <code>headless</code>) và lệnh chạy.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> <code>mvnw test -Pci,staging</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>&lt;profiles&gt;</code> + <code>&lt;properties&gt;</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>.mvn/maven.config</code> làm gì ở dự án?</p>
+<ul>
+<li>A. Đặt Local Repository vào <code>.mvn/repository</code></li>
+<li>B. Đặt URL test</li>
+<li>C. Chọn browser</li>
+<li>D. Không gì</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Áp dụng cho mọi lệnh Maven.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>-Dbrowser=firefox</code> tới JVM test bằng?</p>
+<ul>
+<li>A. Chắc chắn tự động</li>
+<li>B. Surefire thường chuyển tiếp; nên khai báo <code>systemPropertyVariables</code></li>
+<li>C. Không thể</li>
+<li>D. <code>git</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Khai báo rõ ràng và in ra để kiểm chứng.</p>
+</details>
+<p><strong>Câu 3.</strong> Bí mật nên ở?</p>
+<ul>
+<li>A. <code>config.properties</code> commit</li>
+<li>B. Biến môi trường / secret CI</li>
+<li>C. <code>pom.xml</code></li>
+<li>D. README</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Không commit.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you run the same tests against different environments?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Chạy cùng test trên nhiều môi trường?</li>
+<li><strong>Suggested answer (EN):</strong> Externalize the base URL and browser into properties overridable with <code>-D</code>, optionally grouped in Maven profiles, with defaults so the project runs after cloning.</li>
+<li><strong>Giải thích (VI):</strong> Một mã nguồn, nhiều cách chạy.</li>
+<li><strong>Follow-up:</strong> <em>Profiles vs properties files?</em></li>
+</ul>
+<p><strong>2. What does .mvn/maven.config do?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> <code>.mvn/maven.config</code> làm gì?</li>
+<li><strong>Suggested answer (EN):</strong> It holds Maven command line options applied to every run; in this project it sets <code>-Dmaven.repo.local=.mvn/repository</code>.</li>
+<li><strong>Giải thích (VI):</strong> Dễ bị quên khi debug.</li>
+<li><strong>Follow-up:</strong> <em>Should it be committed?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>4 tầng cấu hình</li>
+<li><code>-D</code> &gt; env &gt; file &gt; default</li>
+<li>Profile cho môi trường; bí mật ngoài Git</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>systemPropertyVariables</code>, <code>&lt;profiles&gt;</code>, <code>-P</code>, <code>-D</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Property Maven ≠ property JVM test</li>
+<li>Profile ≠ file properties</li>
+<li>Cấu hình bí mật ≠ commit</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="05-maintainable-test-framework.html">Maintainable Test Framework</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tầng</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build</td>
+<td><code>pom.xml</code>, <code>.mvn/maven.config</code>, <code>maven-wrapper.properties</code></td>
+</tr>
+<tr>
+<td>Chạy test</td>
+<td><code>testng.xml</code>, <code>-Dtest</code></td>
+</tr>
+<tr>
+<td>Ứng dụng test</td>
+<td><code>config.properties</code>, <code>-D</code></td>
+</tr>
+<tr>
+<td>Máy cá nhân</td>
+<td><code>JAVA_HOME</code>, <code>~/.m2/settings.xml</code></td>
+</tr>
+</tbody>
+</table></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;properties&gt;&lt;browser&gt;</span>chrome<span class="nt">&lt;/browser&gt;&lt;/properties&gt;</span>
+...
+<span class="nt">&lt;plugin&gt;</span>
+<span class="w">  </span><span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;version&gt;</span>3.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">  </span><span class="nt">&lt;configuration&gt;</span>
+<span class="w">    </span><span class="nt">&lt;systemPropertyVariables&gt;&lt;browser&gt;</span>${browser}<span class="nt">&lt;/browser&gt;&lt;/systemPropertyVariables&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;profiles&gt;</span>
+<span class="w">  </span><span class="nt">&lt;profile&gt;&lt;id&gt;</span>staging<span class="nt">&lt;/id&gt;&lt;properties&gt;&lt;base.url&gt;</span>https://staging.example.com<span class="nt">&lt;/base.url&gt;&lt;/properties&gt;&lt;/profile&gt;</span>
+<span class="w">  </span><span class="nt">&lt;profile&gt;&lt;id&gt;</span>ci<span class="nt">&lt;/id&gt;&lt;properties&gt;&lt;headless&gt;</span>true<span class="nt">&lt;/headless&gt;&lt;/properties&gt;&lt;/profile&gt;</span>
+<span class="nt">&lt;/profiles&gt;</span></code></pre></div>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="n">-Pci</span><span class="p">,</span><span class="n">staging</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-reusable-components.html"><small>← Bài trước</small><span>Reusable Components</span></a><a class="next" href="05-maintainable-test-framework.html"><small>Bài tiếp theo →</small><span>Maintainable Test Framework</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/04-configuration-management.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

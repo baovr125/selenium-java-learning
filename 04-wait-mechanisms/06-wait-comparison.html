@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>So sánh các cơ chế chờ (và Thread.sleep) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/06-wait-comparison" data-root="../" data-lesson="1" data-title="So sánh các cơ chế chờ (và Thread.sleep)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="so-sánh-các-cơ-chế-chờ-và-threadsleep">So sánh các cơ chế chờ (và Thread.sleep)</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="05-fluent-wait.html">Fluent Wait và Custom Wait</a> · ➡️ <a href="07-real-world-scenarios.html">Wait: 15 tình huống thực tế</a></p>
+<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="05-fluent-wait.html">Fluent Wait</a> · Tiếp: <a href="07-real-world-scenarios.html">Tình huống thực tế</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>So sánh <code>Thread.sleep</code>, Implicit, Explicit, Fluent</li>
+<li>Chọn Wait theo tình huống bằng sơ đồ quyết định</li>
+<li>Đo chênh lệch thời gian giữa <code>sleep</code> và Explicit Wait</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="05-fluent-wait.html">Fluent Wait</a></li>
+<li><a href="02-implicit-wait.html">Implicit Wait</a></li>
+</ul>
+<h2 id="1-threadsleep">1. <code>Thread.sleep()</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">);</span><span class="w">   </span><span class="c1">// ngủ cứng 5 giây</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>Thread.sleep</code></th>
+<th>Explicit Wait</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thời gian</td>
+<td><strong>Luôn</strong> đủ 5 s</td>
+<td>Dừng ngay khi điều kiện đúng (tối đa timeout)</td>
+</tr>
+<tr>
+<td>Phần tử sẵn sàng sau 1 s</td>
+<td>Phí 4 s</td>
+<td>Chỉ 1 s</td>
+</tr>
+<tr>
+<td>Phần tử mất 6 s</td>
+<td><strong>Fail</strong> (sleep ngắn)</td>
+<td>Pass (nếu timeout ≥ 6 s)</td>
+</tr>
+<tr>
+<td>Kiểm tra điều kiện</td>
+<td>Không</td>
+<td>Có</td>
+</tr>
+<tr>
+<td>Exception</td>
+<td>Checked <code>InterruptedException</code></td>
+<td>Unchecked</td>
+</tr>
+</tbody>
+</table></div>
+<p>Tác hại: làm bộ test chậm (100 test × 5 s = 8 phút lãng phí), vẫn flaky (mạng chậm hơn 5 s thì fail), che dấu vấn đề.</p>
+<p>Chỉ chấp nhận trong trường hợp hiếm: debug tạm thời (xem trình duyệt), demo, hoặc chờ tín hiệu <strong>không thể quan sát</strong> được từ DOM — và nên có chú thích lý do. 🧩 <strong>Dự án không có <code>Thread.sleep</code> nào.</strong></p>
+<h2 id="2-chiến-lược-chọn-wait">2. Chiến lược chọn Wait</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Bạn đang chờ cái gì?
+ ├─ Một phần tử xuất hiện để ĐỌC ............... visibilityOfElementLocated
+ ├─ Một phần tử để TƯƠNG TÁC (click) ........... elementToBeClickable (+ chờ overlay biến mất)
+ ├─ Phần tử biến mất / spinner tắt ............. invisibilityOfElementLocated / numberOfElementsToBe(by, 0)
+ ├─ Text/giá trị đổi ........................... textToBe / textToBePresentInElement / attributeToBe
+ ├─ Điều hướng xong ............................ urlContains / titleIs
+ ├─ DOM được vẽ lại ............................ stalenessOf rồi tìm lại
+ ├─ Alert / Frame / Window ..................... alertIsPresent / frameToBeAvailable... / numberOfWindowsToBe
+ └─ Điều kiện đặc thù .......................... Custom Wait (lambda) / FluentWait</code></pre></div>
+<p>Thứ tự ưu tiên: <strong>Explicit Wait theo điều kiện</strong> &gt; Fluent Wait &gt; (không dùng Implicit) &gt; (<code>Thread.sleep</code> chỉ để debug).</p>
+<h2 id="bảng-so-sánh-tổng-hợp">Bảng so sánh tổng hợp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th><code>Thread.sleep</code></th>
+<th>Implicit Wait</th>
+<th>Explicit Wait (<code>WebDriverWait</code>)</th>
+<th><code>FluentWait</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phạm vi</td>
+<td>Một dòng</td>
+<td>Toàn session</td>
+<td>Một điều kiện</td>
+<td>Một điều kiện</td>
+</tr>
+<tr>
+<td>Chờ gì</td>
+<td>Thời gian cố định</td>
+<td>Phần tử <strong>có trong DOM</strong></td>
+<td>Bất kỳ điều kiện</td>
+<td>Bất kỳ điều kiện</td>
+</tr>
+<tr>
+<td>Dừng sớm khi đủ điều kiện</td>
+<td>❌</td>
+<td>✅ (với find)</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Tùy chỉnh polling</td>
+<td>—</td>
+<td>❌</td>
+<td>✅ (constructor/<code>pollingEvery</code>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Tùy chỉnh exception bỏ qua</td>
+<td>—</td>
+<td>❌</td>
+<td>✅ (<code>ignoring</code>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Dễ đoán thời gian</td>
+<td>✅ (nhưng luôn lãng phí)</td>
+<td>❌ khi trộn với explicit</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Dùng trong dự án <code>Selenium1</code></td>
+<td>❌</td>
+<td>❌ (cố ý)</td>
+<td>✅</td>
+<td>❌ (có lambda custom wait ở Ex7)</td>
+</tr>
+<tr>
+<td>Khuyến nghị</td>
+<td>Chỉ để debug</td>
+<td>Tránh</td>
+<td><strong>Mặc định</strong></td>
+<td>Khi cần tinh chỉnh</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Điền bảng: cách chờ nào dừng sớm khi điều kiện đã đúng?</p>
+<p><strong>Input:</strong> Thread.sleep, Implicit, Explicit, Fluent</p>
+<p><strong>Expected Output:</strong> Bảng 4 hàng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Xem bảng so sánh.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Trên <code>/dynamic_loading/2</code> viết hai test: <code>Thread.sleep(8000)</code> và Explicit Wait; so sánh thời gian.</p>
+<p><strong>Input:</strong> <code>/dynamic_loading/2</code></p>
+<p><strong>Expected Output:</strong> Explicit nhanh hơn rõ rệt (dừng khi <code>finish</code> hiện)</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Đo bằng <code>nanoTime</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Với mỗi tình huống chọn Wait: (a) đọc thông báo sau AJAX, (b) click nút sau spinner, (c) chờ tab mới, (d) chờ file tải.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 4 lựa chọn</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Xem sơ đồ quyết định.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Wait nào nên dùng làm mặc định?</p>
+<ul>
+<li>A. <code>Thread.sleep</code></li>
+<li>B. Implicit</li>
+<li>C. Explicit</li>
+<li>D. Không dùng</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: C.</strong> Theo điều kiện, dự đoán được.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>Thread.sleep</code> chấp nhận được khi?</p>
+<ul>
+<li>A. Luôn</li>
+<li>B. Debug tạm thời hoặc tín hiệu không quan sát được (có ghi chú)</li>
+<li>C. Mọi trang chậm</li>
+<li>D. Thay Explicit</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dự án không có <code>sleep</code> nào.</p>
+</details>
+<p><strong>Câu 3.</strong> Implicit Wait chờ gì?</p>
+<ul>
+<li>A. Visible</li>
+<li>B. Clickable</li>
+<li>C. Chỉ presence trong DOM</li>
+<li>D. Text</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: C.</strong> Hạn chế lớn.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Compare Thread.sleep, implicit and explicit waits.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> So sánh sleep, implicit, explicit.</li>
+<li><strong>Suggested answer (EN):</strong> <code>Thread.sleep</code> waits a fixed time, implicit is a global presence-only retry for finds, and explicit waits for a specific condition and returns as soon as it is true; I use explicit waits.</li>
+<li><strong>Giải thích (VI):</strong> Có bảng so sánh.</li>
+<li><strong>Follow-up:</strong> <em>Why is sleep flaky?</em></li>
+</ul>
+<p><strong>2. How would you choose a wait for a spinner followed by a click?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Chọn wait cho spinner rồi click?</li>
+<li><strong>Suggested answer (EN):</strong> Wait for the spinner to be invisible, then wait for the button to be clickable and click.</li>
+<li><strong>Giải thích (VI):</strong> <code>clickable</code> không biết overlay.</li>
+<li><strong>Follow-up:</strong> <em>What if the spinner never shows?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Explicit là mặc định; Fluent khi cần tinh chỉnh</li>
+<li>Implicit tránh; sleep chỉ debug</li>
+<li>Chọn Wait theo điều kiện cần chờ</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li>Bảng so sánh, sơ đồ quyết định</li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Dừng sớm vs chờ cố định</li>
+<li>Presence-only (implicit) vs điều kiện bất kỳ (explicit)</li>
+<li><code>sleep</code> che nguyên nhân</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="07-real-world-scenarios.html">Wait: 15 tình huống thực tế</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cách</th>
+<th>Dừng sớm?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Thread.sleep</code></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Implicit</td>
+<td>✅ (chỉ với find)</td>
+</tr>
+<tr>
+<td>Explicit</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Fluent</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Explicit: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; ms (sleep cứng sẽ là 8000 ms)&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<p>(a) <code>textToBe</code>/<code>visibilityOfElementLocated</code> · (b) <code>invisibilityOfElementLocated(spinner)</code> rồi <code>elementToBeClickable</code> · (c) <code>numberOfWindowsToBe(2)</code> · (d) <code>FluentWait</code> trên điều kiện file.</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="05-fluent-wait.html"><small>← Bài trước</small><span>Fluent Wait và Custom Wait</span></a><a class="next" href="07-real-world-scenarios.html"><small>Bài tiếp theo →</small><span>Wait: 15 tình huống thực tế</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/06-wait-comparison.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

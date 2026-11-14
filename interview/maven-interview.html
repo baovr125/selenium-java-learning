@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maven và Maven Wrapper — Interview · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/maven-interview" data-root="../" data-lesson="0" data-title="Maven và Maven Wrapper — Interview">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="maven-và-maven-wrapper--interview">Maven và Maven Wrapper — Interview</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h2 id="phần-a-14-câu-hỏi-cốt-lõi">Phần A. 14 câu hỏi cốt lõi</h2>
+<h3 id="q1-what-is-maven">Q1. What is Maven?</h3>
+<p><strong>Dịch:</strong> Maven là gì?</p>
+<p><strong>Sample answer (EN):</strong> Maven is a build automation and dependency management tool for Java projects. It uses a <code>pom.xml</code> file to describe the project, downloads the libraries the project needs from repositories, and runs standard build steps like compile, test and package through plugins.</p>
+<p><strong>Giải thích:</strong> Ba ý: (1) quản lý thư viện, (2) chuẩn hoá build, (3) plugin thực hiện việc cụ thể. Nhấn mạnh "convention over configuration".</p>
+<p><strong>Ví dụ thực tế:</strong> Dự án khai báo Selenium và TestNG trong <code>pom.xml</code>; chạy <code>.\mvnw.cmd test</code> là Maven tải khoảng 40 jar, biên dịch và chạy 10 test.</p>
+<p><strong>Câu hỏi đào sâu:</strong> <em>What is the difference between Maven and Gradle?</em> (XML khai báo vs script, độ linh hoạt).</p>
+<hr />
+<h3 id="q2-what-is-maven-wrapper">Q2. What is Maven Wrapper?</h3>
+<p><strong>Dịch:</strong> Maven Wrapper là gì?</p>
+<p><strong>Sample answer:</strong> Maven Wrapper is a small set of scripts (<code>mvnw</code>, <code>mvnw.cmd</code>) and a properties file under <code>.mvn/wrapper</code> that live inside the project. When you run it, it downloads the exact Maven version the project specifies if it is not already on your machine, and then runs Maven with it. So everyone uses the same Maven version without installing Maven manually.</p>
+<p><strong>Giải thích:</strong> Wrapper "bao" Maven: người chạy không cần cài Maven. Phiên bản Maven khoá trong <code>maven-wrapper.properties</code> (commit lên Git).</p>
+<p><strong>Ví dụ:</strong> <code>Selenium1</code> có <code>mvnw.cmd</code>; lệnh <code>mvn -version</code> báo không tìm thấy, nhưng <code>.\mvnw.cmd -version</code> in <code>Apache Maven 3.9.16</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Where does the wrapper store the downloaded Maven?</em> → <code>~/.m2/wrapper/dists/apache-maven-3.9.16/&lt;hash&gt;</code> (dùng chung cho các dự án cùng phiên bản).</p>
+<hr />
+<h3 id="q3-what-is-the-difference-between-maven-and-maven-wrapper">Q3. What is the difference between Maven and Maven Wrapper?</h3>
+<p><strong>Dịch:</strong> Khác nhau giữa Maven và Maven Wrapper?</p>
+<p><strong>Sample answer:</strong> Maven is the actual build tool. Maven Wrapper is just a launcher that makes sure the right Maven version is available and then calls it. With plain Maven you must install it and versions may differ between machines. With the wrapper, the version is pinned in the repository and downloaded automatically, but the wrapper does not replace the JDK.</p>
+<p><strong>Giải thích:</strong> Wrapper không làm thay việc của Maven; nó chỉ cung cấp đúng bản Maven. Bảng so sánh ở <a href="../02-maven-and-project/03-maven-wrapper.html#14-maven-cài-toàn-hệ-thống-vs-maven-wrapper">maven/03 mục 1.4</a>.</p>
+<p><strong>Ví dụ:</strong> Lệnh <code>mvn test</code> cần Maven cài sẵn; <code>.\mvnw.cmd test</code> thì không.</p>
+<p><strong>Đào sâu:</strong> <em>If both exist on my machine, which one should I use in a team project?</em> → Wrapper, để khớp với CI và đồng đội.</p>
+<hr />
+<h3 id="q4-what-is-the-purpose-of-pomxml">Q4. What is the purpose of pom.xml?</h3>
+<p><strong>Dịch:</strong> Mục đích của <code>pom.xml</code>?</p>
+<p><strong>Sample answer:</strong> <code>pom.xml</code> is the Project Object Model. It defines the project coordinates (groupId, artifactId, version), properties like the Java version, the dependencies, and the build plugins and their configuration. Maven reads it to know what to download and how to build.</p>
+<p><strong>Giải thích:</strong> Là "bản mô tả" của dự án. Nêu các khối: coordinates, properties, dependencies, build/plugins, (profiles).</p>
+<p><strong>Ví dụ:</strong> Trong <code>pom.xml</code> của dự án: <code>maven.compiler.release=21</code>, <code>selenium.version=4.52.0</code>, <code>testng.version=7.10.2</code>, và Surefire cấu hình <code>suiteXmlFile = testng.xml</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is the difference between <code>properties</code> and <code>dependencyManagement</code>?</em> (biến vs chuẩn hoá version cho nhiều module/transitive).</p>
+<hr />
+<h3 id="q5-what-is-a-maven-dependency">Q5. What is a Maven dependency?</h3>
+<p><strong>Dịch:</strong> Dependency trong Maven là gì?</p>
+<p><strong>Sample answer:</strong> A dependency is an external library your project needs, identified by <code>groupId</code>, <code>artifactId</code> and <code>version</code>. Maven downloads it from a repository into the local repository and adds it to the classpath. Each dependency has a scope such as <code>compile</code> or <code>test</code>, and it can bring its own transitive dependencies.</p>
+<p><strong>Giải thích:</strong> GAV là "địa chỉ". Scope quyết định thư viện có mặt ở đâu. Transitive là thư viện phụ thuộc gián tiếp.</p>
+<p><strong>Ví dụ:</strong> <code>selenium-java:4.52.0</code> với scope <code>test</code>; <code>dependency:tree</code> cho thấy nó kéo <code>selenium-support</code>, <code>guava</code>, <code>opentelemetry</code>...</p>
+<p><strong>Đào sâu:</strong> <em>What does <code>&lt;scope&gt;test&lt;/scope&gt;</code> mean?</em> → chỉ có khi biên dịch/chạy test, không có trong <code>src/main</code>.</p>
+<hr />
+<h3 id="q6-what-is-the-maven-build-lifecycle">Q6. What is the Maven build lifecycle?</h3>
+<p><strong>Dịch:</strong> Vòng đời build của Maven là gì?</p>
+<p><strong>Sample answer:</strong> The default lifecycle is an ordered list of phases: validate, compile, test, package, verify, install and deploy. When you run a phase, Maven runs all previous phases first. Plugin goals are bound to each phase, for example the compiler plugin to compile and Surefire to test. There are also the separate <code>clean</code> and <code>site</code> lifecycles.</p>
+<p><strong>Giải thích:</strong> Nhớ quy tắc "chạy phase N = chạy mọi phase trước N". <code>clean</code> là lifecycle riêng.</p>
+<p><strong>Ví dụ:</strong> Log thật: <code>resources → compiler:compile → resources:testResources → compiler:testCompile → surefire:test → jar:jar</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is the difference between a phase and a goal?</em> → phase là bước trong lifecycle; goal là việc cụ thể của plugin.</p>
+<hr />
+<h3 id="q7-what-is-the-difference-between-clean-test-package-and-install">Q7. What is the difference between clean, test, package and install?</h3>
+<p><strong>Dịch:</strong> Khác nhau giữa <code>clean</code>, <code>test</code>, <code>package</code>, <code>install</code>?</p>
+<p><strong>Sample answer:</strong> <code>clean</code> deletes the <code>target</code> directory and belongs to the clean lifecycle. <code>test</code> compiles and runs the tests. <code>package</code> runs everything up to test and then creates the jar. <code>install</code> goes further and copies the artifact into the local repository. So <code>package</code> and <code>install</code> also run the tests unless you skip them.</p>
+<p><strong>Giải thích:</strong> <code>test &lt; package &lt; verify &lt; install</code>. Điều hay quên: <code>package</code> <strong>có chạy test</strong>.</p>
+<p><strong>Ví dụ:</strong> <code>.\mvnw.cmd package -DskipTests</code> đã chạy thật: tạo <code>SeleniumPractice-1.0-SNAPSHOT.jar</code> ~2 KB với cảnh báo <code>JAR will be empty</code> vì không có <code>src/main</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How do you skip tests?</em> → <code>-DskipTests</code> (biên dịch test nhưng không chạy) vs <code>-Dmaven.test.skip=true</code> (không biên dịch).</p>
+<hr />
+<h3 id="q8-why-should-we-commit-mvnw-and-mvnwcmd">Q8. Why should we commit mvnw and mvnw.cmd?</h3>
+<p><strong>Dịch:</strong> Vì sao nên commit <code>mvnw</code> và <code>mvnw.cmd</code>?</p>
+<p><strong>Sample answer:</strong> Because they are part of the project's build setup. If they are committed together with <code>.mvn/wrapper/maven-wrapper.properties</code>, anyone who clones the repository, including CI, can build immediately and uses the same Maven version. If they are missing, each person needs to install Maven separately and may get different results.</p>
+<p><strong>Giải thích:</strong> Cũng cần commit <code>.mvn/wrapper/</code>. Với Linux, nhớ bit thực thi (<code>git update-index --chmod=+x mvnw</code>) và line ending LF.</p>
+<p><strong>Ví dụ:</strong> Thành viên mới clone, không cài Maven, chạy <code>.\mvnw.cmd clean test</code> là có kết quả 10/10.</p>
+<p><strong>Đào sâu:</strong> <em>What should NOT be committed?</em> → <code>target/</code>, Local Repository (<code>.mvn/repository</code>), <code>test-output/</code>.</p>
+<hr />
+<h3 id="q9-can-we-run-a-maven-project-without-installing-maven">Q9. Can we run a Maven project without installing Maven?</h3>
+<p><strong>Dịch:</strong> Có chạy được dự án Maven mà không cài Maven không?</p>
+<p><strong>Sample answer:</strong> Yes, if the project contains the Maven Wrapper. <code>mvnw</code> or <code>mvnw.cmd</code> downloads and runs the required Maven automatically. You still need a JDK and, the first time, internet access.</p>
+<p><strong>Giải thích:</strong> Điều kiện: có Wrapper + JDK + mạng (lần đầu).</p>
+<p><strong>Ví dụ:</strong> Máy này không có <code>mvn</code> trong PATH nhưng chạy <code>.\mvnw.cmd test</code> bình thường.</p>
+<p><strong>Đào sâu:</strong> <em>What if the machine is offline?</em> → Nếu đã có Maven trong <code>~/.m2/wrapper/dists</code> và thư viện trong repository thì chạy được với <code>-o</code>; nếu chưa thì không.</p>
+<hr />
+<h3 id="q10-does-maven-wrapper-eliminate-the-need-for-jdk">Q10. Does Maven Wrapper eliminate the need for JDK?</h3>
+<p><strong>Dịch:</strong> Maven Wrapper có thay thế JDK không?</p>
+<p><strong>Sample answer:</strong> No. Maven itself is a Java program, so it needs a Java runtime, and compiling code needs a JDK that includes <code>javac</code>. The wrapper only removes the need to install Maven.</p>
+<p><strong>Giải thích:</strong> Hai thứ khác nhau: JDK (Java) vs Maven (build tool). Một số hiểu lầm: "có mvnw là khỏi cài gì".</p>
+<p><strong>Ví dụ:</strong> Dự án cần JDK ≥ 21 (<code>maven.compiler.release=21</code>). Máy dùng JDK 25.0.1 vẫn biên dịch được vì <code>--release 21</code>. Với JDK &lt; 21 sẽ lỗi <code>release version 21 not supported</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Must JAVA_HOME be set?</em> → Không phải lúc nào cũng bắt buộc: máy này <code>JAVA_HOME</code> trống vẫn chạy nhờ <code>java</code> trong PATH; nhưng nếu đặt thì phải đúng.</p>
+<hr />
+<h3 id="q11-how-do-you-run-a-specific-test-using-maven">Q11. How do you run a specific test using Maven?</h3>
+<p><strong>Dịch:</strong> Làm sao chạy một test cụ thể bằng Maven?</p>
+<p><strong>Sample answer:</strong> With the Surefire <code>-Dtest</code> parameter. For a class: <code>mvnw test -Dtest=LoginTest</code>. For a single method: <code>-Dtest=LoginTest#testLoginSuccess</code>. When <code>-Dtest</code> is used, Surefire ignores the <code>suiteXmlFiles</code> configuration and selects tests by that pattern.</p>
+<p><strong>Giải thích:</strong> PowerShell nên đặt tham số trong dấu nháy (<code>"-Dtest=Class#method"</code>). Wildcard <code>*</code> được hỗ trợ.</p>
+<p><strong>Ví dụ:</strong> <code>.\mvnw.cmd test "-Dtest=EnvironmentCheckTest"</code> chạy 1 test dù class này không có trong <code>testng.xml</code> (đã kiểm chứng).</p>
+<p><strong>Đào sâu:</strong> <em>What happens if the class name is wrong?</em> → Với dự án này: <code>Tests run: 0</code> và <strong>BUILD SUCCESS</strong>. Nên kiểm tra số test đã chạy.</p>
+<hr />
+<h3 id="q12-how-do-you-resolve-dependency-conflicts">Q12. How do you resolve dependency conflicts?</h3>
+<p><strong>Dịch:</strong> Giải quyết xung đột dependency thế nào?</p>
+<p><strong>Sample answer:</strong> First I detect it with <code>mvn dependency:tree</code> and look at which versions are chosen or omitted for conflict. Maven uses "nearest definition wins". To fix it I can pin the version in <code>dependencyManagement</code>, exclude the unwanted transitive dependency, or align the versions of the libraries. Then I re-run the full tests.</p>
+<p><strong>Giải thích:</strong> Triệu chứng: <code>NoSuchMethodError</code>, <code>ClassNotFoundException</code>. Quy trình: phát hiện → ghim/loại trừ → kiểm chứng bằng test.</p>
+<p><strong>Ví dụ:</strong> Nếu thêm thư viện kéo <code>guava</code> cũ, Selenium (cần <code>guava 33.7.2-jre</code>) có thể lỗi lúc chạy; ép phiên bản <code>guava</code> trong <code>dependencyManagement</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What is the difference between exclusion and dependencyManagement?</em> → loại bỏ một nhánh vs ép phiên bản toàn dự án.</p>
+<hr />
+<h3 id="q13-what-happens-when-a-dependency-is-added-to-pomxml">Q13. What happens when a dependency is added to pom.xml?</h3>
+<p><strong>Dịch:</strong> Điều gì xảy ra khi thêm dependency vào <code>pom.xml</code>?</p>
+<p><strong>Sample answer:</strong> Nothing happens until Maven runs. At the next run Maven reads the POM, looks for the artifact in the local repository, and if it is missing it downloads the <code>.pom</code> and <code>.jar</code> from the remote repository, plus all transitive dependencies. It resolves version conflicts and builds the classpath, so the classes become available according to the scope.</p>
+<p><strong>Giải thích:</strong> IDE cần "Reload Maven project". Đồng đội chỉ cần <code>git pull</code> + chạy Maven.</p>
+<p><strong>Ví dụ:</strong> Dự án lưu thư viện trong <code>.mvn/repository</code> (123 jar); thư viện mới sẽ xuất hiện ở đó sau lần chạy đầu.</p>
+<p><strong>Đào sâu:</strong> <em>What if the download fails?</em> → <code>Could not resolve dependencies</code>: kiểm tra tọa độ, mạng, proxy, <code>-U</code>.</p>
+<hr />
+<h3 id="q14-how-do-you-troubleshoot-maven-build-failures">Q14. How do you troubleshoot Maven build failures?</h3>
+<p><strong>Dịch:</strong> Xử lý lỗi build Maven thế nào?</p>
+<p><strong>Sample answer:</strong> I read the first <code>[ERROR]</code> line and identify which plugin goal failed — compiler, surefire, dependency or the wrapper itself. Then I rerun with <code>-e</code> or <code>-X</code> for more detail, narrow the scope with <code>test-compile</code> or a single test, check <code>java -version</code> and <code>mvnw -version</code>, and finally clean the specific broken artifacts. I also read <code>target/surefire-reports</code> for test failures.</p>
+<p><strong>Giải thích:</strong> Phương pháp: đọc lỗi → xác định plugin → thu hẹp → kiểm tra môi trường → làm sạch có chủ đích. Bảng lỗi: <a href="../02-maven-and-project/09-maven-troubleshooting.html">maven/08</a>.</p>
+<p><strong>Ví dụ:</strong> <code>-o clean</code> thất bại với <code>has not been downloaded from it before</code> vì chưa từng tải <code>maven-clean-plugin</code>; bỏ <code>-o</code> là xong.</p>
+<p><strong>Đào sâu:</strong> <em>Tests fail but the build log has no clear error. Where do you look?</em> → <code>target/surefire-reports</code> (<code>emailable-report.html</code>, <code>.dumpstream</code>).</p>
+<hr />
+<h2 id="phần-b-câu-hỏi-bổ-sung">Phần B. Câu hỏi bổ sung</h2>
+<h3 id="q15-what-is-the-difference-between-wrapperversion-and-the-maven-version-in-the-wrapper-properties">Q15. What is the difference between <code>wrapperVersion</code> and the Maven version in the wrapper properties?</h3>
+<p><strong>Dịch:</strong> <code>wrapperVersion</code> khác gì phiên bản Maven?</p>
+<p><strong>Sample answer:</strong> <code>wrapperVersion</code> is the version of the wrapper scripts themselves, while the Maven version is part of <code>distributionUrl</code>. In our project the wrapper is 3.3.4 and it downloads Maven 3.9.16.</p>
+<p><strong>Giải thích:</strong> Hai con số dễ nhầm. Bỏ qua điểm này là lỗi hay gặp.</p>
+<p><strong>Ví dụ:</strong> <code>.mvn/wrapper/maven-wrapper.properties</code>: <code>wrapperVersion=3.3.4</code>, <code>distributionUrl=...apache-maven-3.9.16-bin.zip</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What does <code>distributionType=only-script</code> mean?</em> → chỉ dùng script, không cần <code>maven-wrapper.jar</code>.</p>
+<hr />
+<h3 id="q16-what-is-the-local-repository-and-where-is-it-in-your-project">Q16. What is the local repository, and where is it in your project?</h3>
+<p><strong>Dịch:</strong> Local repository là gì, ở đâu trong dự án của bạn?</p>
+<p><strong>Sample answer:</strong> It is the folder on your machine where Maven caches downloaded artifacts. By default it is <code>~/.m2/repository</code>, but in my project <code>.mvn/maven.config</code> sets <code>-Dmaven.repo.local=.mvn/repository</code>, so the project has its own repository folder, which is excluded from Git.</p>
+<p><strong>Giải thích:</strong> Đây là chi tiết <strong>riêng của dự án</strong> — thể hiện bạn đã đọc kỹ cấu hình. Lý do: cô lập khỏi <code>~/.m2</code> bị hỏng.</p>
+<p><strong>Ví dụ:</strong> <code>.gitignore</code> có dòng <code>.mvn/repository/</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Pros and cons?</em> → cô lập, tái lập; nhưng mỗi clone phải tải lại.</p>
+<hr />
+<h3 id="q17-why-can-build-success-still-hide-a-problem-in-test-execution">Q17. Why can <code>BUILD SUCCESS</code> still hide a problem in test execution?</h3>
+<p><strong>Dịch:</strong> Vì sao <code>BUILD SUCCESS</code> vẫn có thể che giấu vấn đề?</p>
+<p><strong>Sample answer:</strong> Because Maven only fails when a goal fails. If no tests match, for example a wrong <code>-Dtest</code> name, Surefire reports <code>Tests run: 0</code> and the build still succeeds. Skipped tests also do not fail the build. So I always check the test counts.</p>
+<p><strong>Giải thích:</strong> Đã tái hiện: <code>-Dtest=NoSuchTest</code> ⇒ <code>Tests run: 0</code>, <code>BUILD SUCCESS</code>; thêm <code>failIfNoSpecifiedTests=true</code> <strong>không</strong> giúp ở cấu hình này.</p>
+<p><strong>Ví dụ:</strong> Trong CI, đọc <code>target/surefire-reports/TestSuite.txt</code> và fail nếu <code>Tests run: 0</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How would you guard against it in CI?</em> → script kiểm tra số test tối thiểu.</p>
+<hr />
+<h2 id="phần-c-6-tình-huống-thực-tế">Phần C. 6 tình huống thực tế</h2>
+<h3 id="s1-you-clone-the-project-and-have-no-maven-installed-how-do-you-run-the-tests">S1. You clone the project and have no Maven installed. How do you run the tests?</h3>
+<p><strong>Dịch:</strong> Clone dự án, không có Maven, chạy test thế nào?</p>
+<p><strong>Sample answer:</strong> I check Java with <code>java -version</code> (needs 21+), open PowerShell in the project root, run <code>.\mvnw.cmd -version</code> to confirm the wrapper downloads Maven, then <code>.\mvnw.cmd clean test</code>. The first run is slow because it downloads Maven and the libraries. Then I check <code>Tests run</code> and the report in <code>target/surefire-reports</code>.</p>
+<p><strong>Giải thích:</strong> Trình bày quy trình đúng thứ tự, nêu điều kiện (JDK, mạng), và cách kiểm chứng kết quả.</p>
+<hr />
+<h3 id="s2-mvnwcmd-says-not-recognized-what-do-you-check">S2. <code>.\mvnw.cmd</code> says "not recognized". What do you check?</h3>
+<p><strong>Dịch:</strong> Gõ <code>.\mvnw.cmd</code> báo "not recognized", bạn kiểm tra gì?</p>
+<p><strong>Sample answer:</strong> First I check I am in the folder that contains <code>mvnw.cmd</code> and that I typed the <code>.\</code> prefix, because PowerShell does not run commands from the current folder without it. Then I check the file exists with <code>Test-Path</code>, and if it was not checked out, I restore it from Git.</p>
+<p><strong>Giải thích:</strong> 90% là sai thư mục/thiếu <code>.\</code>.</p>
+<hr />
+<h3 id="s3-a-teammate-on-linux-gets-permission-denied-mvnw-why">S3. A teammate on Linux gets "Permission denied: ./mvnw". Why?</h3>
+<p><strong>Dịch:</strong> Đồng đội dùng Linux báo <code>Permission denied: ./mvnw</code>. Vì sao?</p>
+<p><strong>Sample answer:</strong> The file lacks the executable bit, usually because it was committed from Windows. Quick fix is <code>chmod +x mvnw</code>. The permanent fix is <code>git update-index --chmod=+x mvnw</code> and committing it. Also line endings must be LF; otherwise they get "bad interpreter".</p>
+<p><strong>Giải thích:</strong> Git lưu mode <code>100755</code> vs <code>100644</code>; kiểm tra bằng <code>git ls-files --stage mvnw</code>.</p>
+<hr />
+<h3 id="s4-you-added-a-dependency-and-your-teammates-build-fails-after-pulling-what-do-you-do">S4. You added a dependency and your teammate's build fails after pulling. What do you do?</h3>
+<p><strong>Dịch:</strong> Bạn thêm dependency, đồng đội pull về build lỗi. Làm gì?</p>
+<p><strong>Sample answer:</strong> I ask for the first error line. If it says it cannot resolve the artifact, I verify the coordinates and version exist, and whether their network or proxy blocks Maven Central. If it is a runtime error like <code>NoSuchMethodError</code>, I check <code>dependency:tree</code> for a conflict. I also confirm that everything needed was committed, meaning <code>pom.xml</code>, and that my own build was clean from a fresh state.</p>
+<p><strong>Giải thích:</strong> Tách hai loại lỗi: phân giải (mạng/tọa độ) và xung đột (runtime). Chạy <code>clean test</code> ở máy sạch để tái hiện.</p>
+<hr />
+<h3 id="s5-tests-pass-on-your-machine-but-fail-in-ci-where-do-you-start">S5. Tests pass on your machine but fail in CI. Where do you start?</h3>
+<p><strong>Dịch:</strong> Máy bạn pass, CI fail. Bắt đầu từ đâu?</p>
+<p><strong>Sample answer:</strong> I compare the environment: JDK version, Chrome version, whether the browser runs headless, window size, and network. The wrapper makes the Maven version the same, but not these. I read the CI log and the surefire reports, run <code>mvnw clean test</code> locally in a fresh clone, and then check for synchronization problems that appear when the CI machine is slower.</p>
+<p><strong>Giải thích:</strong> Wrapper chỉ khoá Maven, không khoá JDK/Chrome/OS/mạng. Nguyên nhân thường gặp nhất: headless + kích thước cửa sổ + Wait thiếu.</p>
+<hr />
+<h3 id="s6-you-need-to-upgrade-maven-from-3916-to-a-newer-version-for-the-whole-team-how">S6. You need to upgrade Maven from 3.9.16 to a newer version for the whole team. How?</h3>
+<p><strong>Dịch:</strong> Cần nâng Maven cho cả nhóm. Làm thế nào?</p>
+<p><strong>Sample answer:</strong> I change <code>distributionUrl</code> in <code>.mvn/wrapper/maven-wrapper.properties</code>, or regenerate the wrapper with <code>mvnw wrapper:wrapper -Dmaven=&lt;version&gt;</code>. I verify with <code>mvnw -version</code>, run <code>clean test</code>, and commit the changed wrapper files in a pull request. Teammates just pull, and the wrapper downloads the new Maven on their next run.</p>
+<p><strong>Giải thích:</strong> Nâng Maven chỉ cần sửa file được commit — đó là sức mạnh của Wrapper. Tuỳ chọn thêm <code>distributionSha256Sum</code>.</p>
+<hr />
+<h2 id="tự-kiểm-tra-nhanh-trả-lời-trong-10-giây-mỗi-câu">Tự kiểm tra nhanh (trả lời trong 10 giây mỗi câu)</h2>
+<ol>
+<li>Wrapper gồm những file nào? 2. File nào chứa phiên bản Maven? 3. Maven được lưu ở đâu? 4. <code>package</code> có chạy test không? 5. <code>compile</code> ở dự án này làm gì? 6. <code>-Dtest</code> có dùng <code>testng.xml</code> không? 7. <code>Tests run: 0</code> nghĩa là gì? 8. Cần commit file nào, không commit gì?</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="java-interview.html"><small>← Bài trước</small><span>Java for Automation — Interview</span></a><a class="next" href="scenario-based-interview.html"><small>Bài tiếp theo →</small><span>Scenario-based — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/maven-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

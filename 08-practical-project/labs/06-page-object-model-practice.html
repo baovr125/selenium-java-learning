@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 06: Page Object Model (Bài 10) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/06-page-object-model-practice" data-root="../../" data-lesson="0" data-title="Lab 06: Page Object Model (Bài 10)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-06-page-object-model-bài-10">Lab 06: Page Object Model (Bài 10)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../06-automation-framework/01-page-object-model.html">framework-design/01</a> · <a href="../../06-automation-framework/03-reusable-components.html">framework-design/03</a> · <a href="../../interview/framework-interview.html">Interview 08</a></p>
+</blockquote>
+<h2 id="bài-10-xây-dựng-page-object-model">Bài 10. Xây dựng Page Object Model</h2>
+<p><strong>Mục tiêu:</strong> Refactor test Login (kiểu <code>Exercise01</code>) sang POM; cảm nhận lợi ích khi đổi locator.</p>
+<p><strong>Kiến thức cần dùng:</strong> class, constructor, kế thừa, <code>By</code> private, Explicit Wait, method trả về Page tiếp theo.</p>
+<p><strong>Yêu cầu:</strong> trong <code>SeleniumLab</code>:</p>
+<ol>
+<li>Tạo <code>pages/BasePage.java</code> với <code>waitVisible</code>, <code>click</code>, <code>type</code>, <code>text</code>.</li>
+<li>Tạo <code>pages/LoginPage.java</code> và <code>pages/SecureAreaPage.java</code>.</li>
+<li>Viết <code>tests/LoginPomTest.java</code> dùng POM (không có <code>By</code> trong test).</li>
+<li>Viết test fail có chủ ý: login sai ⇒ <code>LoginPage</code> trả lỗi (<code>getFlashMessage()</code>).</li>
+<li><strong>Thí nghiệm bảo trì:</strong> đổi <strong>một</strong> locator (ví dụ <code>By.id("username")</code> → <code>By.name("username")</code>) chỉ trong <code>LoginPage</code>; chạy lại — mọi test vẫn pass.</li>
+</ol>
+<h3 id="các-bước">Các bước</h3>
+<ol>
+<li>Cấu trúc:</li>
+</ol>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">src/test/java/
+├── base/BaseTest.java
+├── pages/BasePage.java, LoginPage.java, SecureAreaPage.java
+└── tests/LoginPomTest.java</code></pre></div>
+<ol start="2">
+<li><code>BasePage</code>, <code>LoginPage</code>, <code>SecureAreaPage</code>: lấy khung ở <a href="../../06-automation-framework/01-page-object-model.html#3-trước-và-sau-khi-áp-dụng-pom">framework-design/01 mục 3</a>.</li>
+<li>Test:</li>
+</ol>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">tests</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">base.BaseTest</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.Assert</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.Test</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pages.LoginPage</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pages.SecureAreaPage</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPomTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">validLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">SecureAreaPage</span><span class="w"> </span><span class="n">secure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">open</span><span class="p">().</span><span class="na">loginAs</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">secure</span><span class="p">.</span><span class="na">getFlashMessage</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">secure</span><span class="p">.</span><span class="na">isAtSecureArea</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidLoginStaysOnLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">LoginPage</span><span class="w"> </span><span class="n">login</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">open</span><span class="p">().</span><span class="na">loginWithInvalid</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;bad&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">login</span><span class="p">.</span><span class="na">getFlashMessage</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;Your password is invalid!&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p><code>LoginPage</code> đã có <code>getFlashMessage()</code> (đọc <code>#flash</code> có chờ) trong mã mẫu ở framework-design/01, vì trang sai vẫn ở <code>/login</code>.</p>
+<ol start="4">
+<li>Mở rộng POM cho <strong>3 Exercise khác</strong> của dự án gốc: <code>DropdownPage</code> (Ex4), <code>AddRemovePage</code> (Ex6), <code>DynamicControlsPage</code> (Ex10). Gợi ý method ở <a href="../../06-automation-framework/01-page-object-model.html#9-áp-dụng-pom-cho-10-exercise-của-dự-án-gợi-ý">framework-design/01 mục 9</a>.</li>
+</ol>
+<h3 id="kết-quả-mong-đợi">Kết quả mong đợi</h3>
+<ul>
+<li><code>.\mvnw.cmd clean test</code> xanh; test <strong>không</strong> chứa <code>By.</code>, <code>WebElement</code>, <code>Thread.sleep</code>.</li>
+<li>Sau thí nghiệm bảo trì, chỉ <strong>một file</strong> thay đổi.</li>
+</ul>
+<h3 id="tự-đánh-giá-thiết-kế">Tự đánh giá thiết kế</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Có/Không</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Locator trong Page là <code>private</code>?</td>
+<td></td>
+</tr>
+<tr>
+<td>Page có assertion? (nên không)</td>
+<td></td>
+</tr>
+<tr>
+<td>Method có tên nghiệp vụ?</td>
+<td></td>
+</tr>
+<tr>
+<td>Wait nằm trong <code>BasePage</code>?</td>
+<td></td>
+</tr>
+<tr>
+<td>Test độc lập, chạy lẻ được?</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="lỗi-thường-gặp">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NullPointerException</code> ở Page</td>
+<td>Quên truyền <code>driver</code> cho constructor</td>
+<td><code>new LoginPage(driver)</code></td>
+</tr>
+<tr>
+<td><code>package pages does not exist</code></td>
+<td>Sai thư mục/ package</td>
+<td><code>src/test/java/pages</code> + <code>package pages;</code></td>
+</tr>
+<tr>
+<td>Assert trong Page</td>
+<td>Thói quen cũ</td>
+<td>Trả dữ liệu, assert ở test</td>
+</tr>
+<tr>
+<td>Lưu <code>WebElement</code> làm field</td>
+<td>Stale</td>
+<td>Lưu <code>By</code></td>
+</tr>
+<tr>
+<td>Page quá nhiều trách nhiệm</td>
+<td>God Page</td>
+<td>Tách trang/component</td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="05-form-automation.html"><small>← Bài trước</small><span>Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7)</span></a><a class="next" href="07-run-tests-with-maven.html"><small>Bài tiếp theo →</small><span>Lab 07: Test Suite với TestNG và chạy bằng Maven (Bài 11)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/06-page-object-model-practice.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

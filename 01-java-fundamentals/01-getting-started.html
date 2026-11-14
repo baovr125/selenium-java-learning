@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java: Getting Started (Introduction, Syntax, Output, Comments) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="01-java-fundamentals/01-getting-started" data-root="../" data-lesson="1" data-title="Java: Getting Started (Introduction, Syntax, Output, Comments)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="java-getting-started-introduction-syntax-output-comments">Java: Getting Started (Introduction, Syntax, Output, Comments)</h1>
+<blockquote>
+<p>🧭 Phase 1 · Java Fundamentals · Chapter 01
+⬅️ <a href="00-environment-setup.html">Cài đặt môi trường</a> · ➡️ <a href="02-variables-and-data-types.html">Java: Variables, Data Types và Type Casting</a></p>
+<p>Chapter 01 · Mức ưu tiên: <strong>Essential</strong> · Dự án mẫu dùng <strong>Java 21</strong> (<code>maven.compiler.release=21</code>)</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề trong bài</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java là gì, JDK/JRE/JVM</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Cấu trúc chương trình và cú pháp</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Output: <code>println</code>, <code>print</code>, <code>printf</code></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Comments và Javadoc</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Tạo và chạy dự án Java</td>
+<td>Essential</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích Java, JDK, JRE, JVM bằng lời của mình</li>
+<li>Viết và chạy chương trình <code>Hello</code> với <code>main</code></li>
+<li>Dùng <code>println</code>, <code>print</code>, <code>printf</code> và comments đúng cách</li>
+<li>Biết cách chạy một chương trình Java (<code>java File.java</code>, <code>javac</code>, Maven)</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="00-environment-setup.html">Cài JDK — [Environment Setup](00-environment-setup.md)</a></li>
+</ul>
+<h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
+<p><code>System.out.println("Thông báo sau khi đăng nhập: " + actualMessage.trim());</code> trong <code>Exercise01_LoginTest</code> — log để theo dõi test; về sau thay bằng logging chuyên nghiệp.</p>
+<h2 id="1-khái-niệm">1. Khái niệm</h2>
+<p><strong>Java</strong> là ngôn ngữ lập trình hướng đối tượng, <strong>biên dịch ra bytecode</strong> rồi chạy trên máy ảo Java (JVM). Selenium for Java, TestNG, Maven đều viết bằng Java — nên bạn cần Java để viết test.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thuật ngữ</th>
+<th>Ý nghĩa</th>
+<th>Bạn dùng khi nào</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>JDK</strong> (Java Development Kit)</td>
+<td>Bộ công cụ để <strong>viết và biên dịch</strong> (<code>javac</code>) + chạy</td>
+<td>Cài trên máy làm automation</td>
+</tr>
+<tr>
+<td><strong>JRE</strong></td>
+<td>Môi trường <strong>chạy</strong> (có trong JDK)</td>
+<td>Máy chỉ chạy chương trình</td>
+</tr>
+<tr>
+<td><strong>JVM</strong></td>
+<td>Máy ảo thực thi bytecode <code>.class</code></td>
+<td>Tự động, không thao tác trực tiếp</td>
+</tr>
+</tbody>
+</table></div>
+<p>Luồng: <code>Hello.java</code> ──<code>javac</code>──► <code>Hello.class</code> (bytecode) ──<code>java</code>──► kết quả.</p>
+<p>Cài đặt JDK và kiểm tra môi trường: xem <a href="00-environment-setup.html">Environment Setup</a>.</p>
+<h2 id="2-syntax-cấu-trúc-một-chương-trình-java">2. Syntax: cấu trúc một chương trình Java</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Hello</span><span class="w"> </span><span class="p">{</span><span class="w">                          </span><span class="c1">// 1. class: tên PHẢI trùng tên file (Hello.java)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// 2. main: điểm bắt đầu chạy</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Hello, Tester!&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 3. một câu lệnh (kết thúc bằng ;)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public class Hello</code></td>
+<td>Khai báo class; tên file là <code>Hello.java</code></td>
+</tr>
+<tr>
+<td><code>public static void main(String[] args)</code></td>
+<td>Phương thức JVM gọi đầu tiên khi chạy bằng <code>java</code></td>
+</tr>
+<tr>
+<td><code>{ }</code></td>
+<td>Khối code</td>
+</tr>
+<tr>
+<td><code>;</code></td>
+<td>Kết thúc câu lệnh</td>
+</tr>
+<tr>
+<td><code>System.out.println(...)</code></td>
+<td>In ra console</td>
+</tr>
+</tbody>
+</table></div>
+<p>Quy tắc cú pháp: Java <strong>phân biệt hoa-thường</strong> (<code>System</code> ≠ <code>system</code>); mỗi câu lệnh kết thúc bằng <code>;</code>; tên class viết <code>PascalCase</code>, tên biến/method <code>camelCase</code>, hằng <code>UPPER_SNAKE_CASE</code>.</p>
+<p>🧩 Trong dự án <code>Selenium1</code>, test chạy bằng TestNG nên <strong>không cần</strong> <code>main</code>; nhưng mỗi Exercise vẫn có <code>main()</code> để chạy trực tiếp (xem <code>Exercise01_LoginTest.java</code>).</p>
+<h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
+<h3 id="ví-dụ-1--hello-và-output">Ví dụ 1 — Hello và Output</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Open browser&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// in rồi xuống dòng</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="s">&quot;Login &quot;</span><span class="p">);</span><span class="w">            </span><span class="c1">// in, KHÔNG xuống dòng</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">print</span><span class="p">(</span><span class="s">&quot;success&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">();</span><span class="w">                  </span><span class="c1">// xuống dòng</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">             </span><span class="c1">// in số: 5</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">           </span><span class="c1">// nối chuỗi: 23</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Open browser
+Login success
+5
+23</code></pre></div>
+<p><strong>Giải thích:</strong> <code>println</code> = print + xuống dòng; <code>print</code> giữ nguyên dòng. <code>2 + 3</code> là phép cộng số; <code>"2" + 3</code> là nối chuỗi (vì có một vế là <code>String</code>).</p>
+<h3 id="ví-dụ-2--printf-định-dạng">Ví dụ 2 — <code>printf</code> định dạng</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Locale</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Login&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">75.5</span><span class="p">;</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">US</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Test: %s | passed: %d | rate: %.1f%%%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="p">,</span><span class="w"> </span><span class="n">passed</span><span class="p">,</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Test: Login | passed: 3 | rate: 75.5%</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mã định dạng</th>
+<th>Kiểu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>%s</code></td>
+<td>chuỗi</td>
+</tr>
+<tr>
+<td><code>%d</code></td>
+<td>số nguyên</td>
+</tr>
+<tr>
+<td><code>%.1f</code></td>
+<td>số thực, 1 chữ số thập phân</td>
+</tr>
+<tr>
+<td><code>%%</code></td>
+<td>ký tự <code>%</code></td>
+</tr>
+<tr>
+<td><code>%n</code></td>
+<td>xuống dòng (đúng với mọi hệ điều hành)</td>
+</tr>
+</tbody>
+</table></div>
+<p>⚠️ <strong>Bẫy locale (đã gặp thật khi kiểm tra bài này):</strong> <code>printf("%.1f", 75.5)</code> in <code>75,5</code> trên máy đặt locale Việt/châu Âu và <code>75.5</code> trên máy locale Mỹ. Muốn kết quả giống nhau mọi máy (ví dụ khi assert/ghi log), truyền <code>Locale.US</code> làm tham số đầu như trong ví dụ.</p>
+<h3 id="ví-dụ-3--comments">Ví dụ 3 — Comments</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="cm">/**</span>
+<span class="cm">     * Javadoc: mô tả class/method, hiện trong IDE khi rê chuột.</span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Comment một dòng: giải thích bước tiếp theo</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Step 1&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// comment cuối dòng</span>
+
+<span class="w">        </span><span class="cm">/* Comment nhiều dòng:</span>
+<span class="cm">           tạm tắt một đoạn code */</span>
+<span class="w">        </span><span class="c1">// System.out.println(&quot;Step 2 (đã tắt)&quot;);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Done&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Step 1
+Done</code></pre></div>
+<h3 id="ví-dụ-4--tạo-và-chạy">Ví dụ 4 — Tạo và chạy</h3>
+<p>Cách nhanh (không cần Maven), JDK 11+ chạy thẳng file nguồn:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">java</span> <span class="n">Hello</span><span class="p">.</span><span class="n">java</span></code></pre></div>
+<p>Cách chuẩn: <code>javac Hello.java</code> rồi <code>java Hello</code>. Với dự án Maven (như <code>Selenium1</code>): <code>.\mvnw.cmd test</code> — xem <a href="../02-maven-and-project/00-project-initialization.html">Project Initialization</a>.</p>
+<h2 id="4-ứng-dụng-trong-selenium-real-world">4. Ứng dụng trong Selenium (Real-world)</h2>
+<p>Output giúp bạn <strong>theo dõi test đang làm gì</strong>. Đây là cách dự án làm (trích <code>Exercise01_LoginTest.java</code>):</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Thông báo sau khi đăng nhập: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">actualMessage</span><span class="p">.</span><span class="na">trim</span><span class="p">());</span></code></pre></div>
+<p>Khi test fail, dòng log này giúp biết giá trị thực tế. Về lâu dài, <code>System.out</code> được thay bằng logging (SLF4J) — xem <a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a>.</p>
+<p>Comments trong dự án: Javadoc mô tả mỗi test (<code>/** ... */</code>) và comment từng bước đánh số <code>// 1.</code>, <code>// 2.</code> — một quy ước tốt để người khác đọc hiểu kịch bản.</p>
+<h2 id="5-lỗi-thường-gặp">5. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>class Hello is public, should be declared in a file named Hello.java</code></td>
+<td>Tên file khác tên class public</td>
+<td>Đặt tên file = tên class</td>
+</tr>
+<tr>
+<td><code>';' expected</code></td>
+<td>Thiếu <code>;</code></td>
+<td>Thêm <code>;</code></td>
+</tr>
+<tr>
+<td><code>cannot find symbol</code></td>
+<td>Gõ sai hoa-thường (<code>system.out</code>)</td>
+<td><code>System.out</code></td>
+</tr>
+<tr>
+<td><code>Error: Main method not found</code></td>
+<td>Sai chữ ký <code>main</code></td>
+<td><code>public static void main(String[] args)</code></td>
+</tr>
+<tr>
+<td>Tiếng Việt thành <code>?</code> trong console</td>
+<td>Console không UTF-8</td>
+<td><code>chcp 65001</code>; hoặc <code>-Dfile.encoding=UTF-8</code> (dự án có <code>run-test.ps1</code> xử lý)</td>
+</tr>
+<tr>
+<td><code>"2" + 3</code> ra <code>23</code> thay vì <code>5</code></td>
+<td>Nối chuỗi</td>
+<td>Dùng số: <code>2 + 3</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> In ra ba dòng: tên dự án, phiên bản Java và chữ <code>Ready</code>.</p>
+<p><strong>Input:</strong> Không có</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Selenium Practice
+Java 21
+Ready</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Mỗi dòng một <code>System.out.println</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Dùng <code>printf</code> in <code>Login: 3/4 passed (75.0%)</code> từ các biến <code>name</code>, <code>passed</code>, <code>total</code>, <code>rate</code>.</p>
+<p><strong>Input:</strong> name="Login", passed=3, total=4, rate=75.0</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Login: 3/4 passed (75.0%)</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>%s</code>, <code>%d</code>, <code>%.1f</code>, <code>%%</code> và <code>Locale.US</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> In bảng kết quả hai test dạng cột: <code>TEST</code> và <code>RESULT</code>, căn trái 15 ký tự.</p>
+<p><strong>Input:</strong> testLogin=PASS, testDropdown=FAIL</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">TEST            RESULT
+testLogin       PASS
+testDropdown    FAIL</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>%-15s</code> căn trái 15 ký tự.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Tên file của <code>public class Hello</code> phải là gì?</p>
+<ul>
+<li>A. hello.java</li>
+<li>B. Hello.java</li>
+<li>C. Main.java</li>
+<li>D. Bất kỳ</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Class <code>public</code> phải trùng tên file và phân biệt hoa-thường.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>System.out.print("a"); System.out.print("b");</code> in ra gì?</p>
+<ul>
+<li>A. a rồi b trên hai dòng</li>
+<li>B. ab trên một dòng</li>
+<li>C. Lỗi biên dịch</li>
+<li>D. b</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>print</code> không xuống dòng.</p>
+</details>
+<p><strong>Câu 3.</strong> Comment nhiều dòng dùng ký hiệu nào?</p>
+<ul>
+<li>A. <code>//</code></li>
+<li>B. <code>/* ... */</code></li>
+<li>C. <code>#</code></li>
+<li>D. <code>&lt;!-- --&gt;</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>//</code> là một dòng; <code>/* */</code> nhiều dòng; <code>/** */</code> là Javadoc.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What are JDK, JRE and JVM?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> JDK, JRE, JVM là gì?</li>
+<li><strong>Suggested answer (EN):</strong> The JVM runs bytecode, the JRE is the JVM plus libraries needed to run programs, and the JDK adds development tools like the compiler <code>javac</code>.</li>
+<li><strong>Giải thích (VI):</strong> Ba lớp lồng nhau: JDK ⊃ JRE ⊃ JVM.</li>
+<li><strong>Follow-up:</strong> <em>Why is Java called platform independent?</em></li>
+</ul>
+<p><strong>2. What does <code>public static void main(String[] args)</code> mean?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Ý nghĩa của <code>public static void main(String[] args)</code>?</li>
+<li><strong>Suggested answer (EN):</strong> It is the entry point: <code>public</code> so the JVM can call it, <code>static</code> so no object is needed, <code>void</code> because it returns nothing, and <code>args</code> holds command line arguments.</li>
+<li><strong>Giải thích (VI):</strong> Dự án Selenium chạy bằng TestNG nên không cần <code>main</code>, nhưng mỗi Exercise vẫn có <code>main()</code> để chạy trực tiếp.</li>
+<li><strong>Follow-up:</strong> <em>Do TestNG tests need a main method?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>class</code> + <code>main</code> là khuôn tối thiểu; tên file = tên class <code>public</code></li>
+<li><code>println</code> xuống dòng, <code>print</code> không; <code>printf</code> định dạng</li>
+<li>Comment <code>//</code>, <code>/* */</code>, <code>/** */</code></li>
+<li>Dùng <code>Locale.US</code> khi cần kết quả <code>printf</code> giống nhau trên mọi máy</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>System.out.println/print/printf</code>, <code>javac</code>, <code>java</code></li>
+<li><code>%s %d %.1f %% %n</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>print</code> ≠ <code>println</code></li>
+<li><code>"2" + 3</code> ra <code>23</code> (nối chuỗi), <code>2 + 3</code> ra <code>5</code></li>
+<li>JDK ≠ JRE ≠ JVM</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-variables-and-data-types.html">Java: Variables, Data Types và Type Casting</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Selenium Practice&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Java 21&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Ready&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Selenium Practice
+Java 21
+Ready</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Locale</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Login&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">75.0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="n">Locale</span><span class="p">.</span><span class="na">US</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%s: %d/%d passed (%.1f%%)%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">passed</span><span class="p">,</span><span class="w"> </span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Login: 3/4 passed (75.0%)</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&quot;%-15s %s%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;TEST&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RESULT&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&quot;%-15s %s%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;testLogin&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;PASS&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&quot;%-15s %s%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;testDropdown&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;FAIL&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">TEST            RESULT
+testLogin       PASS
+testDropdown    FAIL</code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="00-environment-setup.html"><small>← Bài trước</small><span>Cài đặt môi trường</span></a><a class="next" href="02-variables-and-data-types.html"><small>Bài tiếp theo →</small><span>Java: Variables, Data Types và Type Casting</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/01-getting-started.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

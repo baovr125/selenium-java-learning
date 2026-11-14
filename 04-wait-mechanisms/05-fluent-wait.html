@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluent Wait và Custom Wait · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/05-fluent-wait" data-root="../" data-lesson="1" data-title="Fluent Wait và Custom Wait">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="fluent-wait-và-custom-wait">Fluent Wait và Custom Wait</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a> · ➡️ <a href="06-wait-comparison.html">So sánh các cơ chế chờ (và Thread.sleep)</a></p>
+<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="04-expected-conditions.html">ExpectedConditions</a> · Tiếp: <a href="06-wait-comparison.html">So sánh các Wait</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Cấu hình <code>FluentWait</code> đầy đủ</li>
+<li>Viết custom wait bằng lambda hoặc <code>ExpectedCondition</code></li>
+<li>Dùng <code>FluentWait</code> cho điều kiện không thuộc DOM (file tải xong)</li>
+<li>Hiểu vì sao Exercise 7 đặt cuộn trong điều kiện chờ</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="03-explicit-wait.html">Explicit Wait</a></li>
+<li><a href="../01-java-fundamentals/11-lambda-and-generics.html">Java Lambda &amp; Generics</a></li>
+</ul>
+<h2 id="1-fluent-wait">1. Fluent Wait</h2>
+<p><code>FluentWait</code> cho phép cấu hình đầy đủ:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.FluentWait</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.Wait</span><span class="p">;</span>
+
+<span class="n">Wait</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fluent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">StaleElementReferenceException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">withMessage</span><span class="p">(</span><span class="s">&quot;Không thấy nút Download&quot;</span><span class="p">);</span>
+
+<span class="n">WebElement</span><span class="w"> </span><span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fluent</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;download&quot;</span><span class="p">)));</span></code></pre></div>
+<p><strong>Dùng khi:</strong></p>
+<ul>
+<li>Cần <strong>bỏ qua</strong> thêm exception (ví dụ <code>StaleElementReferenceException</code>).</li>
+<li>Cần polling riêng cho từng điều kiện.</li>
+<li>Điều kiện chờ viết bằng lambda tuỳ biến.</li>
+<li>Cần thông báo lỗi rõ.</li>
+</ul>
+<p><code>WebDriverWait</code> là <code>FluentWait&lt;WebDriver&gt;</code> đã đặt sẵn mặc định ⇒ trong thực tế <code>WebDriverWait</code> + <code>.ignoring(...)</code> + <code>.pollingEvery(...)</code> đã làm được mọi thứ FluentWait làm.</p>
+<p>🧩 Dự án chưa dùng <code>FluentWait</code> trực tiếp; Ex 7 dùng <code>wait.until(lambda)</code> — là <strong>custom wait</strong> đúng tinh thần Fluent.</p>
+<h2 id="2-custom-wait">2. Custom Wait</h2>
+<p>Khi <code>ExpectedConditions</code> không có điều kiện bạn cần, viết bằng <strong>lambda</strong> hoặc <code>ExpectedCondition</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// 1. Lambda (🧩 Ex7 dùng cách này)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">before</span><span class="p">);</span>
+
+<span class="c1">// 2. ExpectedCondition tường minh, có toString cho thông báo lỗi dễ đọc</span>
+<span class="n">ExpectedCondition</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">moreItems</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ExpectedCondition</span><span class="o">&lt;&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">Boolean</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">before</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;nhiều hơn &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; đoạn văn&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">moreItems</span><span class="p">);</span>
+
+<span class="c1">// 3. Điều kiện trên giá trị Java thuần (ví dụ file tải xong)</span>
+<span class="n">Path</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;downloads&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;report.pdf&quot;</span><span class="p">);</span>
+<span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">)).</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">Files</span><span class="p">::</span><span class="n">exists</span><span class="p">);</span></code></pre></div>
+<p>Quy tắc viết:</p>
+<ol>
+<li>Trả <code>true</code>/đối tượng khi <strong>đạt</strong>; <code>false</code>/<code>null</code> khi <strong>chưa đạt</strong>.</li>
+<li>Không để lọt exception không mong muốn (hoặc <code>ignoring(...)</code>).</li>
+<li>Gọn, <strong>không side effect</strong> nếu có thể.</li>
+</ol>
+<p>🧩 <strong>Ex7 là trường hợp đặc biệt có side effect có chủ đích:</strong> việc <strong>cuộn</strong> đặt <em>bên trong</em> <code>until</code>, vì plugin jScroll bỏ qua sự kiện scroll khi đang tải dở; cuộn một lần có thể "mất" sự kiện ⇒ nội dung không bao giờ tăng ⇒ <code>TimeoutException</code> (trước đây test này đã từng fail — <code>test-output/testng-failed.xml</code>). Cuộn lặp lại trong vòng chờ cho tới khi số đoạn văn tăng — tuân theo triết lý "retry cho đến khi điều kiện đúng".</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">scrollToBottom</span><span class="p">(</span><span class="n">jsExecutor</span><span class="p">);</span><span class="w">                                   </span><span class="c1">// hành động lặp lại</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">PARAGRAPH_LOCATOR</span><span class="p">).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">countBeforeScroll</span><span class="p">;</span><span class="w">   </span><span class="c1">// điều kiện</span>
+<span class="p">});</span></code></pre></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>FluentWait&lt;WebDriver&gt;</code> timeout 30 s, polling 500 ms, bỏ qua <code>NoSuchElementException</code> và <code>StaleElementReferenceException</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Đoạn code cấu hình</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>withTimeout</code>, <code>pollingEvery</code>, <code>ignoring</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>ExpectedCondition&lt;Boolean&gt;</code> có <code>toString()</code> chờ số <code>.jscroll-added</code> lớn hơn <code>before</code>.</p>
+<p><strong>Input:</strong> <code>before</code> là số đoạn ban đầu</p>
+<p><strong>Expected Output:</strong> Điều kiện dùng được với <code>wait.until</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Lớp ẩn danh.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Chờ một file tải xong (tồn tại và không còn <code>.crdownload</code>) bằng <code>FluentWait&lt;Path&gt;</code>.</p>
+<p><strong>Input:</strong> <code>Path.of("downloads", "report.xlsx")</code></p>
+<p><strong>Expected Output:</strong> Điều kiện đạt khi file sẵn sàng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Điều kiện không cần <code>WebDriver</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>WebDriverWait</code> so với <code>FluentWait</code>?</p>
+<ul>
+<li>A. Không liên quan</li>
+<li>B. <code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code> với mặc định sẵn</li>
+<li>C. <code>FluentWait</code> chỉ cho alert</li>
+<li>D. Giống hệt <code>Thread.sleep</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Có thể thêm <code>ignoring</code>/<code>pollingEvery</code> cho <code>WebDriverWait</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> Điều kiện chờ trả <code>false</code>/<code>null</code> nghĩa là?</p>
+<ul>
+<li>A. Dừng với lỗi</li>
+<li>B. Chưa đạt, thử lại</li>
+<li>C. Đạt</li>
+<li>D. Bỏ qua</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Truthy mới thoả.</p>
+</details>
+<p><strong>Câu 3.</strong> Biến dùng trong lambda của điều kiện phải?</p>
+<ul>
+<li>A. <code>static</code></li>
+<li>B. final/effectively final</li>
+<li>C. <code>public</code></li>
+<li>D. Không giới hạn</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Quy tắc lambda của Java.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you write a custom wait?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Viết Custom Wait thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> Pass a lambda or an <code>ExpectedCondition</code> to <code>wait.until(...)</code> that returns true or a non-null object when satisfied and false or null otherwise.</li>
+<li><strong>Giải thích (VI):</strong> Ex7 là ví dụ thực.</li>
+<li><strong>Follow-up:</strong> <em>Why must captured variables be final?</em></li>
+</ul>
+<p><strong>2. When would you choose FluentWait?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Khi nào chọn FluentWait?</li>
+<li><strong>Suggested answer (EN):</strong> When I need custom polling, extra ignored exceptions, a custom message, or a condition that is not about a WebDriver such as a file download.</li>
+<li><strong>Giải thích (VI):</strong> WebDriverWait đã cover phần lớn.</li>
+<li><strong>Follow-up:</strong> <em>Can FluentWait wait on a Path?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>FluentWait</code> = timeout + polling + ignoring + message</li>
+<li>Custom wait = lambda/<code>ExpectedCondition</code></li>
+<li>Có thể chờ điều kiện không phải DOM</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>withTimeout</code>, <code>pollingEvery</code>, <code>ignoring</code>, <code>withMessage</code>, <code>until</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>FluentWait</code> ≠ chờ cố định</li>
+<li>Side effect trong điều kiện cần ghi chú</li>
+<li><code>WebDriverWait</code> + <code>ignoring</code> đã đủ cho nhiều trường hợp</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="06-wait-comparison.html">So sánh các cơ chế chờ (và Thread.sleep)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">Wait</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fluent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">StaleElementReferenceException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">withMessage</span><span class="p">(</span><span class="s">&quot;Không thấy nút Download&quot;</span><span class="p">);</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fluent</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;download&quot;</span><span class="p">)));</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="n">ExpectedCondition</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">moreItems</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ExpectedCondition</span><span class="o">&lt;&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">Boolean</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">before</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;nhiều hơn &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; đoạn văn&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">moreItems</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">Path</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;downloads&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;report.xlsx&quot;</span><span class="p">);</span>
+<span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">60</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Files</span><span class="p">.</span><span class="na">exists</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">Files</span><span class="p">.</span><span class="na">exists</span><span class="p">(</span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.crdownload&quot;</span><span class="p">)));</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-expected-conditions.html"><small>← Bài trước</small><span>ExpectedConditions (và Presence vs Visibility vs Clickability)</span></a><a class="next" href="06-wait-comparison.html"><small>Bài tiếp theo →</small><span>So sánh các cơ chế chờ (và Thread.sleep)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/05-fluent-wait.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

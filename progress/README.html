@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress — Theo dõi học tập · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="progress/README" data-root="../" data-lesson="0" data-title="Progress — Theo dõi học tập">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="progress--theo-dõi-học-tập">Progress — Theo dõi học tập</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · Bảng tổng: <a href="../LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a></p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Dùng để</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a></td>
+<td>Checklist theo Phase, mỗi bài có trạng thái</td>
+</tr>
+<tr>
+<td><a href="learning-checklist.html">learning-checklist.md</a></td>
+<td>"Tôi có thể..." theo từng bài (rút từ Learning Objectives)</td>
+</tr>
+<tr>
+<td><a href="exercise-tracker.html">exercise-tracker.md</a></td>
+<td>Theo dõi 180 bài tập của các bài học và 8 Labs</td>
+</tr>
+<tr>
+<td><a href="interview-preparation.html">interview-preparation.md</a></td>
+<td>Theo dõi ôn phỏng vấn</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="ba-trạng-thái">Ba trạng thái</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trạng thái</th>
+<th>Ý nghĩa</th>
+<th>Khi nào đánh dấu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⬜ Not Started</td>
+<td>Chưa bắt đầu</td>
+<td>Mặc định</td>
+</tr>
+<tr>
+<td>🟡 In Progress</td>
+<td>Đang học / có bằng chứng thực hành một phần</td>
+<td>Đã đọc bài hoặc đã có thực hành liên quan</td>
+</tr>
+<tr>
+<td>✅ Completed</td>
+<td>Hoàn thành</td>
+<td><strong>Chỉ khi có bằng chứng:</strong> đã chạy ví dụ, làm đủ 3 bài tập (kết quả khớp), trả lời đúng Knowledge Check</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>Quy tắc:</strong> không tự đánh dấu Completed khi chưa có bằng chứng. Bằng chứng có thể là: kết quả chạy lệnh/test, commit trong repo thực hành, ghi chú nhật ký học.</p>
+</blockquote>
+<p>Các trạng thái 🟡 hiện có trong bảng đều ghi rõ <strong>bằng chứng</strong> (code/báo cáo trong dự án <code>Selenium1</code>); chưa bài nào được đánh Completed vì chưa có bằng chứng làm bài tập của giáo trình mới.</p>
+<h2 id="cách-cập-nhật">Cách cập nhật</h2>
+<ol>
+<li>Học xong một bài → đổi trạng thái trong <a href="../LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a>.</li>
+<li>Làm bài tập → tick trong <a href="exercise-tracker.html">exercise-tracker.md</a> và ghi lệnh/kết quả vào cột ghi chú.</li>
+<li>Ôn phỏng vấn → ghi lần ôn trong <a href="interview-preparation.html">interview-preparation.md</a>.</li>
+<li>Thêm bài học kinh nghiệm (lỗi gặp, cách sửa) vào nhật ký bên dưới.</li>
+</ol>
+<h2 id="nhật-ký-học-tự-điền">Nhật ký học (tự điền)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Đã học/làm</th>
+<th>Lỗi gặp &amp; cách xử lý</th>
+<th>Việc tiếp theo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../interview/wait-interview.html"><small>← Bài trước</small><span>Wait và Synchronization — Interview</span></a><a class="next" href="exercise-tracker.html"><small>Bài tiếp theo →</small><span>Exercise Tracker</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/progress/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

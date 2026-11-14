@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 8 — Real-world Automation Project (Chapter 24) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/README" data-root="../" data-lesson="0" data-title="Phase 8 — Real-world Automation Project (Chapter 24)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-8--real-world-automation-project-chapter-24">Phase 8 — Real-world Automation Project (Chapter 24)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/scenario-based-interview.html">scenario-based-interview</a></p>
+</blockquote>
+<p>Tổng hợp mọi kiến thức để dựng một dự án Automation hoàn chỉnh trên <code>https://the-internet.herokuapp.com</code>.</p>
+<h2 id="12-bước-của-phase-8">12 bước của Phase 8</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước</th>
+<th>Nội dung</th>
+<th>Bài / Lab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Phân tích Requirement</td>
+<td><a href="01-requirements-and-test-design.html">01</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Xác định Test Scenarios</td>
+<td><a href="01-requirements-and-test-design.html">01</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Thiết kế Test Cases</td>
+<td><a href="01-requirements-and-test-design.html">01</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Xây dựng Selenium Project</td>
+<td><a href="02-build-the-project.html">02</a>, <a href="labs/01-first-selenium-test.html">Lab 01</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Cấu hình Maven</td>
+<td><a href="02-build-the-project.html">02</a>, <a href="labs/04-maven-and-mvnw-practice.html">Lab 04</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Tổ chức Page Object Model</td>
+<td><a href="02-build-the-project.html">02</a>, <a href="labs/06-page-object-model-practice.html">Lab 06</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Viết Test Scripts</td>
+<td><a href="02-build-the-project.html">02</a>, <a href="labs/02-locator-practice.html">Lab 02</a>, <a href="labs/05-form-automation.html">Lab 05</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Triển khai Wait</td>
+<td><a href="02-build-the-project.html">02</a>, <a href="labs/03-wait-practice.html">Lab 03</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Thực thi Test Suite</td>
+<td><a href="03-run-debug-report-and-git.html">03</a>, <a href="labs/07-run-tests-with-maven.html">Lab 07</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Xử lý lỗi và Debugging</td>
+<td><a href="03-run-debug-report-and-git.html">03</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Tạo Test Report</td>
+<td><a href="03-run-debug-report-and-git.html">03</a></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Quản lý source code bằng Git</td>
+<td><a href="03-run-debug-report-and-git.html">03</a>, <a href="../07-git-and-team-workflow/README.html">Phase 7</a></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="bài-học">Bài học</h2>
+<ol>
+<li><a href="01-requirements-and-test-design.html">Requirements &amp; Test Design</a></li>
+<li><a href="02-build-the-project.html">Build the Project</a></li>
+<li><a href="03-run-debug-report-and-git.html">Run, Debug, Report &amp; Git</a></li>
+</ol>
+<h2 id="labs-12-bài-tập-tăng-dần--đã-chạy-thật">Labs (12 bài tập tăng dần — đã chạy thật)</h2>
+<p>Xem <a href="labs/README.html">labs/README.md</a>. Lab 08 (<a href="labs/08-mini-automation-project.html">Mini Automation Framework</a>) là đích cuối.</p>
+<blockquote>
+<p>Các Lab giữ nguyên từ bản trước (trước đây là thư mục <code>practice/</code>): code mẫu của Lab 02, 03, 05, 06 đã biên dịch và chạy thật (Locator 5, Wait 5, Login 5, Alert/iframe 2, Dynamic Controls 1, POM 2 test pass).</p>
+</blockquote>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html"><small>← Bài trước</small><span>Git: .gitignore và quản lý dự án Maven + Selenium</span></a><a class="next" href="01-requirements-and-test-design.html"><small>Bài tiếp theo →</small><span>Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

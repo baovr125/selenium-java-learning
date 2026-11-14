@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo cáo cập nhật: thiết kế lại lộ trình theo phương pháp bài học nhỏ (kiểu W3Schools) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="UPDATE_REPORT" data-root="" data-lesson="0" data-title="Báo cáo cập nhật: thiết kế lại lộ trình theo phương pháp bài học nhỏ (kiểu W3Schools)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="báo-cáo-cập-nhật-thiết-kế-lại-lộ-trình-theo-phương-pháp-bài-học-nhỏ-kiểu-w3schools">Báo cáo cập nhật: thiết kế lại lộ trình theo phương pháp bài học nhỏ (kiểu W3Schools)</h1>
+<blockquote>
+<p>Ngày: 14/11/2026 · Quay lại <a href="index.html">README</a> · <a href="LEARNING_ROADMAP.html">Roadmap</a> · <a href="LEARNING_PROGRESS.html">Progress</a>
+Phạm vi: chỉ thư mục <code>docs/selenium-learning/</code>. <strong>Không</strong> sửa <code>src/</code>, <code>pom.xml</code>, <code>testng.xml</code>, <code>mvnw*</code>, <code>.mvn/</code>.</p>
+</blockquote>
+<h2 id="mục-lục">Mục lục</h2>
+<ol>
+<li><a href="#1-audit-tài-liệu-trước-khi-cập-nhật">Audit tài liệu trước khi cập nhật</a></li>
+<li><a href="#2-đối-chiếu-với-w3schools">Đối chiếu với W3Schools</a></li>
+<li><a href="#3-cấu-trúc-trước-và-sau">Cấu trúc trước và sau</a></li>
+<li><a href="#4-file-giữ-nguyên-chỉnh-sửa-tạo-mới-di-chuyển">File giữ nguyên, chỉnh sửa, tạo mới, di chuyển</a></li>
+<li><a href="#5-quyết-định-khác-với-đề-xuất-ban-đầu">Quyết định khác với đề xuất ban đầu</a></li>
+<li><a href="#6-kiến-thức-còn-thiếu">Kiến thức còn thiếu</a></li>
+<li><a href="#7-kiểm-chứng">Kiểm chứng</a></li>
+<li><a href="#8-lộ-trình-học-đề-xuất">Lộ trình học đề xuất</a></li>
+</ol>
+<hr />
+<h2 id="1-audit-tài-liệu-trước-khi-cập-nhật">1. Audit tài liệu trước khi cập nhật</h2>
+<p>Bản trước: <strong>61 file, ~9.900 dòng</strong>, theo chủ đề kỹ thuật (maven/, selenium/, testing-framework/, framework-design/, interview/, practice/). Bản sao lưu nguyên vẹn được giữ ở thư mục tạm của phiên làm việc để đối chiếu.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Phát hiện</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Nội dung đã có (giá trị cao)</strong></td>
+<td>Phân tích dự án thật; Maven/Wrapper đã kiểm chứng bằng lệnh; Wait chuyên sâu (15 tình huống + 20 Q&amp;A); 117 câu phỏng vấn song ngữ; 12 bài thực hành đã chạy thật</td>
+</tr>
+<tr>
+<td><strong>Nội dung còn thiếu (so với yêu cầu mới)</strong></td>
+<td><strong>Java Fundamentals gần như không có</strong> (chỉ 1 file 301 dòng); <strong>Git/Team Workflow</strong> chỉ rải rác; <strong>Phase 8 dự án thực tế</strong> chưa có dạng bài học; không có mục tiêu/bài tập/kiểm tra/tổng kết <strong>sau mỗi bài</strong>; tiến độ chưa có trạng thái</td>
+</tr>
+<tr>
+<td><strong>Quá dài / khó học</strong></td>
+<td><code>selenium/05-wait-mechanisms.md</code> <strong>570 dòng</strong> (16 mục); <code>maven/03-maven-wrapper-mvnw.md</code> <strong>479</strong>; <code>02-java-fundamentals-for-selenium.md</code> <strong>301</strong> (14 chủ đề Java trong một file, giả định người đọc đã biết cú pháp); <code>selenium/02-locators-and-web-elements.md</code> 240 (trộn Locator và WebElement API); <code>interview/05</code> và <code>interview/03</code> ~290 dòng</td>
+</tr>
+<tr>
+<td><strong>Trùng lặp</strong></td>
+<td>Bảng so sánh 3 loại Wait xuất hiện ở nhiều nơi; quy trình Maven-team lặp ở <code>maven/03</code> và <code>maven/07</code>; cùng một bài Locator có ở <code>selenium/02</code> và <code>practice/02</code> (khác mục đích nên giữ)</td>
+</tr>
+<tr>
+<td><strong>Chưa phù hợp người mới</strong></td>
+<td>Không có trình tự Java→Selenium; bài đầu tiên nhảy từ khái niệm Selenium sang môi trường mà chưa dạy <code>class</code>/<code>main</code>; thiếu "học xong làm được gì"; lời giải đặt lẫn trong bài thực hành cũ (Lab)</td>
+</tr>
+<tr>
+<td><strong>Điểm mạnh cần giữ</strong></td>
+<td>Mọi ví dụ bám dự án thật (kèm đường dẫn); đã kiểm chứng bằng chạy thật; song ngữ Anh–Việt cho phỏng vấn</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-đối-chiếu-với-w3schools">2. Đối chiếu với W3Schools</h2>
+<p>Đã đọc <strong>mục lục</strong> Java Tutorial của W3Schools (trang landing) để học <strong>trình tự và cách chia bài</strong>. Không sao chép nội dung. Lưu ý trung thực: công cụ chỉ lấy được trang landing (mục lục), <strong>không</strong> lấy được nội dung từng bài; các nhận xét về cấu trúc một bài (giải thích → ví dụ có nút thử → bài tập/quiz → điều hướng Next/Home) dựa trên mô tả mục lục đó và kinh nghiệm chung, nên phần "Code Challenge/Summary" được thiết kế lại theo yêu cầu của bạn thay vì bắt chước.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhóm chủ đề W3Schools</th>
+<th>Chủ đề Java cần học</th>
+<th>Ứng dụng trong Selenium</th>
+<th>Tài liệu cũ</th>
+<th>Tài liệu mới / Nội dung bổ sung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get Started, Syntax, Output, Comments</td>
+<td>Intro, JDK/JRE/JVM, <code>main</code>, <code>println/printf</code>, comment</td>
+<td>Log <code>System.out.println</code></td>
+<td><code>03-environment-setup</code> (chỉ cài đặt)</td>
+<td><a href="01-java-fundamentals/00-environment-setup.html">00-environment-setup</a> (giữ) + <strong>mới</strong> <a href="01-java-fundamentals/01-getting-started.html">01-getting-started</a></td>
+</tr>
+<tr>
+<td>Variables, Data Types, Type Casting</td>
+<td>Kiểu dữ liệu, <code>final</code>, ép kiểu</td>
+<td><code>WebDriver</code>, <code>long/Number</code>, <code>boolean</code></td>
+<td><code>02-java</code> §1 (rất ngắn)</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/02-variables-and-data-types.html">02-variables-and-data-types</a></td>
+</tr>
+<tr>
+<td>Operators, Strings, Math, Booleans</td>
+<td>Toán tử, <code>String</code> methods, <code>equals</code></td>
+<td><code>getText().trim()</code>, <code>contains</code>, <code>endsWith</code></td>
+<td>—</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/03-operators-and-strings.html">03-operators-and-strings</a></td>
+</tr>
+<tr>
+<td>If/Switch/Loops/Break</td>
+<td>Rẽ nhánh, vòng lặp, retry</td>
+<td>Duyệt <code>WebElement</code>, kiểm tra trạng thái</td>
+<td>—</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/04-control-flow.html">04-control-flow</a></td>
+</tr>
+<tr>
+<td>Arrays</td>
+<td>Mảng, <code>Object[][]</code></td>
+<td>DataProvider</td>
+<td>—</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/05-arrays.html">05-arrays</a></td>
+</tr>
+<tr>
+<td>Methods</td>
+<td>Tham số, return, overloading, scope</td>
+<td>Reusable/Page methods</td>
+<td><code>02-java</code> §2</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/06-methods.html">06-methods</a></td>
+</tr>
+<tr>
+<td>Classes, Constructors, Modifiers</td>
+<td>Class, object, <code>this</code>, <code>static</code></td>
+<td>Page Object</td>
+<td><code>02-java</code> §3–4, 9, 14</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/07-classes-and-objects.html">07-classes-and-objects</a></td>
+</tr>
+<tr>
+<td>Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages, Enums</td>
+<td>4 trụ cột OOP</td>
+<td><code>BaseTest</code>, <code>WebDriver</code></td>
+<td><code>02-java</code> §5–8</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/08-oop-concepts.html">08-oop-concepts</a></td>
+</tr>
+<tr>
+<td>Data Structures, Iterator, Wrapper</td>
+<td><code>List/Set/Map</code></td>
+<td><code>List&lt;WebElement&gt;</code>, <code>Set&lt;String&gt;</code></td>
+<td><code>02-java</code> §10</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/09-collections.html">09-collections</a></td>
+</tr>
+<tr>
+<td>Errors, Exceptions, try-with-resources</td>
+<td><code>try/catch/finally</code>, checked/unchecked</td>
+<td>Selenium exceptions</td>
+<td><code>02-java</code> §11</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/10-exception-handling.html">10-exception-handling</a></td>
+</tr>
+<tr>
+<td>Generics, Lambda, Annotations, RegEx, Threads</td>
+<td>Generics, lambda, <code>ThreadLocal</code></td>
+<td><code>wait.until(d -&gt; ...)</code>, TestNG</td>
+<td><code>02-java</code> §12–13</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/11-lambda-and-generics.html">11-lambda-and-generics</a></td>
+</tr>
+<tr>
+<td>Files, I/O</td>
+<td><code>Files</code>, <code>Properties</code>, CSV</td>
+<td><code>config.properties</code>, test data</td>
+<td>—</td>
+<td><strong>mới</strong> <a href="01-java-fundamentals/12-file-handling.html">12-file-handling</a></td>
+</tr>
+<tr>
+<td><em>(không có trong W3Schools)</em> Maven, Wrapper</td>
+<td>—</td>
+<td>Build, dự án nhóm</td>
+<td><code>maven/*</code></td>
+<td>Giữ + bổ sung bài tập/kiểm tra/phỏng vấn</td>
+</tr>
+<tr>
+<td><em>(không có)</em> Selenium, Wait, TestNG, POM</td>
+<td>—</td>
+<td>—</td>
+<td><code>selenium/*</code>, <code>testing-framework/*</code>, <code>framework-design/*</code></td>
+<td>Giữ, tách file dài, bổ sung khung bài học</td>
+</tr>
+<tr>
+<td><em>(không có)</em> Git</td>
+<td>—</td>
+<td>—</td>
+<td>rải rác</td>
+<td><strong>mới</strong> 4 bài Git (đã chạy thật)</td>
+</tr>
+<tr>
+<td>Projects (W3Schools)</td>
+<td>—</td>
+<td>—</td>
+<td><code>practice/*</code></td>
+<td><a href="08-practical-project/README.html">Phase 8</a>: 3 bài mới + 8 Labs</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-cấu-trúc-trước-và-sau">3. Cấu trúc trước và sau</h2>
+<p><strong>Trước (61 file):</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">README.md  00-learning-roadmap.md  00-project-analysis.md  LEARNING_PROGRESS.md
+01-selenium-introduction.md  02-java-fundamentals-for-selenium.md  03-environment-setup.md  04-project-initialization.md
+maven/(README+8)  selenium/(README+10)  testing-framework/(README+6)  framework-design/(README+5)
+interview/(README+10)  practice/(README+8)</code></pre></div>
+<p><strong>Sau (95 file, ~25.157 dòng):</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">README.md  LEARNING_ROADMAP.md  LEARNING_PROGRESS.md  UPDATE_REPORT.md  00-project-analysis.md
+01-java-fundamentals/     README + 00..12 + 13-java-selenium-cheatsheet   (Phase 1)
+02-maven-and-project/     README + 00..09                                  (Phase 2)
+03-selenium-fundamentals/ README + 01..11                                  (Phase 3)
+04-wait-mechanisms/       README + 01..08                                  (Phase 4)
+05-testing-framework/     README + 01..06                                  (Phase 5)
+06-automation-framework/  README + 01..05                                  (Phase 6)
+07-git-and-team-workflow/ README + 01..04                                  (Phase 7)
+08-practical-project/     README + 01..03 + labs/(README + 8)              (Phase 8)
+interview/                README + 7 bộ câu hỏi
+progress/                 README + learning-checklist + exercise-tracker + interview-preparation</code></pre></div>
+<p><strong>Số bài học:</strong> 60 bài có đủ khung (Objectives, Prerequisites, Exercises, Knowledge Check, Interview Corner, Summary, Solutions) với <strong>180 bài tập</strong>, <strong>180 câu kiểm tra</strong>, <strong>120 câu phỏng vấn cuối bài</strong>, cộng 123 câu/tình huống trong các bộ phỏng vấn theo chủ đề.</p>
+<h2 id="4-file-giữ-nguyên-chỉnh-sửa-tạo-mới-di-chuyển">4. File giữ nguyên, chỉnh sửa, tạo mới, di chuyển</h2>
+<h3 id="41-giữ-nội-dung-chỉ-di-chuyển--thêm-khung-bài-học">4.1. Giữ nội dung, chỉ di chuyển (+ thêm khung bài học)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cũ</th>
+<th>Mới</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>03-environment-setup.md</code></td>
+<td><code>01-java-fundamentals/00-environment-setup.md</code></td>
+</tr>
+<tr>
+<td><code>02-java-fundamentals-for-selenium.md</code></td>
+<td><code>01-java-fundamentals/13-java-selenium-cheatsheet.md</code> (giữ làm cheatsheet tra cứu, <strong>không</strong> thêm khung)</td>
+</tr>
+<tr>
+<td><code>04-project-initialization.md</code></td>
+<td><code>02-maven-and-project/00-project-initialization.md</code></td>
+</tr>
+<tr>
+<td><code>maven/01, 02, 04, 05, 06, 07, 08</code></td>
+<td><code>02-maven-and-project/01, 02, 05, 06, 07, 08, 09</code></td>
+</tr>
+<tr>
+<td><code>01-selenium-introduction.md</code></td>
+<td><code>03-selenium-fundamentals/01-selenium-introduction.md</code></td>
+</tr>
+<tr>
+<td><code>selenium/01, 03, 07, 08, 09, 10</code></td>
+<td><code>03-selenium-fundamentals/02, 05, 08, 09, 10, 11</code></td>
+</tr>
+<tr>
+<td><code>testing-framework/01..06</code></td>
+<td><code>05-testing-framework/01..06</code></td>
+</tr>
+<tr>
+<td><code>framework-design/01..05</code></td>
+<td><code>06-automation-framework/01..05</code></td>
+</tr>
+<tr>
+<td><code>practice/01..08, README</code></td>
+<td><code>08-practical-project/labs/01..08, README</code></td>
+</tr>
+<tr>
+<td><code>00-project-analysis.md</code></td>
+<td>giữ nguyên vị trí và nội dung</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="42-tách-file-dài-không-mất-nội-dung-đánh-số-mục-lại-sửa-liên-kếtanchor">4.2. Tách file dài (không mất nội dung, đánh số mục lại, sửa liên kết/anchor)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cũ</th>
+<th>Mới</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selenium/05-wait-mechanisms.md</code> (570 dòng)</td>
+<td>8 bài <code>04-wait-mechanisms/01..08</code> (intro; implicit; explicit; ExpectedConditions; fluent/custom; so sánh + <code>Thread.sleep</code>; 15 tình huống; best practices + 20 câu tự kiểm tra) + bảng so sánh tổng hợp mới</td>
+</tr>
+<tr>
+<td><code>maven/03-maven-wrapper-mvnw.md</code> (479 dòng)</td>
+<td><code>02-maven-and-project/03-maven-wrapper.md</code> (khái niệm, file, cách tải, Windows, Linux) + <code>04-maven-wrapper-in-team-and-git.md</code> (nhóm, Git, lỗi, nâng cấp)</td>
+</tr>
+<tr>
+<td><code>selenium/02-locators-and-web-elements.md</code> (240)</td>
+<td><code>03-selenium-fundamentals/03-locators.md</code> + <code>04-webelement.md</code> (+ bảng lỗi WebElement mới)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="43-gộp">4.3. Gộp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cũ</th>
+<th>Mới</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selenium/04-web-element-interactions.md</code> + phần Dropdown của <code>selenium/06</code></td>
+<td><code>06-element-interactions.md</code></td>
+</tr>
+<tr>
+<td>Phần Alert/Frame/Window của <code>selenium/06</code></td>
+<td><code>07-browser-interactions.md</code></td>
+</tr>
+<tr>
+<td>10 file <code>interview/01..10</code></td>
+<td>7 file: <code>java-</code>, <code>selenium-</code> (gộp 01+04+06), <code>maven-</code>, <code>wait-</code>, <code>framework-</code> (gộp 07+08), <code>git-</code>, <code>scenario-based-interview.md</code> — <strong>giữ nguyên toàn bộ câu hỏi</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="44-chỉnh-sửa">4.4. Chỉnh sửa</h3>
+<ul>
+<li><strong>60 bài học</strong>: thêm 🎯 Learning Objectives, 📋 Prerequisites, (☕ Java↔Selenium), điều hướng trước/sau, và phần cuối (Exercises, Knowledge Check, Interview Corner, Summary, Solutions). Nội dung gốc ở giữa <strong>không bị viết lại</strong>.</li>
+<li><code>02-maven-and-project/04-...</code> và <code>03-maven-wrapper.md</code>: sửa tham chiếu mục; bổ sung ghi chú đã tái hiện về <code>mvnw</code> mode <code>100644</code>.</li>
+<li><code>03-selenium-fundamentals/07-browser-interactions.md</code>: đổi tên tiêu đề "Phần B/C/D"; ví dụ iframe đã sửa từ lần trước (TinyMCE: <code>click()</code> + <code>Ctrl+A</code>).</li>
+</ul>
+<h3 id="45-tạo-mới">4.5. Tạo mới</h3>
+<ul>
+<li>12 bài Java (<code>01..12</code>) + README Phase 1 — mỗi bài có ví dụ <strong>chạy được kèm kết quả</strong>.</li>
+<li>4 bài Git, 3 bài Phase 8, các README chương, <code>LEARNING_ROADMAP.md</code>, <code>LEARNING_PROGRESS.md</code> (checklist 3 trạng thái), <code>progress/</code> (4 file), <code>UPDATE_REPORT.md</code>, <code>interview/README.md</code>.</li>
+<li>Bài tập + kiểm tra + phỏng vấn cho 40 bài học đã có.</li>
+</ul>
+<h3 id="46-không-còn-tồn-tại-như-file-riêng-đã-thay-thế-nội-dung-đã-được-tích-hợp-hoặc-bản-sao-lưu-còn">4.6. Không còn tồn tại như file riêng (đã thay thế, nội dung đã được tích hợp hoặc bản sao lưu còn)</h3>
+<p><code>00-learning-roadmap.md</code> (thay bằng <code>LEARNING_ROADMAP.md</code>, giữ ý tưởng nhịp học và bảng tự đánh giá), <code>maven/README.md</code>, <code>selenium/README.md</code>, <code>testing-framework/README.md</code>, <code>framework-design/README.md</code>, <code>practice/README.md</code> (README mới của từng chương giữ lại các bảng hữu ích: bảng lệnh Maven nhanh, bản đồ API Selenium, thành phần TestNG đang dùng).</p>
+<h2 id="5-quyết-định-khác-với-đề-xuất-ban-đầu">5. Quyết định khác với đề xuất ban đầu</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Đề xuất của bạn</th>
+<th>Thực hiện</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maven: 6 file</td>
+<td>10 file (<code>00</code> + <code>01..09</code>)</td>
+<td>Giữ nguyên nội dung đã kiểm chứng thay vì gộp; tách Wrapper thành 2 bài để dễ đọc; giữ <code>07-build-and-test-execution</code> (Surefire/Failsafe) và <code>09-troubleshooting</code></td>
+</tr>
+<tr>
+<td>Selenium: 7 file</td>
+<td>11 file</td>
+<td>Locators/WebElement tách; Actions, JS Executor, Exceptions, Debugging giữ làm bài riêng</td>
+</tr>
+<tr>
+<td>Wait: 8 file (<code>implicit</code>, <code>explicit</code>, <code>expected-conditions</code>, <code>fluent</code>, <code>comparison</code>, <code>real-world-scenarios</code>, <code>best-practices</code>)</td>
+<td>8 file, tên tương ứng</td>
+<td>Khớp đề xuất</td>
+</tr>
+<tr>
+<td><code>05-testing-framework/</code>, <code>06-automation-framework/</code> (không liệt kê file)</td>
+<td>6 và 5 bài</td>
+<td>Giữ nội dung cũ</td>
+</tr>
+<tr>
+<td><code>07-git-and-team-workflow/</code> (không liệt kê file)</td>
+<td>4 bài mới</td>
+<td>Đã thử trên repo thật</td>
+</tr>
+<tr>
+<td><code>08-practical-project/</code> (không liệt kê file)</td>
+<td>3 bài + <code>labs/</code></td>
+<td>Giữ 8 Lab đã chạy thật</td>
+</tr>
+<tr>
+<td><code>progress/</code> + <code>LEARNING_PROGRESS.md</code></td>
+<td>Cả hai, <code>LEARNING_PROGRESS.md</code> là bảng chính</td>
+<td>Tránh trùng lặp: checklist ở root; chi tiết trong <code>progress/</code></td>
+</tr>
+<tr>
+<td><code>LEARNING_ROADMAP.md</code></td>
+<td>Có</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 1 chapter 01–08</td>
+<td>12 file + 00-setup + cheatsheet</td>
+<td>Chủ đề Java gom đúng nhóm theo cấu trúc bạn đề xuất</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-kiến-thức-còn-thiếu">6. Kiến thức còn thiếu</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khu vực</th>
+<th>Còn thiếu</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java (Optional)</td>
+<td><code>Scanner</code>/User Input, <code>Date/Time</code>, inner/anonymous class (mới nhắc), <code>LinkedList/TreeMap/LinkedHashMap</code> (chỉ nhắc tên), <code>Optional</code>, Advanced sorting, I/O streams nhị phân</td>
+<td>Không cần cho Junior Automation; học sau</td>
+</tr>
+<tr>
+<td>Selenium</td>
+<td>Shadow DOM, Relative Locators (mới nhắc), Chrome DevTools Protocol, Selenium Grid, <code>PageFactory</code> chi tiết, tải/tải lên file chi tiết</td>
+<td></td>
+</tr>
+<tr>
+<td>Framework</td>
+<td>Tích hợp thật với Log4j2/Extent/Allure; GitHub Actions chạy thật; Docker</td>
+<td>Đã có ví dụ minh hoạ nhưng <strong>chưa chạy</strong></td>
+</tr>
+<tr>
+<td>JUnit 5</td>
+<td>Chỉ ở mức so sánh</td>
+<td>Dự án dùng TestNG</td>
+</tr>
+<tr>
+<td>Git</td>
+<td><code>stash</code> (nhắc), <code>cherry-pick</code>, tags, <code>reset --hard</code>, rebase tương tác, Git hooks</td>
+<td></td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>Maven Profiles/Failsafe/Enforcer chỉ có ví dụ minh hoạ, chưa chạy trong dự án</td>
+<td></td>
+</tr>
+<tr>
+<td>Hạn chế đã biết</td>
+<td>Một số đoạn giải pháp Selenium là <strong>minh hoạ cần ngữ cảnh</strong> (ví dụ locator <code>#download</code>, file <code>report.xlsx</code>) nên không tự chạy được độc lập — xem mục 7</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-kiểm-chứng">7. Kiểm chứng</h2>
+<p>Môi trường: Windows 11, JDK 25.0.1 (biên dịch <code>--release 21</code>), Maven 3.9.16 qua Wrapper, Selenium 4.52.0, TestNG 7.10.2, Git 2.49.0, Chrome.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Việc kiểm tra</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ví dụ Java của Phase 1</strong> (biên dịch + chạy + so khớp khối <code>output</code>)</td>
+<td><strong>93/93 đạt</strong> (57 ví dụ trong bài + 36 lời giải bài tập). Trong quá trình viết đã bắt được 2 lỗi và sửa: <code>printf("%.1f")</code> ra <code>75,5</code> thay vì <code>75.5</code> trên máy locale Việt (đã thêm <code>Locale.US</code> và ghi chú bẫy locale vào bài), và một con số độ dài chuỗi</td>
+</tr>
+<tr>
+<td><strong>Lời giải Selenium/TestNG</strong> (biên dịch với classpath thật của dự án)</td>
+<td><strong>56/56 đạt</strong> (không chạy)</td>
+</tr>
+<tr>
+<td><strong>Chạy thật</strong> 36 lời giải Selenium (trích tự động thành một lớp test, chạy trên the-internet)</td>
+<td>28 đạt. 7 không chạy độc lập vì là <strong>minh hoạ cần ngữ cảnh</strong> (locator/file giả định, hoặc cố ý ném <code>NoSuchElementException</code>). <strong>1 lỗi thật phát hiện:</strong> cuộn <code>/infinite_scroll</code> cho <code>scrollY = 0</code> vì trang ban đầu (<code>scrollHeight</code> 707) thấp hơn cửa sổ (<code>innerHeight</code> 889) → bài tập được đổi sang <code>/floating_menu</code> (đo được <code>scrollY = 4465</code>) và ghi chú lý do</td>
+</tr>
+<tr>
+<td>Đo thời gian Implicit Wait</td>
+<td><code>findElements</code> rỗng: <strong>17 ms</strong> (không implicit) vs <strong>3050 ms</strong> (implicit 3 s) — số đo thật được dùng trong bài</td>
+</tr>
+<tr>
+<td><strong>Git</strong> (repo thử, Windows)</td>
+<td>Đã chạy: commit, <code>check-ignore</code>, conflict thật ở <code>pom.xml</code>, merge/rebase, <code>--abort</code>. Phát hiện: <code>mvnw</code> commit với mode <strong>100644</strong>; cảnh báo <code>LF→CRLF</code>. Đã kiểm chứng cách sửa (<code>update-index --chmod=+x</code> → <code>100755</code>; <code>.gitattributes</code> → <code>attr/text eol=lf</code>)</td>
+</tr>
+<tr>
+<td><strong>Liên kết Markdown</strong> (đường dẫn + anchor, tất cả file)</td>
+<td>Xem kết quả cuối mục này</td>
+</tr>
+<tr>
+<td>Cấu trúc thư mục, file rỗng</td>
+<td>Không có file rỗng/ngắn dưới ngưỡng</td>
+</tr>
+<tr>
+<td>Nội dung Maven</td>
+<td>Giữ nguyên bản đã kiểm chứng (lệnh <code>-version</code>, <code>compile</code>, <code>test-compile</code>, <code>clean</code>, <code>package -DskipTests</code>, <code>dependency:tree</code>, <code>-Dtest=...</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Chưa kiểm chứng:</strong> <code>./mvnw</code> trên Linux/macOS; ví dụ CI (GitHub Actions); <code>maven-failsafe-plugin</code>; Maven Profile; Log4j2/Extent/Allure; lệnh Git trên máy khác Windows. W3Schools: chỉ đọc được mục lục.</p>
+<h2 id="8-lộ-trình-học-đề-xuất">8. Lộ trình học đề xuất</h2>
+<p>Xem chi tiết ở <a href="LEARNING_ROADMAP.html">LEARNING_ROADMAP.md</a>. Tóm tắt:</p>
+<ol>
+<li><strong>Tuần 1–2:</strong> Phase 1 (Java) — 13 bài; gõ lại ví dụ, làm 3 bài tập mỗi bài.</li>
+<li><strong>Tuần 3:</strong> Phase 2 (Maven + <strong>Wrapper</strong>) — chạy <code>mvnw</code> trên bản sao dự án.</li>
+<li><strong>Tuần 4:</strong> Phase 3 (Selenium cơ bản).</li>
+<li><strong>Tuần 5:</strong> Phase 4 (<strong>Wait</strong>) — ôn 20 câu phỏng vấn Wait.</li>
+<li><strong>Tuần 6–7:</strong> Phase 5–6 (TestNG, POM, framework).</li>
+<li><strong>Tuần 8:</strong> Phase 7 (Git).</li>
+<li><strong>Tuần 9–10:</strong> Phase 8 (dự án) + ôn phỏng vấn tổng hợp.</li>
+</ol>
+<p>Bạn đã làm xong 10 Exercise nên có thể đi nhanh Phase 3 và tập trung vào chỗ còn trống: <strong>Java nền tảng, POM, Git, Wait nâng cao, Maven team workflow</strong>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="LEARNING_PROGRESS.html"><small>← Bài trước</small><span>Learning Progress</span></a><a class="next" href="00-project-analysis.html"><small>Bài tiếp theo →</small><span>Báo cáo phân tích source code dự án</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/UPDATE_REPORT.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="assets/nav.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

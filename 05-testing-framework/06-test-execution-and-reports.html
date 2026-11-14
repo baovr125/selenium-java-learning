@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chạy test và báo cáo · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="05-testing-framework/06-test-execution-and-reports" data-root="../" data-lesson="1" data-title="Chạy test và báo cáo">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="chạy-test-và-báo-cáo">Chạy test và báo cáo</h1>
+<blockquote>
+<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="05-test-data-and-configuration.html">Test Data và Configuration</a> · ➡️ <a href="../06-automation-framework/01-page-object-model.html">Page Object Model (POM)</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="05-test-data-and-configuration.html">Trước: Test Data</a> · <a href="../06-automation-framework/README.html">Framework design</a> · <a href="../02-maven-and-project/07-build-and-test-execution.html">Maven: chạy test</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Liệt kê các cách chạy test và nơi lưu báo cáo</li>
+<li>Đọc kết quả console và <code>TestSuite.txt</code></li>
+<li>Viết kiểm tra CI cho <code>Tests run: 0</code></li>
+<li>Biết các công cụ báo cáo nâng cao</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../02-maven-and-project/07-build-and-test-execution.html">Build &amp; Test Execution</a></li>
+</ul>
+<h2 id="1-bốn-cách-chạy-test-trong-dự-án">1. Bốn cách chạy test trong dự án</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cách</th>
+<th>Lệnh/thao tác</th>
+<th>Qua Maven?</th>
+<th>Báo cáo</th>
+<th>Dùng khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maven (chuẩn)</td>
+<td><code>.\mvnw.cmd test</code></td>
+<td>✅</td>
+<td><code>target/surefire-reports/</code></td>
+<td>Hằng ngày, CI</td>
+</tr>
+<tr>
+<td>Script</td>
+<td><code>.\run-test.ps1 -TargetClass Exercise07_InfiniteScrollTest</code></td>
+<td>❌ (chỉ lấy classpath từ Maven)</td>
+<td>In console</td>
+<td>Chạy nhanh 1 bài</td>
+</tr>
+<tr>
+<td><code>AllExercisesTest.main()</code></td>
+<td>Chạy trong IDE hoặc <code>run-test.ps1 -TargetClass AllExercisesTest</code></td>
+<td>❌</td>
+<td><code>test-output/</code></td>
+<td>Chạy cả suite không qua Surefire</td>
+</tr>
+<tr>
+<td>VS Code</td>
+<td>Ctrl+Shift+B (task trong <code>.vscode/tasks.json</code>)</td>
+<td>❌</td>
+<td>Console</td>
+<td>Chạy file đang mở</td>
+</tr>
+</tbody>
+</table></div>
+<p>Chi tiết lệnh Maven: <a href="../02-maven-and-project/07-build-and-test-execution.html">maven/06</a>.</p>
+<h2 id="2-cách-đọc-kết-quả-console">2. Cách đọc kết quả console</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[INFO] Running TestSuite
+...
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 91.32 s -- in TestSuite
+[INFO] Results:
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trường</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tests run</code></td>
+<td>Số <code>@Test</code> method <strong>đã thực thi</strong> (0 là dấu hiệu nguy hiểm)</td>
+</tr>
+<tr>
+<td><code>Failures</code></td>
+<td>Assertion sai</td>
+</tr>
+<tr>
+<td><code>Errors</code></td>
+<td>Exception khác</td>
+</tr>
+<tr>
+<td><code>Skipped</code></td>
+<td>Không chạy (phụ thuộc fail, <code>SkipException</code>, config fail)</td>
+</tr>
+<tr>
+<td><code>Time elapsed</code></td>
+<td>Tổng thời gian</td>
+</tr>
+<tr>
+<td><code>BUILD SUCCESS</code></td>
+<td>Maven ổn — <strong>chưa nói test đủ/đúng</strong>; luôn đọc <code>Tests run</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-báo-cáo-surefire-testng">3. Báo cáo Surefire (TestNG)</h2>
+<p>Thư mục <code>target/surefire-reports/</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Nội dung</th>
+<th>Dùng cho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>index.html</code></td>
+<td>Báo cáo TestNG đầy đủ</td>
+<td>Người đọc</td>
+</tr>
+<tr>
+<td><code>emailable-report.html</code></td>
+<td>Bản gọn, để gửi mail</td>
+<td>Chia sẻ (🧩 bản mẫu ở <code>ket-qua/emailable-report.html</code>)</td>
+</tr>
+<tr>
+<td><code>testng-results.xml</code></td>
+<td>Dữ liệu chi tiết</td>
+<td>Công cụ phân tích</td>
+</tr>
+<tr>
+<td><code>TEST-TestSuite.xml</code></td>
+<td>JUnit XML</td>
+<td><strong>CI</strong> đọc để hiển thị kết quả</td>
+</tr>
+<tr>
+<td><code>TestSuite.txt</code></td>
+<td>Tóm tắt một dòng</td>
+<td>Script kiểm tra nhanh</td>
+</tr>
+<tr>
+<td><code>*.dumpstream</code></td>
+<td>Log hạ tầng JVM</td>
+<td>Debug Surefire</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mở nhanh:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Start-Process</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">emailable-report</span><span class="p">.</span><span class="n">html</span></code></pre></div>
+<h2 id="4-báo-cáo-do-chạy-bằng-code">4. Báo cáo do chạy bằng code</h2>
+<p><code>AllExercisesTest</code> (TestNG API) ghi vào <code>test-output/</code> (có <code>index.html</code>, <code>emailable-report.html</code>, <code>testng-failed.xml</code>, <code>Command line suite/...</code>). Hai thư mục báo cáo khác nhau ⇒ <strong>đừng nhầm</strong> khi tìm kết quả.</p>
+<h2 id="5-chạy-lại-test-fail">5. Chạy lại test fail</h2>
+<p><code>test-output/testng-failed.xml</code> (🧩 đang liệt kê <code>Exercise07_InfiniteScrollTest</code> từ lần chạy cũ) là bộ test tạo sẵn cho lần chạy lại. Dùng để biết lần trước fail gì; để chạy lại bằng Maven, cách đơn giản nhất là <code>-Dtest=Exercise07_InfiniteScrollTest</code>.</p>
+<h2 id="6-báo-cáo-nâng-cao-tổng-quan">6. Báo cáo nâng cao (tổng quan)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Công cụ</th>
+<th>Đặc điểm</th>
+<th>Dùng khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Báo cáo TestNG/Surefire mặc định</td>
+<td>Có sẵn, không cần thêm</td>
+<td>Học tập/nhỏ</td>
+</tr>
+<tr>
+<td><strong>ExtentReports</strong></td>
+<td>HTML đẹp, ảnh chụp, bước chi tiết</td>
+<td>Báo cáo cho QA lead/khách hàng</td>
+</tr>
+<tr>
+<td><strong>Allure</strong></td>
+<td>Báo cáo tương tác, lịch sử, phân nhóm</td>
+<td>Dự án lớn, CI</td>
+</tr>
+<tr>
+<td>Báo cáo CI (JUnit XML)</td>
+<td>CI tự hiển thị</td>
+<td>GitHub Actions/Jenkins</td>
+</tr>
+</tbody>
+</table></div>
+<p>Cách tích hợp chung: viết một <code>ITestListener</code> (<code>onTestStart/Success/Failure</code>) để ghi bước, chụp ảnh khi fail, đẩy vào công cụ báo cáo. Thêm thư viện vào <code>pom.xml</code> <strong>sau khi</strong> tra phiên bản ổn định và xem <code>dependency:tree</code>.</p>
+<h2 id="7-chạy-trên-ci-ví-dụ-minh-hoạ">7. Chạy trên CI (ví dụ minh hoạ)</h2>
+<p>GitHub Actions (<strong>không có trong dự án</strong>, chỉ minh hoạ):</p>
+<div class="code" data-lang="yaml"><div class="code-head"><span class="lang">yaml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ui-tests</span>
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pull_request</span><span class="p p-Indicator">]</span>
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-java@v4</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">temurin</span>
+<span class="w">          </span><span class="nt">java-version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;21&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chmod +x mvnw</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./mvnw -B clean test</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v4</span>
+<span class="w">        </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always()</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">surefire-reports</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">target/surefire-reports</span></code></pre></div>
+<p>Điều kiện cần cho CI Linux: test chạy <strong>headless</strong> (không có màn hình) ⇒ cần <code>ChromeOptions</code> <code>--headless=new</code> và <code>--window-size</code>; trong container đôi khi cần thêm <code>--no-sandbox</code>. Dự án hiện chưa có (xem <a href="../03-selenium-fundamentals/02-webdriver.html#3-cấu-hình-browser-chromeoptions">selenium/01</a>). Chú ý ví dụ YAML chỉ minh hoạ; hãy kiểm tra phiên bản action hiện hành khi áp dụng.</p>
+<p>Điểm mạnh của Maven Wrapper trong CI: không cần bước cài Maven, chỉ cần JDK (<code>./mvnw</code>).</p>
+<h2 id="8-danh-sách-kiểm-tra-sau-mỗi-lần-chạy">8. Danh sách kiểm tra sau mỗi lần chạy</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <code>Tests run</code> = số test mong đợi.</li>
+<li class="task"><input type="checkbox" disabled> <code>Skipped: 0</code> (hoặc hiểu vì sao &gt; 0).</li>
+<li class="task"><input type="checkbox" disabled> Xem test fail trong <code>emailable-report.html</code>.</li>
+<li class="task"><input type="checkbox" disabled> Phân loại: bug sản phẩm / bug test / môi trường / flaky.</li>
+<li class="task"><input type="checkbox" disabled> Không commit <code>target/</code>, <code>test-output/</code>.</li>
+</ul>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Không thấy báo cáo</td>
+<td>Chạy bằng cách khác Maven</td>
+<td>Tìm đúng thư mục (<code>target/surefire-reports</code> vs <code>test-output</code>)</td>
+</tr>
+<tr>
+<td>Báo cáo cũ</td>
+<td>Không <code>clean</code></td>
+<td><code>clean test</code></td>
+</tr>
+<tr>
+<td><code>Tests run: 0</code></td>
+<td>Sai <code>-Dtest</code>/class</td>
+<td><a href="../02-maven-and-project/07-build-and-test-execution.html#8-năm-trạng-thái-cần-phân-biệt">maven/06</a></td>
+</tr>
+<tr>
+<td>CI fail, local pass</td>
+<td>Headless/kích thước/Chrome khác</td>
+<td>Cấu hình headless; cố định <code>--window-size</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Điền bảng: cách chạy → báo cáo nằm ở đâu.</p>
+<p><strong>Input:</strong> <code>mvnw test</code>, <code>run-test.ps1 -TargetClass AllExercisesTest</code></p>
+<p><strong>Expected Output:</strong> Hai thư mục khác nhau</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Surefire vs TestNG trực tiếp.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Đọc <code>TestSuite.txt</code> bằng PowerShell và rút ra <code>Tests run</code>.</p>
+<p><strong>Input:</strong> File <code>target\surefire-reports\TestSuite.txt</code></p>
+<p><strong>Expected Output:</strong> Dòng <code>Tests run: N, ...</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>Get-Content</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết đoạn PowerShell cho CI: <strong>fail</strong> (exit 1) nếu <code>Tests run</code> bằng 0.</p>
+<p><strong>Input:</strong> <code>TestSuite.txt</code></p>
+<p><strong>Expected Output:</strong> Exit code 1 khi không có test</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>Select-String</code> + regex <code>Tests run: (\d+)</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Báo cáo gửi mail nằm ở?</p>
+<ul>
+<li>A. <code>emailable-report.html</code></li>
+<li>B. <code>pom.xml</code></li>
+<li>C. <code>target/classes</code></li>
+<li>D. <code>.mvn/</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Trong thư mục báo cáo.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>Skipped: 2</code> và <code>BUILD SUCCESS</code> nghĩa là?</p>
+<ul>
+<li>A. Mọi test chạy</li>
+<li>B. Có 2 test không được kiểm — cần điều tra</li>
+<li>C. Lỗi Maven</li>
+<li>D. Fail</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Skipped không làm build fail.</p>
+</details>
+<p><strong>Câu 3.</strong> Báo cáo đẹp có biểu đồ/ảnh thường dùng?</p>
+<ul>
+<li>A. ExtentReports/Allure</li>
+<li>B. <code>Thread.sleep</code></li>
+<li>C. <code>javac</code></li>
+<li>D. Git</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Tích hợp bằng listener.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you read test results from a Maven run?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Đọc kết quả test từ Maven?</li>
+<li><strong>Suggested answer (EN):</strong> I check <code>Tests run</code>, failures, errors and skipped counts, not only BUILD SUCCESS, and open the reports under <code>target/surefire-reports</code>.</li>
+<li><strong>Giải thích (VI):</strong> Zero tests still gives BUILD SUCCESS.</li>
+<li><strong>Follow-up:</strong> <em>How do you guard in CI?</em></li>
+</ul>
+<p><strong>2. How would you run the suite in CI?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Chạy suite trong CI?</li>
+<li><strong>Suggested answer (EN):</strong> Use the Maven Wrapper (<code>./mvnw -B clean test</code>) with JDK only, run headless, upload the surefire reports as artifacts, and fail if zero tests ran.</li>
+<li><strong>Giải thích (VI):</strong> Cần headless + window-size.</li>
+<li><strong>Follow-up:</strong> <em>Why use the wrapper in CI?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Hai nơi báo cáo: <code>target/surefire-reports</code> (Maven) và <code>test-output</code> (chạy code)</li>
+<li>Luôn đọc <code>Tests run/Failures/Errors/Skipped</code></li>
+<li>CI: headless + upload báo cáo + kiểm tra <code>Tests run &gt; 0</code></li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>emailable-report.html</code>, <code>TEST-TestSuite.xml</code>, <code>testng-results.xml</code>, <code>TestSuite.txt</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Surefire reports ≠ TestNG output</li>
+<li><code>BUILD SUCCESS</code> ≠ test pass</li>
+<li>Failures ≠ Errors</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../06-automation-framework/01-page-object-model.html">Page Object Model (POM)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cách chạy</th>
+<th>Báo cáo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.\mvnw.cmd test</code></td>
+<td><code>target\surefire-reports\</code></td>
+</tr>
+<tr>
+<td><code>AllExercisesTest.main()</code> / <code>run-test.ps1 -TargetClass AllExercisesTest</code></td>
+<td><code>test-output\</code></td>
+</tr>
+</tbody>
+</table></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Get-Content</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">TestSuite</span><span class="p">.</span><span class="n">txt</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nv">$line</span> <span class="p">=</span> <span class="nb">Select-String</span> <span class="n">-Path</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">TestSuite</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Pattern</span> <span class="s1">&#39;Tests run: (\d+)&#39;</span>
+<span class="nv">$run</span> <span class="p">=</span> <span class="no">[int]</span><span class="nv">$line</span><span class="p">.</span><span class="n">Matches</span><span class="p">[</span><span class="n">0</span><span class="p">].</span><span class="n">Groups</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">Value</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$run</span> <span class="o">-eq</span> <span class="n">0</span><span class="p">)</span> <span class="p">{</span> <span class="nb">Write-Error</span> <span class="s2">&quot;Không có test nào chạy&quot;</span><span class="p">;</span> <span class="n">exit</span> <span class="n">1</span> <span class="p">}</span>
+<span class="nb">Write-Output</span> <span class="s2">&quot;Tests run = $run&quot;</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="05-test-data-and-configuration.html"><small>← Bài trước</small><span>Test Data và Configuration</span></a><a class="next" href="../06-automation-framework/README.html"><small>Bài tiếp theo →</small><span>Phase 6 — Page Object Model và Framework Design (Chapter 21–22)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/06-test-execution-and-reports.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

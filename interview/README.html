@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview Preparation — Junior Automation Test Engineer · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/README" data-root="../" data-lesson="0" data-title="Interview Preparation — Junior Automation Test Engineer">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="interview-preparation--junior-automation-test-engineer">Interview Preparation — Junior Automation Test Engineer</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Theo dõi ôn tập: <a href="../progress/interview-preparation.html">progress/interview-preparation.md</a>
+Đối tượng: Fresher / Junior Automation Tester (Selenium + Java + Maven + TestNG + Git).</p>
+</blockquote>
+<h2 id="hai-lớp-phỏng-vấn-xuyên-suốt-lộ-trình">Hai lớp phỏng vấn xuyên suốt lộ trình</h2>
+<ol>
+<li><strong>Interview Corner</strong> — 2 câu ở <strong>cuối mỗi bài học</strong> (120 câu), bám sát nội dung bài vừa học.</li>
+<li><strong>Bộ câu hỏi theo chủ đề</strong> — các file dưới đây, ôn tổng hợp trước ngày phỏng vấn (123 câu và tình huống).</li>
+</ol>
+<h2 id="bộ-câu-hỏi-theo-chủ-đề">Bộ câu hỏi theo chủ đề</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Chủ đề</th>
+<th>Học xong Phase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="java-interview.html">java-interview.md</a></td>
+<td>Java for Automation</td>
+<td>1</td>
+</tr>
+<tr>
+<td><a href="maven-interview.html">maven-interview.md</a> ⭐</td>
+<td>Maven và Maven Wrapper (14 câu cốt lõi + tình huống: clone, chạy test, đổi dependency, phối hợp)</td>
+<td>2</td>
+</tr>
+<tr>
+<td><a href="selenium-interview.html">selenium-interview.md</a></td>
+<td>Selenium Fundamentals, Locators/WebElement, Exception Handling</td>
+<td>3</td>
+</tr>
+<tr>
+<td><a href="wait-interview.html">wait-interview.md</a> ⭐</td>
+<td>Wait và Synchronization (20 câu + 3 câu viết code)</td>
+<td>4</td>
+</tr>
+<tr>
+<td><a href="framework-interview.html">framework-interview.md</a></td>
+<td>TestNG/JUnit và Page Object Model</td>
+<td>5–6</td>
+</tr>
+<tr>
+<td><a href="git-interview.html">git-interview.md</a></td>
+<td>Git và Team Workflow</td>
+<td>7</td>
+</tr>
+<tr>
+<td><a href="scenario-based-interview.html">scenario-based-interview.md</a></td>
+<td>12 tình huống thực tế</td>
+<td>8</td>
+</tr>
+</tbody>
+</table></div>
+<p>Cấu trúc mỗi câu: <strong>Câu hỏi (EN) → Dịch (VI) → Câu trả lời mẫu (EN) → Giải thích (VI) → Ví dụ thực tế → Câu hỏi đào sâu.</strong></p>
+<h2 id="cách-ôn">Cách ôn</h2>
+<ol>
+<li>Đọc câu hỏi tiếng Anh, <strong>tự trả lời thành tiếng bằng tiếng Anh</strong> trước khi xem đáp án.</li>
+<li>Đối chiếu câu mẫu; đọc giải thích tiếng Việt để hiểu bản chất, không học thuộc.</li>
+<li>Luôn chuẩn bị một <strong>ví dụ từ dự án <code>Selenium1</code></strong> (có đường dẫn file) — thuyết phục hơn lý thuyết.</li>
+<li>Tập trả lời <strong>câu hỏi đào sâu</strong>.</li>
+</ol>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mẹo</th>
+<th>Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trả lời theo cấu trúc "Định nghĩa → Vì sao → Ví dụ"</td>
+<td>Rõ ràng</td>
+</tr>
+<tr>
+<td>Nói thật giới hạn</td>
+<td>"Mình chưa dùng Selenium Grid nhưng hiểu nguyên lý..."</td>
+</tr>
+<tr>
+<td>Nêu trade-off</td>
+<td>"Implicit Wait đơn giản nhưng..."</td>
+</tr>
+<tr>
+<td>Gắn với dự án</td>
+<td>"<code>BaseTest</code> trong dự án của mình..."</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="tự-giới-thiệu-dự-án-mẫu-30-giây">Tự giới thiệu dự án (mẫu 30 giây)</h2>
+<blockquote>
+<p>"I built a Selenium practice project with Java 21, Selenium 4.52, TestNG and Maven. It covers 10 UI exercises on the-internet.herokuapp.com — login, checkboxes, tables, dropdowns, hover, dynamic elements, infinite scroll, modal and drag and drop. I use a shared <code>BaseTest</code> for the driver lifecycle, Explicit Waits only, and the Maven Wrapper so the project runs without installing Maven. I run the suite with <code>mvnw.cmd clean test</code> and the 10 tests pass. Next I plan to add Page Object Model, screenshots on failure and data-driven tests."</p>
+</blockquote>
+<p>(Mọi chi tiết khớp dự án thật.)</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../08-practical-project/labs/08-mini-automation-project.html"><small>← Bài trước</small><span>Lab 08: Mini Automation Framework (Bài 12)</span></a><a class="next" href="framework-interview.html"><small>Bài tiếp theo →</small><span>Testing Framework và Page Object Model — Interview</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

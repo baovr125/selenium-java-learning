@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maintainable Test Framework · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="06-automation-framework/05-maintainable-test-framework" data-root="../" data-lesson="1" data-title="Maintainable Test Framework">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="maintainable-test-framework">Maintainable Test Framework</h1>
+<blockquote>
+<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
+⬅️ <a href="04-configuration-management.html">Configuration Management</a> · ➡️ <a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="04-configuration-management.html">Trước: Configuration</a> · <a href="../08-practical-project/labs/08-mini-automation-project.html">Practice: Mini project</a> · <a href="../interview/framework-interview.html">Phỏng vấn</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Đánh giá <code>Selenium1</code> theo tiêu chí dễ bảo trì</li>
+<li>Áp dụng 10 nguyên tắc</li>
+<li>Review code test bằng checklist</li>
+<li>Lập backlog cải thiện theo thứ tự giá trị/công sức</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="02-automation-framework-architecture.html">Architecture</a></li>
+<li><a href="03-reusable-components.html">Reusable Components</a></li>
+</ul>
+<h2 id="1-dễ-bảo-trì-nghĩa-là-gì">1. "Dễ bảo trì" nghĩa là gì?</h2>
+<p>Một framework <strong>dễ bảo trì</strong> khi:</p>
+<ol>
+<li>UI đổi nhỏ ⇒ sửa ở <strong>một</strong> chỗ.</li>
+<li>Người mới đọc test <strong>hiểu</strong> ngay.</li>
+<li>Thêm test mới <strong>nhanh</strong> (dùng lại).</li>
+<li>Test fail ⇒ <strong>biết vì sao</strong> trong vài phút.</li>
+<li>Chạy <strong>ổn định</strong> (ít flaky).</li>
+<li>Máy nào chạy cũng <strong>giống nhau</strong> (Wrapper, ghim phiên bản, cấu hình trong Git).</li>
+</ol>
+<h2 id="2-đánh-giá-selenium1-theo-tiêu-chí">2. Đánh giá <code>Selenium1</code> theo tiêu chí</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Hiện trạng</th>
+<th>Điểm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tái lập build</td>
+<td>Wrapper + phiên bản ghim + <code>.gitignore</code> đúng</td>
+<td>🟢 Tốt</td>
+</tr>
+<tr>
+<td>Đồng bộ hoá</td>
+<td>Explicit Wait nhất quán, không <code>sleep</code>, không implicit</td>
+<td>🟢 Tốt</td>
+</tr>
+<tr>
+<td>Độc lập test</td>
+<td>Mỗi test một browser</td>
+<td>🟢 Tốt</td>
+</tr>
+<tr>
+<td>Assertion</td>
+<td>Có message, kiểm chứng trước/sau</td>
+<td>🟢 Tốt</td>
+</tr>
+<tr>
+<td>Locator tập trung</td>
+<td>Rải trong test</td>
+<td>🟡 Cần POM</td>
+</tr>
+<tr>
+<td>Cấu hình/dữ liệu</td>
+<td>Hard-code</td>
+<td>🟡 Cần Config/DataProvider</td>
+</tr>
+<tr>
+<td>Chẩn đoán lỗi</td>
+<td>Không screenshot/log có cấu trúc</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>Tái sử dụng</td>
+<td>Helper <code>private</code> trong từng class</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td>Song song / đa browser</td>
+<td>Không</td>
+<td>⚪ Chưa cần</td>
+</tr>
+<tr>
+<td>CI</td>
+<td>Chưa có</td>
+<td>⚪ Chưa cần</td>
+</tr>
+</tbody>
+</table></div>
+<p>Với mục đích học tập 10 bài đầu, kết quả này rất tốt. Danh sách 🟡 là <strong>backlog học tập</strong>.</p>
+<h2 id="3-mười-nguyên-tắc">3. Mười nguyên tắc</h2>
+<ol>
+<li><strong>Test độc lập</strong> — không phụ thuộc thứ tự/dữ liệu của test khác.</li>
+<li><strong>Mỗi test một mục tiêu</strong> — tên mô tả hành vi: <code>shouldShowErrorWhenPasswordInvalid</code>.</li>
+<li><strong>Không <code>Thread.sleep</code></strong> — chờ theo điều kiện.</li>
+<li><strong>Locator ổn định, tập trung</strong> (Page Object).</li>
+<li><strong>Assertion ở test, hành vi ở page.</strong></li>
+<li><strong>Cấu hình/dữ liệu ngoài code.</strong></li>
+<li><strong>Fail rõ ràng</strong> — message, ảnh, log.</li>
+<li><strong>Giữ test nhanh</strong> — không làm điều không cần (ví dụ đăng nhập qua UI cho mọi test: dùng cookie/API setup).</li>
+<li><strong>Phiên bản được ghim</strong> — Wrapper, thư viện, plugin.</li>
+<li><strong>Refactor liên tục</strong> — đừng để helper lặp ≥ 3 lần.</li>
+</ol>
+<h2 id="4-đặt-tên">4. Đặt tên</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Đối tượng</th>
+<th>Quy ước</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test class</td>
+<td><code>&lt;Chức năng&gt;Test</code></td>
+<td><code>LoginTest</code></td>
+</tr>
+<tr>
+<td>Test method</td>
+<td>Động từ + kỳ vọng</td>
+<td><code>shouldLoginWithValidCredentials</code></td>
+</tr>
+<tr>
+<td>Page class</td>
+<td><code>&lt;Trang&gt;Page</code></td>
+<td><code>LoginPage</code></td>
+</tr>
+<tr>
+<td>Method hành động</td>
+<td>Động từ</td>
+<td><code>loginAs</code>, <code>addElement</code></td>
+</tr>
+<tr>
+<td>Method lấy dữ liệu</td>
+<td><code>get...</code>, <code>is...</code></td>
+<td><code>getFlashMessage</code>, <code>isAtSecureArea</code></td>
+</tr>
+<tr>
+<td>Hằng</td>
+<td><code>UPPER_SNAKE</code></td>
+<td><code>LOGIN_URL</code> (🧩 dự án)</td>
+</tr>
+<tr>
+<td>Package</td>
+<td>chữ thường</td>
+<td><code>pages</code>, <code>tests</code>, <code>base</code> (🧩)</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Dự án đặt tên <code>Exercise01_LoginTest</code> theo đề bài (học tập). Dự án thật thường đặt theo chức năng, không theo số thứ tự.</p>
+<h2 id="5-quản-lý-thay-đổi-ui">5. Quản lý thay đổi UI</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thay đổi</th>
+<th>Cách ứng phó</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đổi <code>id/class</code></td>
+<td>Sửa 1 dòng trong Page</td>
+</tr>
+<tr>
+<td>Đổi luồng (thêm bước xác nhận)</td>
+<td>Sửa method nghiệp vụ trong Page; test giữ nguyên</td>
+</tr>
+<tr>
+<td>Đổi chữ hiển thị</td>
+<td>Dùng locator không phụ thuộc text; hoặc tách text ra hằng</td>
+</tr>
+<tr>
+<td>Đổi cấu trúc DOM</td>
+<td>CSS ngắn, ít lồng; <code>data-testid</code> do dev thêm</td>
+</tr>
+<tr>
+<td>Thêm popup/cookie banner</td>
+<td>Xử lý ở <code>BasePage</code>/<code>BaseTest</code> một lần</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mẹo lớn: <strong>thoả thuận với dev</strong> thêm <code>data-testid</code> cho phần tử quan trọng.</p>
+<h2 id="6-giảm-flaky">6. Giảm flaky</h2>
+<p>Xem <a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html#5-flaky-test">selenium/10</a>. Tóm tắt: Wait đúng điều kiện (đặc trưng cho trạng thái <strong>mới</strong>, như 🧩 Ex10 <code>textToBe</code>), tránh phụ thuộc animation, cô lập dữ liệu, ổn định môi trường, kích thước cửa sổ cố định, <strong>không</strong> che flaky bằng retry.</p>
+<h2 id="7-review-code-test">7. Review code test</h2>
+<p>Checklist khi review PR:</p>
+<ul>
+<li class="task"><input type="checkbox" disabled> Test có assertion có ý nghĩa?</li>
+<li class="task"><input type="checkbox" disabled> Wait đúng điều kiện, không <code>sleep</code>?</li>
+<li class="task"><input type="checkbox" disabled> Locator ổn định, nằm trong Page?</li>
+<li class="task"><input type="checkbox" disabled> Không dữ liệu/URL/bí mật hard-code sai chỗ?</li>
+<li class="task"><input type="checkbox" disabled> Test độc lập, chạy lẻ được?</li>
+<li class="task"><input type="checkbox" disabled> <code>clean test</code> xanh, <code>Tests run</code> đúng?</li>
+<li class="task"><input type="checkbox" disabled> Không commit <code>target/</code>, <code>.mvn/repository/</code>?</li>
+<li class="task"><input type="checkbox" disabled> <code>pom.xml</code> đổi có lý do?</li>
+</ul>
+<h2 id="8-tài-liệu-hoá">8. Tài liệu hoá</h2>
+<ul>
+<li><code>README.md</code>: yêu cầu môi trường, cách chạy (🧩 dự án có README tốt).</li>
+<li>Quy ước đặt tên/ cấu trúc package.</li>
+<li>Cách thêm Page/Test mới.</li>
+<li>Cách đọc báo cáo.</li>
+<li>Cách xử lý sự cố (<a href="../02-maven-and-project/09-maven-troubleshooting.html">maven/08</a>).</li>
+</ul>
+<h2 id="9-lộ-trình-cải-thiện-selenium1-đề-xuất-theo-thứ-tự-giá-trị-công-sức">9. Lộ trình cải thiện <code>Selenium1</code> (đề xuất theo thứ tự giá trị/ công sức)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ưu tiên</th>
+<th>Việc</th>
+<th>Công sức</th>
+<th>Giá trị</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Chụp screenshot khi fail</td>
+<td>Thấp</td>
+<td>Cao</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Thêm <code>ChromeOptions</code> + headless qua <code>-D</code></td>
+<td>Thấp</td>
+<td>Cao (CI)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tách <code>Config</code></td>
+<td>Thấp</td>
+<td>Trung</td>
+</tr>
+<tr>
+<td>4</td>
+<td>POM cho Login, Dropdown, Tables</td>
+<td>Trung</td>
+<td>Cao</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>@DataProvider</code> cho login nhiều case</td>
+<td>Thấp</td>
+<td>Trung</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Logging (<code>slf4j-simple</code>)</td>
+<td>Thấp</td>
+<td>Trung</td>
+</tr>
+<tr>
+<td>7</td>
+<td>CI chạy <code>./mvnw -B clean test</code></td>
+<td>Trung</td>
+<td>Cao</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>ThreadLocal</code> + parallel</td>
+<td>Trung</td>
+<td>Trung</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Báo cáo Extent/Allure</td>
+<td>Trung</td>
+<td>Trung</td>
+</tr>
+</tbody>
+</table></div>
+<p>Làm từng bước nhỏ, mỗi bước <strong>chạy <code>clean test</code> xanh</strong> rồi mới commit.</p>
+<h2 id="tóm-tắt">Tóm tắt</h2>
+<p>Framework tốt = <strong>ít lặp, ít bất ngờ, dễ chẩn đoán, dễ đổi</strong>. Bắt đầu nhỏ như <code>Selenium1</code>, thêm tầng khi nhu cầu xuất hiện.</p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Chấm <code>Selenium1</code> theo 6 tiêu chí: tái lập build, đồng bộ hoá, độc lập, locator tập trung, cấu hình, chẩn đoán lỗi.</p>
+<p><strong>Input:</strong> Phân tích dự án</p>
+<p><strong>Expected Output:</strong> Bảng 🟢/🟡</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Xem bảng đánh giá.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Đổi tên 3 tên test theo quy ước <code>shouldXxx</code>: <code>test1</code>, <code>testLogin</code>, <code>loginTest2</code>.</p>
+<p><strong>Input:</strong> 3 tên</p>
+<p><strong>Expected Output:</strong> 3 tên mô tả hành vi</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Động từ + kỳ vọng.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Lập backlog 5 việc cải thiện cho <code>Selenium1</code>, xếp theo giá trị/công sức.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Danh sách có thứ tự</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Screenshot, headless, Config, POM, CI.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Dấu hiệu framework dễ bảo trì?</p>
+<ul>
+<li>A. UI đổi nhỏ chỉ sửa một chỗ</li>
+<li>B. Nhiều lớp trừu tượng</li>
+<li>C. Test phụ thuộc nhau</li>
+<li>D. Dùng <code>sleep</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Đó là mục tiêu của POM.</p>
+</details>
+<p><strong>Câu 2.</strong> Không nên làm gì với test flaky?</p>
+<ul>
+<li>A. Điều tra nguyên nhân</li>
+<li>B. Che bằng retry</li>
+<li>C. Wait đúng điều kiện</li>
+<li>D. Tách test</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Retry che lỗi.</p>
+</details>
+<p><strong>Câu 3.</strong> Test method nên đặt tên?</p>
+<ul>
+<li>A. <code>test1</code></li>
+<li>B. Động từ + kỳ vọng (<code>shouldLoginWith...</code>)</li>
+<li>C. Tên dài vô nghĩa</li>
+<li>D. Số thứ tự</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Mô tả hành vi.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What makes a test framework maintainable?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Điều gì làm framework dễ bảo trì?</li>
+<li><strong>Suggested answer (EN):</strong> Locators in one place, independent and readable tests, condition-based waits, externalized config and data, clear failure evidence and reproducible builds with pinned versions.</li>
+<li><strong>Giải thích (VI):</strong> 10 nguyên tắc.</li>
+<li><strong>Follow-up:</strong> <em>How do you review test code?</em></li>
+</ul>
+<p><strong>2. What would you improve first in a small framework?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Cải thiện gì đầu tiên?</li>
+<li><strong>Suggested answer (EN):</strong> Add screenshots on failure and headless support for CI, then extract configuration and introduce page objects, each as a small verified change.</li>
+<li><strong>Giải thích (VI):</strong> Ưu tiên giá trị/công sức.</li>
+<li><strong>Follow-up:</strong> <em>Why small changes?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Locator tập trung, test độc lập, chờ theo điều kiện</li>
+<li>Cấu hình/ dữ liệu ngoài code</li>
+<li>Backlog theo giá trị/công sức</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li>Checklist review PR, quy ước đặt tên</li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Bảo trì ≠ nhiều tính năng</li>
+<li>Retry ≠ sửa flaky</li>
+<li>Refactor mỗi bước phải <code>clean test</code> xanh</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>🟢 tái lập build (Wrapper+ghim), 🟢 đồng bộ hoá (Explicit), 🟢 độc lập (mỗi test 1 browser), 🟡 locator tập trung (chưa POM), 🟡 cấu hình (hard-code), 🟡 chẩn đoán lỗi (chưa screenshot/log).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<p><code>shouldOpenHomePage</code>, <code>shouldLoginWithValidCredentials</code>, <code>shouldRejectInvalidPassword</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Screenshot khi fail (thấp/cao). 2. <code>ChromeOptions</code> + headless qua <code>-D</code> (thấp/cao). 3. Tách <code>Config</code> (thấp/trung). 4. POM cho Login/Dropdown/Tables (trung/cao). 5. CI chạy <code>./mvnw -B clean test</code> (trung/cao).</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-configuration-management.html"><small>← Bài trước</small><span>Configuration Management</span></a><a class="next" href="../07-git-and-team-workflow/README.html"><small>Bài tiếp theo →</small><span>Phase 7 — Git và Team Collaboration (Chapter 23)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/05-maintainable-test-framework.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

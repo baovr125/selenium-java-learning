@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/05-form-automation" data-root="../../" data-lesson="0" data-title="Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-05-form-automation-login-dropdown-alert-frame-bài-6--bài-7">Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../03-selenium-fundamentals/06-element-interactions.html">selenium/04</a> · <a href="../../03-selenium-fundamentals/07-browser-interactions.html">selenium/06</a>
+Đối chiếu: <a href="../../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a>, <a href="../../../../../src/test/java/tests/Exercise04_DropdownTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise04</a></p>
+</blockquote>
+<hr />
+<h2 id="bài-6-tự-động-hoá-chức-năng-login">Bài 6. Tự động hoá chức năng Login</h2>
+<p><strong>Mục tiêu:</strong> Viết bộ test Login có <strong>đường đi đúng + đường đi sai</strong>, dùng <code>@DataProvider</code>, Explicit Wait và assert tốt.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>sendKeys</code>, <code>clear</code>, <code>click</code>, <code>getText</code>, <code>getCurrentUrl</code>, <code>visibilityOfElementLocated</code>, <code>@DataProvider</code>.</p>
+<p><strong>Yêu cầu:</strong> trên <code>/login</code> (tài khoản đúng: <code>tomsmith</code> / <code>SuperSecretPassword!</code>):</p>
+<ol>
+<li>Đăng nhập đúng ⇒ URL kết thúc <code>/secure</code>, flash chứa <code>You logged into a secure area!</code>.</li>
+<li>Mật khẩu sai ⇒ vẫn ở <code>/login</code>, flash báo mật khẩu sai.</li>
+<li>Username sai ⇒ flash báo username sai.</li>
+<li>Sau khi login đúng, bấm <strong>Logout</strong> ⇒ về <code>/login</code>, flash báo đã đăng xuất.</li>
+<li>Dùng <code>@DataProvider</code> cho các trường hợp sai.</li>
+</ol>
+<h3 id="code-tham-khảo">Code tham khảo</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">tests</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">base.BaseTest</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.By</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.ExpectedConditions</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.Assert</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.DataProvider</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.Test</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPracticeTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">USER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">PASS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">SUBMIT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">FLASH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">URL</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">USER</span><span class="p">).</span><span class="na">clear</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">USER</span><span class="p">).</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">PASS</span><span class="p">).</span><span class="na">clear</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">PASS</span><span class="p">).</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">pass</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">SUBMIT</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">flashText</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">FLASH</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">loginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">login</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flashText</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Thực tế: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">().</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@DataProvider</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;invalid&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="nf">invalid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="p">{</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wrong-password&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Your password is invalid!&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="s">&quot;nobody&quot;</span><span class="p">,</span><span class="w">   </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Your username is invalid!&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">         </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w">                    </span><span class="s">&quot;Your username is invalid!&quot;</span><span class="p">}</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span><span class="p">(</span><span class="n">dataProvider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;invalid&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">loginFails</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">pass</span><span class="p">);</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flashText</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Kỳ vọng chứa &#39;&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;&#39; nhưng thực tế: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">().</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Phải ở lại trang login&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">logout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">login</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;a.button.secondary&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">flashText</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged out of the secure area!&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">().</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<blockquote>
+<p>✅ Đã chạy thật: 5 test của Bài 6 pass (thông báo lỗi và locator nút Logout <code>a.button.secondary</code> khớp trang tại thời điểm viết). Nếu trang đổi, hãy in <code>flash</code> thực tế và chỉnh kỳ vọng.</p>
+</blockquote>
+<h3 id="kết-quả-mong-đợi">Kết quả mong đợi</h3>
+<p><code>Tests run: 5</code> (1 + 3 + 1), xanh 3 lần liên tiếp. Mỗi lần chạy mở/đóng Chrome (<code>@BeforeMethod</code>).</p>
+<h3 id="lỗi-thường-gặp">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AssertionError</code> ở message</td>
+<td>Chuỗi thực tế khác kỳ vọng</td>
+<td>In <code>msg</code>, sửa kỳ vọng theo trang thật</td>
+</tr>
+<tr>
+<td><code>NoSuchElementException</code> nút Logout</td>
+<td>Sai locator</td>
+<td>DevTools</td>
+</tr>
+<tr>
+<td>Test không phụ thuộc thứ tự?</td>
+<td>Có (mỗi test login lại)</td>
+<td>Giữ độc lập</td>
+</tr>
+<tr>
+<td><code>@DataProvider</code> không chạy</td>
+<td>Import sai/<code>dataProvider</code> sai tên</td>
+<td>Kiểm tra tên</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="bài-7-dropdown-alert-và-frame">Bài 7. Dropdown, Alert và Frame</h2>
+<p><strong>Mục tiêu:</strong> Xử lý ba loại "ngữ cảnh đặc biệt" của Selenium.</p>
+<h3 id="7a-dropdown--dropdown">7A. Dropdown — <code>/dropdown</code></h3>
+<p>Mô phỏng <a href="../../../../../src/test/java/tests/Exercise04_DropdownTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise04</a>, tự viết lại <strong>không nhìn đáp án</strong> rồi so sánh. Thêm: kiểm tra <code>isMultiple()</code> = <code>false</code>; chọn bằng <code>selectByValue("2")</code> và bằng <code>selectByIndex(1)</code>.</p>
+<h3 id="7b-alert--javascript_alerts">7B. Alert — <code>/javascript_alerts</code></h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">jsAlerts</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/javascript_alerts&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">By</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;result&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// JS Alert</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsAlert()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">alert</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;I am a JS Alert&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;You successfully clicked an alert&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// JS Confirm — Cancel</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsConfirm()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">()).</span><span class="na">dismiss</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;You clicked: Cancel&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// JS Prompt — nhập chữ</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsPrompt()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Alert</span><span class="w"> </span><span class="n">prompt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
+<span class="w">    </span><span class="n">prompt</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Selenium&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">prompt</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;You entered: Selenium&quot;</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="7c-frame--iframe">7C. Frame — <code>/iframe</code></h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">iframeEditor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/iframe&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span>
+<span class="w">    </span><span class="n">WebElement</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">body</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Your content goes here.&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// nội dung mặc định</span>
+<span class="w">    </span><span class="n">body</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w">                                                          </span><span class="c1">// focus vào editor</span>
+<span class="w">    </span><span class="n">body</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">chord</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">CONTROL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Xin chao iframe&quot;</span><span class="p">);</span><span class="w">       </span><span class="c1">// chọn hết rồi gõ đè</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">body</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Xin chao iframe&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">                                    </span><span class="c1">// QUAN TRỌNG</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;h3&quot;</span><span class="p">)).</span><span class="na">isDisplayed</span><span class="p">());</span>
+<span class="p">}</span></code></pre></div>
+<p>(Cần <code>import org.openqa.selenium.Keys;</code>.)</p>
+<blockquote>
+<p>✅ <strong>Đã kiểm chứng khi chạy thật</strong> (Selenium 4.52.0, Chrome): phiên bản đầu của bài này dùng <code>body.clear(); body.sendKeys(...)</code> <strong>thất bại</strong> (<code>expected [Xin chao iframe] but found []</code>). Với trình soạn thảo TinyMCE, <code>sendKeys</code> mà không <strong>focus</strong> trước thì không ghi nhận chữ. Cách đúng là <code>click()</code> rồi <code>Ctrl+A</code> và gõ. Bài học: editor WYSIWYG khác <code>&lt;input&gt;</code> thường — luôn kiểm chứng kết quả bằng assertion.</p>
+</blockquote>
+<h3 id="7d-window--windows-mở-rộng">7D. Window — <code>/windows</code> (mở rộng)</h3>
+<p>Viết test: bấm <strong>Click Here</strong> → <code>numberOfWindowsToBe(2)</code> → chuyển sang tab mới → kiểm tra <code>getTitle()</code> / h3 là <code>New Window</code> → <code>close()</code> → quay về <code>mainHandle</code>.</p>
+<h3 id="kết-quả-mong-đợi_1">Kết quả mong đợi</h3>
+<ul>
+<li>Mỗi phần pass; bạn giải thích được <code>accept</code>/<code>dismiss</code>/<code>sendKeys</code> của Alert và vì sao phải <code>defaultContent()</code> sau iframe.</li>
+</ul>
+<h3 id="lỗi-thường-gặp_1">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoAlertPresentException</code></td>
+<td>Gọi <code>switchTo().alert()</code> quá sớm</td>
+<td><code>alertIsPresent()</code></td>
+</tr>
+<tr>
+<td><code>UnhandledAlertException</code></td>
+<td>Alert chưa xử lý mà gọi lệnh khác</td>
+<td>Xử lý alert trước</td>
+</tr>
+<tr>
+<td><code>NoSuchElementException</code> trong iframe</td>
+<td>Chưa chuyển frame</td>
+<td><code>switchTo().frame</code></td>
+</tr>
+<tr>
+<td><code>UnexpectedTagNameException</code></td>
+<td><code>Select</code> trên phần tử không phải <code>&lt;select&gt;</code></td>
+<td>Kiểm tra thẻ</td>
+</tr>
+<tr>
+<td><code>NoSuchWindowException</code></td>
+<td>Dùng driver sau <code>close()</code></td>
+<td><code>switchTo().window(main)</code></td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-maven-and-mvnw-practice.html"><small>← Bài trước</small><span>Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)</span></a><a class="next" href="06-page-object-model-practice.html"><small>Bài tiếp theo →</small><span>Lab 06: Page Object Model (Bài 10)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/05-form-automation.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

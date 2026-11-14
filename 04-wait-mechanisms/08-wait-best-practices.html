@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wait Best Practices · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/08-wait-best-practices" data-root="../" data-lesson="1" data-title="Wait Best Practices">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="wait-best-practices">Wait Best Practices</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="07-real-world-scenarios.html">Wait: 15 tình huống thực tế</a> · ➡️ <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG Fundamentals</a></p>
+<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="07-real-world-scenarios.html">Tình huống thực tế</a> · Phỏng vấn: <a href="../interview/wait-interview.html">wait-interview</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Áp dụng 8 best practices cho Wait</li>
+<li>Review một đoạn code test về đồng bộ hoá</li>
+<li>Tự trả lời 20 câu hỏi Wait</li>
+<li>Gom hàm chờ vào <code>BasePage</code></li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="06-wait-comparison.html">Wait Comparison</a></li>
+</ul>
+<h2 id="1-best-practices-và-lỗi-thường-gặp">1. Best Practices và lỗi thường gặp</h2>
+<h3 id="-best-practices">✅ Best Practices</h3>
+<ol>
+<li>Chỉ dùng Explicit Wait; implicit = 0.</li>
+<li>Chờ <strong>điều kiện thực</strong> (visible, clickable, text), không chờ "thời gian".</li>
+<li>Một <code>WebDriverWait</code> dùng chung trong <code>BaseTest</code>; tạo Wait riêng khi cần thời gian khác.</li>
+<li>Ưu tiên bản dùng <code>By</code> (tìm lại mỗi vòng) để tránh stale.</li>
+<li>Sau hành động bất đồng bộ: chờ → rồi mới assert.</li>
+<li>Viết <code>withMessage(...)</code> để lỗi dễ đọc.</li>
+<li>Gom hàm chờ vào <code>BasePage</code> (<a href="../06-automation-framework/03-reusable-components.html">framework-design/03</a>).</li>
+<li>Không <code>catch (TimeoutException)</code> để "nuốt"; nếu bắt, phải có hành động rõ ràng.</li>
+</ol>
+<h3 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TimeoutException</code></td>
+<td>Điều kiện sai/locator sai/trang thật sự chậm</td>
+<td>Đọc thông báo điều kiện; kiểm tra locator bằng DevTools; tăng timeout có cân nhắc</td>
+</tr>
+<tr>
+<td>Pass nhưng đọc dữ liệu cũ</td>
+<td>Chờ điều kiện đã đúng từ trước (như T6)</td>
+<td>Chờ điều kiện <strong>đặc trưng cho trạng thái mới</strong> (<code>textToBe</code>, <code>stalenessOf</code>)</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code> trong lúc chờ</td>
+<td>Dùng <code>WebElement</code> thay vì <code>By</code></td>
+<td>Dùng <code>By</code>, hoặc <code>.ignoring(StaleElementReferenceException.class)</code></td>
+</tr>
+<tr>
+<td><code>ElementClickInterceptedException</code></td>
+<td>Overlay che</td>
+<td>Chờ overlay <code>invisibilityOfElementLocated</code></td>
+</tr>
+<tr>
+<td>Test chậm bất thường</td>
+<td>Trộn implicit + explicit; <code>Thread.sleep</code></td>
+<td>Bỏ implicit; dùng explicit</td>
+</tr>
+<tr>
+<td><code>invisibilityOfElementLocated</code> pass quá sớm</td>
+<td>Phần tử chưa từng xuất hiện</td>
+<td>Chờ xuất hiện trước</td>
+</tr>
+<tr>
+<td>Lệnh <code>wait.until(...)</code> có kết quả <code>null</code></td>
+<td>Quên dùng giá trị trả về</td>
+<td>Gán <code>WebElement el = wait.until(...)</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>➡️ Tiếp: <a href="../03-selenium-fundamentals/07-browser-interactions.html">06. Dropdown, Alert, Frame, Window</a></p>
+<h2 id="2-20-câu-hỏi-tự-kiểm-tra">2. 20 câu hỏi tự kiểm tra</h2>
+<blockquote>
+<p>Đáp án song ngữ đầy đủ ở <a href="../interview/wait-interview.html">interview/05-wait-and-synchronization.md</a>.</p>
+</blockquote>
+<ol>
+<li>Vì sao test Selenium cần Wait?</li>
+<li>Có mấy loại Wait? Kể tên.</li>
+<li>Implicit Wait hoạt động thế nào và áp dụng cho lệnh nào?</li>
+<li>Explicit Wait khác Implicit Wait ở đâu?</li>
+<li><code>WebDriverWait</code> và <code>FluentWait</code> khác nhau thế nào?</li>
+<li>Polling interval mặc định của <code>WebDriverWait</code> là bao nhiêu?</li>
+<li><code>WebDriverWait</code> mặc định bỏ qua exception nào?</li>
+<li>Timeout 15 giây nghĩa là test luôn chờ 15 giây? Giải thích.</li>
+<li>Sự khác nhau giữa <code>presenceOfElementLocated</code> và <code>visibilityOfElementLocated</code>?</li>
+<li><code>elementToBeClickable</code> kiểm tra những gì? Có đảm bảo không bị che không?</li>
+<li><code>invisibilityOfElementLocated</code> trả <code>true</code> trong những trường hợp nào?</li>
+<li>Khi nào dùng <code>stalenessOf</code>?</li>
+<li><code>frameToBeAvailableAndSwitchToIt</code> làm hai việc gì?</li>
+<li>Vì sao không nên trộn Implicit và Explicit Wait?</li>
+<li>Vì sao <code>Thread.sleep()</code> không được khuyến khích?</li>
+<li>Bạn viết Custom Wait thế nào? Cho ví dụ.</li>
+<li><code>textToBe</code> khác <code>textToBePresentInElement</code> thế nào?</li>
+<li>Làm sao kiểm tra một phần tử đã biến mất?</li>
+<li><code>TimeoutException</code> khác <code>NoSuchElementException</code> thế nào?</li>
+<li>Test lúc pass lúc fail ("flaky") — bạn kiểm tra theo trình tự nào?</li>
+</ol>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết lại dòng sau theo best practice: <code>Thread.sleep(5000); driver.findElement(By.id("flash")).getText();</code></p>
+<p><strong>Input:</strong> Đoạn code cho trước</p>
+<p><strong>Expected Output:</strong> Đoạn code không có sleep</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Explicit Wait theo điều kiện.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>BasePage</code> với <code>waitVisible</code>, <code>waitClickable</code>, <code>click</code>, <code>type</code>, <code>text</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Lớp dùng lại</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>protected</code> + <code>By</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Review đoạn: <code>driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); ... wait.until(d -&gt; d.findElements(by).isEmpty());</code> — nêu 3 vấn đề.</p>
+<p><strong>Input:</strong> Đoạn code cho trước</p>
+<p><strong>Expected Output:</strong> 3 vấn đề</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Trộn implicit + explicit.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Best practice đầu tiên?</p>
+<ul>
+<li>A. Dùng <code>sleep</code></li>
+<li>B. Chỉ dùng Explicit Wait; implicit = 0</li>
+<li>C. Tăng timeout thật lớn</li>
+<li>D. Retry vô hạn</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Dự đoán được và nhanh.</p>
+</details>
+<p><strong>Câu 2.</strong> Wait nên đặt ở đâu trong framework?</p>
+<ul>
+<li>A. Rải trong test</li>
+<li>B. Trong <code>BasePage</code>/helper</li>
+<li>C. Trong <code>pom.xml</code></li>
+<li>D. Trong <code>testng.xml</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Test sạch, dễ bảo trì.</p>
+</details>
+<p><strong>Câu 3.</strong> Nên <code>catch (TimeoutException)</code> để bỏ qua lỗi?</p>
+<ul>
+<li>A. Luôn</li>
+<li>B. Chỉ khi có mục đích rõ (phần tử tuỳ chọn)</li>
+<li>C. Không bao giờ</li>
+<li>D. Chỉ trên CI</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Không nuốt lỗi.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What are your best practices for waits?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Best practices về Wait?</li>
+<li><strong>Suggested answer (EN):</strong> Use explicit waits on specific conditions with implicit wait left at zero, no <code>Thread.sleep</code>, one shared <code>WebDriverWait</code> with helper methods in the base page, wait for conditions specific to the new state, and use clear timeout messages.</li>
+<li><strong>Giải thích (VI):</strong> Tóm tắt đầy đủ.</li>
+<li><strong>Follow-up:</strong> <em>How do you handle slow operations?</em></li>
+</ul>
+<p><strong>2. A test passes sometimes and fails sometimes. How do you investigate?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Test lúc pass lúc fail?</li>
+<li><strong>Suggested answer (EN):</strong> Rerun in isolation, read the exception, check the locator in DevTools, replace sleeps with a specific condition, check dependencies and environment, fix the root cause and rerun repeatedly instead of hiding it with retries.</li>
+<li><strong>Giải thích (VI):</strong> Quy trình có hệ thống.</li>
+<li><strong>Follow-up:</strong> <em>When is retry acceptable?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Explicit mặc định; implicit = 0; không sleep</li>
+<li>Wait trong <code>BasePage</code>; điều kiện đặc trưng trạng thái mới</li>
+<li>Không nuốt <code>TimeoutException</code></li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>BasePage.waitVisible/click/type/text</code>, <code>withMessage</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Tăng timeout ≠ sửa lỗi</li>
+<li>Retry ≠ sửa</li>
+<li><code>clickable</code> ≠ không bị che</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG Fundamentals</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">))).</span><span class="na">getText</span><span class="p">();</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BasePage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="nf">BasePage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="nf">waitVisible</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="nf">waitClickable</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">by</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">click</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">waitClickable</span><span class="p">(</span><span class="n">by</span><span class="p">).</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">);</span><span class="w"> </span><span class="n">el</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span><span class="w"> </span><span class="n">el</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">text</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">).</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Trộn Implicit + Explicit: thời gian khó đoán. 2. <code>findElements</code> rỗng chờ thêm tối đa 10 s mỗi vòng. 3. Nên dùng <code>numberOfElementsToBe(by, 0)</code>/<code>invisibilityOfElementLocated</code> và đặt implicit = 0.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="07-real-world-scenarios.html"><small>← Bài trước</small><span>Wait: 15 tình huống thực tế</span></a><a class="next" href="../05-testing-framework/README.html"><small>Bài tiếp theo →</small><span>Phase 5 — Testing Framework (Chapter 20)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/08-wait-best-practices.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

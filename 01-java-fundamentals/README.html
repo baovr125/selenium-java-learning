@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 1 — Java Fundamentals (Chapter 01–08) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="01-java-fundamentals/README" data-root="../" data-lesson="0" data-title="Phase 1 — Java Fundamentals (Chapter 01–08)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-1--java-fundamentals-chapter-0108">Phase 1 — Java Fundamentals (Chapter 01–08)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a>
+Mục tiêu: đủ Java để đọc hiểu và viết Selenium script. <strong>Không</strong> học toàn bộ Java như Java Developer.</p>
+</blockquote>
+<h2 id="danh-sách-bài">Danh sách bài</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Chapter</th>
+<th>Ưu tiên</th>
+<th>Java → Selenium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td><a href="00-environment-setup.html">Environment Setup</a></td>
+<td>01</td>
+<td>Essential</td>
+<td>Cài JDK, chạy <code>mvnw</code></td>
+</tr>
+<tr>
+<td>01</td>
+<td><a href="01-getting-started.html">Getting Started</a></td>
+<td>01</td>
+<td>Essential</td>
+<td><code>System.out.println</code> log</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-variables-and-data-types.html">Variables &amp; Data Types</a></td>
+<td>02</td>
+<td>Essential</td>
+<td><code>WebDriver</code>, <code>WebElement</code>, dữ liệu test</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-operators-and-strings.html">Operators &amp; Strings</a></td>
+<td>02</td>
+<td>Essential</td>
+<td><code>getText().trim()</code>, <code>contains</code>, <code>endsWith</code></td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-control-flow.html">Control Flow</a></td>
+<td>03</td>
+<td>Essential</td>
+<td>Kiểm tra trạng thái, duyệt <code>WebElement</code></td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="05-arrays.html">Arrays</a></td>
+<td>04</td>
+<td>Essential</td>
+<td><code>Object[][]</code> của DataProvider</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="06-methods.html">Methods</a></td>
+<td>04</td>
+<td>Essential</td>
+<td>Reusable / Page methods</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="07-classes-and-objects.html">Classes &amp; Objects</a></td>
+<td>05</td>
+<td>Essential</td>
+<td>Page Objects, constructor</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="08-oop-concepts.html">OOP Concepts</a></td>
+<td>05</td>
+<td>Essential</td>
+<td><code>BaseTest</code>, <code>WebDriver</code> interface</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="09-collections.html">Collections</a></td>
+<td>06</td>
+<td>Essential</td>
+<td><code>List&lt;WebElement&gt;</code>, <code>Map</code> test data</td>
+</tr>
+<tr>
+<td>10</td>
+<td><a href="10-exception-handling.html">Exception Handling</a></td>
+<td>07</td>
+<td>Essential</td>
+<td>Selenium exceptions</td>
+</tr>
+<tr>
+<td>11</td>
+<td><a href="11-lambda-and-generics.html">Lambda &amp; Generics</a></td>
+<td>07</td>
+<td>Important</td>
+<td><code>wait.until(d -&gt; ...)</code>, TestNG annotations</td>
+</tr>
+<tr>
+<td>12</td>
+<td><a href="12-file-handling.html">File Handling &amp; Properties</a></td>
+<td>08</td>
+<td>Essential</td>
+<td><code>config.properties</code>, CSV test data</td>
+</tr>
+<tr>
+<td>—</td>
+<td><a href="13-java-selenium-cheatsheet.html">Cheatsheet Java ↔ Selenium ↔ POM</a></td>
+<td>—</td>
+<td>Tham khảo</td>
+<td>Tra cứu nhanh</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="bảng-ưu-tiên-chi-tiết-trong-từng-bài">Bảng ưu tiên chi tiết (trong từng bài)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Mức</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variables, data types, <code>String</code>, <code>if/for/while</code>, mảng, method, class, constructor, <code>static</code>, kế thừa, interface, <code>List/Map/Set</code>, <code>try/catch/finally</code>, <code>Properties</code></td>
+<td><strong>Essential</strong></td>
+</tr>
+<tr>
+<td>Overloading, varargs, <code>StringBuilder</code>, <code>Math</code>, <code>switch</code>, <code>Iterator</code>, wrapper classes, Generics, Lambda, Stream cơ bản, <code>Path/Files</code>, enum</td>
+<td><strong>Important</strong></td>
+</tr>
+<tr>
+<td>Recursion, <code>float/byte/short</code>, <code>LinkedList</code>, <code>TreeMap</code>, inner/anonymous class, RegEx, Threads, I/O streams nhị phân</td>
+<td><strong>Optional</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="đối-chiếu-với-w3schools-java-tutorial-chỉ-về-trình-tự">Đối chiếu với W3Schools Java Tutorial (chỉ về trình tự)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhóm chủ đề W3Schools</th>
+<th>Bài ở đây</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get Started, Syntax, Output, Comments</td>
+<td>00–01</td>
+</tr>
+<tr>
+<td>Variables, Data Types, Type Casting</td>
+<td>02</td>
+</tr>
+<tr>
+<td>Operators, Strings, Math, Booleans</td>
+<td>03</td>
+</tr>
+<tr>
+<td>If...Else, Switch, Loops, Break/Continue</td>
+<td>04</td>
+</tr>
+<tr>
+<td>Arrays</td>
+<td>05</td>
+</tr>
+<tr>
+<td>Methods (parameters, overloading, scope, recursion)</td>
+<td>06</td>
+</tr>
+<tr>
+<td>OOP: Classes, Constructors, Modifiers, Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages, Enums</td>
+<td>07–08</td>
+</tr>
+<tr>
+<td>Data Structures (List, Set, Map, Iterator), Wrapper Classes</td>
+<td>09</td>
+</tr>
+<tr>
+<td>Errors, Exceptions, try-with-resources</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Generics, Lambda, Annotations, RegEx, Threads</td>
+<td>11</td>
+</tr>
+<tr>
+<td>Files, I/O</td>
+<td>12</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nội dung tự viết, mỗi ví dụ bám Selenium; kiểm chứng kỹ thuật theo <a href="https://docs.oracle.com/en/java/" target="_blank" rel="noopener">tài liệu Oracle</a>.</p>
+<h2 id="cách-học-phase-1">Cách học Phase 1</h2>
+<ol>
+<li>Gõ lại ví dụ (đừng chỉ đọc), chạy bằng <code>java Main.java</code> (JDK 21+) hoặc IDE.</li>
+<li>Làm 3 bài tập cuối bài, mở lời giải ở cuối.</li>
+<li>Trả lời Knowledge Check, đọc Interview Corner.</li>
+<li>Khi đọc <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a> hiểu từng dòng thì bạn đã sẵn sàng sang <a href="../02-maven-and-project/README.html">Phase 2</a>.</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../00-project-analysis.html"><small>← Bài trước</small><span>Báo cáo phân tích source code dự án</span></a><a class="next" href="00-environment-setup.html"><small>Bài tiếp theo →</small><span>Cài đặt môi trường</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

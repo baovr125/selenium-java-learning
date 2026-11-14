@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giáo trình Selenium Java — từ Java cơ bản đến Junior Automation Test Engineer · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="README" data-root="" data-lesson="0" data-title="Giáo trình Selenium Java — từ Java cơ bản đến Junior Automation Test Engineer">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<div id="dashboard" class="dashboard"></div>
+<h1 id="giáo-trình-selenium-java--từ-java-cơ-bản-đến-junior-automation-test-engineer">Giáo trình Selenium Java — từ Java cơ bản đến Junior Automation Test Engineer</h1>
+<blockquote>
+<p>Học theo phương pháp từng bài nhỏ: <strong>Learn → Understand → See Examples → Practice → Test Your Knowledge → Interview Preparation.</strong>
+Dựa trên source code thật của dự án <code>Selenium1</code> (Java 21, Selenium 4.52.0, TestNG 7.10.2, Maven 3.9.16 qua Wrapper 3.3.4).</p>
+</blockquote>
+<h2 id="-bản-web-khuyên-dùng-để-học">🌐 Bản web (khuyên dùng để học)</h2>
+<p>Mở file <a href="index.html">site/index.html</a> bằng trình duyệt (bấm đúp là chạy, không cần Internet). Bản web có thanh điều hướng theo phase, <strong>tìm kiếm toàn văn</strong> (gõ <code>/</code>), theo dõi tiến độ 3 trạng thái, kiểm tra kiến thức tương tác, nút Copy cho code, giao diện sáng/tối và dùng được trên điện thoại. Sinh lại sau khi sửa Markdown: <code>python docs/selenium-learning/tools/build_site.py</code> — xem <a href="../tools/README.md" class="ext" title="Chỉ có khi xem local">tools/README.md</a> (gồm cách đăng trực tuyến sau này).</p>
+<h2 id="bắt-đầu">Bắt đầu</h2>
+<ol>
+<li>Đọc <a href="LEARNING_ROADMAP.html">LEARNING_ROADMAP.md</a> — lộ trình 8 phase.</li>
+<li>Mở bài đầu tiên: <a href="01-java-fundamentals/00-environment-setup.html">Environment Setup</a> → <a href="01-java-fundamentals/01-getting-started.html">Java Getting Started</a>.</li>
+<li>Mỗi bài theo đúng thứ tự; cuối bài có link <strong>Bài tiếp theo</strong>.</li>
+<li>Đánh dấu tiến độ ở <a href="LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a>.</li>
+<li>Ôn phỏng vấn ở <a href="interview/README.html">interview/</a>.</li>
+</ol>
+<h2 id="một-bài-học-gồm-những-gì">Một bài học gồm những gì?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục</th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🎯 Learning Objectives</td>
+<td>Học xong làm được gì</td>
+</tr>
+<tr>
+<td>📋 Prerequisites</td>
+<td>Cần biết gì trước (kèm link)</td>
+</tr>
+<tr>
+<td>Concept → Syntax → Code Examples</td>
+<td>Khái niệm, cú pháp, ví dụ (Java chạy được kèm kết quả)</td>
+</tr>
+<tr>
+<td>Real-world Application</td>
+<td>Áp dụng trong Selenium/dự án <code>Selenium1</code></td>
+</tr>
+<tr>
+<td>Common Mistakes</td>
+<td>Lỗi người mới hay gặp</td>
+</tr>
+<tr>
+<td>✍️ Practice Exercises</td>
+<td>3 bài: Basic → Intermediate → Practical Application (Yêu cầu, Input, Expected Output, Hint)</td>
+</tr>
+<tr>
+<td>✅ Knowledge Check</td>
+<td>3 câu trắc nghiệm có đáp án + giải thích</td>
+</tr>
+<tr>
+<td>💼 Interview Corner</td>
+<td>2 câu phỏng vấn song ngữ + câu hỏi đào sâu</td>
+</tr>
+<tr>
+<td>📌 Lesson Summary</td>
+<td>Cần nhớ · Method/lệnh · Dễ nhầm · Bài tiếp theo</td>
+</tr>
+<tr>
+<td>🔑 Reference Solutions</td>
+<td>Lời giải <strong>ở cuối bài</strong> — tự làm trước!</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-phase">8 Phase</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Nội dung</th>
+<th>Thư mục</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Java Fundamentals (13 bài)</td>
+<td><a href="01-java-fundamentals/README.html">01-java-fundamentals/</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Maven, Maven Wrapper, làm việc nhóm (10 bài)</td>
+<td><a href="02-maven-and-project/README.html">02-maven-and-project/</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Selenium Fundamentals (11 bài)</td>
+<td><a href="03-selenium-fundamentals/README.html">03-selenium-fundamentals/</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Wait và Synchronization ⭐ (8 bài)</td>
+<td><a href="04-wait-mechanisms/README.html">04-wait-mechanisms/</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Testing Framework — TestNG (6 bài)</td>
+<td><a href="05-testing-framework/README.html">05-testing-framework/</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Page Object Model &amp; Framework Design (5 bài)</td>
+<td><a href="06-automation-framework/README.html">06-automation-framework/</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Git và Team Collaboration (4 bài)</td>
+<td><a href="07-git-and-team-workflow/README.html">07-git-and-team-workflow/</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Dự án thực tế + 8 Labs</td>
+<td><a href="08-practical-project/README.html">08-practical-project/</a></td>
+</tr>
+<tr>
+<td>—</td>
+<td>Phỏng vấn (7 bộ câu hỏi)</td>
+<td><a href="interview/README.html">interview/</a></td>
+</tr>
+<tr>
+<td>—</td>
+<td>Theo dõi tiến độ</td>
+<td><a href="progress/README.html">progress/</a> · <a href="LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a></td>
+</tr>
+<tr>
+<td>—</td>
+<td>Phân tích dự án gốc · Báo cáo cập nhật</td>
+<td><a href="00-project-analysis.html">00-project-analysis.md</a> · <a href="UPDATE_REPORT.html">UPDATE_REPORT.md</a></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="mức-ưu-tiên-ghi-ở-đầu-mỗi-bài">Mức ưu tiên (ghi ở đầu mỗi bài)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhãn</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Essential</strong></td>
+<td>Bắt buộc phải biết để làm automation</td>
+</tr>
+<tr>
+<td><strong>Important</strong></td>
+<td>Nên học</td>
+</tr>
+<tr>
+<td><strong>Optional</strong></td>
+<td>Có thể học sau</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="java--selenium">Java ↔ Selenium</h2>
+<p>Mỗi kiến thức Java đều có mục "Ứng dụng trong Selenium". Bảng tổng hợp: <a href="01-java-fundamentals/13-java-selenium-cheatsheet.html">Java ↔ Selenium ↔ POM cheatsheet</a>.</p>
+<h2 id="môi-trường-đã-dùng-để-kiểm-chứng">Môi trường đã dùng để kiểm chứng</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Giá trị</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OS</td>
+<td>Windows 11</td>
+</tr>
+<tr>
+<td>Java</td>
+<td>JDK 25.0.1 (mã biên dịch <code>--release 21</code>)</td>
+</tr>
+<tr>
+<td>Maven (Wrapper)</td>
+<td>3.9.16 · Wrapper 3.3.4 <code>only-script</code></td>
+</tr>
+<tr>
+<td>Selenium / TestNG</td>
+<td>4.52.0 / 7.10.2</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>2.49.0</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Độ tin cậy của ví dụ:</strong> 93 ví dụ Java của các bài Phase 1 (và lời giải bài tập) đã được biên dịch và chạy thật, kết quả khớp khối "output"; các đoạn Selenium/TestNG đã được biên dịch thử với classpath của dự án; các thao tác Selenium trên <code>the-internet.herokuapp.com</code> đã chạy thật trong bản sao dự án (xem <a href="UPDATE_REPORT.html#7-kiểm-chứng">UPDATE_REPORT.md</a>). Trang web là của bên thứ ba; nếu giao diện đổi, hãy tự điều chỉnh locator.</p>
+<h2 id="nguyên-tắc">Nguyên tắc</h2>
+<ul>
+<li>Tài liệu <strong>không sửa</strong> <code>src/</code>, <code>pom.xml</code>, <code>testng.xml</code>, <code>mvnw*</code>, <code>.mvn/</code>.</li>
+<li>Ví dụ mới (ngoài code dự án) là mã tham khảo: hãy tự chạy trong thư mục thực hành riêng (ví dụ <code>SeleniumLab</code>).</li>
+<li>Tham khảo W3Schools <strong>chỉ về phương pháp tổ chức bài học</strong>; nội dung tự viết, bám Selenium/dự án thật.</li>
+<li>Kiểm chứng kỹ thuật dựa trên tài liệu chính thức: <a href="https://docs.oracle.com/en/java/" target="_blank" rel="noopener">Java</a> · <a href="https://www.selenium.dev/documentation/" target="_blank" rel="noopener">Selenium</a> · <a href="https://maven.apache.org/guides/" target="_blank" rel="noopener">Maven</a> · <a href="https://maven.apache.org/wrapper/" target="_blank" rel="noopener">Maven Wrapper</a> · <a href="https://testng.org/" target="_blank" rel="noopener">TestNG</a>.</li>
+</ul>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="next" href="LEARNING_ROADMAP.html"><small>Bài tiếp theo →</small><span>Learning Roadmap — Selenium Java cho Junior Automation Test Engineer</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="assets/nav.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

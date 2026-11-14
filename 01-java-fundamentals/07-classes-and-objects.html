@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java: Classes và Objects (attributes, methods, constructors, this, modifiers, static) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="01-java-fundamentals/07-classes-and-objects" data-root="../" data-lesson="1" data-title="Java: Classes và Objects (attributes, methods, constructors, this, modifiers, static)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="java-classes-và-objects-attributes-methods-constructors-this-modifiers-static">Java: Classes và Objects (attributes, methods, constructors, <code>this</code>, modifiers, static)</h1>
+<blockquote>
+<p>🧭 Phase 1 · Java Fundamentals · Chapter 05
+⬅️ <a href="06-methods.html">Java: Methods (tham số, giá trị trả về, overloading, scope, recursion)</a> · ➡️ <a href="08-oop-concepts.html">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</a></p>
+<p>Chapter 05 · Mức ưu tiên: <strong>Essential</strong></p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OOP là gì</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Class, Object, <code>new</code></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Attributes (field) và Methods</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Constructors, <code>this</code></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>Access modifiers: <code>public</code>, <code>private</code>, <code>protected</code></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td><code>static</code> và non-static</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td><code>final</code> (field/class/method)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td><code>record</code> (class dữ liệu ngắn gọn, Java 16+)</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Inner class, anonymous class</td>
+<td>Optional</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Tạo class, object, attribute, method, constructor</li>
+<li>Dùng <code>this</code>, <code>private</code>, <code>public</code>, <code>protected</code></li>
+<li>Phân biệt <code>static</code> và non-static</li>
+<li>Mô phỏng một Page Object bằng class thường</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="06-methods.html">Methods</a></li>
+</ul>
+<h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
+<p><code>protected WebDriver driver;</code> (BaseTest), <code>new ChromeDriver()</code>, <code>new Actions(driver)</code>, và Page Object <code>new LoginPage(driver)</code>.</p>
+<h2 id="1-khái-niệm">1. Khái niệm</h2>
+<p><strong>OOP (Object-Oriented Programming)</strong> tổ chức chương trình thành các <strong>đối tượng</strong>, mỗi đối tượng gồm <strong>dữ liệu (attributes)</strong> và <strong>hành vi (methods)</strong>.</p>
+<ul>
+<li><strong>Class</strong> = bản thiết kế (ví dụ <code>LoginPage</code>).</li>
+<li><strong>Object</strong> = thực thể tạo từ class bằng <code>new</code> (ví dụ <code>new LoginPage(driver)</code>).</li>
+</ul>
+<p>Selenium cho bạn nhiều đối tượng sẵn: <code>WebDriver</code>, <code>WebElement</code>, <code>Actions</code>, <code>Select</code>. Khi viết <strong>Page Object Model</strong>, bạn tự tạo class cho mỗi trang.</p>
+<h2 id="2-syntax">2. Syntax</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">User</span><span class="w"> </span><span class="p">{</span><span class="w">                           </span><span class="c1">// class</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">                      </span><span class="c1">// attribute (field), private = đóng gói</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">User</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">       </span><span class="c1">// constructor: tên = tên class, không có kiểu trả về</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">                     </span><span class="c1">// this: đối tượng hiện tại</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">                 </span><span class="c1">// method</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">User</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">User</span><span class="p">(</span><span class="s">&quot;Tom&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="p">);</span><span class="w">                 </span><span class="c1">// tạo object</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">u</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w">              </span><span class="c1">// gọi method qua object</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Attribute (field)</td>
+<td>Biến thuộc object; lưu trạng thái</td>
+</tr>
+<tr>
+<td>Method</td>
+<td>Hành vi của object</td>
+</tr>
+<tr>
+<td>Constructor</td>
+<td>Chạy <strong>một lần khi <code>new</code></strong> để khởi tạo; nếu không viết, Java tự thêm constructor rỗng</td>
+</tr>
+<tr>
+<td><code>this</code></td>
+<td>Tham chiếu tới object đang chạy; phân biệt field với tham số cùng tên</td>
+</tr>
+<tr>
+<td><code>new</code></td>
+<td>Tạo object, gọi constructor</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Access modifiers</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Cùng class</th>
+<th>Cùng package</th>
+<th>Class con</th>
+<th>Mọi nơi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td><code>protected</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✖</td>
+</tr>
+<tr>
+<td>(mặc định)</td>
+<td>✔</td>
+<td>✔</td>
+<td>✖ (khác package)</td>
+<td>✖</td>
+</tr>
+<tr>
+<td><code>private</code></td>
+<td>✔</td>
+<td>✖</td>
+<td>✖</td>
+<td>✖</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong><code>static</code> vs non-static</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>static</code></th>
+<th>non-static (instance)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thuộc về</td>
+<td>Class</td>
+<td>Từng object</td>
+</tr>
+<tr>
+<td>Gọi</td>
+<td><code>ClassName.member</code></td>
+<td><code>object.member</code></td>
+</tr>
+<tr>
+<td>Ví dụ</td>
+<td><code>Assert.assertEquals(...)</code>, <code>Duration.ofSeconds(15)</code></td>
+<td><code>driver.get(url)</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
+<h3 id="ví-dụ-1--class-testresult">Ví dụ 1 — Class <code>TestResult</code></h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">TestResult</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">                    </span><span class="c1">// field mặc định (package-private)</span>
+<span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="n">passed</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">print</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; -&gt; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">passed</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;PASS&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s">&quot;FAIL&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TestResult</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TestResult</span><span class="p">();</span>
+<span class="w">        </span><span class="n">r</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;testLoginSuccess&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">r</span><span class="p">.</span><span class="na">passed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">        </span><span class="n">r</span><span class="p">.</span><span class="na">print</span><span class="p">();</span>
+
+<span class="w">        </span><span class="n">TestResult</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TestResult</span><span class="p">();</span><span class="w">   </span><span class="c1">// object thứ hai, dữ liệu riêng</span>
+<span class="w">        </span><span class="n">r2</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;testDropdown&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">r2</span><span class="p">.</span><span class="na">print</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">testLoginSuccess -&gt; PASS
+testDropdown -&gt; FAIL</code></pre></div>
+<p>(<code>passed</code> mặc định <code>false</code>.)</p>
+<h3 id="ví-dụ-2--constructor-this-private--getter">Ví dụ 2 — Constructor, <code>this</code>, <code>private</code> + getter</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">LoginData</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">LoginData</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">username</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">password</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">getUsername</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">username</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isPasswordEmpty</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">password</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">LoginData</span><span class="w"> </span><span class="n">valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LoginData</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">LoginData</span><span class="w"> </span><span class="n">empty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LoginData</span><span class="p">(</span><span class="s">&quot;nobody&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">valid</span><span class="p">.</span><span class="na">getUsername</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">valid</span><span class="p">.</span><span class="na">isPasswordEmpty</span><span class="p">());</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">empty</span><span class="p">.</span><span class="na">getUsername</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">empty</span><span class="p">.</span><span class="na">isPasswordEmpty</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">// valid.password = &quot;x&quot;;   // ❌ password là private</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">tomsmith false
+nobody true</code></pre></div>
+<h3 id="ví-dụ-3--static-và-non-static">Ví dụ 3 — <code>static</code> và non-static</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">Counter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">totalClicks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">     </span><span class="c1">// dùng chung cho mọi object</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">myClicks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">               </span><span class="c1">// riêng từng object</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">click</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">myClicks</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="n">totalClicks</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">describe</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">      </span><span class="c1">// method static: không truy cập myClicks</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;tổng click = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">totalClicks</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Counter</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Counter</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Counter</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Counter</span><span class="p">();</span>
+<span class="w">        </span><span class="n">a</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="na">myClicks</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">myClicks</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">Counter</span><span class="p">.</span><span class="na">describe</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">2 1
+tổng click = 3</code></pre></div>
+<h3 id="ví-dụ-4--mô-phỏng-một-page-object-không-cần-selenium">Ví dụ 4 — Mô phỏng một Page Object (không cần Selenium)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">FakeDriver</span><span class="w"> </span><span class="p">{</span><span class="w">                                   </span><span class="c1">// thay cho WebDriver, chỉ để học cú pháp</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">currentUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">currentUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">url</span><span class="p">;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;get &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">url</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">type</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">locator</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;type &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">locator</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">click</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">locator</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;click &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">locator</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">FakeDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">                 </span><span class="c1">// field private</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">usernameInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;#username&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">passwordInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;#password&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">loginButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">FakeDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// constructor nhận driver</span>
+
+<span class="w">    </span><span class="n">LoginPage</span><span class="w"> </span><span class="nf">open</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">loginAs</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">type</span><span class="p">(</span><span class="n">usernameInput</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">type</span><span class="p">(</span><span class="n">passwordInput</span><span class="p">,</span><span class="w"> </span><span class="n">pass</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">click</span><span class="p">(</span><span class="n">loginButton</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">FakeDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FakeDriver</span><span class="p">();</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">open</span><span class="p">().</span><span class="na">loginAs</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">get https://the-internet.herokuapp.com/login
+type #username = tomsmith
+type #password = SuperSecretPassword!
+click button[type=&#39;submit&#39;]</code></pre></div>
+<p>Đây chính là hình dạng của Page Object: field <code>private</code> (locator), constructor nhận <code>driver</code>, method theo hành vi nghiệp vụ, trả <code>this</code>/page tiếp theo.</p>
+<h2 id="4-ứng-dụng-trong-selenium-real-world">4. Ứng dụng trong Selenium (Real-world)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kiến thức</th>
+<th>Ví dụ trong dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Class + kế thừa</td>
+<td><code>public class BaseTest</code> rồi <code>Exercise01_LoginTest extends BaseTest</code></td>
+</tr>
+<tr>
+<td>Field <code>protected</code></td>
+<td><code>protected WebDriver driver; protected WebDriverWait wait;</code> (<code>BaseTest</code>) — class con khác package vẫn dùng được</td>
+</tr>
+<tr>
+<td><code>private static final</code></td>
+<td><code>private static final String LOGIN_URL = ...</code> (mọi Exercise)</td>
+</tr>
+<tr>
+<td>Constructor gọi từ API</td>
+<td><code>new ChromeDriver()</code>, <code>new WebDriverWait(driver, Duration.ofSeconds(15))</code>, <code>new Actions(driver)</code>, <code>new Select(element)</code></td>
+</tr>
+<tr>
+<td><code>static</code> method</td>
+<td><code>Assert.assertEquals(...)</code>, <code>ExpectedConditions.visibilityOfElementLocated(...)</code>, <code>main(String[] args)</code></td>
+</tr>
+<tr>
+<td>non-static</td>
+<td><code>driver.get(...)</code>, <code>element.click()</code></td>
+</tr>
+<tr>
+<td><code>this</code></td>
+<td><code>this.driver = driver;</code> trong constructor Page Object</td>
+</tr>
+</tbody>
+</table></div>
+<p>⚠️ <code>main</code> là <code>static</code> nên muốn gọi <code>setup()</code> (non-static) phải tạo object — đó là lý do mỗi Exercise có <code>Exercise01_LoginTest test = new Exercise01_LoginTest(); test.setup();</code>.</p>
+<p>Không dùng <code>static WebDriver driver</code> rồi chạy song song: mọi test dùng chung một driver, giẫm lên nhau (dùng <code>ThreadLocal</code>, xem <a href="11-lambda-and-generics.html">Lambda và Generics</a>).</p>
+<h2 id="5-lỗi-thường-gặp">5. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NullPointerException</code> khi dùng <code>driver</code> trong Page</td>
+<td>Quên gán trong constructor</td>
+<td><code>this.driver = driver;</code></td>
+</tr>
+<tr>
+<td><code>non-static ... cannot be referenced from a static context</code></td>
+<td>Gọi member non-static từ <code>static</code></td>
+<td>Tạo object hoặc đổi thiết kế</td>
+</tr>
+<tr>
+<td>Field <code>private</code> bị truy cập từ test</td>
+<td>Vi phạm đóng gói</td>
+<td>Cung cấp method <code>public</code></td>
+</tr>
+<tr>
+<td>Nhầm tên tham số với field (không dùng <code>this</code>)</td>
+<td><code>name = name;</code> gán biến cho chính nó</td>
+<td><code>this.name = name;</code></td>
+</tr>
+<tr>
+<td>Constructor có <code>void</code></td>
+<td>Trở thành method thường</td>
+<td>Bỏ <code>void</code></td>
+</tr>
+<tr>
+<td>Quên <code>new</code></td>
+<td>Biến vẫn <code>null</code></td>
+<td><code>Page p = new Page(driver);</code></td>
+</tr>
+<tr>
+<td>Lạm dụng <code>static</code></td>
+<td>Trạng thái dùng chung gây lỗi khi song song</td>
+<td>Ưu tiên instance</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Tạo class <code>TestCase</code> có <code>name</code>, <code>priority</code> và method <code>print()</code>; tạo hai object và in.</p>
+<p><strong>Input:</strong> name="TC_LOGIN_01", priority="High"</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">TC_LOGIN_01 [High]
+TC_CHK_01 [Medium]</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Field + method + <code>new</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết lại bằng constructor, field <code>private final</code>, getter và <code>isHighPriority()</code>.</p>
+<p><strong>Input:</strong> <code>new TestCase("TC_LOGIN_01", "High")</code></p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">TC_LOGIN_01 true</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>this.name = name;</code></p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>CheckboxPage</code> giả lập: field <code>private boolean checked</code>, method <code>ensureChecked()</code> chỉ "click" khi chưa tick (đếm số lần click bằng field <code>static</code>).</p>
+<p><strong>Input:</strong> Gọi <code>ensureChecked()</code> hai lần trên checkbox ban đầu chưa tick</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">true clicks=1</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Idempotent: kiểm tra trạng thái trước khi click.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Constructor có đặc điểm nào?</p>
+<ul>
+<li>A. Có kiểu trả về <code>void</code></li>
+<li>B. Trùng tên class, không có kiểu trả về</li>
+<li>C. Phải là <code>static</code></li>
+<li>D. Chỉ chạy một lần trong cả chương trình</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Constructor trùng tên class và không có kiểu trả về.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>protected</code> cho phép truy cập từ đâu?</p>
+<ul>
+<li>A. Chỉ cùng class</li>
+<li>B. Cùng package và class con</li>
+<li>C. Mọi nơi</li>
+<li>D. Chỉ class con cùng package</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>protected</code> = cùng package + class con (kể cả khác package).</p>
+</details>
+<p><strong>Câu 3.</strong> Vì sao <code>main</code> (static) phải <code>new</code> object mới gọi được <code>setup()</code>?</p>
+<ul>
+<li>A. Vì <code>setup()</code> là <code>private</code></li>
+<li>B. Vì member non-static thuộc từng object</li>
+<li>C. Vì TestNG yêu cầu</li>
+<li>D. Không phải</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Member non-static cần có object.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is the difference between a class and an object?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Class khác object thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> A class is a blueprint that defines attributes and methods; an object is an instance created with <code>new</code>.</li>
+<li><strong>Giải thích (VI):</strong> <code>LoginPage</code> là class; <code>new LoginPage(driver)</code> là object.</li>
+<li><strong>Follow-up:</strong> <em>What does <code>this</code> refer to?</em></li>
+</ul>
+<p><strong>2. Why is <code>protected WebDriver driver</code> used in BaseTest?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao <code>driver</code> là <code>protected</code>?</li>
+<li><strong>Suggested answer (EN):</strong> Subclasses in other packages, like the test classes, need to use it, while it stays hidden from unrelated classes; package-private would not be visible across packages.</li>
+<li><strong>Giải thích (VI):</strong> Đúng với dự án: <code>base.BaseTest</code> và <code>tests.Exercise...</code>.</li>
+<li><strong>Follow-up:</strong> <em>What if it were private?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Class = bản thiết kế, object = thực thể (<code>new</code>)</li>
+<li>Constructor khởi tạo; <code>this</code> là object hiện tại</li>
+<li><code>private</code> giấu dữ liệu; <code>static</code> thuộc class</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>new</code>, <code>this</code>, <code>static</code>, <code>final</code>, <code>private/protected/public</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>static</code> ≠ instance</li>
+<li>Quên <code>this.</code> khi tham số trùng tên field</li>
+<li>Constructor không có kiểu trả về</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="08-oop-concepts.html">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">TestCase</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">priority</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">print</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; [&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;]&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TestCase</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TestCase</span><span class="p">();</span>
+<span class="w">        </span><span class="n">a</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;TC_LOGIN_01&quot;</span><span class="p">;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;High&quot;</span><span class="p">;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="na">print</span><span class="p">();</span>
+<span class="w">        </span><span class="n">TestCase</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TestCase</span><span class="p">();</span>
+<span class="w">        </span><span class="n">b</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;TC_CHK_01&quot;</span><span class="p">;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Medium&quot;</span><span class="p">;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="na">print</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">TC_LOGIN_01 [High]
+TC_CHK_01 [Medium]</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">TestCase</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">priority</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">TestCase</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">priority</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">priority</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">getName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isHighPriority</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">priority</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;High&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TestCase</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TestCase</span><span class="p">(</span><span class="s">&quot;TC_LOGIN_01&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;High&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="na">isHighPriority</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">TC_LOGIN_01 true</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">CheckboxPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">totalClicks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">checked</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">CheckboxPage</span><span class="p">(</span><span class="kt">boolean</span><span class="w"> </span><span class="n">initial</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">checked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">initial</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ensureChecked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checked</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">checked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">            </span><span class="n">totalClicks</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isChecked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">checked</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">CheckboxPage</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CheckboxPage</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">        </span><span class="n">page</span><span class="p">.</span><span class="na">ensureChecked</span><span class="p">();</span>
+<span class="w">        </span><span class="n">page</span><span class="p">.</span><span class="na">ensureChecked</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">page</span><span class="p">.</span><span class="na">isChecked</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; clicks=&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">CheckboxPage</span><span class="p">.</span><span class="na">totalClicks</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">true clicks=1</code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-methods.html"><small>← Bài trước</small><span>Java: Methods (tham số, giá trị trả về, overloading, scope, recursion)</span></a><a class="next" href="08-oop-concepts.html"><small>Bài tiếp theo →</small><span>Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/07-classes-and-objects.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

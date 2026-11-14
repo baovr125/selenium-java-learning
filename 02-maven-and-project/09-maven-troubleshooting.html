@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/09-maven-troubleshooting" data-root="../" data-lesson="1" data-title="Troubleshooting">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="troubleshooting">Troubleshooting</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 12 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="08-working-in-team.html">Quy trình làm việc với Maven trong team</a> · ➡️ <a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium là gì?</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="04-maven-wrapper-in-team-and-git.html#3-các-lỗi-thường-gặp">Wrapper &amp; lỗi</a> · <a href="07-build-and-test-execution.html">Build &amp; test</a> · <a href="../interview/maven-interview.html">Phỏng vấn: troubleshoot</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Áp dụng phương pháp 5 bước để đọc lỗi Maven</li>
+<li>Nhận diện nhóm lỗi theo plugin/goal</li>
+<li>Tra bảng nguyên nhân – kiểm tra – khắc phục</li>
+<li>Biết khi nào và xoá gì trong cache</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="05-maven-lifecycle.html">Maven Lifecycle</a></li>
+<li><a href="03-maven-wrapper.html">Maven Wrapper</a></li>
+</ul>
+<h2 id="1-phương-pháp-chung-5-bước">1. Phương pháp chung (5 bước)</h2>
+<ol>
+<li><strong>Đọc dòng <code>[ERROR]</code> đầu tiên</strong> (không phải dòng cuối). Dòng quan trọng nhất có dạng <code>Failed to execute goal &lt;plugin&gt;:&lt;version&gt;:&lt;goal&gt; (id) on project ...: &lt;nguyên nhân&gt;</code>.</li>
+<li><strong>Xác định plugin/goal nào lỗi</strong> → biết lỗi thuộc nhóm nào:</li>
+</ol>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Goal lỗi</th>
+<th>Nhóm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compiler:compile</code> / <code>testCompile</code></td>
+<td>Lỗi biên dịch (cú pháp, thiếu thư viện, sai Java version)</td>
+</tr>
+<tr>
+<td><code>surefire:test</code></td>
+<td>Test fail/error hoặc Surefire không khởi động được</td>
+</tr>
+<tr>
+<td><code>resources:...</code></td>
+<td>Lỗi copy tài nguyên/encoding</td>
+</tr>
+<tr>
+<td><code>dependency:...</code></td>
+<td>Phân giải dependency</td>
+</tr>
+<tr>
+<td>(không có goal, lỗi trước đó)</td>
+<td><code>pom.xml</code> sai hoặc Wrapper/JDK</td>
+</tr>
+</tbody>
+</table></div>
+<ol start="3">
+<li><strong>Thu thập thêm thông tin:</strong> <code>-e</code> (stacktrace), <code>-X</code> (debug), <code>-B -q</code>, <code>MVNW_VERBOSE=true</code>.</li>
+<li><strong>Thu hẹp:</strong> <code>test-compile</code> trước, rồi một test (<code>-Dtest=Class#method</code>), rồi cả suite.</li>
+<li><strong>Làm sạch có chủ đích:</strong> <code>clean</code>; xoá artifact hỏng trong Local Repository; không xoá bừa.</li>
+</ol>
+<h2 id="2-bảng-lỗi-nguyên-nhân--kiểm-tra--khắc-phục">2. Bảng lỗi: nguyên nhân – kiểm tra – khắc phục</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Triệu chứng</th>
+<th>Nguyên nhân</th>
+<th>Kiểm tra</th>
+<th>Khắc phục</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>'.\mvnw.cmd' is not recognized</code></td>
+<td>Sai thư mục / thiếu <code>.\</code> / file mất</td>
+<td><code>Get-Location</code>, <code>Test-Path .\mvnw.cmd</code></td>
+<td><code>cd</code> đúng chỗ; dùng <code>.\mvnw.cmd</code>; khôi phục file từ Git</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>release version 21 not supported</code></td>
+<td>JDK &lt; 21</td>
+<td><code>java -version</code>, <code>.\mvnw.cmd -version</code></td>
+<td>Dùng JDK ≥ 21, đặt <code>JAVA_HOME</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>The JAVA_HOME environment variable is not defined correctly</code></td>
+<td><code>JAVA_HOME</code> trỏ sai</td>
+<td><code>echo $env:JAVA_HOME</code>, <code>Test-Path "$env:JAVA_HOME\bin\javac.exe"</code></td>
+<td>Sửa hoặc xoá biến <code>JAVA_HOME</code> (khi để trống Maven dùng <code>java</code> trong <code>PATH</code>)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>Could not resolve dependencies ... Could not find artifact</code></td>
+<td>Sai tọa độ / phiên bản không tồn tại / chưa có mạng</td>
+<td>Kiểm tra GAV trên Maven Central, <code>ping repo.maven.apache.org</code></td>
+<td>Sửa tọa độ, bật mạng, <code>-U</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>Cannot access central ... in offline mode</code></td>
+<td>Dùng <code>-o</code> nhưng cache thiếu plugin/lib</td>
+<td>Bạn có gõ <code>-o</code>?</td>
+<td>Bỏ <code>-o</code> (cần mạng một lần). <em>Ví dụ thật:</em> <code>-o clean</code> thất bại vì chưa từng tải <code>maven-clean-plugin 3.2.0</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>Could not transfer artifact</code> / <code>Connection timed out</code></td>
+<td>Mạng, proxy, firewall</td>
+<td>Mở URL artifact bằng trình duyệt; xem <code>~/.m2/settings.xml</code></td>
+<td>Cấu hình proxy; dùng mirror; thử lại</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Wrapper không tải được Maven</td>
+<td>Mạng/proxy; URL sai</td>
+<td><code>MVNW_VERBOSE=true</code>; mở <code>distributionUrl</code></td>
+<td>Sửa mạng; <code>MVNW_REPOURL</code>; giải nén thủ công vào <code>~/.m2/wrapper/dists/...</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>Permission denied: ./mvnw</code></td>
+<td>Thiếu bit <code>x</code></td>
+<td><code>ls -l mvnw</code></td>
+<td><code>chmod +x mvnw</code>; <code>git update-index --chmod=+x mvnw</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>/bin/sh^M: bad interpreter</code></td>
+<td><code>mvnw</code> bị CRLF</td>
+<td><code>file mvnw</code></td>
+<td><code>dos2unix mvnw</code>; <code>.gitattributes</code>: <code>/mvnw text eol=lf</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>Nothing to compile - all classes are up to date</code></td>
+<td>Không có <code>src/main</code> (dự án này) hoặc không có file thay đổi</td>
+<td>Có thư mục <code>src/main/java</code> không?</td>
+<td><strong>Bình thường.</strong> Dùng <code>test-compile</code>/<code>test</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>Tests run: 0</code> rồi <code>BUILD SUCCESS</code></td>
+<td>Sai <code>-Dtest</code>, sai tên class, class không có <code>@Test</code>, sai thư mục</td>
+<td>Có dòng <code>Running tests.&lt;Class&gt;</code>?</td>
+<td>Sửa tên; xem <a href="07-build-and-test-execution.html#8-năm-trạng-thái-cần-phân-biệt">06</a></td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>Compilation failure: package org.testng does not exist</code></td>
+<td>Dependency thiếu/scope sai/ chưa tải</td>
+<td><code>dependency:tree</code></td>
+<td>Thêm dependency; kiểm tra scope và vị trí code</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>error: unmappable character for encoding</code> hoặc tiếng Việt thành <code>?</code></td>
+<td>Thiếu encoding</td>
+<td>Kiểm tra <code>project.build.sourceEncoding</code></td>
+<td>Đặt <code>UTF-8</code> (dự án đã có); <code>chcp 65001</code> cho console</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>SessionNotCreatedException</code> khi chạy test</td>
+<td>Chrome quá cũ/ driver không tải được</td>
+<td><code>chrome://version</code>; mạng</td>
+<td>Cập nhật Chrome; kiểm tra Internet</td>
+</tr>
+<tr>
+<td>15</td>
+<td><code>NoSuchMethodError</code> / <code>ClassNotFoundException</code> lúc chạy</td>
+<td>Xung đột phiên bản dependency</td>
+<td><code>dependency:tree -Dverbose</code></td>
+<td>Ghim version bằng <code>dependencyManagement</code>/exclusion (<a href="06-dependency-management.html">05</a>)</td>
+</tr>
+<tr>
+<td>16</td>
+<td><code>Failed to execute goal ...maven-resources-plugin... NoClassDefFoundError</code> (README của dự án)</td>
+<td><code>~/.m2</code> có file <code>.pom</code> giả/hỏng (khoảng 450 byte)</td>
+<td>Xem kích thước file <code>.pom</code> trong <code>~/.m2</code></td>
+<td>Dùng <code>mvnw.cmd</code> (đã dùng repo riêng <code>.mvn/repository</code>); hoặc xoá các file hỏng</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Test chạy mà nhiều tab <code>chrome.exe</code> còn sót</td>
+<td><code>quit()</code> không chạy (JVM bị kill)</td>
+<td>Task Manager</td>
+<td><code>taskkill /F /IM chromedriver.exe</code>; <code>taskkill /F /IM chrome.exe</code> (cẩn thận mất tab đang dùng)</td>
+</tr>
+<tr>
+<td>18</td>
+<td><code>.dumpstream</code>: <code>Boot Manifest-JAR contains absolute paths ... 'other' has different root</code></td>
+<td>Dự án và Maven/Local Repo ở <strong>khác ổ đĩa</strong></td>
+<td><code>*.dumpstream</code> trong <code>target/surefire-reports</code></td>
+<td>Chỉ cảnh báo; nếu muốn tắt: <code>&lt;argLine&gt;-Djdk.net.URLClassPath.disableClassPathURLCheck=true&lt;/argLine&gt;</code> trong Surefire</td>
+</tr>
+<tr>
+<td>19</td>
+<td><code>SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"</code></td>
+<td><code>slf4j-api</code> không có binding</td>
+<td>Dependency tree</td>
+<td>Vô hại; thêm <code>slf4j-simple</code> cùng dòng 1.7.x nếu muốn log</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Build lúc được lúc không</td>
+<td>Test flaky; mạng; SNAPSHOT/range</td>
+<td>Chạy lại, xem log, xem <code>Tests run</code></td>
+<td>Điều tra đồng bộ hoá (Wait); ghim version</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-cây-quyết-định-nhanh">3. Cây quyết định nhanh</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Gõ .\mvnw.cmd ... không chạy?
+ ├─ &quot;not recognized&quot; ........................ sai thư mục / thiếu .\
+ ├─ lỗi tải Maven ........................... mạng / proxy / URL            (#6,#7)
+ └─ chạy nhưng báo JAVA ..................... JDK/JAVA_HOME                 (#2,#3)
+
+Chạy nhưng BUILD FAILURE?
+ ├─ goal compiler ........................... cú pháp / thiếu lib / Java    (#2,#12,#13)
+ ├─ goal surefire, &quot;Tests run: N, Failures&quot;  test sai hoặc flaky            (selenium/09)
+ ├─ &quot;Could not resolve&quot; ..................... dependency / mạng             (#4,#5,#6)
+ └─ &quot;Tests run: 0&quot; + SUCCESS ................ test không chạy               (#11)</code></pre></div>
+<h2 id="4-công-cụ-chẩn-đoán">4. Công cụ chẩn đoán</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Mục đích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.\mvnw.cmd -version</code></td>
+<td>Maven + Java + OS đang dùng</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd -X test</code></td>
+<td>Log debug (rất dài; lọc bằng <code>Select-String</code>)</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd -e test</code></td>
+<td>Stacktrace lỗi</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd help:effective-pom</code></td>
+<td>POM sau khi gộp</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd help:effective-settings</code></td>
+<td><code>settings.xml</code> hiệu lực (proxy, mirror)</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd dependency:tree</code></td>
+<td>Cây phụ thuộc</td>
+</tr>
+<tr>
+<td><code>$env:MVNW_VERBOSE="true"</code></td>
+<td>Debug Wrapper</td>
+</tr>
+<tr>
+<td><code>Get-Content target\surefire-reports\*.dumpstream</code></td>
+<td>Lỗi hạ tầng Surefire</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-khi-nào-xoá-cache">5. Khi nào xoá cache?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Muốn làm</th>
+<th>Hành động</th>
+<th>Rủi ro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xoá build cũ</td>
+<td><code>clean</code> (xoá <code>target/</code>)</td>
+<td>Không</td>
+</tr>
+<tr>
+<td>Tải lại một artifact hỏng</td>
+<td>Xoá thư mục artifact trong <code>.mvn/repository/...</code></td>
+<td>Cần mạng để tải lại</td>
+</tr>
+<tr>
+<td>Tải lại toàn bộ thư viện</td>
+<td>Xoá <code>.mvn/repository</code></td>
+<td>Mất vài phút, không mất mã nguồn</td>
+</tr>
+<tr>
+<td>Tải lại Maven của Wrapper</td>
+<td>Xoá <code>~/.m2/wrapper/dists/apache-maven-3.9.16</code></td>
+<td>Tải lại ~9 MB</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Quy tắc an toàn: xoá <strong>đúng phạm vi nhỏ nhất</strong> có thể; đọc kỹ đường dẫn trước khi <code>Remove-Item -Recurse</code>.</p>
+</blockquote>
+<h2 id="6-cách-viết-báo-lỗi-tốt-cho-đồng-độimentor">6. Cách viết báo lỗi tốt cho đồng đội/mentor</h2>
+<ol>
+<li>Lệnh đã chạy (chính xác).</li>
+<li><code>.\mvnw.cmd -version</code> (3 dòng đầu).</li>
+<li><strong>Toàn bộ</strong> khối <code>[ERROR]</code> đầu tiên (không chụp màn hình cắt dở).</li>
+<li>Bạn đã thử gì.</li>
+<li>Thay đổi gần nhất (<code>git diff</code>).</li>
+</ol>
+<p>➡️ Quay lại: <a href="README.html">Mục lục Maven</a></p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Với dòng lỗi <code>Failed to execute goal ...maven-compiler-plugin...testCompile</code>, lỗi thuộc nhóm nào?</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Lỗi biên dịch code test</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Xem tên plugin/goal.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> <code>.\mvnw.cmd -o clean</code> báo <code>has not been downloaded from it before</code>. Nguyên nhân và cách sửa?</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Giải thích 2 câu</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>-o</code> = offline.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết mẫu báo lỗi tốt (5 mục) để gửi mentor.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 5 mục</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Lệnh, version, lỗi đầu tiên, đã thử, thay đổi gần nhất.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Dòng nào nên đọc đầu tiên trong log lỗi?</p>
+<ul>
+<li>A. Dòng cuối</li>
+<li>B. Dòng <code>[ERROR]</code> đầu tiên</li>
+<li>C. Dòng <code>[INFO]</code> đầu</li>
+<li>D. Không đọc</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Nó nêu plugin/goal lỗi.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>release version 21 not supported</code> nghĩa là?</p>
+<ul>
+<li>A. JDK thấp hơn 21</li>
+<li>B. Thiếu Chrome</li>
+<li>C. Thiếu mạng</li>
+<li>D. Sai TestNG</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Cần JDK ≥ 21.</p>
+</details>
+<p><strong>Câu 3.</strong> Cảnh báo <code>StaticLoggerBinder</code> có làm hỏng test không?</p>
+<ul>
+<li>A. Có</li>
+<li>B. Không, vô hại</li>
+<li>C. Chỉ trên Linux</li>
+<li>D. Làm test skipped</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>slf4j-api</code> không có binding; chỉ là cảnh báo.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you troubleshoot Maven build failures?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Xử lý lỗi build Maven?</li>
+<li><strong>Suggested answer (EN):</strong> Read the first <code>[ERROR]</code>, identify the failing plugin goal, rerun with <code>-e</code>/<code>-X</code>, narrow with <code>test-compile</code> or a single test, check <code>java -version</code> and <code>mvnw -version</code>, and clean only the broken artifacts.</li>
+<li><strong>Giải thích (VI):</strong> Quy trình 5 bước.</li>
+<li><strong>Follow-up:</strong> <em>Where do you look for test failures?</em></li>
+</ul>
+<p><strong>2. Tests fail but the Maven log is unclear. Where next?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Test fail nhưng log không rõ?</li>
+<li><strong>Suggested answer (EN):</strong> Open <code>target/surefire-reports</code> (<code>emailable-report.html</code>, <code>TestSuite.txt</code>, <code>.dumpstream</code>) for details.</li>
+<li><strong>Giải thích (VI):</strong> <code>.dumpstream</code> chứa cảnh báo hạ tầng.</li>
+<li><strong>Follow-up:</strong> <em>What does the 'Boot Manifest-JAR' warning mean?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>5 bước: đọc lỗi → xác định goal → thu thập → thu hẹp → làm sạch có chủ đích</li>
+<li>Nhóm lỗi: compiler / surefire / dependency / wrapper-JDK</li>
+<li>Xoá cache ở phạm vi nhỏ nhất</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>-e</code>, <code>-X</code>, <code>-B</code>, <code>-U</code>, <code>-o</code>, <code>help:effective-pom</code>, <code>help:effective-settings</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Lỗi biên dịch ≠ test fail</li>
+<li><code>JAVA_HOME</code> trống (OK) ≠ sai (lỗi)</li>
+<li><code>-o</code> thiếu cache gây lỗi tải</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium là gì?</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>Nhóm <strong>biên dịch</strong> (cú pháp, thiếu thư viện, sai Java version) — không phải test fail.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<p>Plugin <code>maven-clean-plugin 3.2.0</code> chưa từng tải về nên offline không có. Bỏ <code>-o</code> (cần mạng một lần). Đã tái hiện trên dự án.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Lệnh chạy chính xác. 2. <code>.\mvnw.cmd -version</code>. 3. Toàn bộ khối <code>[ERROR]</code> đầu tiên. 4. Những gì đã thử. 5. <code>git diff</code> thay đổi gần nhất.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="08-working-in-team.html"><small>← Bài trước</small><span>Quy trình làm việc với Maven trong team</span></a><a class="next" href="../03-selenium-fundamentals/README.html"><small>Bài tiếp theo →</small><span>Phase 3 — Selenium Fundamentals (Chapter 13–18)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/09-maven-troubleshooting.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

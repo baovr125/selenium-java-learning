@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo cáo phân tích source code dự án · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="00-project-analysis" data-root="" data-lesson="0" data-title="Báo cáo phân tích source code dự án">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="báo-cáo-phân-tích-source-code-dự-án">Báo cáo phân tích source code dự án</h1>
+<blockquote>
+<p>Tài liệu này là <strong>kết quả đọc source code thật</strong> của dự án <code>b:\Fresher\Selenium1</code> (không phải lý thuyết chung).
+Mọi con số phiên bản bên dưới lấy từ <code>pom.xml</code>, <code>.mvn/wrapper/maven-wrapper.properties</code> và kết quả chạy lệnh <code>mvnw.cmd</code> trên máy ngày 14/11/2026.
+Liên quan: <a href="LEARNING_ROADMAP.html">Lộ trình học</a> · <a href="02-maven-and-project/README.html">Maven</a> · <a href="03-selenium-fundamentals/README.html">Selenium</a></p>
+</blockquote>
+<h2 id="mục-lục">Mục lục</h2>
+<ol>
+<li><a href="#1-tóm-tắt-nhanh">Tóm tắt nhanh</a></li>
+<li><a href="#2-công-nghệ-và-phiên-bản">Công nghệ và phiên bản</a></li>
+<li><a href="#3-cấu-trúc-thư-mục">Cấu trúc thư mục</a></li>
+<li><a href="#4-các-file-maven-và-maven-wrapper">Các file Maven và Maven Wrapper</a></li>
+<li><a href="#5-kiến-trúc-test">Kiến trúc test</a></li>
+<li><a href="#6-phân-tích-từng-class-và-method-quan-trọng">Phân tích từng class và method quan trọng</a></li>
+<li><a href="#7-selenium-api-đang-được-sử-dụng">Selenium API đang được sử dụng</a></li>
+<li><a href="#8-cách-chạy-test-và-kết-quả-đã-kiểm-chứng">Cách chạy test và kết quả đã kiểm chứng</a></li>
+<li><a href="#9-điểm-mạnh-của-dự-án">Điểm mạnh của dự án</a></li>
+<li><a href="#10-vấn-đề-phát-hiện-được-và-đề-xuất">Vấn đề phát hiện được và đề xuất</a></li>
+<li><a href="#11-những-gì-dự-án-chưa-có">Những gì dự án CHƯA có</a></li>
+</ol>
+<hr />
+<h2 id="1-tóm-tắt-nhanh">1. Tóm tắt nhanh</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Trả lời (đã xác minh)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Build tool?</td>
+<td><strong>Maven</strong> (<code>pom.xml</code>), chạy qua <strong>Maven Wrapper</strong> <code>mvnw</code> / <code>mvnw.cmd</code>. Không có Gradle.</td>
+</tr>
+<tr>
+<td>Testing framework?</td>
+<td><strong>TestNG 7.10.2</strong>. Không có JUnit.</td>
+</tr>
+<tr>
+<td>Selenium?</td>
+<td><strong>4.52.0</strong> (<code>selenium-java</code>, scope <code>test</code>).</td>
+</tr>
+<tr>
+<td>Java?</td>
+<td>Mã nguồn biên dịch với <code>maven.compiler.release=21</code>. Máy hiện tại cài <strong>JDK 25.0.1</strong> (chạy được vì <code>--release 21</code> cho phép JDK mới hơn biên dịch ra mức 21).</td>
+</tr>
+<tr>
+<td>Mô hình thiết kế?</td>
+<td><code>BaseTest</code> + 10 Test Class kế thừa. <strong>Chưa có Page Object Model.</strong></td>
+</tr>
+<tr>
+<td>Website được test?</td>
+<td><code>https://the-internet.herokuapp.com</code> (trang luyện tập công khai).</td>
+</tr>
+<tr>
+<td>Trình duyệt?</td>
+<td>Chỉ <strong>Chrome</strong> (<code>new ChromeDriver()</code>), driver do <strong>Selenium Manager</strong> tự tải (không dùng WebDriverManager).</td>
+</tr>
+<tr>
+<td>Git?</td>
+<td>Thư mục <strong>hiện chưa phải Git repository</strong> (không có <code>.git</code>), nhưng đã có <code>.gitignore</code>. Máy có Git 2.49.0.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-công-nghệ-và-phiên-bản">2. Công nghệ và phiên bản</h2>
+<p>Nguồn: <a href="../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a>, <a href="../../../.mvn/wrapper/maven-wrapper.properties" class="ext" title="File của dự án (chỉ mở được khi xem local)">maven-wrapper.properties</a>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Phiên bản</th>
+<th>Khai báo ở đâu</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java (mức biên dịch)</td>
+<td>21</td>
+<td><code>&lt;maven.compiler.release&gt;21&lt;/maven.compiler.release&gt;</code></td>
+<td>Cần JDK ≥ 21</td>
+</tr>
+<tr>
+<td>Java (máy đang dùng)</td>
+<td>25.0.1 (Oracle)</td>
+<td>lệnh <code>java -version</code>, <code>mvnw.cmd -version</code></td>
+<td><code>JAVA_HOME</code> <strong>đang trống</strong>, Java lấy từ <code>PATH</code></td>
+</tr>
+<tr>
+<td>Maven (qua Wrapper)</td>
+<td><strong>3.9.16</strong></td>
+<td><code>distributionUrl</code> trong <code>maven-wrapper.properties</code></td>
+<td>Tải về <code>C:\Users\&lt;tên&gt;\.m2\wrapper\dists\apache-maven-3.9.16\...</code></td>
+</tr>
+<tr>
+<td>Maven Wrapper</td>
+<td><strong>3.3.4</strong>, <code>distributionType=only-script</code></td>
+<td><code>wrapperVersion=3.3.4</code></td>
+<td>Không có <code>maven-wrapper.jar</code></td>
+</tr>
+<tr>
+<td>Selenium</td>
+<td>4.52.0</td>
+<td><code>&lt;selenium.version&gt;</code></td>
+<td>scope <code>test</code></td>
+</tr>
+<tr>
+<td>TestNG</td>
+<td>7.10.2</td>
+<td><code>&lt;testng.version&gt;</code></td>
+<td>scope <code>test</code></td>
+</tr>
+<tr>
+<td>maven-compiler-plugin</td>
+<td>3.13.0</td>
+<td><code>&lt;build&gt;&lt;plugins&gt;</code></td>
+<td>khai báo tường minh</td>
+</tr>
+<tr>
+<td>maven-surefire-plugin</td>
+<td>3.5.2</td>
+<td><code>&lt;build&gt;&lt;plugins&gt;</code></td>
+<td><code>suiteXmlFile = testng.xml</code></td>
+</tr>
+<tr>
+<td>maven-dependency-plugin</td>
+<td>3.7.0</td>
+<td>không khai báo (Maven tự chọn bản mặc định)</td>
+<td><code>run-test.ps1</code> dùng <code>dependency:build-classpath</code></td>
+</tr>
+<tr>
+<td>Selenium Manager</td>
+<td>4.52.0 (kèm trong <code>selenium-manager-4.52.0.jar</code>)</td>
+<td>transitive</td>
+<td>Tự tải ChromeDriver</td>
+</tr>
+<tr>
+<td>SLF4J</td>
+<td>1.7.36 (không có binding)</td>
+<td>transitive qua TestNG</td>
+<td>Gây cảnh báo <code>Failed to load class StaticLoggerBinder</code> — vô hại</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Cây dependency thật</strong> (<code>.\mvnw.cmd dependency:tree</code>): <code>selenium-java</code> kéo theo ~40 jar (Chrome/Edge/Firefox/IE/Safari driver, <code>selenium-support</code>, <code>guava</code>, <code>opentelemetry-*</code>, <code>byte-buddy</code>...). <code>testng</code> kéo theo <code>slf4j-api</code>, <code>jcommander</code>, <code>jquery</code> (webjar). Chi tiết giải thích ở <a href="02-maven-and-project/06-dependency-management.html">maven/05-dependency-management.md</a>.</p>
+<h2 id="3-cấu-trúc-thư-mục">3. Cấu trúc thư mục</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Selenium1/
+├── pom.xml                      # Khai báo dependency + plugin
+├── testng.xml                   # Suite: danh sách 10 class bài tập
+├── mvnw, mvnw.cmd               # Maven Wrapper (Linux/macOS, Windows)
+├── .mvn/
+│   ├── wrapper/maven-wrapper.properties   # Phiên bản Maven + URL tải
+│   ├── maven.config             # -Dmaven.repo.local=.mvn/repository
+│   └── repository/              # Local repository RIÊNG của dự án (đã gitignore)
+├── run-test.ps1 / run-test.bat  # Script biên dịch + chạy 1 class bằng javac/java (không qua surefire)
+├── .vscode/tasks.json, launch.json
+├── de.md                        # Đề bài 10 exercise
+├── README.md, HUONG_DAN_LAM_LAI.md   # Hướng dẫn có sẵn của dự án
+├── ket-qua/emailable-report.html     # Báo cáo mẫu 10/10 pass
+├── target/, test-output/        # Sinh tự động (gitignore)
+└── src/test/java/
+    ├── base/BaseTest.java
+    └── tests/
+        ├── Exercise01_LoginTest.java ... Exercise10_DynamicControlsTest.java
+        ├── AllExercisesTest.java      # main() chạy testng.xml bằng code
+        └── EnvironmentCheckTest.java  # Kiểm tra môi trường</code></pre></div>
+<p><strong>Điểm đặc biệt cần hiểu:</strong> không có thư mục <code>src/main/java</code>. Toàn bộ code nằm trong <code>src/test/java</code> vì dự án chỉ là mã kiểm thử. Hệ quả đã xác minh: <code>.\mvnw.cmd compile</code> luôn in <code>Nothing to compile - all classes are up to date</code> — phase <code>compile</code> chỉ biên dịch <code>src/main</code>; muốn biên dịch code test phải dùng <code>test-compile</code> (hoặc <code>test</code>). Xem <a href="02-maven-and-project/05-maven-lifecycle.html">maven/04</a>.</p>
+<h2 id="4-các-file-maven-và-maven-wrapper">4. Các file Maven và Maven Wrapper</h2>
+<p>Bạn yêu cầu không giả định file nào tồn tại, nên đây là kết quả kiểm tra thực tế:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File / thư mục</th>
+<th>Tồn tại?</th>
+<th>Nội dung / vai trò</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pom.xml</code></td>
+<td>✅</td>
+<td>2 dependency, 2 plugin, không có <code>dependencyManagement</code>, không có <code>repositories</code></td>
+</tr>
+<tr>
+<td><code>mvnw</code></td>
+<td>✅ (11.790 byte)</td>
+<td>Script <code>sh</code> cho Linux/macOS/Git Bash, phiên bản wrapper 3.3.4</td>
+</tr>
+<tr>
+<td><code>mvnw.cmd</code></td>
+<td>✅ (8.481 byte)</td>
+<td>Script batch nhúng PowerShell, tải Maven bằng <code>System.Net.WebClient</code></td>
+</tr>
+<tr>
+<td><code>.mvn/</code></td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td><code>.mvn/wrapper/</code></td>
+<td>✅</td>
+<td>chỉ có <code>maven-wrapper.properties</code></td>
+</tr>
+<tr>
+<td><code>.mvn/wrapper/maven-wrapper.properties</code></td>
+<td>✅</td>
+<td><code>wrapperVersion=3.3.4</code>, <code>distributionType=only-script</code>, <code>distributionUrl=.../apache-maven-3.9.16-bin.zip</code></td>
+</tr>
+<tr>
+<td><code>.mvn/wrapper/maven-wrapper.jar</code></td>
+<td>❌ <strong>không có</strong></td>
+<td>Đúng với <code>only-script</code> — script tự tải bằng PowerShell/curl/wget, không cần jar</td>
+</tr>
+<tr>
+<td><code>.mvn/maven.config</code></td>
+<td>✅</td>
+<td><code>-Dmaven.repo.local=.mvn/repository</code> → đổi Local Repository về trong dự án</td>
+</tr>
+<tr>
+<td><code>.mvn/jvm.config</code></td>
+<td>❌</td>
+<td>không có</td>
+</tr>
+<tr>
+<td><code>distributionSha256Sum</code></td>
+<td>❌</td>
+<td>không khai báo ⇒ Wrapper <strong>không</strong> kiểm tra checksum bản Maven tải về</td>
+</tr>
+</tbody>
+</table></div>
+<p>Giải thích sâu: <a href="02-maven-and-project/03-maven-wrapper.html">maven/03-maven-wrapper-mvnw.md</a>.</p>
+<h2 id="5-kiến-trúc-test">5. Kiến trúc test</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">   testng.xml  ──(surefire đọc)──►  10 class tests.ExerciseXX_*Test
+                                              │ extends
+                                              ▼
+                                    base.BaseTest
+                          @BeforeMethod setup()  → new ChromeDriver(), maximize, pageLoadTimeout(30s), WebDriverWait(15s)
+                          @AfterMethod  tearDown() → driver.quit()</code></pre></div>
+<ul>
+<li><strong>Mỗi <code>@Test</code> = một lần mở Chrome mới</strong> (vì <code>@BeforeMethod</code>). An toàn (test độc lập) nhưng chậm: cả bộ 10 test mất ~91 giây (xem <code>target/surefire-reports/TestSuite.txt</code>).</li>
+<li><code>driver</code> và <code>wait</code> là field <code>protected</code> của <code>BaseTest</code> → class con dùng trực tiếp.</li>
+<li><strong>Không</strong> dùng Implicit Wait (có chú thích lý do ngay trong <code>BaseTest</code>). Mọi chờ đợi đi qua <code>wait</code> (Explicit Wait, 15 giây).</li>
+<li>Mỗi Test Class còn có <code>main()</code> để chạy trực tiếp từ IDE bằng cách gọi thủ công <code>setup()</code> → test → <code>tearDown()</code>.</li>
+</ul>
+<h2 id="6-phân-tích-từng-class-và-method-quan-trọng">6. Phân tích từng class và method quan trọng</h2>
+<blockquote>
+<p>Với mỗi mục: Chức năng · Mục đích · Cách hoạt động · API liên quan · Khi nào dùng · Lỗi thường gặp · Cách cải thiện.</p>
+</blockquote>
+<h3 id="61-basetestjava">6.1. <a href="../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Phân tích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Chức năng</strong></td>
+<td>Lớp cha dùng chung: quản lý vòng đời <code>WebDriver</code> và <code>WebDriverWait</code>.</td>
+</tr>
+<tr>
+<td><strong>Mục đích</strong></td>
+<td>Tránh lặp code khởi tạo/đóng trình duyệt ở 10 class. Đảm bảo mỗi test có trình duyệt sạch.</td>
+</tr>
+<tr>
+<td><strong><code>setup()</code> (<code>@BeforeMethod</code>)</strong></td>
+<td>(1) <code>new ChromeDriver()</code> — Selenium Manager tìm/tải ChromeDriver khớp phiên bản Chrome; (2) <code>window().maximize()</code>; (3) <code>pageLoadTimeout(30s)</code> để <code>get()</code> không treo vô hạn; (4) <code>new WebDriverWait(driver, Duration.ofSeconds(15))</code>.</td>
+</tr>
+<tr>
+<td><strong><code>tearDown()</code> (<code>@AfterMethod</code>)</strong></td>
+<td><code>if (driver != null) driver.quit()</code> — <code>quit()</code> đóng <strong>toàn bộ cửa sổ + kết thúc session + dừng process chromedriver</strong>.</td>
+</tr>
+<tr>
+<td><strong>API liên quan</strong></td>
+<td><code>ChromeDriver</code>, <code>WebDriver.manage().window().maximize()</code>, <code>Timeouts.pageLoadTimeout(Duration)</code>, <code>WebDriverWait</code>, <code>@BeforeMethod</code>, <code>@AfterMethod</code>. Xem <a href="03-selenium-fundamentals/02-webdriver.html">selenium/01</a>, <a href="05-testing-framework/04-test-setup-and-teardown.html">testing-framework/04</a>.</td>
+</tr>
+<tr>
+<td><strong>Khi nào dùng</strong></td>
+<td>Mọi dự án TestNG cần một nơi quản lý driver.</td>
+</tr>
+<tr>
+<td><strong>Lỗi thường gặp</strong></td>
+<td>Quên <code>quit()</code> → process <code>chrome.exe</code>/<code>chromedriver.exe</code> mồ côi. Nếu <code>new ChromeDriver()</code> ném exception thì <code>driver</code> vẫn <code>null</code> — code đã xử lý bằng <code>if (driver != null)</code>.</td>
+</tr>
+<tr>
+<td><strong>Cải thiện</strong></td>
+<td>(a) Tách <code>DriverFactory</code> để hỗ trợ nhiều browser; (b) <code>ThreadLocal&lt;WebDriver&gt;</code> nếu muốn chạy song song; (c) đọc timeout/URL từ file cấu hình; (d) chụp ảnh khi fail (<code>ITestResult</code> trong <code>@AfterMethod</code>); (e) cân nhắc <code>@BeforeClass</code> nếu muốn chạy nhanh hơn (đổi lại các test phụ thuộc nhau hơn). Xem <a href="06-automation-framework/README.html">framework-design</a>.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="62-exercise01_logintestjava">6.2. <a href="../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> đăng nhập <code>tomsmith</code>/<code>SuperSecretPassword!</code>, xác minh flash message và URL <code>/secure</code>.</li>
+<li><strong>Điểm hay:</strong> hàm <code>assertSameElement(...)</code> chứng minh <code>By.id</code>, <code>By.name</code>, <code>By.xpath</code>, <code>By.className</code> cùng trỏ về <strong>một</strong> <code>WebElement</code> (so sánh <code>equals</code> — <code>RemoteWebElement.equals</code> dựa trên element id nội bộ của browser). Đây là cách học Locator rất trực quan.</li>
+<li><strong>API:</strong> <code>findElement</code>, <code>clear</code>, <code>sendKeys</code>, <code>click</code>, <code>getText</code>, <code>isDisplayed</code>, <code>getCurrentUrl</code>, <code>ExpectedConditions.visibilityOfElementLocated</code>.</li>
+<li><strong>Lỗi thường gặp:</strong> đọc <code>#flash</code> ngay sau <code>click()</code> khi trang chưa load xong → <code>NoSuchElementException</code>; dự án tránh bằng <code>wait.until(visibilityOfElementLocated)</code>.</li>
+<li><strong>Cải thiện:</strong> username/password hard-code → chuyển ra config; tách thành <code>LoginPage</code> (POM). Xem <a href="06-automation-framework/01-page-object-model.html">framework-design/01</a>.</li>
+</ul>
+<h3 id="63-exercise02_checkboxestestjava">6.3. <a href="../../../src/test/java/tests/Exercise02_CheckboxesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise02_CheckboxesTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> đảm bảo cả 2 checkbox ở trạng thái checked.</li>
+<li><strong>Bài học:</strong> checkbox 2 <strong>mặc định đã tick</strong>, nên "click" mù sẽ bỏ tick. Hàm <code>clickAndVerifyToggled</code> kiểm tra <code>isSelected()</code> <strong>trước và sau</strong> click → test không thể "pass giả".</li>
+<li><strong>API:</strong> <code>findElements(By.cssSelector("#checkboxes input[type='checkbox']"))</code>, <code>isSelected()</code>, <code>click()</code>.</li>
+<li><strong>Cải thiện:</strong> viết helper <code>setChecked(WebElement, boolean)</code> — chỉ click khi trạng thái hiện tại khác trạng thái mong muốn (idempotent).</li>
+</ul>
+<h3 id="64-exercise03_webtablestestjava">6.4. <a href="../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03_WebTablesTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> đọc 4 dòng (đầu, hai, kế cuối, cuối) của <code>#table1</code> bằng XPath vị trí <code>[1]</code>, <code>[2]</code>, <code>[last()-1]</code>, <code>[last()]</code>.</li>
+<li><strong>API:</strong> <code>By.xpath</code>, <code>findElements(...).size()</code>, <code>row.findElements(By.tagName("td"))</code> (tìm <strong>con</strong> của một element), <code>getText().trim()</code>.</li>
+<li><strong>Lỗi thường gặp:</strong> XPath bắt đầu bằng <code>//</code> bên trong <code>row.findElement</code> sẽ tìm toàn trang (không phải trong <code>row</code>); nên dùng <code>.//td</code>. Dự án dùng <code>By.tagName("td")</code> nên an toàn.</li>
+<li><strong>Cải thiện:</strong> dữ liệu kỳ vọng hard-code → dùng <code>@DataProvider</code> hoặc file JSON; trang web đổi dữ liệu là test fail.</li>
+</ul>
+<h3 id="65-exercise04_dropdowntestjava">6.5. <a href="../../../src/test/java/tests/Exercise04_DropdownTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise04_DropdownTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> chọn từng option bằng class <code>Select</code>, kiểm tra text và <code>value</code>.</li>
+<li><strong>API:</strong> <code>new Select(WebElement)</code>, <code>getFirstSelectedOption()</code>, <code>getOptions()</code>, <code>selectByVisibleText()</code>, <code>getAttribute("value")</code>. <code>Select</code> chỉ dùng được với thẻ <code>&lt;select&gt;</code> thật.</li>
+<li><strong>Điểm hay:</strong> duyệt <code>getOptions()</code> rồi lọc <code>isEnabled()</code> để bỏ placeholder <code>disabled</code>, không hard-code.</li>
+<li><strong>Lưu ý:</strong> file <code>target/surefire-reports/tests.Exercise04_DropdownTest.txt</code> còn sót từ lần chạy trước (11/11) — là báo cáo cũ, không phải lỗi hiện tại.</li>
+</ul>
+<h3 id="66-exercise05_hovertestjava">6.6. <a href="../../../src/test/java/tests/Exercise05_HoverTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise05_HoverTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> hover từng ảnh, đọc <code>h5</code> ("name: user1"...).</li>
+<li><strong>API:</strong> <code>Actions.moveToElement(el).perform()</code>, <code>ExpectedConditions.visibilityOf(WebElement)</code>.</li>
+<li><strong>Bài học:</strong> caption luôn <strong>có trong DOM</strong> nhưng <strong>ẩn</strong> (CSS). <code>findElement</code> thành công ngay, nhưng <code>getText()</code> trả chuỗi rỗng nếu chưa hiển thị → phải chờ <code>visibilityOf</code>. Đây là ví dụ thực tế về khác biệt <em>Presence vs Visibility</em>.</li>
+<li><strong>Lưu ý:</strong> <code>actions.moveToElement(...)</code> quên <code>.perform()</code> là lỗi kinh điển: không có gì xảy ra.</li>
+</ul>
+<h3 id="67-exercise06_addremoveelementstestjava">6.7. <a href="../../../src/test/java/tests/Exercise06_AddRemoveElementsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise06_AddRemoveElementsTest.java</a></h3>
+<ul>
+<li><strong>API:</strong> <code>By.xpath("//button[text()='Add Element']")</code>, <code>By.className("added-manually")</code>, <code>numberOfElementsToBe(locator, 0)</code>.</li>
+<li><strong>Bài học:</strong> để chứng minh element <strong>biến mất</strong> hãy chờ <code>numberOfElementsToBe(locator, 0)</code> (hoặc <code>invisibilityOfElementLocated</code>) thay vì <code>findElements</code> rồi so sánh ngay. Comment trong code giải thích đúng: không dùng Implicit Wait để khỏi chờ thừa.</li>
+</ul>
+<h3 id="68-exercise07_infinitescrolltestjava">6.8. <a href="../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise07_InfiniteScrollTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> cuộn xuống 3 lần, mỗi lần đảm bảo có thêm đoạn <code>jscroll-added</code>; cuộn về đầu trang.</li>
+<li><strong>Kỹ thuật nâng cao:</strong> đặt <code>scrollToBottom</code> <strong>bên trong</strong> <code>wait.until(d -&gt; {...})</code> — vừa cuộn lặp vừa kiểm tra điều kiện (Custom Wait bằng lambda). Lý do được ghi trong Javadoc: plugin jScroll bỏ qua sự kiện scroll nếu đang tải dở; cuộn đúng 1 lần có thể "mất" sự kiện. Có sẵn file <code>test-output/testng-failed.xml</code> ghi nhận Exercise07 từng fail — bài học thật về <em>flaky test</em>.</li>
+<li><strong>API:</strong> <code>JavascriptExecutor.executeScript</code>, <code>window.scrollTo</code>, <code>window.dispatchEvent(new Event('scroll'))</code>, <code>getBoundingClientRect()</code>, <code>Wait.until(Function)</code>.</li>
+<li><strong>Lưu ý:</strong> <code>wait.until(d -&gt; {scrollToBottom(); return ...})</code> có <strong>side effect</strong> trong điều kiện chờ — chấp nhận được ở đây vì có chủ đích, nhưng nên ghi chú rõ.</li>
+</ul>
+<h3 id="69-exercise08_entryadmodaltestjava">6.9. <a href="../../../src/test/java/tests/Exercise08_EntryAdModalTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise08_EntryAdModalTest.java</a></h3>
+<ul>
+<li><strong>API:</strong> <code>visibilityOfElementLocated</code>, <code>invisibilityOfElementLocated</code>, tìm element con <code>modal.findElement(By.cssSelector(".modal-title h3"))</code>.</li>
+<li><strong>Lưu ý:</strong> dùng <code>toUpperCase()</code> khi so tiêu đề vì CSS có thể đổi hoa/thường nhưng <code>getText()</code> trả về văn bản <strong>như đang hiển thị</strong> (kể cả <code>text-transform</code>). So sánh không phân biệt hoa-thường là quyết định thực tế hợp lý.</li>
+</ul>
+<h3 id="610-exercise09_draganddroptestjava">6.10. <a href="../../../src/test/java/tests/Exercise09_DragAndDropTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise09_DragAndDropTest.java</a></h3>
+<ul>
+<li><strong>API:</strong> <code>Actions.dragAndDrop(source, target).perform()</code>.</li>
+<li><strong>Rủi ro:</strong> trang dùng HTML5 Drag &amp; Drop; <code>Actions.dragAndDrop</code> thường hoạt động trên Chrome hiện đại, nhưng đây là loại thao tác <strong>dễ flaky</strong> giữa các phiên bản browser. Phương án dự phòng: <code>clickAndHold</code> → <code>moveToElement</code> → <code>release</code>, hoặc JavaScript mô phỏng sự kiện <code>dragstart/drop</code>. Xem <a href="03-selenium-fundamentals/08-mouse-and-keyboard-actions.html">selenium/07</a>.</li>
+</ul>
+<h3 id="611-exercise10_dynamiccontrolstestjava">6.11. <a href="../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise10_DynamicControlsTest.java</a></h3>
+<ul>
+<li><strong>Chức năng:</strong> Remove checkbox, Enable input; chờ AJAX.</li>
+<li><strong>API:</strong> <code>visibilityOfElementLocated</code>, <code>invisibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>textToBe(locator, "It's enabled!")</code>.</li>
+<li><strong>Bài học then chốt (có chú thích trong code):</strong> sau khi Enable, thông báo <code>#message</code> <strong>vẫn đang hiển thị "It's gone!"</strong> của bước trước, nên chờ "visible" sẽ qua ngay và đọc nhầm. Phải chờ <strong>nội dung đúng</strong> bằng <code>textToBe</code>. Đây là một trong những lỗi đồng bộ hoá phổ biến nhất ngoài đời.</li>
+</ul>
+<h3 id="612-allexercisestestjava-environmentchecktestjava">6.12. <a href="../../../src/test/java/tests/AllExercisesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">AllExercisesTest.java</a>, <a href="../../../src/test/java/tests/EnvironmentCheckTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">EnvironmentCheckTest.java</a></h3>
+<ul>
+<li><code>AllExercisesTest.main()</code> dùng API lập trình <code>org.testng.TestNG</code>: <code>setTestSuites(List.of("testng.xml"))</code>, <code>run()</code>, <code>System.exit(getStatus())</code> (exit code ≠ 0 khi fail — tốt cho CI).</li>
+<li><code>EnvironmentCheckTest</code> <strong>không nằm</strong> trong <code>testng.xml</code>; chỉ chạy qua <code>run-test.ps1</code> hoặc <code>-Dtest=EnvironmentCheckTest</code>.</li>
+</ul>
+<h3 id="613-run-testps1">6.13. <a href="../../../run-test.ps1" class="ext" title="File của dự án (chỉ mở được khi xem local)">run-test.ps1</a></h3>
+<p>Script tự viết: tìm JDK 21+ → <code>mvnw dependency:build-classpath</code> ra <code>target\classpath.txt</code> (cache, chỉ tạo lại khi <code>pom.xml</code> mới hơn) → <code>javac</code> → <code>java -cp ... tests.&lt;Class&gt;</code>. <strong>Đây không phải Maven Surefire:</strong> không sinh report surefire, không đọc <code>testng.xml</code> (trừ khi chạy <code>AllExercisesTest</code>). Ghi chú: file cố ý để ASCII vì PowerShell 5.1 đọc sai UTF-8 không BOM.</p>
+<h2 id="7-selenium-api-đang-được-sử-dụng">7. Selenium API đang được sử dụng</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>API</th>
+<th>Dùng ở</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new ChromeDriver()</code></td>
+<td>BaseTest</td>
+</tr>
+<tr>
+<td><code>manage().window().maximize()</code></td>
+<td>BaseTest</td>
+</tr>
+<tr>
+<td><code>manage().timeouts().pageLoadTimeout()</code></td>
+<td>BaseTest</td>
+</tr>
+<tr>
+<td><code>WebDriverWait</code>, <code>until(ExpectedCondition)</code>, <code>until(Function)</code></td>
+<td>BaseTest + 8 test</td>
+</tr>
+<tr>
+<td><code>get(url)</code>, <code>getTitle()</code>, <code>getCurrentUrl()</code></td>
+<td>tất cả</td>
+</tr>
+<tr>
+<td><code>By.id/name/className/xpath/cssSelector/tagName</code></td>
+<td>tất cả</td>
+</tr>
+<tr>
+<td><code>findElement</code>, <code>findElements</code> (cả trên <code>driver</code> lẫn trên <code>WebElement</code>)</td>
+<td>tất cả</td>
+</tr>
+<tr>
+<td><code>click</code>, <code>sendKeys</code>, <code>clear</code>, <code>getText</code>, <code>getAttribute</code>, <code>isDisplayed</code>, <code>isEnabled</code>, <code>isSelected</code></td>
+<td>Ex 1-10</td>
+</tr>
+<tr>
+<td><code>Select</code></td>
+<td>Ex 4</td>
+</tr>
+<tr>
+<td><code>Actions.moveToElement</code>, <code>Actions.dragAndDrop</code></td>
+<td>Ex 5, 9</td>
+</tr>
+<tr>
+<td><code>JavascriptExecutor.executeScript</code></td>
+<td>Ex 7</td>
+</tr>
+<tr>
+<td><code>ExpectedConditions</code>: <code>visibilityOfElementLocated</code>, <code>visibilityOf</code>, <code>presenceOfElementLocated</code>, <code>invisibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>numberOfElementsToBe</code>, <code>textToBe</code></td>
+<td>Ex 1,5,6,7,8,10</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Chưa dùng trong dự án (có tài liệu lý thuyết riêng):</strong> <code>navigate().back/forward/refresh()</code>, <code>Alert</code>, <code>switchTo().frame()</code>, <code>switchTo().window()</code>, <code>FluentWait</code>, <code>getPageSource()</code>, <code>close()</code>, <code>TakesScreenshot</code>, Relative Locator, <code>Keys</code>.</p>
+<h2 id="8-cách-chạy-test-và-kết-quả-đã-kiểm-chứng">8. Cách chạy test và kết quả đã kiểm chứng</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Kết quả quan sát được</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.\mvnw.cmd -version</code></td>
+<td>Maven 3.9.16, Java 25.0.1, <code>JAVA_HOME</code> trống vẫn chạy được</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd compile</code></td>
+<td><code>Nothing to compile</code> (không có <code>src/main</code>), BUILD SUCCESS</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test-compile</code></td>
+<td>Biên dịch code test, BUILD SUCCESS</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test</code> (lần chạy gần nhất trong <code>target/surefire-reports/TestSuite.txt</code>)</td>
+<td><code>Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 91.32 s</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test "-Dtest=EnvironmentCheckTest"</code></td>
+<td><code>Tests run: 1 ... BUILD SUCCESS</code> — <strong>chạy được dù class này không có trong <code>testng.xml</code></strong> vì <code>-Dtest</code> làm Surefire bỏ qua <code>suiteXmlFiles</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test "-Dtest=NoSuchTest"</code></td>
+<td><strong><code>Tests run: 0 ... BUILD SUCCESS</code></strong> ⚠️ Gõ sai tên class vẫn "thành công"! Xem <a href="02-maven-and-project/07-build-and-test-execution.html">maven/06</a></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd dependency:tree</code></td>
+<td>In cây phụ thuộc (xem mục 2)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9-điểm-mạnh-của-dự-án">9. Điểm mạnh của dự án</h2>
+<ol>
+<li>Dùng Maven Wrapper <code>only-script</code> + <code>.gitignore</code> đúng (không commit <code>target/</code>, <code>.mvn/repository/</code>).</li>
+<li>Quy ước nhất quán: Explicit Wait, không Implicit Wait, có giải thích.</li>
+<li>Test <strong>tự kiểm chứng</strong> (kiểm tra cả trạng thái trước khi click, kiểm tra element biến mất).</li>
+<li>Javadoc/comment tiếng Việt chi tiết, có <code>assert</code> message rõ ràng.</li>
+<li>Có <code>testng.xml</code> là nguồn duy nhất cho danh sách test (dùng chung cho Maven và <code>AllExercisesTest</code>).</li>
+<li>Có báo cáo mẫu 10/10 đạt trong <code>ket-qua/</code>.</li>
+</ol>
+<h2 id="10-vấn-đề-phát-hiện-được-và-đề-xuất">10. Vấn đề phát hiện được và đề xuất</h2>
+<blockquote>
+<p>Theo yêu cầu, <strong>chỉ ghi nhận và đề xuất — không sửa source code.</strong></p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Phát hiện</th>
+<th>Mức độ</th>
+<th>Đề xuất</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>README.md</code> (mục 7) nói <code>mvnw.cmd</code> "dùng <code>JAVA_HOME</code>". Thực tế trên máy này <code>JAVA_HOME</code> <strong>trống</strong> nhưng <code>mvnw.cmd</code> vẫn chạy bằng Java trong <code>PATH</code>. Với <code>only-script</code>, <code>JAVA_HOME</code> không bắt buộc để <em>tải</em> Maven; Maven (<code>mvn.cmd</code>) tự tìm <code>java</code> trong <code>PATH</code> nếu không có <code>JAVA_HOME</code>.</td>
+<td>Thấp (tài liệu)</td>
+<td>Sửa câu: "nên đặt <code>JAVA_HOME</code>; nếu thiếu, Maven dùng <code>java</code> trong <code>PATH</code>".</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>-Dtest=</code> gõ sai tên → <code>Tests run: 0</code>, <code>BUILD SUCCESS</code> (đã tái hiện). Đã thử thêm <code>-Dsurefire.failIfNoSpecifiedTests=true</code> — <strong>vẫn SUCCESS</strong>, cờ này không cứu được.</td>
+<td>Trung bình (bẫy CI)</td>
+<td>Trong CI, đọc <code>target/surefire-reports/TestSuite.txt</code> và fail nếu <code>Tests run: 0</code>; đọc log có dòng <code>Running tests.&lt;Class&gt;</code>.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>target/surefire-reports/*.dumpstream</code> cảnh báo: <code>Boot Manifest-JAR contains absolute paths ... 'other' has different root</code>. Nguyên nhân: dự án ở ổ <code>B:</code> còn Local Repository mặc định/Maven home ở ổ <code>C:</code>. Chỉ là cảnh báo.</td>
+<td>Thấp</td>
+<td>Gợi ý của chính Surefire: <code>&lt;argLine&gt;-Djdk.net.URLClassPath.disableClassPathURLCheck=true&lt;/argLine&gt;</code>.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Cảnh báo <code>SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"</code>.</td>
+<td>Thấp</td>
+<td>Thêm <code>slf4j-simple</code> (scope test) nếu muốn log; hoặc bỏ qua.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Credentials và dữ liệu kỳ vọng hard-code trong test.</td>
+<td>Trung bình</td>
+<td><code>config.properties</code> / <code>@DataProvider</code> — xem <a href="05-testing-framework/05-test-data-and-configuration.html">testing-framework/05</a>.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Không có Page Object Model; locator rải trong test.</td>
+<td>Trung bình (bảo trì)</td>
+<td>Tách Page Class — xem <a href="08-practical-project/labs/06-page-object-model-practice.html">practice/06</a>.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Mỗi test mở 1 Chrome (<code>@BeforeMethod</code>). Chạy 10 test ≈ 91 s.</td>
+<td>Thấp</td>
+<td>Chấp nhận để test độc lập; hoặc <code>parallel</code> + <code>ThreadLocal</code>.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Mỗi test có <code>main()</code> lặp lại cùng mẫu. Khi chạy bằng TestNG, <code>main()</code> không dùng.</td>
+<td>Thấp</td>
+<td>Chấp nhận (phục vụ học tập/IDE); dự án thật thường bỏ.</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>EnvironmentCheckTest</code> không nằm trong <code>testng.xml</code>.</td>
+<td>Thông tin</td>
+<td>Cố ý (smoke check môi trường).</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Không khai báo <code>distributionSha256Sum</code> trong <code>maven-wrapper.properties</code>.</td>
+<td>Thấp</td>
+<td>Thêm checksum nếu cần bảo mật chuỗi cung ứng.</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>.mvn/maven.config</code> đặt Local Repository vào <code>.mvn/repository</code> (123 jar). Có lợi: cô lập khỏi <code>~/.m2</code> bị hỏng (xem README mục 7). Bất lợi: thư mục lớn, mỗi clone phải tải lại.</td>
+<td>Thông tin</td>
+<td>Giữ nguyên; chỉ cần chắc <code>.mvn/repository/</code> nằm trong <code>.gitignore</code> (đã có).</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Thư mục chưa là Git repo.</td>
+<td>Thông tin</td>
+<td><code>git init</code> khi bắt đầu làm việc nhóm.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="11-những-gì-dự-án-chưa-có">11. Những gì dự án CHƯA có</h2>
+<p>Không có không phải lỗi — đây là <strong>danh sách việc để học tiếp</strong>:</p>
+<ul>
+<li>Page Object Model, <code>BasePage</code>, <code>DriverFactory</code>, <code>ConfigReader</code>.</li>
+<li>Logging (Log4j2/SLF4J), Reporting (Extent/Allure), Screenshot khi fail, TestNG Listener.</li>
+<li>Data-driven (<code>@DataProvider</code>), TestNG Groups, chạy song song.</li>
+<li>Failsafe plugin / Maven Profile / chạy đa môi trường.</li>
+<li>CI (GitHub Actions), headless mode, đa trình duyệt, Selenium Grid.</li>
+</ul>
+<p>Lộ trình học các mục này: <a href="LEARNING_ROADMAP.html">00-learning-roadmap.md</a> và <a href="06-automation-framework/README.html">framework-design/</a>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="UPDATE_REPORT.html"><small>← Bài trước</small><span>Báo cáo cập nhật: thiết kế lại lộ trình theo phương pháp bài học nhỏ (kiểu W3Schools)</span></a><a class="next" href="01-java-fundamentals/README.html"><small>Bài tiếp theo →</small><span>Phase 1 — Java Fundamentals (Chapter 01–08)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/00-project-analysis.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="assets/nav.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

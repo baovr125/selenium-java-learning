@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maven Wrapper (mvnw, mvnw.cmd) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/03-maven-wrapper" data-root="../" data-lesson="1" data-title="Maven Wrapper (mvnw, mvnw.cmd)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="maven-wrapper-mvnw-mvnwcmd-">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>) ⭐</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 10 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="02-pom-xml.html"><code>pom.xml</code> và Dependencies</a> · ➡️ <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a></p>
+<p>Chapter 10 · <a href="README.html">README chương</a> · Tiếp: <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper trong team và Git</a> · Phỏng vấn: <a href="../interview/maven-interview.html">maven-interview</a>
+Mọi thông tin "trong dự án" đã được đối chiếu với file thật và đã chạy lệnh thật.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích Maven Wrapper là gì, vì sao cần</li>
+<li>Phân biệt <code>mvnw</code>, <code>mvnw.cmd</code>, <code>maven-wrapper.properties</code></li>
+<li>Giải thích Wrapper xác định và tải Maven ở đâu</li>
+<li>Chạy Wrapper trên Windows và Linux/macOS</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-maven-fundamentals.html">Maven Fundamentals</a></li>
+<li><a href="02-pom-xml.html">pom.xml</a></li>
+</ul>
+<h2 id="1-maven-wrapper-là-gì">1. Maven Wrapper là gì?</h2>
+<h3 id="11-định-nghĩa">1.1. Định nghĩa</h3>
+<p>📘 <strong>Maven Wrapper</strong> là một bộ <strong>script nhỏ nằm trong chính dự án</strong> (<code>mvnw</code>, <code>mvnw.cmd</code>, cùng thư mục <code>.mvn/wrapper</code>). Khi bạn chạy <code>mvnw</code>, script sẽ:</p>
+<ol>
+<li>Đọc xem dự án <strong>yêu cầu phiên bản Maven nào</strong>;</li>
+<li>Nếu máy chưa có đúng phiên bản đó thì <strong>tự tải về</strong>;</li>
+<li>Rồi <strong>chạy Maven</strong> đó với các tham số bạn truyền.</li>
+</ol>
+<p>Nói ngắn gọn: <em>"Wrapper = người đưa đúng Maven cho bạn, không cần bạn cài Maven."</em></p>
+<h3 id="12-tại-sao-cần">1.2. Tại sao cần?</h3>
+<p>Hãy hình dung nhóm 4 người, mỗi người một kiểu:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành viên</th>
+<th>Maven trên máy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An</td>
+<td>Chưa cài</td>
+</tr>
+<tr>
+<td>Bình</td>
+<td>3.6.3 (cài từ lâu)</td>
+</tr>
+<tr>
+<td>Chi</td>
+<td>3.9.9</td>
+</tr>
+<tr>
+<td>CI server</td>
+<td>3.8.1</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dự án cần tính năng/hành vi của Maven 3.9.x. Kết quả: "máy tôi chạy được, máy bạn thì không" (<em>works on my machine</em>). Với Wrapper, <strong>mọi người đều chạy qua <code>mvnw</code> ⇒ cùng Maven 3.9.16</strong>, cấu hình nằm trong Git.</p>
+<h3 id="13-giải-quyết-vấn-đề-gì-khi-làm-việc-nhóm">1.3. Giải quyết vấn đề gì khi làm việc nhóm?</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Vấn đề</th>
+<th>Wrapper giải quyết thế nào</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thành viên mới chưa cài Maven</td>
+<td>Clone xong chạy <code>mvnw</code> ngay</td>
+</tr>
+<tr>
+<td>Mỗi người một phiên bản Maven</td>
+<td>Phiên bản khoá trong <code>maven-wrapper.properties</code> (được commit)</td>
+</tr>
+<tr>
+<td>CI phải cài Maven</td>
+<td>CI chỉ cần JDK + <code>./mvnw</code></td>
+</tr>
+<tr>
+<td>Nâng cấp Maven</td>
+<td>Sửa <strong>1 dòng</strong> <code>distributionUrl</code>, commit, mọi người nhận bản mới khi pull</td>
+</tr>
+<tr>
+<td>Hướng dẫn onboarding dài dòng</td>
+<td>Chỉ còn "cài JDK, chạy <code>mvnw</code>"</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="14-maven-cài-toàn-hệ-thống-vs-maven-wrapper">1.4. Maven cài toàn hệ thống vs Maven Wrapper</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Maven cài sẵn (<code>mvn</code>)</th>
+<th>Maven Wrapper (<code>mvnw</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cài đặt</td>
+<td>Tự tải, giải nén, đặt <code>PATH</code></td>
+<td>Không cần; tự tải khi chạy lần đầu</td>
+</tr>
+<tr>
+<td>Phiên bản</td>
+<td>Tuỳ máy mỗi người</td>
+<td>Cố định theo dự án</td>
+</tr>
+<tr>
+<td>Lệnh</td>
+<td><code>mvn test</code></td>
+<td><code>.\mvnw.cmd test</code> / <code>./mvnw test</code></td>
+</tr>
+<tr>
+<td>Dùng cho nhiều dự án</td>
+<td>Một bản cho tất cả</td>
+<td>Mỗi dự án có thể một bản (lưu cache chung ở <code>~/.m2/wrapper/dists</code>)</td>
+</tr>
+<tr>
+<td>Cần Internet lần đầu</td>
+<td>Chỉ khi tải thư viện</td>
+<td>Cần thêm để tải Maven</td>
+</tr>
+<tr>
+<td>Cần JDK</td>
+<td>✅</td>
+<td>✅ (Wrapper <strong>không</strong> thay thế JDK)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="15-vì-sao-dự-án-chạy-maven-mà-không-cần-cài-maven">1.5. Vì sao dự án chạy Maven mà không cần cài Maven?</h3>
+<p>Đã kiểm chứng trên máy này: lệnh <code>mvn -version</code> báo <code>command not found</code>, nhưng <code>.\mvnw.cmd -version</code> in ra <strong>Apache Maven 3.9.16</strong>, <code>Maven home: C:\Users\&lt;tên&gt;\.m2\wrapper\dists\apache-maven-3.9.16\0daed3be...</code>. Tức Maven nằm trong thư mục cache của Wrapper chứ không phải trong <code>PATH</code>.</p>
+<h2 id="2-các-file-của-maven-wrapper">2. Các file của Maven Wrapper</h2>
+<p>Cấu trúc <strong>thật</strong> của dự án (kiểm tra bằng <code>Glob</code>):</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Selenium1/
+├── mvnw                                   ← script sh (Linux/macOS/Git Bash)         11.790 byte
+├── mvnw.cmd                               ← script batch+PowerShell (Windows)          8.481 byte
+└── .mvn/
+    ├── wrapper/
+    │   └── maven-wrapper.properties       ← cấu hình phiên bản (3 dòng)
+    ├── maven.config                       ← (không thuộc Wrapper) tham số Maven mặc định
+    └── repository/                        ← (không thuộc Wrapper) Local Repository riêng, gitignore</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Vai trò</th>
+<th>Có trong dự án?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mvnw</code></td>
+<td>Script <code>sh</code> cho Linux, macOS (và Git Bash/WSL trên Windows)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>mvnw.cmd</code></td>
+<td>Script cho Windows (cmd/PowerShell). Là file <code>.cmd</code> có đoạn PowerShell nhúng bên trong</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>.mvn/wrapper/maven-wrapper.properties</code></td>
+<td>Nói <strong>tải Maven nào, từ đâu</strong></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>.mvn/wrapper/maven-wrapper.jar</code></td>
+<td>Một tiện ích Java dùng để tải Maven, có trong kiểu <code>bin</code>/<code>jar</code> cũ</td>
+<td>❌ <strong>không có</strong> (đúng với <code>only-script</code>)</td>
+</tr>
+<tr>
+<td><code>.mvn/maven.config</code></td>
+<td>Tham số dòng lệnh Maven mặc định (mỗi lần chạy tự thêm)</td>
+<td>✅ (không thuộc Wrapper)</td>
+</tr>
+<tr>
+<td><code>.mvn/jvm.config</code></td>
+<td>Tham số JVM cho Maven (<code>-Xmx...</code>)</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="21-maven-wrapperproperties--nội-dung-thật">2.1. <code>maven-wrapper.properties</code> — nội dung thật</h3>
+<div class="code" data-lang="properties"><div class="code-head"><span class="lang">properties</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="na">wrapperVersion</span><span class="o">=</span><span class="s">3.3.4</span>
+<span class="na">distributionType</span><span class="o">=</span><span class="s">only-script</span>
+<span class="na">distributionUrl</span><span class="o">=</span><span class="s">https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khoá</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wrapperVersion</code></td>
+<td>Phiên bản của chính <strong>Maven Wrapper</strong> (script <code>mvnw</code>) — <strong>khác</strong> phiên bản Maven!</td>
+</tr>
+<tr>
+<td><code>distributionType</code></td>
+<td><code>only-script</code> = chỉ dùng script, không cần <code>maven-wrapper.jar</code>; các kiểu khác (<code>source</code>, <code>bin</code>) tuỳ phiên bản wrapper.</td>
+</tr>
+<tr>
+<td><code>distributionUrl</code></td>
+<td><strong>URL tải Maven.</strong> Số <code>3.9.16</code> trong URL chính là phiên bản Maven mà cả nhóm dùng</td>
+</tr>
+<tr>
+<td><code>distributionSha256Sum</code></td>
+<td>(không khai báo) Nếu có, Wrapper kiểm tra checksum bản tải về</td>
+</tr>
+<tr>
+<td><code>wrapperSha256Sum</code></td>
+<td>(không khai báo) Chỉ dùng với kiểu có <code>maven-wrapper.jar</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Hai con số dễ nhầm:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Giá trị</th>
+<th>Nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wrapperVersion</code></td>
+<td>3.3.4</td>
+<td>Phiên bản <strong>script wrapper</strong></td>
+</tr>
+<tr>
+<td>số trong <code>distributionUrl</code></td>
+<td>3.9.16</td>
+<td>Phiên bản <strong>Maven</strong> thực sự chạy</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-mvnw-và-mvnwcmd-khác-nhau-thế-nào">2.2. <code>mvnw</code> và <code>mvnw.cmd</code> khác nhau thế nào?</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>mvnw</code></th>
+<th><code>mvnw.cmd</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hệ điều hành</td>
+<td>Linux, macOS, Git Bash, WSL</td>
+<td>Windows (cmd, PowerShell)</td>
+</tr>
+<tr>
+<td>Ngôn ngữ</td>
+<td>POSIX <code>sh</code></td>
+<td>Batch + PowerShell nhúng</td>
+</tr>
+<tr>
+<td>Cách tải Maven</td>
+<td><code>wget</code>, nếu không có thì <code>curl</code>, nếu không có cả hai thì chạy <strong>mã Java nguồn</strong> (khi đó mới cần <code>JAVA_HOME</code>)</td>
+<td>PowerShell <code>System.Net.WebClient</code></td>
+</tr>
+<tr>
+<td>Giải nén</td>
+<td><code>unzip</code>, nếu thiếu thì <code>tar</code></td>
+<td>PowerShell <code>Expand-Archive</code></td>
+</tr>
+<tr>
+<td>Gọi Maven</td>
+<td><code>exec "$MAVEN_HOME/bin/mvn"</code></td>
+<td>chạy <code>"$MAVEN_HOME\bin\mvn.cmd" %*</code></td>
+</tr>
+<tr>
+<td>Quyền thực thi</td>
+<td>Cần bit <code>x</code> (<code>chmod +x mvnw</code>)</td>
+<td>Không áp dụng</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dự án hiện lưu <code>mvnw</code> với quyền <code>-rwxr-xr-x</code> (có bit thực thi) trên máy Windows/Git Bash. Khi commit bằng Git trên Windows, cần chắc Git ghi nhận bit này — xem <a href="04-maven-wrapper-in-team-and-git.html#2-maven-wrapper-và-git">Maven Wrapper và Git</a>.</p>
+<h2 id="3-wrapper-xác-định-và-tải-maven-như-thế-nào">3. Wrapper xác định và tải Maven như thế nào?</h2>
+<p>Luồng thực thi của <code>mvnw.cmd</code> (đọc từ script thật, version 3.3.4):</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">.\mvnw.cmd test
+   │
+   ├─1. Batch khởi động PowerShell và chạy chính nội dung file mvnw.cmd
+   ├─2. Đọc distributionUrl trong .mvn/wrapper/maven-wrapper.properties
+   ├─3. Tính thư mục đích:
+   │      %USERPROFILE%\.m2\wrapper\dists\apache-maven-3.9.16\&lt;SHA-256 của distributionUrl&gt;
+   ├─4. Thư mục đó đã có Maven chưa?
+   │      ├─ CÓ  → bỏ qua tải
+   │      └─ CHƯA → tải .zip (WebClient) → (nếu có distributionSha256Sum thì kiểm tra) → giải nén → di chuyển vào thư mục đích
+   └─5. Chạy  &lt;thư mục đích&gt;\bin\mvn.cmd  với đúng tham số bạn đưa vào  (ví dụ: test)</code></pre></div>
+<p>Điểm đáng chú ý rút từ script:</p>
+<ul>
+<li><strong>Thư mục cache chung của cả máy</strong> (<code>~/.m2/wrapper/dists</code>), không nằm trong dự án ⇒ nhiều dự án cùng phiên bản dùng chung, tải một lần.</li>
+<li>Phần <code>&lt;hash&gt;</code> là SHA-256 của <code>distributionUrl</code> ⇒ đổi URL (ví dụ đổi phiên bản) sẽ ra thư mục mới và tải bản mới.</li>
+<li>Biến môi trường tuỳ chọn (đọc từ phần chú thích đầu script):</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Biến</th>
+<th>Tác dụng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MVNW_REPOURL</code></td>
+<td>Đổi gốc URL tải Maven (dùng mirror nội bộ công ty)</td>
+</tr>
+<tr>
+<td><code>MVNW_USERNAME</code>, <code>MVNW_PASSWORD</code></td>
+<td>Xác thực khi tải</td>
+</tr>
+<tr>
+<td><code>MVNW_VERBOSE=true</code></td>
+<td>In chi tiết quá trình tải (rất hữu ích khi debug)</td>
+</tr>
+<tr>
+<td><code>MAVEN_USER_HOME</code> (bản <code>mvnw</code> sh)</td>
+<td>Đổi vị trí <code>~/.m2</code></td>
+</tr>
+<tr>
+<td><code>JAVA_HOME</code></td>
+<td>Chọn JDK. Chỉ <strong>bắt buộc</strong> khi <code>mvnw</code> (sh) phải tải bằng mã Java</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sau khi Maven chạy, Maven đọc tiếp <code>.mvn/maven.config</code> (⇒ <code>-Dmaven.repo.local=.mvn/repository</code>) và dùng <code>pom.xml</code> để giải quyết thư viện.</p>
+<blockquote>
+<p>Vì sao Wrapper không "cài" Maven vào <code>PATH</code>? Nó không cần. Nó trực tiếp gọi file <code>mvn.cmd</code> trong thư mục cache. Vì vậy <code>mvn -version</code> vẫn lỗi, còn <code>mvnw -version</code> thì chạy được.</p>
+</blockquote>
+<h2 id="4-dùng-mvnw-trên-windows">4. Dùng <code>mvnw</code> trên Windows</h2>
+<p>Mở PowerShell tại thư mục chứa <code>pom.xml</code> (<code>B:\Fresher\Selenium1</code>). <strong>Phải có <code>.\</code></strong> vì PowerShell không chạy lệnh ở thư mục hiện tại nếu thiếu tiền tố.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Giải thích</th>
+<th>Kết quả mong đợi (<code>-version</code>, <code>compile</code>, <code>test-compile</code>, <code>clean</code>, <code>package -DskipTests</code>, <code>test -Dtest=...</code> đã chạy thật; <code>test</code> toàn bộ lấy từ báo cáo lần chạy gần nhất)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.\mvnw.cmd -version</code></td>
+<td>In phiên bản Maven + Java + OS. Lần đầu sẽ tải Maven</td>
+<td><code>Apache Maven 3.9.16</code>, <code>Java version: 25.0.1</code>, <code>Maven home: C:\Users\...\.m2\wrapper\dists\...</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd clean</code></td>
+<td>Xoá thư mục <code>target/</code></td>
+<td><code>--- clean:3.2.0:clean ---</code> rồi <code>BUILD SUCCESS</code>. Lần đầu <strong>phải có mạng</strong> để tải <code>maven-clean-plugin 3.2.0</code> (đã tái hiện: chạy <code>-o</code> khi chưa tải sẽ <code>BUILD FAILURE ... has not been downloaded from it before</code>)</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd compile</code></td>
+<td>Biên dịch <strong><code>src/main</code></strong></td>
+<td>Dự án chỉ có <code>src/test</code> ⇒ <code>Nothing to compile - all classes are up to date</code> + <code>BUILD SUCCESS</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test-compile</code></td>
+<td>Biên dịch cả <code>src/test</code></td>
+<td><code>compiler:testCompile ... BUILD SUCCESS</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test</code></td>
+<td><code>compile</code> + <code>test-compile</code> + chạy test (Surefire theo <code>testng.xml</code>)</td>
+<td><code>Tests run: 10, Failures: 0, Errors: 0, Skipped: 0</code> + <code>BUILD SUCCESS</code> (mở Chrome 10 lần, ~90 giây)</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd clean test</code></td>
+<td>Xoá <code>target/</code> rồi chạy toàn bộ từ đầu</td>
+<td>Giống trên, nhưng buộc biên dịch lại</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd package</code></td>
+<td>Chạy đến phase <code>package</code> (sau <code>test</code>) rồi tạo file jar</td>
+<td>Test chạy trước; sau đó <code>--- jar:3.5.0:jar ---</code>, cảnh báo <code>JAR will be empty - no content was marked for inclusion!</code> và sinh <code>target/SeleniumPractice-1.0-SNAPSHOT.jar</code> (~2 KB, vì không có <code>src/main</code>). Đã chạy thật với <code>-DskipTests</code></td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>⚠️ <code>package</code> <strong>chạy cả test</strong> (vì <code>test</code> nằm trước <code>package</code> trong lifecycle). Muốn bỏ qua test: <code>-DskipTests</code>. Xem <a href="05-maven-lifecycle.html">04</a>.</p>
+</blockquote>
+<p>Một số mẹo cho PowerShell:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=Exercise01_LoginTest&quot;</span>      <span class="c"># đặt -D trong nháy kép</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-q</span> <span class="n">test</span>                                  <span class="c"># -q: ít log</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-o</span> <span class="nb">test-compile</span>                          <span class="c"># -o: offline (không dùng mạng)</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-B</span> <span class="n">test</span>                                  <span class="c"># -B: batch mode, log gọn cho CI</span>
+<span class="nv">$env:MVNW_VERBOSE</span><span class="p">=</span><span class="s2">&quot;true&quot;</span><span class="p">;</span> <span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span>       <span class="c"># xem chi tiết wrapper</span></code></pre></div>
+<h2 id="5-dùng-mvnw-trên-linuxmacos">5. Dùng <code>mvnw</code> trên Linux/macOS</h2>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">chmod<span class="w"> </span>+x<span class="w"> </span>mvnw<span class="w">          </span><span class="c1"># chỉ cần 1 lần nếu file chưa có quyền thực thi</span>
+./mvnw<span class="w"> </span>-version
+./mvnw<span class="w"> </span>clean
+./mvnw<span class="w"> </span>compile
+./mvnw<span class="w"> </span><span class="nb">test</span>
+./mvnw<span class="w"> </span>clean<span class="w"> </span><span class="nb">test</span>
+./mvnw<span class="w"> </span>package</code></pre></div>
+<h3 id="khác-biệt-windows--linuxmacos">Khác biệt Windows ↔ Linux/macOS</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Điểm</th>
+<th>Windows</th>
+<th>Linux/macOS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lệnh</td>
+<td><code>.\mvnw.cmd</code></td>
+<td><code>./mvnw</code></td>
+</tr>
+<tr>
+<td>Quyền chạy</td>
+<td>Không cần</td>
+<td>Cần <code>chmod +x mvnw</code>; không có thì lỗi <code>Permission denied</code></td>
+</tr>
+<tr>
+<td>Nháy tham số <code>-D</code></td>
+<td>Nên dùng <code>"..."</code> trong PowerShell</td>
+<td>Không bắt buộc</td>
+</tr>
+<tr>
+<td>Xuống dòng trong script</td>
+<td><code>`</code> (PowerShell)</td>
+<td><code>\</code></td>
+</tr>
+<tr>
+<td>Biến môi trường tạm</td>
+<td><code>$env:JAVA_HOME="..."</code></td>
+<td><code>export JAVA_HOME=...</code></td>
+</tr>
+<tr>
+<td>Dấu phân cách classpath</td>
+<td><code>;</code></td>
+<td><code>:</code></td>
+</tr>
+<tr>
+<td>Thư mục cache Maven</td>
+<td><code>C:\Users\&lt;tên&gt;\.m2\wrapper\dists</code></td>
+<td><code>~/.m2/wrapper/dists</code></td>
+</tr>
+<tr>
+<td>Cần công cụ tải</td>
+<td>PowerShell (có sẵn)</td>
+<td><code>wget</code> hoặc <code>curl</code> (+ <code>unzip</code> hoặc <code>tar</code>)</td>
+</tr>
+<tr>
+<td>Kết thúc dòng file</td>
+<td>Không quan trọng</td>
+<td><strong>LF bắt buộc</strong> cho <code>mvnw</code>; nếu bị chuyển thành CRLF sẽ lỗi <code>/bin/sh^M: bad interpreter</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Trên Windows có thể chạy <code>./mvnw</code> trong <strong>Git Bash</strong> (file <code>mvnw</code> của dự án có quyền <code>-rwxr-xr-x</code> trong Git Bash; tài liệu này <strong>chưa</strong> chạy thử <code>./mvnw</code> thật trên Linux/macOS — các lệnh ở mục 5 dựa trên đọc script <code>mvnw</code> và hành vi chuẩn của Wrapper 3.3.4).</p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Đọc <code>maven-wrapper.properties</code> và nói rõ <code>wrapperVersion</code> khác phiên bản Maven thế nào.</p>
+<p><strong>Input:</strong> File <code>.mvn/wrapper/maven-wrapper.properties</code></p>
+<p><strong>Expected Output:</strong> <code>wrapperVersion=3.3.4</code>, Maven <code>3.9.16</code> (trong <code>distributionUrl</code>)</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Đọc dòng <code>distributionUrl</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Chạy <code>.\mvnw.cmd -version</code> và xác định thư mục lưu Maven (<code>Maven home</code>).</p>
+<p><strong>Input:</strong> PowerShell tại gốc dự án</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Dòng `Maven home: C:\Users\&lt;tên&gt;\.m2\wrapper\dists\apache-maven-3.9.16\&lt;hash&gt;`</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Có <code>mvn -version</code> cũng chạy không? (máy chưa cài Maven thì không).</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Dựng Wrapper cho <code>SeleniumLab</code> bằng cách chép <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper</code> và kiểm tra.</p>
+<p><strong>Input:</strong> Thư mục <code>SeleniumLab</code> và <code>Selenium1</code></p>
+<p><strong>Expected Output:</strong> <code>.\mvnw.cmd -version</code> in Maven 3.9.16</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Tạo <code>.mvn</code> trước nếu chưa có.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Wrapper có thay thế việc cài JDK không?</p>
+<ul>
+<li>A. Có</li>
+<li>B. Không, Maven vẫn cần JDK</li>
+<li>C. Chỉ trên Windows</li>
+<li>D. Chỉ khi có <code>maven-wrapper.jar</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Wrapper chỉ thay phần cài Maven.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>mvnw.cmd</code> dùng để làm gì?</p>
+<ul>
+<li>A. Chạy Wrapper trên Windows</li>
+<li>B. Chạy trên Linux</li>
+<li>C. Tạo JDK</li>
+<li>D. Đổi <code>pom.xml</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> <code>mvnw</code> cho Linux/macOS/Git Bash; <code>mvnw.cmd</code> cho Windows.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>distributionType=only-script</code> nghĩa là?</p>
+<ul>
+<li>A. Dùng script để tải, không cần <code>maven-wrapper.jar</code></li>
+<li>B. Bắt buộc có jar</li>
+<li>C. Chỉ chạy offline</li>
+<li>D. Không tải Maven</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Script tự tải bằng PowerShell/curl/wget.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is Maven Wrapper and what problem does it solve?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Maven Wrapper là gì, giải quyết vấn đề gì?</li>
+<li><strong>Suggested answer (EN):</strong> It is a set of scripts in the project that download and run the exact Maven version the project specifies, so everybody and CI use the same Maven without installing it.</li>
+<li><strong>Giải thích (VI):</strong> Tránh "máy tôi chạy được".</li>
+<li><strong>Follow-up:</strong> <em>Where is the Maven stored?</em></li>
+</ul>
+<p><strong>2. Maven vs Maven Wrapper?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Maven khác Maven Wrapper?</li>
+<li><strong>Suggested answer (EN):</strong> Maven is the build tool; the wrapper is a launcher that ensures the pinned Maven version exists and then calls it. The wrapper does not replace the JDK.</li>
+<li><strong>Giải thích (VI):</strong> Phiên bản Maven khoá trong file properties được commit.</li>
+<li><strong>Follow-up:</strong> <em>How to upgrade Maven for the team?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Wrapper = script trong dự án, tải đúng Maven rồi chạy</li>
+<li>Maven lưu ở <code>~/.m2/wrapper/dists/...</code></li>
+<li>Windows <code>.\mvnw.cmd</code>, Linux/macOS <code>./mvnw</code> (+ <code>chmod +x</code>)</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li>.\mvnw.cmd -version/test/clean, <code>MVNW_VERBOSE</code>, <code>MVNW_REPOURL</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>wrapperVersion</code> ≠ phiên bản Maven</li>
+<li>Wrapper ≠ JDK</li>
+<li><code>mvn</code> (cài sẵn) ≠ <code>mvnw</code> (qua Wrapper)</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>wrapperVersion=3.3.4</code> là phiên bản <strong>script wrapper</strong>; <code>distributionUrl=.../apache-maven-3.9.16-bin.zip</code> quyết định <strong>Maven 3.9.16</strong>. <code>distributionType=only-script</code> → không có <code>maven-wrapper.jar</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
+<p>Maven nằm trong <code>~/.m2/wrapper/dists/...</code> (cache chung theo máy), <strong>không</strong> trong <code>PATH</code> — nên <code>mvn -version</code> có thể lỗi mà <code>mvnw</code> vẫn chạy.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">mkdir</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">\.</span><span class="n">mvn</span>
+<span class="nb">Copy-Item</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span><span class="p">\</span><span class="n">mvnw</span><span class="p">,</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span><span class="p">\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">\</span>
+<span class="nb">Copy-Item</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span><span class="p">\.</span><span class="n">mvn</span><span class="p">\</span><span class="n">wrapper</span> <span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">\.</span><span class="n">mvn</span><span class="p">\</span><span class="n">wrapper</span> <span class="n">-Recurse</span>
+<span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">;</span> <span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-pom-xml.html"><small>← Bài trước</small><span>pom.xml và Dependencies</span></a><a class="next" href="04-maven-wrapper-in-team-and-git.html"><small>Bài tiếp theo →</small><span>Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/03-maven-wrapper.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

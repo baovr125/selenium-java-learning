@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Browser Interactions: Alert, Frame/iFrame, Window/Tab · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/07-browser-interactions" data-root="../" data-lesson="1" data-title="Browser Interactions: Alert, Frame/iFrame, Window/Tab">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="browser-interactions-alert-frameiframe-windowtab">Browser Interactions: Alert, Frame/iFrame, Window/Tab</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 18 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="06-element-interactions.html">Web Element Interactions</a> · ➡️ <a href="08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a></p>
+<p>Chapter 18 · <a href="README.html">README chương</a> · Trước: <a href="06-element-interactions.html">Element Interactions</a> · Tiếp: <a href="08-mouse-and-keyboard-actions.html">Mouse &amp; Keyboard</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Xử lý JavaScript Alert/Confirm/Prompt</li>
+<li>Làm việc với iframe</li>
+<li>Chuyển giữa cửa sổ/tab</li>
+<li>Luôn chờ trước khi chuyển ngữ cảnh</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="06-element-interactions.html">Element Interactions</a></li>
+<li><a href="../04-wait-mechanisms/03-explicit-wait.html">Explicit Wait</a></li>
+</ul>
+<h2 id="alert">Alert</h2>
+<p>Có 3 loại JavaScript popup (không thuộc DOM): <strong>alert</strong> (OK), <strong>confirm</strong> (OK/Cancel), <strong>prompt</strong> (nhập chữ).</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsPrompt()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span><span class="w">     </span><span class="c1">// chờ + lấy Alert</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">alert</span><span class="p">.</span><span class="na">getText</span><span class="p">());</span>
+<span class="n">alert</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Xin chào&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// chỉ prompt</span>
+<span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span><span class="w">                 </span><span class="c1">// OK</span>
+<span class="c1">// alert.dismiss();             // Cancel</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>driver.switchTo().alert()</code></td>
+<td>Chuyển sang alert (ném <code>NoAlertPresentException</code> nếu chưa có)</td>
+</tr>
+<tr>
+<td><code>getText()</code></td>
+<td>Nội dung</td>
+</tr>
+<tr>
+<td><code>accept()</code> / <code>dismiss()</code></td>
+<td>OK / Cancel</td>
+</tr>
+<tr>
+<td><code>sendKeys(String)</code></td>
+<td>Nhập vào prompt</td>
+</tr>
+</tbody>
+</table></div>
+<p>Lưu ý:</p>
+<ul>
+<li>Khi alert đang mở, mọi lệnh khác (kể cả <code>findElement</code>) ném <code>UnhandledAlertException</code>.</li>
+<li>Alert <strong>không phải</strong> HTML ⇒ không dùng locator được.</li>
+<li>Luôn <strong>chờ</strong> <code>alertIsPresent()</code> thay vì <code>switchTo().alert()</code> thẳng (<a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>).</li>
+<li>Popup xác thực (basic auth) không phải alert: nhúng credential vào URL <code>https://user:pass@host/...</code> hoặc dùng cơ chế riêng.</li>
+<li>Modal HTML (như 🧩 Ex8 Entry Ad) <strong>không phải alert</strong> — dùng locator bình thường.</li>
+</ul>
+<h2 id="frame--iframe">Frame / iFrame</h2>
+<p><code>&lt;iframe&gt;</code> chứa một <strong>tài liệu HTML riêng</strong>. Selenium chỉ "nhìn thấy" phần tử của frame <strong>hiện tại</strong> ⇒ muốn thao tác trong iframe phải <strong>chuyển ngữ cảnh</strong>.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/iframe&quot;</span><span class="p">);</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span><span class="w">  </span><span class="c1">// chờ + vào</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">));</span>
+<span class="n">body</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w">                                                        </span><span class="c1">// focus vào editor</span>
+<span class="n">body</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">chord</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">CONTROL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Noi dung trong iframe&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// chọn hết rồi gõ đè</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">                     </span><span class="c1">// ra khỏi mọi iframe, về trang chính</span></code></pre></div>
+<blockquote>
+<p>✅ Đã kiểm chứng thật: với TinyMCE của the-internet, <code>clear()</code> + <code>sendKeys()</code> <strong>không</strong> ghi nhận chữ (ô vẫn rỗng); phải <code>click()</code> để focus rồi <code>Ctrl+A</code> và gõ. Editor WYSIWYG (<code>contenteditable</code>) cư xử khác <code>&lt;input&gt;</code>.</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switchTo().frame(int index)</code></td>
+<td>Theo chỉ số (mong manh)</td>
+</tr>
+<tr>
+<td><code>switchTo().frame(String nameOrId)</code></td>
+<td>Theo <code>name</code> hoặc <code>id</code></td>
+</tr>
+<tr>
+<td><code>switchTo().frame(WebElement)</code></td>
+<td>Theo phần tử <code>&lt;iframe&gt;</code></td>
+</tr>
+<tr>
+<td><code>switchTo().parentFrame()</code></td>
+<td>Lên <strong>một</strong> cấp</td>
+</tr>
+<tr>
+<td><code>switchTo().defaultContent()</code></td>
+<td>Về gốc</td>
+</tr>
+</tbody>
+</table></div>
+<p>Frame lồng nhau: vào lần lượt từng cấp; ra bằng <code>parentFrame()</code>/<code>defaultContent()</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoSuchElementException</code> dù phần tử có trong DevTools</td>
+<td>Phần tử nằm trong iframe</td>
+<td><code>switchTo().frame(...)</code> trước</td>
+</tr>
+<tr>
+<td><code>NoSuchFrameException</code></td>
+<td>Frame chưa tải / sai locator</td>
+<td><code>frameToBeAvailableAndSwitchToIt</code></td>
+</tr>
+<tr>
+<td>Sau khi ra, phần tử trang chính "biến mất"</td>
+<td>Quên <code>defaultContent()</code></td>
+<td>Luôn quay về</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td>Frame bị nạp lại</td>
+<td>Chuyển lại frame, tìm lại phần tử</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="window--tab">Window / Tab</h2>
+<p>Mỗi cửa sổ/tab có một <strong>window handle</strong> (chuỗi định danh).</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">mainHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span><span class="w">                       </span><span class="c1">// tab hiện tại</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">              </span><span class="c1">// /windows: mở tab mới</span>
+
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w">              </span><span class="c1">// chờ tab mở</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">handle</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">                   </span><span class="c1">// Set&lt;String&gt;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">handle</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">mainHandle</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span><span class="w">                           </span><span class="c1">// sang tab mới</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span><span class="w">                              </span><span class="c1">// &quot;New Window&quot;</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">close</span><span class="p">();</span><span class="w">                                                     </span><span class="c1">// đóng tab mới</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">mainHandle</span><span class="p">);</span><span class="w">                               </span><span class="c1">// PHẢI quay lại tab chính</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getWindowHandle()</code></td>
+<td>Handle cửa sổ hiện tại</td>
+</tr>
+<tr>
+<td><code>getWindowHandles()</code></td>
+<td><code>Set&lt;String&gt;</code> mọi cửa sổ (không có thứ tự đảm bảo)</td>
+</tr>
+<tr>
+<td><code>switchTo().window(handle)</code></td>
+<td>Chuyển</td>
+</tr>
+<tr>
+<td><code>switchTo().newWindow(WindowType.TAB \| WINDOW)</code></td>
+<td>Selenium 4: mở &amp; chuyển sang tab/cửa sổ mới</td>
+</tr>
+<tr>
+<td><code>close()</code></td>
+<td>Đóng cửa sổ hiện tại (xem <a href="05-browser-navigation.html#6-close-vs-quit">03</a>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>⚠️ Lỗi thường gặp:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getWindowHandles()</code> chỉ có 1 handle</td>
+<td>Tab chưa mở xong</td>
+<td><code>numberOfWindowsToBe(2)</code></td>
+</tr>
+<tr>
+<td><code>NoSuchWindowException</code></td>
+<td><code>driver</code> vẫn trỏ cửa sổ đã đóng</td>
+<td><code>switchTo().window(...)</code></td>
+</tr>
+<tr>
+<td>Dựa vào thứ tự của <code>Set</code></td>
+<td><code>Set</code> không đảm bảo thứ tự</td>
+<td>So sánh với handle chính</td>
+</tr>
+<tr>
+<td>Quên quay lại tab chính</td>
+<td></td>
+<td>Lưu <code>mainHandle</code> từ đầu</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Luôn <strong>chờ</strong> (<code>alertIsPresent</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>numberOfWindowsToBe</code>) trước khi chuyển ngữ cảnh.</li>
+<li>Lưu <code>mainHandle</code>; sau khi xong luôn quay lại.</li>
+<li>Tách thành helper dùng lại: <code>switchToNewWindow()</code>, <code>acceptAlert()</code>.</li>
+<li>Ưu tiên <code>selectByVisibleText</code>/<code>selectByValue</code> hơn <code>selectByIndex</code>.</li>
+<li>Mỗi lần chuyển frame nhớ thoát ra.</li>
+</ol>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Trên <code>/javascript_alerts</code>, bấm JS Alert, chấp nhận và kiểm tra <code>#result</code>.</p>
+<p><strong>Input:</strong> <code>/javascript_alerts</code></p>
+<p><strong>Expected Output:</strong> <code>You successfully clicked an alert</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>alertIsPresent()</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Vào iframe ở <code>/iframe</code>, đọc nội dung mặc định, gõ đè chữ mới và quay ra trang chính.</p>
+<p><strong>Input:</strong> <code>/iframe</code></p>
+<p><strong>Expected Output:</strong> Mặc định <code>Your content goes here.</code>; sau đó chữ mới</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>click()</code> + <code>Ctrl+A</code> trước khi gõ.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Trên <code>/windows</code>, bấm <em>Click Here</em>, chuyển sang tab mới, kiểm tra heading, đóng và quay về.</p>
+<p><strong>Input:</strong> <code>/windows</code></p>
+<p><strong>Expected Output:</strong> Heading tab mới <code>New Window</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>numberOfWindowsToBe(2)</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Gọi <code>switchTo().alert()</code> quá sớm gây?</p>
+<ul>
+<li>A. <code>NoAlertPresentException</code></li>
+<li>B. <code>TimeoutException</code></li>
+<li>C. Không gì</li>
+<li>D. Pass</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Dùng <code>alertIsPresent()</code>.</p>
+</details>
+<p><strong>Câu 2.</strong> Sau khi làm việc trong iframe, trở về trang chính bằng?</p>
+<ul>
+<li>A. <code>close()</code></li>
+<li>B. <code>switchTo().defaultContent()</code></li>
+<li>C. <code>quit()</code></li>
+<li>D. <code>refresh()</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Hoặc <code>parentFrame()</code> lên một cấp.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>getWindowHandles()</code> trả về kiểu?</p>
+<ul>
+<li>A. <code>List&lt;String&gt;</code></li>
+<li>B. <code>Set&lt;String&gt;</code></li>
+<li>C. <code>String[]</code></li>
+<li>D. <code>Map</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>Set&lt;String&gt;</code>: không đảm bảo thứ tự.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you handle multiple windows?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Xử lý nhiều cửa sổ?</li>
+<li><strong>Suggested answer (EN):</strong> Save the main handle, wait with <code>numberOfWindowsToBe</code>, loop over <code>getWindowHandles()</code> to switch to the new one, and switch back to the main handle after closing.</li>
+<li><strong>Giải thích (VI):</strong> Không dựa vào thứ tự của Set.</li>
+<li><strong>Follow-up:</strong> <em>What exception if you forget to switch back?</em></li>
+</ul>
+<p><strong>2. How do you handle an iframe?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Xử lý iframe?</li>
+<li><strong>Suggested answer (EN):</strong> Switch into it with <code>frameToBeAvailableAndSwitchToIt</code>, work with its elements, and leave with <code>switchTo().defaultContent()</code>.</li>
+<li><strong>Giải thích (VI):</strong> Phần tử trong iframe không thấy từ trang chính.</li>
+<li><strong>Follow-up:</strong> <em>WYSIWYG editors need what extra step?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Alert không phải HTML: <code>switchTo().alert()</code></li>
+<li>iframe: vào → làm → <code>defaultContent()</code></li>
+<li>Window: lưu handle chính, chờ số cửa sổ, chuyển, quay lại</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>alertIsPresent</code>, <code>accept/dismiss/sendKeys</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>getWindowHandles</code>, <code>switchTo().window/newWindow</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Alert ≠ modal HTML</li>
+<li><code>defaultContent</code> ≠ <code>parentFrame</code></li>
+<li><code>close</code> cửa sổ phụ rồi phải switch lại</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/javascript_alerts&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsAlert()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
+<span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;result&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;You successfully clicked an alert&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/iframe&quot;</span><span class="p">);</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">body</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Your content goes here.&quot;</span><span class="p">);</span>
+<span class="n">body</span><span class="p">.</span><span class="na">click</span><span class="p">();</span>
+<span class="n">body</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">chord</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">CONTROL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Xin chao iframe&quot;</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">body</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Xin chao iframe&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/windows&quot;</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">))</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;h3&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;New Window&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">main</span><span class="p">);</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-element-interactions.html"><small>← Bài trước</small><span>Web Element Interactions</span></a><a class="next" href="08-mouse-and-keyboard-actions.html"><small>Bài tiếp theo →</small><span>Keyboard và Mouse Actions</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/07-browser-interactions.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/04-maven-wrapper-in-team-and-git" data-root="../" data-lesson="1" data-title="Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="maven-wrapper-làm-việc-nhóm-git-và-lỗi-thường-gặp-">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp ⭐</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 10 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a> · ➡️ <a href="05-maven-lifecycle.html">Commands và Build Lifecycle</a></p>
+<p>Chapter 10 · <a href="README.html">README chương</a> · Trước: <a href="03-maven-wrapper.html">Maven Wrapper</a> · Tiếp: <a href="05-maven-lifecycle.html">Maven Lifecycle</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Mô tả quy trình làm việc nhóm với Wrapper từ clone đến push</li>
+<li>Biết file nào commit, file nào không</li>
+<li>Xử lý các lỗi Wrapper thường gặp</li>
+<li>Biết cách nâng phiên bản Maven cho cả nhóm</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="03-maven-wrapper.html">Maven Wrapper</a></li>
+<li><a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals</a></li>
+</ul>
+<h2 id="1-maven-wrapper-và-làm-việc-nhóm">1. Maven Wrapper và làm việc nhóm</h2>
+<h3 id="11-kịch-bản-từ-đầu-đến-cuối">1.1. Kịch bản từ đầu đến cuối</h3>
+<p>Giả sử bạn là <strong>Bảo</strong> (thành viên mới) và <code>Selenium1</code> đã được đẩy lên GitHub.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước</th>
+<th>Hành động</th>
+<th>Lệnh</th>
+<th>Điều xảy ra bên dưới</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Clone dự án</td>
+<td><code>git clone &lt;url&gt;</code> rồi <code>cd Selenium1</code></td>
+<td>Bạn nhận <code>pom.xml</code>, <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/</code>, <code>src/</code>, <code>testng.xml</code>, <code>.gitignore</code>. <strong>Không</strong> có <code>target/</code> hay <code>.mvn/repository/</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Kiểm tra JDK</td>
+<td><code>java -version</code></td>
+<td>Cần ≥ 21</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Không cài Maven</td>
+<td><code>mvn -version</code> ⇒ lỗi</td>
+<td>Bình thường, không sao</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Xác nhận Wrapper chạy</td>
+<td><code>.\mvnw.cmd -version</code></td>
+<td>Tải Maven 3.9.16 vào <code>~/.m2/wrapper/dists/</code> (lần đầu)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Chạy test</td>
+<td><code>.\mvnw.cmd clean test</code></td>
+<td>Tải thư viện vào <code>.mvn/repository</code> (lần đầu chậm), biên dịch, chạy 10 test</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Thêm thư viện mới</strong> (ví dụ <code>slf4j-simple</code>)</td>
+<td>Sửa <code>pom.xml</code>, thêm <code>&lt;dependency&gt;</code></td>
+<td>Chưa tải gì cho đến khi chạy Maven</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Kiểm chứng</td>
+<td><code>.\mvnw.cmd dependency:tree</code> rồi <code>.\mvnw.cmd clean test</code></td>
+<td>Maven tải thư viện mới vào Local Repository; test phải vẫn xanh</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Cập nhật dependency</strong></td>
+<td>Đổi <code>&lt;selenium.version&gt;</code>, chạy lại <code>clean test</code></td>
+<td>Maven tải phiên bản mới; <strong>đọc kỹ</strong> kết quả test</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Commit, push</td>
+<td><code>git add pom.xml</code> → <code>git commit</code> → <code>git push</code></td>
+<td>Chỉ <code>pom.xml</code> đổi; <strong>không</strong> có file jar nào được commit</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Đồng đội pull</td>
+<td><code>git pull</code> rồi <code>.\mvnw.cmd test</code></td>
+<td>Máy họ tự tải thư viện mới do <code>pom.xml</code> chỉ định — <strong>không cần làm gì thêm</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Điểm mấu chốt: <strong>thông tin duy nhất</strong> được chia sẻ qua Git là <em>"dự án cần những gì"</em> (<code>pom.xml</code>, <code>maven-wrapper.properties</code>). Còn <em>"những file thực tế"</em> (jar, Maven distribution) mỗi máy tự tải.</p>
+<h3 id="12-trả-lời-các-câu-hỏi-then-chốt">1.2. Trả lời các câu hỏi then chốt</h3>
+<p><strong>Những file Wrapper nào cần commit?</strong>
+✅ <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/maven-wrapper.properties</code> (và <code>maven-wrapper.jar</code> nếu dự án dùng kiểu có jar). Đồng thời commit <code>pom.xml</code>. Nếu dùng <code>.mvn/maven.config</code>/<code>.mvn/jvm.config</code> (cấu hình chung của nhóm) cũng commit.</p>
+<p><strong>Có nên commit <code>.mvn/wrapper</code>?</strong>
+✅ <strong>Có.</strong> Đây là nơi khoá phiên bản Maven. Không commit thì Wrapper không biết tải Maven nào và <code>mvnw</code> hỏng trên máy người khác.</p>
+<p><strong>Có nên commit <code>target/</code>?</strong>
+❌ <strong>Không.</strong> Toàn bộ là file sinh ra (class, report, jar); khác nhau mỗi máy, nặng, gây xung đột Git. Dự án đã có <code>target/</code> trong <code>.gitignore</code>.</p>
+<p><strong>Có nên commit thư viện trong Local Maven Repository?</strong>
+❌ <strong>Không.</strong> Dự án này còn đặt Local Repository ngay trong <code>.mvn/repository</code> (123 jar) — <strong>tuyệt đối không commit</strong>, đã được <code>.gitignore</code> chặn bằng dòng <code>.mvn/repository/</code>. Hãy lưu ý: vì nó nằm dưới <code>.mvn/</code>, <strong>đừng</strong> nhầm lẫn và dùng lệnh <code>git add .mvn</code> (sẽ bị <code>.gitignore</code> chặn phần repository, nhưng thói quen này dễ gây lỗi ở dự án khác). Luôn <code>git add .mvn/wrapper/</code> cụ thể.</p>
+<p><strong>Khi thêm dependency vào <code>pom.xml</code>, thành viên khác cần làm gì?</strong>
+Chỉ cần <code>git pull</code> rồi chạy Maven bất kỳ (<code>.\mvnw.cmd test</code>). Maven thấy dependency mới chưa có trong Local Repository ⇒ tự tải. Nếu IDE đang mở, bấm <strong>Reload Maven project</strong>.</p>
+<p><strong>Khi đổi phiên bản Maven cần cập nhật gì?</strong>
+Sửa <strong>một</strong> dòng <code>distributionUrl</code> trong <code>.mvn/wrapper/maven-wrapper.properties</code> (hoặc chạy <code>mvnw wrapper:wrapper -Dmaven=&lt;phiên bản&gt;</code> để sinh lại). Kiểm tra bằng <code>.\mvnw.cmd -version</code>, chạy <code>clean test</code>, rồi commit file properties (và các file wrapper nếu đổi). Mọi thành viên pull xong, lần chạy tiếp theo <code>mvnw</code> tự tải bản mới. Xem <a href="#4-nâng-cấp--đổi-phiên-bản-maven">mục 4</a>.</p>
+<p><strong>Vì sao các thành viên nên dùng cùng một Maven Wrapper?</strong>
+Để <em>kết quả build giống nhau</em>: cùng Maven ⇒ cùng cách giải quyết dependency, cùng hành vi plugin mặc định, ít lỗi "máy tôi chạy được".</p>
+<p><strong>Maven Wrapper có đảm bảo tất cả máy chạy giống nhau không?</strong>
+❌ <strong>Không hoàn toàn.</strong> Wrapper chỉ khoá <strong>phiên bản Maven</strong>. Vẫn khác nhau ở:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Yếu tố</th>
+<th>Wrapper có kiểm soát?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phiên bản Maven</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Phiên bản JDK (dự án <code>--release 21</code>, máy A dùng 21, máy B dùng 25)</td>
+<td>❌ (chỉ hạn chế một phần nhờ <code>release</code>)</td>
+</tr>
+<tr>
+<td>Phiên bản Chrome / ChromeDriver</td>
+<td>❌ (Selenium Manager tải theo Chrome từng máy)</td>
+</tr>
+<tr>
+<td>Hệ điều hành, độ phân giải, font</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Thư viện (nếu dùng version range hoặc SNAPSHOT)</td>
+<td>❌ — nên ghim phiên bản cố định (dự án làm đúng)</td>
+</tr>
+<tr>
+<td>Mạng, tốc độ website được test</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>~/.m2/settings.xml</code> cá nhân (mirror, proxy)</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Maven Wrapper có thay thế việc cài JDK không?</strong>
+❌ <strong>Không.</strong> Maven là chương trình Java, vẫn cần JDK/JRE để chạy, và cần <strong>JDK</strong> (có <code>javac</code>) để biên dịch. Wrapper chỉ thay phần <em>cài Maven</em>.</p>
+<h2 id="2-maven-wrapper-và-git">2. Maven Wrapper và Git</h2>
+<h3 id="21-bảng-quản-lý-file">2.1. Bảng quản lý file</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File / thư mục</th>
+<th>Commit?</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pom.xml</code></td>
+<td>✅</td>
+<td>Định nghĩa dependency, plugin</td>
+</tr>
+<tr>
+<td><code>mvnw</code></td>
+<td>✅</td>
+<td>Script cho Linux/macOS/CI</td>
+</tr>
+<tr>
+<td><code>mvnw.cmd</code></td>
+<td>✅</td>
+<td>Script cho Windows</td>
+</tr>
+<tr>
+<td><code>.mvn/wrapper/</code></td>
+<td>✅</td>
+<td>Khoá phiên bản Maven</td>
+</tr>
+<tr>
+<td><code>.mvn/maven.config</code></td>
+<td>✅</td>
+<td>Tham số chung cả nhóm (ở dự án: đặt repo riêng)</td>
+</tr>
+<tr>
+<td><code>testng.xml</code>, <code>src/</code></td>
+<td>✅</td>
+<td>Mã nguồn</td>
+</tr>
+<tr>
+<td><code>target/</code></td>
+<td>❌</td>
+<td>Build output</td>
+</tr>
+<tr>
+<td><code>test-output/</code></td>
+<td>❌</td>
+<td>Report TestNG chạy ngoài Maven</td>
+</tr>
+<tr>
+<td><code>.mvn/repository/</code></td>
+<td>❌</td>
+<td>Local Repository riêng của dự án</td>
+</tr>
+<tr>
+<td><code>~/.m2/...</code></td>
+<td>❌</td>
+<td>Nằm ngoài dự án</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-kiểm-tra-trước-khi-commit">2.2. Kiểm tra trước khi commit</h3>
+<p>Hiện thư mục <code>Selenium1</code> <strong>chưa là Git repository</strong>. Để thực hành, hãy làm trên một <strong>bản sao</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>init
+git<span class="w"> </span>status
+git<span class="w"> </span>add<span class="w"> </span>pom.xml<span class="w"> </span>mvnw<span class="w"> </span>mvnw.cmd<span class="w"> </span>.mvn/wrapper/<span class="w"> </span>.gitignore<span class="w"> </span>testng.xml<span class="w"> </span>src/
+git<span class="w"> </span>status<span class="w">                      </span><span class="c1"># xem chính xác thứ sẽ commit</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update Maven configuration&quot;</span></code></pre></div>
+<p>Kiểm tra <code>target/</code> và repository riêng đã bị bỏ qua:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>check-ignore<span class="w"> </span>-v<span class="w"> </span>target<span class="w"> </span>.mvn/repository<span class="w">     </span><span class="c1"># in ra dòng .gitignore khớp</span>
+git<span class="w"> </span>ls-files<span class="w"> </span>.mvn<span class="w">                               </span><span class="c1"># chỉ nên thấy .mvn/wrapper/..., .mvn/maven.config</span></code></pre></div>
+<h3 id="23-bit-thực-thi-của-mvnw-quan-trọng-với-linuxmacosci">2.3. Bit thực thi của <code>mvnw</code> (quan trọng với Linux/macOS/CI)</h3>
+<blockquote>
+<p>✅ <strong>Đã tái hiện thật (Git 2.49.0, Windows):</strong> <code>git add mvnw</code> rồi <code>git ls-files --stage mvnw</code> cho <code>100644</code> (không thực thi). Sửa bằng <code>git update-index --chmod=+x mvnw</code> → <code>100755</code>. Xem <a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">bài Git <code>.gitignore</code> và Maven</a>.</p>
+</blockquote>
+<p>Git lưu quyền thực thi. Trên Windows, đảm bảo <code>mvnw</code> được lưu là executable:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>ls-files<span class="w"> </span>--stage<span class="w"> </span>mvnw<span class="w">                      </span><span class="c1"># 100755 = executable, 100644 = không</span>
+git<span class="w"> </span>update-index<span class="w"> </span>--chmod<span class="o">=</span>+x<span class="w"> </span>mvnw<span class="w">               </span><span class="c1"># sửa nếu là 100644</span></code></pre></div>
+<p>Nếu thành viên dùng Linux/macOS gặp <code>Permission denied</code>, đây là nguyên nhân. Cách tạm: <code>chmod +x mvnw</code>.</p>
+<h3 id="24-kết-thúc-dòng-line-endings">2.4. Kết thúc dòng (line endings)</h3>
+<p><code>mvnw</code> phải là <strong>LF</strong>. Nếu Git trên Windows tự đổi sang CRLF (<code>core.autocrlf=true</code>) thì Linux báo lỗi <code>bad interpreter</code>. Giải pháp phổ biến: thêm vào <code>.gitattributes</code>:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">/mvnw            text eol=lf
+/mvnw.cmd        text eol=crlf</code></pre></div>
+<h3 id="25-khi-nào-cần-commit-khi-nào-không">2.5. Khi nào cần commit, khi nào không?</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Commit gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thêm/đổi dependency</td>
+<td>Chỉ <code>pom.xml</code></td>
+</tr>
+<tr>
+<td>Đổi phiên bản Maven</td>
+<td><code>.mvn/wrapper/maven-wrapper.properties</code> (+ <code>mvnw</code>, <code>mvnw.cmd</code> nếu sinh lại bằng <code>wrapper:wrapper</code>)</td>
+</tr>
+<tr>
+<td>Chạy test</td>
+<td><strong>Không</strong> commit gì (đừng add <code>target/</code>, <code>test-output/</code>)</td>
+</tr>
+<tr>
+<td>Tải thêm thư viện về máy</td>
+<td><strong>Không</strong> commit gì</td>
+</tr>
+<tr>
+<td>Đổi cấu hình chung Maven</td>
+<td><code>.mvn/maven.config</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-các-lỗi-thường-gặp">3. Các lỗi thường gặp</h2>
+<h3 id="31-mvnwcmd-không-chạy">3.1. <code>mvnw.cmd</code> không chạy</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>mvnw.cmd : The term 'mvnw.cmd' is not recognized...</code> hoặc <code>'.\mvnw.cmd' is not recognized</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>Đứng sai thư mục; quên <code>.\</code> trong PowerShell; file bị xoá/không checkout</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td><code>Get-Location</code>; <code>Test-Path .\mvnw.cmd</code>; <code>git status</code></td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td><code>cd</code> đến thư mục có <code>pom.xml</code>; gõ <code>.\mvnw.cmd</code>; <code>git checkout -- mvnw.cmd</code> nếu bị mất</td>
+</tr>
+</tbody>
+</table></div>
+<p>Biến thể: PowerShell báo "running scripts is disabled" — <code>mvnw.cmd</code> là file <code>.cmd</code> nên không bị ExecutionPolicy của <code>.ps1</code>; nhưng script nhúng gọi <code>powershell -noprofile</code> sẽ vẫn chạy. Nếu bị chính sách công ty chặn PowerShell, Wrapper kiểu Windows sẽ không tải được Maven ⇒ cài Maven thủ công hoặc nhờ IT.</p>
+<h3 id="32-không-có-quyền-thực-thi-mvnw-trên-linuxmacos">3.2. Không có quyền thực thi <code>mvnw</code> trên Linux/macOS</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>bash: ./mvnw: Permission denied</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>File không có bit <code>x</code> (thường do commit từ Windows)</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td><code>ls -l mvnw</code>; <code>git ls-files --stage mvnw</code> (100644?)</td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td><code>chmod +x mvnw</code>; để vĩnh viễn: <code>git update-index --chmod=+x mvnw</code> rồi commit</td>
+</tr>
+</tbody>
+</table></div>
+<p>Biến thể: <code>/bin/sh^M: bad interpreter</code> ⇒ CRLF; khắc phục bằng <code>.gitattributes</code> ở <a href="#24-kết-thúc-dòng-line-endings">2.4</a> và <code>dos2unix mvnw</code>.</p>
+<h3 id="33-không-tải-được-maven-distribution">3.3. Không tải được Maven Distribution</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>Exception calling "DownloadFile"... Unable to connect to the remote server</code> hoặc <code>curl: Failed to fetch https://repo.maven.apache.org/...</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>Mất mạng, proxy/firewall, tường lửa công ty chặn <code>repo.maven.apache.org</code>, đồng hồ máy sai, <code>distributionUrl</code> sai (404)</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td>Mở URL trong <code>distributionUrl</code> bằng trình duyệt; <code>MVNW_VERBOSE=true</code>; kiểm tra proxy (<code>$env:HTTPS_PROXY</code>)</td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Sửa mạng/proxy; dùng mirror nội bộ qua <code>MVNW_REPOURL</code>; sửa URL; hoặc tải zip thủ công và giải nén vào đúng thư mục <code>~/.m2/wrapper/dists/apache-maven-3.9.16/&lt;hash&gt;/</code> (hash trùng với thư mục mà wrapper tính)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nếu tải dở bị hỏng: xoá thư mục <code>~/.m2/wrapper/dists/apache-maven-3.9.16/</code> rồi chạy lại.</p>
+<h3 id="34-lỗi-kết-nối-maven-central-tải-thư-viện">3.4. Lỗi kết nối Maven Central (tải thư viện)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>Could not transfer artifact ... from/to central</code>, <code>Connection timed out</code>, <code>Unknown host repo.maven.apache.org</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>Mất mạng/proxy/DNS; Central tạm lỗi; <code>settings.xml</code> có mirror hỏng</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td><code>ping repo.maven.apache.org</code>; mở URL artifact trong trình duyệt; xem <code>~/.m2/settings.xml</code></td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Sửa mạng; cấu hình proxy trong <code>settings.xml</code>; thử lại; dùng <code>-o</code> nếu đã có cache đủ; cân nhắc <code>-U</code> để ép cập nhật sau khi sửa</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="35-java-version-không-tương-thích">3.5. Java version không tương thích</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>Fatal error compiling: error: release version 21 not supported</code> hoặc <code>invalid target release: 21</code>; <code>UnsupportedClassVersionError</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>JDK trong <code>PATH</code>/<code>JAVA_HOME</code> thấp hơn 21</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td><code>java -version</code>; <code>javac -version</code>; <code>.\mvnw.cmd -version</code> (dòng <code>Java version:</code> / <code>runtime:</code>)</td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Cài JDK ≥ 21 và đặt <code>JAVA_HOME</code>; PowerShell tạm thời: <code>$env:JAVA_HOME="C:\...\jdk-21"; $env:Path="$env:JAVA_HOME\bin;$env:Path"</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Ở chiều ngược lại — JDK <strong>mới hơn</strong> (25) chạy tốt, nhờ <code>maven.compiler.release=21</code>.</p>
+<h3 id="36-dependency-resolution-failed">3.6. Dependency resolution failed</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>Failed to execute goal ... Could not resolve dependencies for project ...: Could not find artifact ...</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>Gõ sai <code>groupId/artifactId/version</code>; phiên bản không tồn tại; mất mạng lần đầu; file trong repo bị hỏng; repository chứa artifact chưa được khai báo</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td>So tọa độ với trang tìm kiếm Maven Central; <code>.\mvnw.cmd dependency:tree</code>; xem file <code>*.lastUpdated</code> trong repo</td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Sửa tọa độ; kiểm tra mạng; xoá thư mục artifact lỗi trong <code>.mvn/repository</code>; chạy lại <code>-U</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Chi tiết: <a href="09-maven-troubleshooting.html">08</a>.</p>
+<h3 id="37-maven-build-failed">3.7. Maven build failed</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>BUILD FAILURE</code></td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td><strong>Rất nhiều loại</strong>: lỗi biên dịch, test fail, plugin lỗi, thiếu dependency</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td>Đọc <strong>dòng <code>[ERROR]</code> đầu tiên</strong> và dòng <code>Failed to execute goal &lt;plugin&gt;:&lt;goal&gt;</code>. Thêm <code>-e</code> (stacktrace) hoặc <code>-X</code> (debug)</td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Tuỳ plugin: <code>compiler</code> → sửa code; <code>surefire</code> → xem <code>target/surefire-reports</code>; <code>dependency</code> → mục 3.6</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nhận biết nhanh: <code>compiler:testCompile</code> fail = lỗi cú pháp/thiếu thư viện; <code>surefire:test</code> fail = test <strong>chạy nhưng sai</strong>; hai việc khác hẳn nhau.</p>
+<h3 id="38-wrapper-dùng-maven-khác-với-môi-trường-cá-nhân">3.8. Wrapper dùng Maven khác với môi trường cá nhân</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>mvn -version</code> ra 3.6.x nhưng <code>mvnw -version</code> ra 3.9.16; kết quả build khác nhau giữa IDE và dòng lệnh</td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td>IDE dùng "bundled Maven" hoặc Maven cài sẵn, còn dòng lệnh dùng Wrapper</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td>So hai lệnh version; xem thiết lập Maven trong IDE</td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Luôn dùng <code>mvnw</code> làm chuẩn; trong IDE chọn "Use Maven Wrapper" (IntelliJ: <em>Settings → Build Tools → Maven → Maven home path: Use Maven wrapper</em>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Trường hợp thật của dự án (README của dự án, mục 7): <code>~/.m2</code> có <code>.pom</code> giả làm Maven cài sẵn bị lỗi <code>maven-resources-plugin</code>, còn <code>mvnw.cmd</code> không bị vì dùng repo riêng <code>.mvn/repository</code>.</p>
+<h3 id="39-java_home-chưa-được-cấu-hình-đúng">3.9. <code>JAVA_HOME</code> chưa được cấu hình đúng</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Triệu chứng</td>
+<td><code>The JAVA_HOME environment variable is not defined correctly</code>, hoặc Maven chạy bằng JDK khác ý bạn</td>
+</tr>
+<tr>
+<td>Nguyên nhân</td>
+<td><code>JAVA_HOME</code> trỏ vào thư mục không tồn tại, trỏ vào <code>bin</code>, trỏ vào JRE, hoặc có dấu <code>\</code> cuối/ngoặc kép thừa</td>
+</tr>
+<tr>
+<td>Kiểm tra</td>
+<td><code>echo $env:JAVA_HOME</code>; <code>Test-Path "$env:JAVA_HOME\bin\javac.exe"</code>; <code>.\mvnw.cmd -version</code> xem <code>runtime:</code></td>
+</tr>
+<tr>
+<td>Khắc phục</td>
+<td>Đặt lại đúng <strong>thư mục gốc JDK</strong> (chứa <code>bin\javac.exe</code>), mở terminal mới</td>
+</tr>
+</tbody>
+</table></div>
+<p>🔎 <strong>Sự thật đã kiểm chứng:</strong> trên máy này <code>JAVA_HOME</code> <strong>trống</strong> vẫn chạy được: Maven dùng <code>java</code> có trong <code>PATH</code>. Tức <code>JAVA_HOME</code> <strong>không phải lúc nào cũng bắt buộc</strong>; nhưng nếu nó <strong>được đặt mà sai</strong> thì sẽ lỗi — nên hoặc đặt đúng, hoặc để trống hẳn.</p>
+<h2 id="4-nâng-cấp--đổi-phiên-bản-maven">4. Nâng cấp / đổi phiên bản Maven</h2>
+<blockquote>
+<p>Phần này chỉ để <strong>học</strong>; không thay đổi cấu hình của dự án hiện tại.</p>
+</blockquote>
+<p>Cách 1 — sửa tay <code>maven-wrapper.properties</code>:</p>
+<div class="code" data-lang="properties"><div class="code-head"><span class="lang">properties</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="na">distributionUrl</span><span class="o">=</span><span class="s">https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/&lt;phiên bản mới&gt;/apache-maven-&lt;phiên bản mới&gt;-bin.zip</span></code></pre></div>
+<p>Cách 2 — dùng goal của Maven (cần một Maven chạy được, ví dụ chính <code>mvnw</code>):</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">wrapper</span><span class="p">:</span><span class="n">wrapper</span> <span class="s2">&quot;-Dmaven=&lt;phiên bản mới&gt;&quot;</span> <span class="s2">&quot;-Dtype=only-script&quot;</span></code></pre></div>
+<p>Sau đó:</p>
+<ol>
+<li><code>.\mvnw.cmd -version</code> — phải in phiên bản mới.</li>
+<li><code>.\mvnw.cmd clean test</code> — mọi test phải xanh.</li>
+<li>Commit các file wrapper đã đổi; thông báo nhóm.</li>
+</ol>
+<p>Tuỳ chọn tăng an toàn: thêm <code>distributionSha256Sum=&lt;hash&gt;</code> vào properties để Wrapper kiểm tra bản tải về (dự án hiện chưa có).</p>
+<h2 id="5-tóm-tắt">5. Tóm tắt</h2>
+<ul>
+<li>Wrapper = script trong dự án, tải và chạy <strong>đúng phiên bản Maven</strong> của dự án; <strong>không thay JDK</strong>.</li>
+<li>Dự án: Wrapper 3.3.4, <code>only-script</code>, Maven <strong>3.9.16</strong>, không có jar, không có checksum.</li>
+<li>Commit: <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/</code>, <code>pom.xml</code>. Không commit: <code>target/</code>, Local Repository, <code>test-output/</code>.</li>
+<li>Wrapper khoá Maven nhưng <strong>không</strong> khoá JDK, Chrome, mạng.</li>
+<li>Windows: <code>.\mvnw.cmd &lt;goal&gt;</code>. Linux/macOS: <code>./mvnw &lt;goal&gt;</code> + <code>chmod +x</code>.</li>
+</ul>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Lập bảng commit/không commit cho 6 mục: <code>pom.xml</code>, <code>mvnw</code>, <code>.mvn/wrapper/</code>, <code>target/</code>, <code>.mvn/repository/</code>, <code>test-output/</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Bảng 6 hàng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Sinh ra khi build thì không commit.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Mô phỏng nâng Maven: nêu 4 bước và lệnh kiểm chứng.</p>
+<p><strong>Input:</strong> Muốn đổi Maven 3.9.16 → bản mới</p>
+<p><strong>Expected Output:</strong> 4 bước</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Sửa <code>distributionUrl</code> hoặc <code>wrapper:wrapper</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Khắc phục <code>Permission denied: ./mvnw</code> cho đồng đội Linux: đặt bit thực thi trong Git và kiểm tra.</p>
+<p><strong>Input:</strong> Repo thử đã commit <code>mvnw</code> với mode 100644</p>
+<p><strong>Expected Output:</strong> Mode <code>100755</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>git update-index --chmod=+x</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Thành viên mới clone dự án và chưa cài Maven. Cần gì để chạy test?</p>
+<ul>
+<li>A. Cài Maven thủ công</li>
+<li>B. JDK + <code>mvnw</code> + Internet</li>
+<li>C. Chỉ Chrome</li>
+<li>D. Không cần gì</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Wrapper tải Maven; vẫn cần JDK.</p>
+</details>
+<p><strong>Câu 2.</strong> Khi thêm dependency vào <code>pom.xml</code>, đồng đội cần làm gì?</p>
+<ul>
+<li>A. Cài lại Maven</li>
+<li>B. <code>git pull</code> rồi chạy Maven (tự tải)</li>
+<li>C. Copy jar</li>
+<li>D. Không thể</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Maven tự tải thư viện mới vào Local Repository.</p>
+</details>
+<p><strong>Câu 3.</strong> Wrapper có đảm bảo mọi máy chạy giống hệt nhau?</p>
+<ul>
+<li>A. Có</li>
+<li>B. Không, chỉ khoá phiên bản Maven; JDK/Chrome/mạng vẫn khác</li>
+<li>C. Chỉ trên Windows</li>
+<li>D. Chỉ khi có SHA-256</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> JDK, Chrome, OS, mạng không do Wrapper kiểm soát.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Why should we commit mvnw and mvnw.cmd?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao commit <code>mvnw</code> và <code>mvnw.cmd</code>?</li>
+<li><strong>Suggested answer (EN):</strong> So anyone who clones the repository, including CI, can build immediately with the same pinned Maven version without installing Maven.</li>
+<li><strong>Giải thích (VI):</strong> Cùng <code>.mvn/wrapper/</code>.</li>
+<li><strong>Follow-up:</strong> <em>What must you not commit?</em></li>
+</ul>
+<p><strong>2. A teammate on Linux gets 'Permission denied: ./mvnw'. Why?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Đồng đội Linux gặp <code>Permission denied: ./mvnw</code>?</li>
+<li><strong>Suggested answer (EN):</strong> The file was committed without the executable bit (mode 100644), typical when committed from Windows; fix with <code>git update-index --chmod=+x mvnw</code> and commit; also keep LF line endings via <code>.gitattributes</code>.</li>
+<li><strong>Giải thích (VI):</strong> Đã tái hiện: Git trên Windows commit <code>mvnw</code> mode 100644.</li>
+<li><strong>Follow-up:</strong> <em>What error do you get when mvnw has CRLF?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Commit: <code>pom.xml</code>, <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/</code>, <code>.mvn/maven.config</code></li>
+<li>Không commit: <code>target/</code>, <code>.mvn/repository/</code>, <code>test-output/</code></li>
+<li>Wrapper khoá Maven, <strong>không</strong> khoá JDK/Chrome</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>git update-index --chmod=+x mvnw</code>, <code>git ls-files --stage</code>, <code>wrapper:wrapper</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>mvnw</code> cần LF; <code>mvnw.cmd</code> CRLF</li>
+<li>Mode 100644 vs 100755</li>
+<li>Máy chạy giống nhau ≠ cùng Maven</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="05-maven-lifecycle.html">Commands và Build Lifecycle</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục</th>
+<th>Commit?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pom.xml</code>, <code>mvnw</code>, <code>.mvn/wrapper/</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>target/</code>, <code>.mvn/repository/</code>, <code>test-output/</code></td>
+<td>❌</td>
+</tr>
+</tbody>
+</table></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<ol>
+<li>Sửa <code>distributionUrl</code> (hoặc <code>.\mvnw.cmd wrapper:wrapper "-Dmaven=&lt;phiên bản&gt;" "-Dtype=only-script"</code>).</li>
+<li><code>.\mvnw.cmd -version</code> → phải ra phiên bản mới.</li>
+<li><code>.\mvnw.cmd clean test</code> → xanh.</li>
+<li>Commit các file wrapper đã đổi, mở PR.</li>
+</ol>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>ls-files<span class="w"> </span>--stage<span class="w"> </span>mvnw<span class="w">          </span><span class="c1"># 100644</span>
+git<span class="w"> </span>update-index<span class="w"> </span>--chmod<span class="o">=</span>+x<span class="w"> </span>mvnw
+git<span class="w"> </span>ls-files<span class="w"> </span>--stage<span class="w"> </span>mvnw<span class="w">          </span><span class="c1"># 100755</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Make mvnw executable&quot;</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-maven-wrapper.html"><small>← Bài trước</small><span>Maven Wrapper (mvnw, mvnw.cmd)</span></a><a class="next" href="05-maven-lifecycle.html"><small>Bài tiếp theo →</small><span>Commands và Build Lifecycle</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/04-maven-wrapper-in-team-and-git.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

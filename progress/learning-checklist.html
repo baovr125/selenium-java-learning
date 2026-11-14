@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Checklist — &quot;Tôi có thể...&quot; · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="progress/learning-checklist" data-root="../" data-lesson="0" data-title="Learning Checklist — &quot;Tôi có thể...&quot;">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<div class="notice">ℹ️ Trang tĩnh sinh từ Markdown. Tiến độ tương tác nằm ở <a href="../LEARNING_PROGRESS.html">Learning Progress</a> và ngay trong từng bài học.</div>
+<h1 id="learning-checklist--tôi-có-thể">Learning Checklist — "Tôi có thể..."</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">progress/</a> · Rút từ mục 🎯 Learning Objectives của từng bài. Chỉ tick khi <strong>tự làm được không nhìn tài liệu</strong>.</p>
+</blockquote>
+<h2 id="phase-1-java-fundamentals">Phase 1: Java Fundamentals</h2>
+<h3 id="cài-đặt-môi-trường---not-started"><a href="../01-java-fundamentals/00-environment-setup.html">Cài đặt môi trường</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Cài và kiểm tra JDK (≥ 21) cùng Chrome</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>JAVA_HOME</code>, <code>PATH</code>, JDK và JRE</li>
+<li class="task"><input type="checkbox" disabled> Chạy <code>mvnw.cmd -version</code> và test kiểm tra môi trường mà không cần cài Maven</li>
+</ul>
+<h3 id="java-getting-started-introduction-syntax-output-comments---not-started"><a href="../01-java-fundamentals/01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích Java, JDK, JRE, JVM bằng lời của mình</li>
+<li class="task"><input type="checkbox" disabled> Viết và chạy chương trình <code>Hello</code> với <code>main</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>println</code>, <code>print</code>, <code>printf</code> và comments đúng cách</li>
+<li class="task"><input type="checkbox" disabled> Biết cách chạy một chương trình Java (<code>java File.java</code>, <code>javac</code>, Maven)</li>
+</ul>
+<h3 id="java-variables-data-types-và-type-casting---in-progress"><a href="../01-java-fundamentals/02-variables-and-data-types.html">Java: Variables, Data Types và Type Casting</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Khai báo biến, hằng (<code>final</code>) với đúng kiểu dữ liệu</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt primitive và non-primitive</li>
+<li class="task"><input type="checkbox" disabled> Ép kiểu (casting) và chuyển đổi <code>String</code> ↔ số an toàn</li>
+<li class="task"><input type="checkbox" disabled> Nhận ra vì sao dự án dùng <code>long</code>, <code>Number</code>, <code>boolean</code>, <code>String</code>, <code>List</code></li>
+</ul>
+<h3 id="java-operators-strings-math-và-booleans---in-progress"><a href="../01-java-fundamentals/03-operators-and-strings.html">Java: Operators, Strings, Math và Booleans</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng toán tử số học, so sánh, logic đúng thứ tự ưu tiên</li>
+<li class="task"><input type="checkbox" disabled> Thao tác <code>String</code> với các method thường dùng trong assertion</li>
+<li class="task"><input type="checkbox" disabled> So sánh chuỗi bằng <code>equals</code> thay vì <code>==</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>StringBuilder</code>, <code>Math</code> và boolean trong điều kiện</li>
+</ul>
+<h3 id="java-control-flow-ifelse-switch-loops-breakcontinue---in-progress"><a href="../01-java-fundamentals/04-control-flow.html">Java: Control Flow (If...Else, Switch, Loops, Break/Continue)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Rẽ nhánh với <code>if/else</code>, <code>switch</code></li>
+<li class="task"><input type="checkbox" disabled> Lặp với <code>for</code>, <code>for-each</code>, <code>while</code>, <code>do-while</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>break</code>, <code>continue</code> và viết vòng retry có giới hạn</li>
+<li class="task"><input type="checkbox" disabled> Ánh xạ vòng lặp sang việc duyệt danh sách <code>WebElement</code></li>
+</ul>
+<h3 id="java-arrays-mảng---not-started"><a href="../01-java-fundamentals/05-arrays.html">Java: Arrays (mảng)</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Khai báo, truy cập và duyệt mảng</li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>Arrays.toString</code>, <code>Arrays.sort</code>, <code>split</code> trả mảng</li>
+<li class="task"><input type="checkbox" disabled> Hiểu mảng hai chiều <code>Object[][]</code> của <code>@DataProvider</code></li>
+<li class="task"><input type="checkbox" disabled> Biết khi nào dùng <code>List</code> thay mảng</li>
+</ul>
+<h3 id="java-methods-tham-số-giá-trị-trả-về-overloading-scope-recursion---in-progress"><a href="../01-java-fundamentals/06-methods.html">Java: Methods (tham số, giá trị trả về, overloading, scope, recursion)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Viết method có tham số và giá trị trả về</li>
+<li class="task"><input type="checkbox" disabled> Dùng overloading và varargs</li>
+<li class="task"><input type="checkbox" disabled> Hiểu scope của biến</li>
+<li class="task"><input type="checkbox" disabled> Nhận ra method là nền tảng của Reusable Method / Page Method</li>
+</ul>
+<h3 id="java-classes-và-objects-attributes-methods-constructors-this-modifiers-static---in-progress"><a href="../01-java-fundamentals/07-classes-and-objects.html">Java: Classes và Objects (attributes, methods, constructors, <code>this</code>, modifiers, static)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Tạo class, object, attribute, method, constructor</li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>this</code>, <code>private</code>, <code>public</code>, <code>protected</code></li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>static</code> và non-static</li>
+<li class="task"><input type="checkbox" disabled> Mô phỏng một Page Object bằng class thường</li>
+</ul>
+<h3 id="java-oop-concepts-encapsulation-inheritance-polymorphism-abstraction-interface-packages---in-progress"><a href="../01-java-fundamentals/08-oop-concepts.html">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Áp dụng Encapsulation, Inheritance, Polymorphism, Abstraction</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt interface và abstract class</li>
+<li class="task"><input type="checkbox" disabled> Dùng package/import đúng</li>
+<li class="task"><input type="checkbox" disabled> Giải thích vì sao khai báo <code>WebDriver driver = new ChromeDriver()</code></li>
+</ul>
+<h3 id="java-collections-list-set-map-iterator-wrapper-classes---in-progress"><a href="../01-java-fundamentals/09-collections.html">Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>ArrayList</code>, <code>HashSet</code>, <code>HashMap</code> đúng mục đích</li>
+<li class="task"><input type="checkbox" disabled> Hiểu wrapper class và autoboxing</li>
+<li class="task"><input type="checkbox" disabled> Duyệt và xoá phần tử an toàn</li>
+<li class="task"><input type="checkbox" disabled> Giải thích vì sao <code>findElements</code> trả <code>List&lt;WebElement&gt;</code></li>
+</ul>
+<h3 id="java-exception-handling-trycatchfinally-throwthrows-try-with-resources---in-progress"><a href="../01-java-fundamentals/10-exception-handling.html">Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>try/catch/finally</code>, <code>throw</code>, <code>throws</code></li>
+<li class="task"><input type="checkbox" disabled> Phân biệt checked và unchecked exception</li>
+<li class="task"><input type="checkbox" disabled> Dùng try-with-resources</li>
+<li class="task"><input type="checkbox" disabled> Nhận biết khi nào được/không được <code>catch</code> trong test</li>
+</ul>
+<h3 id="java-generics-lambda-annotations-regex-và-threads-mức-cần-cho-selenium---in-progress"><a href="../01-java-fundamentals/11-lambda-and-generics.html">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Đọc hiểu và viết lambda, method reference</li>
+<li class="task"><input type="checkbox" disabled> Hiểu generics trong <code>List&lt;WebElement&gt;</code>, <code>Wait&lt;WebDriver&gt;</code></li>
+<li class="task"><input type="checkbox" disabled> Biết annotation là gì và TestNG đọc chúng thế nào</li>
+<li class="task"><input type="checkbox" disabled> Hiểu <code>ThreadLocal</code> để chạy song song</li>
+</ul>
+<h3 id="java-file-handling-properties-và-configuration---not-started"><a href="../01-java-fundamentals/12-file-handling.html">Java: File Handling, Properties và Configuration</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Đọc/ghi file văn bản với <code>Path</code> và <code>Files</code></li>
+<li class="task"><input type="checkbox" disabled> Đọc cấu hình bằng <code>Properties</code> với giá trị mặc định</li>
+<li class="task"><input type="checkbox" disabled> Đọc CSV đơn giản làm dữ liệu test</li>
+<li class="task"><input type="checkbox" disabled> Hiểu thứ tự ưu tiên <code>-D</code> &gt; file &gt; mặc định</li>
+</ul>
+<h2 id="phase-2-maven-and-project-management">Phase 2: Maven and Project Management</h2>
+<h3 id="khởi-tạo-dự-án-selenium-java--maven--testng---in-progress"><a href="../02-maven-and-project/00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dựng cấu trúc thư mục Maven chuẩn cho dự án Selenium</li>
+<li class="task"><input type="checkbox" disabled> Viết <code>pom.xml</code> tối thiểu và <code>BaseTest</code> đầu tiên</li>
+<li class="task"><input type="checkbox" disabled> Chạy test đầu tiên bằng <code>mvnw</code></li>
+</ul>
+<h3 id="maven-fundamentals---not-started"><a href="../02-maven-and-project/01-maven-fundamentals.html">Maven Fundamentals</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích Maven là gì và vì sao cần</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt Local, Central, Remote Repository</li>
+<li class="task"><input type="checkbox" disabled> Mô tả quy trình Maven tải dependency</li>
+<li class="task"><input type="checkbox" disabled> Chỉ ra Local Repository riêng của dự án (<code>.mvn/repository</code>)</li>
+</ul>
+<h3 id="pomxml-và-dependencies---not-started"><a href="../02-maven-and-project/02-pom-xml.html"><code>pom.xml</code> và Dependencies</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Đọc từng khối của <code>pom.xml</code> thật của dự án</li>
+<li class="task"><input type="checkbox" disabled> Giải thích <code>properties</code>, <code>dependencies</code>, <code>scope</code>, <code>plugins</code></li>
+<li class="task"><input type="checkbox" disabled> Biết <code>dependencyManagement</code>, <code>profiles</code>, <code>repositories</code> dùng khi nào</li>
+</ul>
+<h3 id="maven-wrapper-mvnw-mvnwcmd---in-progress"><a href="../02-maven-and-project/03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích Maven Wrapper là gì, vì sao cần</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>mvnw</code>, <code>mvnw.cmd</code>, <code>maven-wrapper.properties</code></li>
+<li class="task"><input type="checkbox" disabled> Giải thích Wrapper xác định và tải Maven ở đâu</li>
+<li class="task"><input type="checkbox" disabled> Chạy Wrapper trên Windows và Linux/macOS</li>
+</ul>
+<h3 id="maven-wrapper-làm-việc-nhóm-git-và-lỗi-thường-gặp---not-started"><a href="../02-maven-and-project/04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Mô tả quy trình làm việc nhóm với Wrapper từ clone đến push</li>
+<li class="task"><input type="checkbox" disabled> Biết file nào commit, file nào không</li>
+<li class="task"><input type="checkbox" disabled> Xử lý các lỗi Wrapper thường gặp</li>
+<li class="task"><input type="checkbox" disabled> Biết cách nâng phiên bản Maven cho cả nhóm</li>
+</ul>
+<h3 id="commands-và-build-lifecycle---not-started"><a href="../02-maven-and-project/05-maven-lifecycle.html">Commands và Build Lifecycle</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Liệt kê các phase của default lifecycle theo thứ tự</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>clean</code>, <code>compile</code>, <code>test</code>, <code>package</code>, <code>verify</code>, <code>install</code></li>
+<li class="task"><input type="checkbox" disabled> Giải thích Maven thực thi phase theo thứ tự</li>
+<li class="task"><input type="checkbox" disabled> Biết <code>-DskipTests</code>, <code>-o</code>, <code>-q</code>, <code>-B</code></li>
+</ul>
+<h3 id="dependency-management---not-started"><a href="../02-maven-and-project/06-dependency-management.html">Dependency Management</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Đọc <code>dependency:tree</code> thật của dự án</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt direct và transitive dependency</li>
+<li class="task"><input type="checkbox" disabled> Giải quyết xung đột phiên bản</li>
+<li class="task"><input type="checkbox" disabled> Thêm dependency theo quy trình an toàn</li>
+</ul>
+<h3 id="build-và-chạy-automation-test-bằng-maven---in-progress"><a href="../02-maven-and-project/07-build-and-test-execution.html">Build và chạy Automation Test bằng Maven</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Chạy toàn bộ suite, một class, một method bằng Maven</li>
+<li class="task"><input type="checkbox" disabled> Hiểu Surefire/Failsafe và <code>-Dtest</code> bỏ qua <code>testng.xml</code></li>
+<li class="task"><input type="checkbox" disabled> Đọc kết quả trong <code>target/surefire-reports</code></li>
+<li class="task"><input type="checkbox" disabled> Phân biệt 5 trạng thái: pass, skipped, fail, error, không có test</li>
+</ul>
+<h3 id="quy-trình-làm-việc-với-maven-trong-team---not-started"><a href="../02-maven-and-project/08-working-in-team.html">Quy trình làm việc với Maven trong team</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Thực hiện quy trình 9 bước từ clone đến khi đồng đội pull</li>
+<li class="task"><input type="checkbox" disabled> Đọc nhanh một dự án Maven lạ</li>
+<li class="task"><input type="checkbox" disabled> Thêm/cập nhật dependency an toàn</li>
+<li class="task"><input type="checkbox" disabled> Dùng checklist trước khi push</li>
+</ul>
+<h3 id="troubleshooting---not-started"><a href="../02-maven-and-project/09-maven-troubleshooting.html">Troubleshooting</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Áp dụng phương pháp 5 bước để đọc lỗi Maven</li>
+<li class="task"><input type="checkbox" disabled> Nhận diện nhóm lỗi theo plugin/goal</li>
+<li class="task"><input type="checkbox" disabled> Tra bảng nguyên nhân – kiểm tra – khắc phục</li>
+<li class="task"><input type="checkbox" disabled> Biết khi nào và xoá gì trong cache</li>
+</ul>
+<h2 id="phase-3-selenium-fundamentals">Phase 3: Selenium Fundamentals</h2>
+<h3 id="selenium-là-gì---in-progress"><a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium là gì?</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích Selenium, WebDriver, Browser Driver, Browser</li>
+<li class="task"><input type="checkbox" disabled> Mô tả kiến trúc Test → HTTP/JSON (W3C) → Driver → Browser</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt WebDriver và WebElement</li>
+<li class="task"><input type="checkbox" disabled> Giải thích <code>close()</code> và <code>quit()</code></li>
+</ul>
+<h3 id="webdriver-fundamentals---in-progress"><a href="../03-selenium-fundamentals/02-webdriver.html">WebDriver Fundamentals</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Khởi tạo <code>ChromeDriver</code> và cấu hình <code>ChromeOptions</code></li>
+<li class="task"><input type="checkbox" disabled> Phân biệt ba loại timeout của <code>manage().timeouts()</code> và <code>WebDriverWait</code></li>
+<li class="task"><input type="checkbox" disabled> Hiểu vòng đời driver trong <code>BaseTest</code></li>
+<li class="task"><input type="checkbox" disabled> Biết API cũ đã bị loại bỏ</li>
+</ul>
+<h3 id="selenium-locators-cách-tìm-phần-tử---in-progress"><a href="../03-selenium-fundamentals/03-locators.html">Selenium: Locators (cách tìm phần tử)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Viết 8 loại locator</li>
+<li class="task"><input type="checkbox" disabled> Viết CSS Selector và XPath (tương đối, trục, vị trí)</li>
+<li class="task"><input type="checkbox" disabled> Chọn locator ổn định, dễ bảo trì</li>
+<li class="task"><input type="checkbox" disabled> Kiểm tra locator bằng DevTools</li>
+</ul>
+<h3 id="selenium-webelement-api---in-progress"><a href="../03-selenium-fundamentals/04-webelement.html">Selenium: WebElement API</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>findElement</code>/<code>findElements</code> đúng</li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>click</code>, <code>sendKeys</code>, <code>clear</code>, <code>getText</code>, <code>getAttribute</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>isDisplayed</code>, <code>isEnabled</code>, <code>isSelected</code></li>
+<li class="task"><input type="checkbox" disabled> Hiểu và xử lý <code>StaleElementReferenceException</code></li>
+</ul>
+<h3 id="browser-navigation---in-progress"><a href="../03-selenium-fundamentals/05-browser-navigation.html">Browser Navigation</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>get</code>, <code>navigate().to/back/forward/refresh</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>getTitle</code>, <code>getCurrentUrl</code>, <code>getPageSource</code></li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>close()</code> và <code>quit()</code></li>
+<li class="task"><input type="checkbox" disabled> Đợi điều hướng bằng điều kiện thay vì đọc ngay</li>
+</ul>
+<h3 id="web-element-interactions---in-progress"><a href="../03-selenium-fundamentals/06-element-interactions.html">Web Element Interactions</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Nhập liệu, click, tick checkbox/radio, xử lý form</li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>Select</code> cho dropdown và multi-select</li>
+<li class="task"><input type="checkbox" disabled> Xử lý phần tử động bằng Explicit Wait</li>
+<li class="task"><input type="checkbox" disabled> Đọc dữ liệu bảng</li>
+</ul>
+<h3 id="browser-interactions-alert-frameiframe-windowtab---not-started"><a href="../03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions: Alert, Frame/iFrame, Window/Tab</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Xử lý JavaScript Alert/Confirm/Prompt</li>
+<li class="task"><input type="checkbox" disabled> Làm việc với iframe</li>
+<li class="task"><input type="checkbox" disabled> Chuyển giữa cửa sổ/tab</li>
+<li class="task"><input type="checkbox" disabled> Luôn chờ trước khi chuyển ngữ cảnh</li>
+</ul>
+<h3 id="keyboard-và-mouse-actions---in-progress"><a href="../03-selenium-fundamentals/08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>Actions</code> cho hover, kéo thả, phím tổ hợp</li>
+<li class="task"><input type="checkbox" disabled> Nhớ <code>perform()</code></li>
+<li class="task"><input type="checkbox" disabled> Chờ thay đổi UI sau hover/kéo thả</li>
+<li class="task"><input type="checkbox" disabled> Biết phương án dự phòng cho thao tác dễ flaky</li>
+</ul>
+<h3 id="javascript-executor---in-progress"><a href="../03-selenium-fundamentals/09-javascript-executor.html">JavaScript Executor</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>JavascriptExecutor.executeScript</code></li>
+<li class="task"><input type="checkbox" disabled> Cuộn trang và đọc <code>scrollY</code> đúng kiểu <code>Number</code></li>
+<li class="task"><input type="checkbox" disabled> Biết khi nào nên/không nên dùng JS</li>
+<li class="task"><input type="checkbox" disabled> Giải thích kỹ thuật của Exercise 7</li>
+</ul>
+<h3 id="exception-handling---not-started"><a href="../03-selenium-fundamentals/10-selenium-exceptions.html">Exception Handling</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Nhận diện các exception Selenium thường gặp và nguyên nhân</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>TimeoutException</code> và <code>NoSuchElementException</code></li>
+<li class="task"><input type="checkbox" disabled> Biết khi nào <code>catch</code> có mục đích</li>
+<li class="task"><input type="checkbox" disabled> Tránh bẫy import <code>NoSuchElementException</code></li>
+</ul>
+<h3 id="debugging-và-best-practices---in-progress"><a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging và Best Practices</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Áp dụng quy trình debug 8 bước</li>
+<li class="task"><input type="checkbox" disabled> Chụp screenshot khi fail</li>
+<li class="task"><input type="checkbox" disabled> Nhận diện và xử lý test flaky</li>
+<li class="task"><input type="checkbox" disabled> Dùng checklist khi viết test mới</li>
+</ul>
+<h2 id="phase-4-wait-and-synchronization">Phase 4: Wait and Synchronization</h2>
+<h3 id="wait-introduction-vì-sao-selenium-cần-wait---not-started"><a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích vì sao Selenium cần Wait (vấn đề đồng bộ hoá)</li>
+<li class="task"><input type="checkbox" disabled> Kể tên 3 cơ chế chờ và phạm vi của chúng</li>
+<li class="task"><input type="checkbox" disabled> Tái hiện lỗi do thiếu Wait và nhận ra triệu chứng flaky</li>
+</ul>
+<h3 id="implicit-wait---in-progress"><a href="../04-wait-mechanisms/02-implicit-wait.html">Implicit Wait</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Cài và hiểu phạm vi của Implicit Wait</li>
+<li class="task"><input type="checkbox" disabled> Giải thích vì sao dự án cấm Implicit Wait</li>
+<li class="task"><input type="checkbox" disabled> Đo được tác hại của <code>findElements</code> rỗng khi có implicit wait</li>
+<li class="task"><input type="checkbox" disabled> Giải thích vì sao không trộn Implicit và Explicit</li>
+</ul>
+<h3 id="explicit-wait-và-webdriverwait---in-progress"><a href="../04-wait-mechanisms/03-explicit-wait.html">Explicit Wait và WebDriverWait</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>WebDriverWait.until(ExpectedConditions...)</code></li>
+<li class="task"><input type="checkbox" disabled> Cấu hình timeout, polling interval, ignored exceptions, message</li>
+<li class="task"><input type="checkbox" disabled> Đọc <code>TimeoutException</code> để debug</li>
+<li class="task"><input type="checkbox" disabled> Giải thích Wait đang dùng trong <code>Selenium1</code></li>
+</ul>
+<h3 id="expectedconditions-và-presence-vs-visibility-vs-clickability---in-progress"><a href="../04-wait-mechanisms/04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Chọn đúng <code>ExpectedConditions</code> cho từng tình huống</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt Presence, Visibility, Clickability</li>
+<li class="task"><input type="checkbox" disabled> Biết bẫy của <code>invisibilityOfElementLocated</code> và <code>textToBe</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>stalenessOf</code>, <code>numberOfWindowsToBe</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>alertIsPresent</code></li>
+</ul>
+<h3 id="fluent-wait-và-custom-wait---in-progress"><a href="../04-wait-mechanisms/05-fluent-wait.html">Fluent Wait và Custom Wait</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Cấu hình <code>FluentWait</code> đầy đủ</li>
+<li class="task"><input type="checkbox" disabled> Viết custom wait bằng lambda hoặc <code>ExpectedCondition</code></li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>FluentWait</code> cho điều kiện không thuộc DOM (file tải xong)</li>
+<li class="task"><input type="checkbox" disabled> Hiểu vì sao Exercise 7 đặt cuộn trong điều kiện chờ</li>
+</ul>
+<h3 id="so-sánh-các-cơ-chế-chờ-và-threadsleep---not-started"><a href="../04-wait-mechanisms/06-wait-comparison.html">So sánh các cơ chế chờ (và Thread.sleep)</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> So sánh <code>Thread.sleep</code>, Implicit, Explicit, Fluent</li>
+<li class="task"><input type="checkbox" disabled> Chọn Wait theo tình huống bằng sơ đồ quyết định</li>
+<li class="task"><input type="checkbox" disabled> Đo chênh lệch thời gian giữa <code>sleep</code> và Explicit Wait</li>
+</ul>
+<h3 id="wait-15-tình-huống-thực-tế---not-started"><a href="../04-wait-mechanisms/07-real-world-scenarios.html">Wait: 15 tình huống thực tế</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Áp dụng Wait cho 15 tình huống thực tế</li>
+<li class="task"><input type="checkbox" disabled> Nhận ra mẫu "thông báo cũ" và "spinner che nút"</li>
+<li class="task"><input type="checkbox" disabled> Viết wait cho alert, tab mới, iframe, stale</li>
+</ul>
+<h3 id="wait-best-practices---not-started"><a href="../04-wait-mechanisms/08-wait-best-practices.html">Wait Best Practices</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Áp dụng 8 best practices cho Wait</li>
+<li class="task"><input type="checkbox" disabled> Review một đoạn code test về đồng bộ hoá</li>
+<li class="task"><input type="checkbox" disabled> Tự trả lời 20 câu hỏi Wait</li>
+<li class="task"><input type="checkbox" disabled> Gom hàm chờ vào <code>BasePage</code></li>
+</ul>
+<h2 id="phase-5-testing-framework">Phase 5: Testing Framework</h2>
+<h3 id="testng-fundamentals---in-progress"><a href="../05-testing-framework/01-testng-fundamentals.html">TestNG Fundamentals</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích TestNG làm gì so với Selenium</li>
+<li class="task"><input type="checkbox" disabled> Nhớ thứ tự annotation và dùng <code>@BeforeMethod/@AfterMethod</code></li>
+<li class="task"><input type="checkbox" disabled> Viết <code>@DataProvider</code>, <code>groups</code>, <code>testng.xml</code></li>
+<li class="task"><input type="checkbox" disabled> Hiểu vì sao <code>&lt;test&gt;</code> trong XML không phải một test method</li>
+</ul>
+<h3 id="junit-fundamentals-so-sánh-với-testng---not-started"><a href="../05-testing-framework/02-junit-fundamentals.html">JUnit Fundamentals (so sánh với TestNG)</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Ánh xạ annotation TestNG ↔ JUnit 5</li>
+<li class="task"><input type="checkbox" disabled> Viết <code>@ParameterizedTest</code> cơ bản</li>
+<li class="task"><input type="checkbox" disabled> Nhớ thứ tự tham số <code>assertEquals</code> khác nhau</li>
+<li class="task"><input type="checkbox" disabled> Biết dự án này <strong>không</strong> dùng JUnit</li>
+</ul>
+<h3 id="assertions-và-verification---in-progress"><a href="../05-testing-framework/03-assertions-and-verification.html">Assertions và Verification</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dùng <code>Assert.assertEquals/assertTrue/assertFalse/assertNotEquals</code> đúng thứ tự</li>
+<li class="task"><input type="checkbox" disabled> Phân biệt Hard Assert và <code>SoftAssert</code></li>
+<li class="task"><input type="checkbox" disabled> Viết assertion có message và kiểm chứng trước/sau</li>
+<li class="task"><input type="checkbox" disabled> Kiểm tra exception mong đợi</li>
+</ul>
+<h3 id="test-setup-và-teardown---in-progress"><a href="../05-testing-framework/04-test-setup-and-teardown.html">Test Setup và Teardown</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Phân tích <code>BaseTest</code> của dự án từng dòng</li>
+<li class="task"><input type="checkbox" disabled> Chọn cấp setup (<code>@BeforeMethod</code> vs <code>@BeforeClass</code>)</li>
+<li class="task"><input type="checkbox" disabled> Giải thích vòng đời khi test fail</li>
+<li class="task"><input type="checkbox" disabled> Đề xuất <code>ThreadLocal</code> + screenshot cho teardown</li>
+</ul>
+<h3 id="test-data-và-configuration---not-started"><a href="../05-testing-framework/05-test-data-and-configuration.html">Test Data và Configuration</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Nhận ra dữ liệu/cấu hình hard-code trong dự án</li>
+<li class="task"><input type="checkbox" disabled> Viết <code>Config</code> đọc <code>config.properties</code> với thứ tự ưu tiên</li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>@DataProvider</code> đọc CSV</li>
+<li class="task"><input type="checkbox" disabled> Quản lý bí mật an toàn</li>
+</ul>
+<h3 id="chạy-test-và-báo-cáo---in-progress"><a href="../05-testing-framework/06-test-execution-and-reports.html">Chạy test và báo cáo</a> — 🟡 In Progress</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Liệt kê các cách chạy test và nơi lưu báo cáo</li>
+<li class="task"><input type="checkbox" disabled> Đọc kết quả console và <code>TestSuite.txt</code></li>
+<li class="task"><input type="checkbox" disabled> Viết kiểm tra CI cho <code>Tests run: 0</code></li>
+<li class="task"><input type="checkbox" disabled> Biết các công cụ báo cáo nâng cao</li>
+</ul>
+<h2 id="phase-6-page-object-model-and-framework-design">Phase 6: Page Object Model and Framework Design</h2>
+<h3 id="page-object-model-pom---not-started"><a href="../06-automation-framework/01-page-object-model.html">Page Object Model (POM)</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích POM và lợi ích</li>
+<li class="task"><input type="checkbox" disabled> Thiết kế Page Class (locator <code>private</code>, method nghiệp vụ, không assert)</li>
+<li class="task"><input type="checkbox" disabled> Kết nối Page với Test qua <code>driver</code></li>
+<li class="task"><input type="checkbox" disabled> Nhận diện lỗi thiết kế POM</li>
+</ul>
+<h3 id="kiến-trúc-automation-framework---not-started"><a href="../06-automation-framework/02-automation-framework-architecture.html">Kiến trúc Automation Framework</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Mô tả các tầng của framework và quy tắc phụ thuộc</li>
+<li class="task"><input type="checkbox" disabled> Đối chiếu kiến trúc với <code>Selenium1</code></li>
+<li class="task"><input type="checkbox" disabled> Theo dõi luồng một lần chạy <code>mvnw clean test</code></li>
+<li class="task"><input type="checkbox" disabled> Chọn mức độ framework phù hợp quy mô</li>
+</ul>
+<h3 id="reusable-components---not-started"><a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Viết <code>BasePage</code>, <code>DriverFactory</code>, <code>Config</code>, utilities</li>
+<li class="task"><input type="checkbox" disabled> Thêm screenshot và Listener</li>
+<li class="task"><input type="checkbox" disabled> Biết khi nào kéo code ra dùng chung</li>
+<li class="task"><input type="checkbox" disabled> Tránh <code>static</code> giữ trạng thái driver</li>
+</ul>
+<h3 id="configuration-management---not-started"><a href="../06-automation-framework/04-configuration-management.html">Configuration Management</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Phân biệt 4 tầng cấu hình trong dự án</li>
+<li class="task"><input type="checkbox" disabled> Truyền <code>-D</code> từ Maven sang JVM test</li>
+<li class="task"><input type="checkbox" disabled> Dùng Maven Profile cho môi trường</li>
+<li class="task"><input type="checkbox" disabled> Biết <code>.mvn/maven.config</code> ảnh hưởng thế nào</li>
+</ul>
+<h3 id="maintainable-test-framework---not-started"><a href="../06-automation-framework/05-maintainable-test-framework.html">Maintainable Test Framework</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Đánh giá <code>Selenium1</code> theo tiêu chí dễ bảo trì</li>
+<li class="task"><input type="checkbox" disabled> Áp dụng 10 nguyên tắc</li>
+<li class="task"><input type="checkbox" disabled> Review code test bằng checklist</li>
+<li class="task"><input type="checkbox" disabled> Lập backlog cải thiện theo thứ tự giá trị/công sức</li>
+</ul>
+<h2 id="phase-7-git-and-team-collaboration">Phase 7: Git and Team Collaboration</h2>
+<h3 id="git-fundamentals-clone-status-add-commit-push-fetch-pull---not-started"><a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Giải thích working tree, staging, commit, remote</li>
+<li class="task"><input type="checkbox" disabled> Dùng <code>clone/status/add/commit/log/diff/push/fetch/pull</code></li>
+<li class="task"><input type="checkbox" disabled> Phân biệt <code>fetch</code> và <code>pull</code></li>
+<li class="task"><input type="checkbox" disabled> Hoàn tác an toàn với <code>restore</code>, <code>stash</code></li>
+</ul>
+<h3 id="git-branch-merge-và-rebase---not-started"><a href="../07-git-and-team-workflow/02-branch-merge-rebase.html">Git: Branch, Merge và Rebase</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Tạo và chuyển nhánh</li>
+<li class="task"><input type="checkbox" disabled> Gộp bằng <code>merge</code> và hiểu <code>rebase</code></li>
+<li class="task"><input type="checkbox" disabled> Nhớ quy tắc vàng của rebase</li>
+<li class="task"><input type="checkbox" disabled> Dùng quy ước đặt tên nhánh</li>
+</ul>
+<h3 id="git-pull-request-và-giải-quyết-conflict---not-started"><a href="../07-git-and-team-workflow/03-pull-request-and-conflicts.html">Git: Pull Request và Giải quyết Conflict</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Đọc dấu hiệu conflict và giải quyết có kiểm chứng</li>
+<li class="task"><input type="checkbox" disabled> Thực hiện quy trình Pull Request</li>
+<li class="task"><input type="checkbox" disabled> Review code test bằng checklist</li>
+<li class="task"><input type="checkbox" disabled> Huỷ merge/rebase khi cần</li>
+</ul>
+<h3 id="git-gitignore-và-quản-lý-dự-án-maven--selenium---not-started"><a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">Git: <code>.gitignore</code> và quản lý dự án Maven + Selenium</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Viết và kiểm tra <code>.gitignore</code></li>
+<li class="task"><input type="checkbox" disabled> Biết commit gì, không commit gì cho dự án Maven + Selenium</li>
+<li class="task"><input type="checkbox" disabled> Sửa <code>mvnw</code> mode <code>100644</code> và line ending bằng <code>.gitattributes</code></li>
+<li class="task"><input type="checkbox" disabled> Xử lý file đã lỡ commit</li>
+</ul>
+<h2 id="phase-8-real-world-automation-project">Phase 8: Real-world Automation Project</h2>
+<h3 id="project-step-13-phân-tích-requirement-test-scenarios-và-test-cases---not-started"><a href="../08-practical-project/01-requirements-and-test-design.html">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Chuyển Requirement thành Test Scenario và Test Case</li>
+<li class="task"><input type="checkbox" disabled> Quyết định cái gì nên tự động hoá</li>
+<li class="task"><input type="checkbox" disabled> Viết kết quả mong đợi kiểm chứng được</li>
+<li class="task"><input type="checkbox" disabled> Lập bảng traceability và tìm khoảng trống</li>
+</ul>
+<h3 id="project-step-48-xây-dựng-selenium-project-maven-pom-test-scripts-và-wait---not-started"><a href="../08-practical-project/02-build-the-project.html">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Dựng framework nhỏ theo 6 mốc có kiểm chứng</li>
+<li class="task"><input type="checkbox" disabled> Tổ chức Maven, POM, Config, Wait đúng chuẩn</li>
+<li class="task"><input type="checkbox" disabled> Dùng Definition of Done cho mỗi mốc</li>
+</ul>
+<h3 id="project-step-912-thực-thi-suite-debug-báo-cáo-và-git---not-started"><a href="../08-practical-project/03-run-debug-report-and-git.html">Project Step 9–12: Thực thi Suite, Debug, Báo cáo và Git</a> — ⬜ Not Started</h3>
+<ul>
+<li class="task"><input type="checkbox" disabled> Thực thi suite và đọc kết quả đúng</li>
+<li class="task"><input type="checkbox" disabled> Debug theo quy trình 8 bước</li>
+<li class="task"><input type="checkbox" disabled> Viết bản tóm tắt báo cáo</li>
+<li class="task"><input type="checkbox" disabled> Quản lý mã nguồn bằng Git với checklist nghiệm thu</li>
+</ul>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="interview-preparation.html"><small>← Bài trước</small><span>Interview Preparation Tracker</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/progress/learning-checklist.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

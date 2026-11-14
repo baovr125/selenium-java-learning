@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercise Tracker · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="progress/exercise-tracker" data-root="../" data-lesson="0" data-title="Exercise Tracker">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<div class="notice">ℹ️ Trang tĩnh sinh từ Markdown. Tiến độ tương tác nằm ở <a href="../LEARNING_PROGRESS.html">Learning Progress</a> và ngay trong từng bài học.</div>
+<h1 id="exercise-tracker">Exercise Tracker</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">progress/</a> · Mỗi bài có 3 bài tập (Basic → Intermediate → Practical). Tick khi <strong>đã tự làm và chạy được</strong>; ghi lệnh/kết quả ở cột Ghi chú.</p>
+</blockquote>
+<h2 id="bài-tập-của-các-bài-học">Bài tập của các bài học</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bài học</th>
+<th>Ex 1 (Basic)</th>
+<th>Ex 2 (Intermediate)</th>
+<th>Ex 3 (Practical)</th>
+<th>Ghi chú / bằng chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../01-java-fundamentals/00-environment-setup.html#-practice-exercises">Cài đặt môi trường</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/01-getting-started.html#-practice-exercises">Java: Getting Started (Introduction, Syntax, Output, Comments)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/02-variables-and-data-types.html#-practice-exercises">Java: Variables, Data Types và Type Casting</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/03-operators-and-strings.html#-practice-exercises">Java: Operators, Strings, Math và Booleans</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/04-control-flow.html#-practice-exercises">Java: Control Flow (If...Else, Switch, Loops, Break/Continue)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/05-arrays.html#-practice-exercises">Java: Arrays (mảng)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/06-methods.html#-practice-exercises">Java: Methods (tham số, giá trị trả về, overloading, scope, recursion)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/07-classes-and-objects.html#-practice-exercises">Java: Classes và Objects (attributes, methods, constructors, <code>this</code>, modifiers, static)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/08-oop-concepts.html#-practice-exercises">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/09-collections.html#-practice-exercises">Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/10-exception-handling.html#-practice-exercises">Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/11-lambda-and-generics.html#-practice-exercises">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../01-java-fundamentals/12-file-handling.html#-practice-exercises">Java: File Handling, Properties và Configuration</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/00-project-initialization.html#-practice-exercises">Khởi tạo dự án Selenium Java + Maven + TestNG</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/01-maven-fundamentals.html#-practice-exercises">Maven Fundamentals</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/02-pom-xml.html#-practice-exercises"><code>pom.xml</code> và Dependencies</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/03-maven-wrapper.html#-practice-exercises">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/04-maven-wrapper-in-team-and-git.html#-practice-exercises">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/05-maven-lifecycle.html#-practice-exercises">Commands và Build Lifecycle</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/06-dependency-management.html#-practice-exercises">Dependency Management</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/07-build-and-test-execution.html#-practice-exercises">Build và chạy Automation Test bằng Maven</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/08-working-in-team.html#-practice-exercises">Quy trình làm việc với Maven trong team</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../02-maven-and-project/09-maven-troubleshooting.html#-practice-exercises">Troubleshooting</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/01-selenium-introduction.html#-practice-exercises">Selenium là gì?</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/02-webdriver.html#-practice-exercises">WebDriver Fundamentals</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/03-locators.html#-practice-exercises">Selenium: Locators (cách tìm phần tử)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/04-webelement.html#-practice-exercises">Selenium: WebElement API</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/05-browser-navigation.html#-practice-exercises">Browser Navigation</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/06-element-interactions.html#-practice-exercises">Web Element Interactions</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/07-browser-interactions.html#-practice-exercises">Browser Interactions: Alert, Frame/iFrame, Window/Tab</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/08-mouse-and-keyboard-actions.html#-practice-exercises">Keyboard và Mouse Actions</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/09-javascript-executor.html#-practice-exercises">JavaScript Executor</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/10-selenium-exceptions.html#-practice-exercises">Exception Handling</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html#-practice-exercises">Debugging và Best Practices</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/01-wait-introduction.html#-practice-exercises">Wait Introduction: vì sao Selenium cần Wait?</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/02-implicit-wait.html#-practice-exercises">Implicit Wait</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/03-explicit-wait.html#-practice-exercises">Explicit Wait và WebDriverWait</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/04-expected-conditions.html#-practice-exercises">ExpectedConditions (và Presence vs Visibility vs Clickability)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/05-fluent-wait.html#-practice-exercises">Fluent Wait và Custom Wait</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/06-wait-comparison.html#-practice-exercises">So sánh các cơ chế chờ (và Thread.sleep)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/07-real-world-scenarios.html#-practice-exercises">Wait: 15 tình huống thực tế</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../04-wait-mechanisms/08-wait-best-practices.html#-practice-exercises">Wait Best Practices</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../05-testing-framework/01-testng-fundamentals.html#-practice-exercises">TestNG Fundamentals</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../05-testing-framework/02-junit-fundamentals.html#-practice-exercises">JUnit Fundamentals (so sánh với TestNG)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../05-testing-framework/03-assertions-and-verification.html#-practice-exercises">Assertions và Verification</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../05-testing-framework/04-test-setup-and-teardown.html#-practice-exercises">Test Setup và Teardown</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../05-testing-framework/05-test-data-and-configuration.html#-practice-exercises">Test Data và Configuration</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../05-testing-framework/06-test-execution-and-reports.html#-practice-exercises">Chạy test và báo cáo</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../06-automation-framework/01-page-object-model.html#-practice-exercises">Page Object Model (POM)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../06-automation-framework/02-automation-framework-architecture.html#-practice-exercises">Kiến trúc Automation Framework</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../06-automation-framework/03-reusable-components.html#-practice-exercises">Reusable Components</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../06-automation-framework/04-configuration-management.html#-practice-exercises">Configuration Management</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../06-automation-framework/05-maintainable-test-framework.html#-practice-exercises">Maintainable Test Framework</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../07-git-and-team-workflow/01-git-fundamentals.html#-practice-exercises">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../07-git-and-team-workflow/02-branch-merge-rebase.html#-practice-exercises">Git: Branch, Merge và Rebase</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../07-git-and-team-workflow/03-pull-request-and-conflicts.html#-practice-exercises">Git: Pull Request và Giải quyết Conflict</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html#-practice-exercises">Git: <code>.gitignore</code> và quản lý dự án Maven + Selenium</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/01-requirements-and-test-design.html#-practice-exercises">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/02-build-the-project.html#-practice-exercises">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/03-run-debug-report-and-git.html#-practice-exercises">Project Step 9–12: Thực thi Suite, Debug, Báo cáo và Git</a></td>
+<td>☐</td>
+<td>☐</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-labs-12-bài-tập-tăng-dần">8 Labs (12 bài tập tăng dần)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lab</th>
+<th>Xong?</th>
+<th>Ghi chú / bằng chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../08-practical-project/labs/01-first-selenium-test.html">Lab 01 — Khởi tạo dự án + test đầu tiên (Bài 1–2)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/02-locator-practice.html">Lab 02 — Locator (Bài 5)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/03-wait-practice.html">Lab 03 — Explicit Wait &amp; Dynamic Elements (Bài 8–9)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/04-maven-and-mvnw-practice.html">Lab 04 — Maven Wrapper &amp; chạy bằng <code>mvnw.cmd</code> (Bài 3–4)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/05-form-automation.html">Lab 05 — Login, Dropdown, Alert, Frame (Bài 6–7)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/06-page-object-model-practice.html">Lab 06 — Page Object Model (Bài 10)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/07-run-tests-with-maven.html">Lab 07 — TestNG Suite + Maven (Bài 11)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="../08-practical-project/labs/08-mini-automation-project.html">Lab 08 — Mini Automation Framework (Bài 12)</a></td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Progress — Theo dõi học tập</span></a><a class="next" href="interview-preparation.html"><small>Bài tiếp theo →</small><span>Interview Preparation Tracker</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/progress/exercise-tracker.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

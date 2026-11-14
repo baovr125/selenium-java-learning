@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Data và Configuration · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="05-testing-framework/05-test-data-and-configuration" data-root="../" data-lesson="1" data-title="Test Data và Configuration">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="test-data-và-configuration">Test Data và Configuration</h1>
+<blockquote>
+<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="04-test-setup-and-teardown.html">Test Setup và Teardown</a> · ➡️ <a href="06-test-execution-and-reports.html">Chạy test và báo cáo</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="04-test-setup-and-teardown.html">Trước: Setup/Teardown</a> · <a href="06-test-execution-and-reports.html">Sau: Chạy test và báo cáo</a> · <a href="../06-automation-framework/04-configuration-management.html">Config Manager</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Nhận ra dữ liệu/cấu hình hard-code trong dự án</li>
+<li>Viết <code>Config</code> đọc <code>config.properties</code> với thứ tự ưu tiên</li>
+<li>Dùng <code>@DataProvider</code> đọc CSV</li>
+<li>Quản lý bí mật an toàn</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../01-java-fundamentals/12-file-handling.html">Java File Handling</a></li>
+<li><a href="01-testng-fundamentals.html">TestNG Fundamentals</a></li>
+</ul>
+<h2 id="1-dự-án-hiện-làm-gì">1. Dự án hiện làm gì?</h2>
+<p>Hiện tại, <strong>mọi dữ liệu và cấu hình đều hard-code</strong> trong test:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Loại</th>
+<th>Vị trí</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>URL</td>
+<td>Hằng <code>private static final</code> ở mỗi class</td>
+<td><code>LOGIN_URL = "https://the-internet.herokuapp.com/login"</code></td>
+</tr>
+<tr>
+<td>Tài khoản</td>
+<td>Hằng ở <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a></td>
+<td><code>tomsmith</code> / <code>SuperSecretPassword!</code> (tài khoản demo công khai)</td>
+</tr>
+<tr>
+<td>Dữ liệu kỳ vọng</td>
+<td>Trong <code>assertEquals</code></td>
+<td>Dữ liệu bảng ở Ex3 (<code>Smith</code>, <code>John</code>...)</td>
+</tr>
+<tr>
+<td>Timeout</td>
+<td><a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a></td>
+<td><code>Duration.ofSeconds(15)</code>, <code>30</code></td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>BaseTest</code></td>
+<td><code>new ChromeDriver()</code></td>
+</tr>
+<tr>
+<td>Suite</td>
+<td><a href="../../../../testng.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">testng.xml</a></td>
+<td>10 class</td>
+</tr>
+<tr>
+<td>Thông số Maven</td>
+<td><a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a></td>
+<td><code>selenium.version</code>, <code>testng.version</code>, <code>release</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Với 10 bài tập học tập, cách này <strong>đơn giản và dễ đọc</strong> là hợp lý. Khi dự án lớn lên, cần tách để dễ bảo trì.</p>
+<h2 id="2-vì-sao-nên-tách-dữ-liệu-và-cấu-hình">2. Vì sao nên tách dữ liệu và cấu hình?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hard-code</th>
+<th>Tách ra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đổi URL ⇒ sửa nhiều file</td>
+<td>Sửa 1 chỗ</td>
+</tr>
+<tr>
+<td>Không chạy được nhiều môi trường</td>
+<td><code>-Denv=staging</code></td>
+</tr>
+<tr>
+<td>Mật khẩu thật lộ trong Git</td>
+<td>Biến môi trường / file không commit</td>
+</tr>
+<tr>
+<td>Thêm bộ dữ liệu ⇒ viết thêm test</td>
+<td>Thêm 1 dòng dữ liệu</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-các-loại-dữ-liệucấu-hình">3. Các loại dữ liệu/cấu hình</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhóm</th>
+<th>Ví dụ</th>
+<th>Lưu ở</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cấu hình môi trường</strong></td>
+<td><code>base.url</code>, <code>browser</code>, <code>timeout</code>, <code>headless</code></td>
+<td><code>config.properties</code>, <code>-D</code>, biến môi trường</td>
+</tr>
+<tr>
+<td><strong>Dữ liệu test</strong></td>
+<td>user, product, expected message</td>
+<td>JSON/CSV/Excel hoặc <code>@DataProvider</code></td>
+</tr>
+<tr>
+<td><strong>Bí mật</strong></td>
+<td>mật khẩu, token</td>
+<td>Biến môi trường/ secret của CI; <strong>không commit</strong></td>
+</tr>
+<tr>
+<td><strong>Cấu hình build</strong></td>
+<td>phiên bản thư viện</td>
+<td><code>pom.xml</code></td>
+</tr>
+<tr>
+<td><strong>Cấu hình chạy</strong></td>
+<td>test nào chạy</td>
+<td><code>testng.xml</code>, <code>-Dtest</code>, <code>groups</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-file-configproperties">4. File <code>config.properties</code></h2>
+<p>Đặt trong <code>src/test/resources/config.properties</code>:</p>
+<div class="code" data-lang="properties"><div class="code-head"><span class="lang">properties</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="na">base.url</span><span class="o">=</span><span class="s">https://the-internet.herokuapp.com</span>
+<span class="na">browser</span><span class="o">=</span><span class="s">chrome</span>
+<span class="na">timeout.seconds</span><span class="o">=</span><span class="s">15</span>
+<span class="na">headless</span><span class="o">=</span><span class="s">false</span></code></pre></div>
+<p>Đọc bằng Java thuần:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Properties</span><span class="w"> </span><span class="n">PROPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Properties</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">InputStream</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Config</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">&quot;config.properties&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">in</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="s">&quot;Không tìm thấy config.properties trong classpath&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">PROPS</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="n">in</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">IOException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UncheckedIOException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">Config</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="cm">/** Ưu tiên: -Dkey (command line) &gt; file properties &gt; giá trị mặc định. */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">defaultValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">PROPS</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">defaultValue</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">timeoutSeconds</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">parseInt</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;timeout.seconds&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;15&quot;</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">baseUrl</span><span class="p">()</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;base.url&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">browser</span><span class="p">()</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;browser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Chạy ghi đè: <code>.\mvnw.cmd test "-Dbrowser=firefox" "-Dtimeout.seconds=30"</code>.</p>
+<p>Nhờ cơ chế <strong>chuỗi ưu tiên</strong> (<code>-D</code> &gt; file &gt; mặc định) bạn có cùng mã nguồn cho local và CI.</p>
+<p>⚠️ Chỉ khi Surefire <strong>chuyển</strong> system property sang JVM test thì <code>System.getProperty</code> thấy giá trị từ <code>-D</code> — mặc định Surefire sao chép property của Maven; hoặc khai báo tường minh qua <code>systemPropertyVariables</code> (<a href="../02-maven-and-project/02-pom-xml.html">maven/02</a>). Hãy tự kiểm chứng bằng cách in giá trị ra.</p>
+<h2 id="5-nhiều-môi-trường">5. Nhiều môi trường</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">src/test/resources/
+├── config.properties            # mặc định
+├── config-staging.properties    # ghi đè cho staging
+└── config-prod.properties</code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">&quot;env&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;default&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// -Denv=staging</span></code></pre></div>
+<p>Đọc <code>config.properties</code> rồi chồng <code>config-&lt;env&gt;.properties</code>. Hoặc dùng <strong>Maven Profile</strong> (<a href="../02-maven-and-project/07-build-and-test-execution.html#6-chạy-với-môi-trường-khác-nhau">maven/06</a>).</p>
+<h2 id="6-dữ-liệu-test-dataprovider">6. Dữ liệu test: <code>@DataProvider</code></h2>
+<p>Dữ liệu nhỏ, trong code:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@DataProvider</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dropdownOptions&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="nf">dropdownOptions</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;Option 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;Option 2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+
+<span class="nd">@Test</span><span class="p">(</span><span class="n">dataProvider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dropdownOptions&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shouldSelectOption</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">Config</span><span class="p">.</span><span class="na">baseUrl</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dropdown&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Select</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;dropdown&quot;</span><span class="p">)));</span>
+<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="na">selectByVisibleText</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">getFirstSelectedOption</span><span class="p">().</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+<p>Dữ liệu lớn, ngoài code: đọc file rồi trả <code>Object[][]</code>.</p>
+<h3 id="csv-không-cần-thư-viện">CSV (không cần thư viện)</h3>
+<p><code>src/test/resources/login.csv</code>:</p>
+<div class="code" data-lang="csv"><div class="code-head"><span class="lang">csv</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">username,password,expected
+tomsmith,SuperSecretPassword!,You logged into a secure area!
+tomsmith,wrong,Your password is invalid!</code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@DataProvider</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;csvLogin&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="nf">csvLogin</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">InputStream</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">&quot;login.csv&quot;</span><span class="p">);</span>
+<span class="w">         </span><span class="n">BufferedReader</span><span class="w"> </span><span class="n">br</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BufferedReader</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">InputStreamReader</span><span class="p">(</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">br</span><span class="p">.</span><span class="na">lines</span><span class="p">().</span><span class="na">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="na">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)).</span><span class="na">toArray</span><span class="p">(</span><span class="n">Object</span><span class="o">[][]</span><span class="p">::</span><span class="k">new</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Lưu ý: dữ liệu có dấu phẩy phải dùng thư viện CSV thật (OpenCSV/Commons CSV) — thêm vào <code>pom.xml</code> sau khi tra phiên bản ổn định.</p>
+<h3 id="json--excel">JSON / Excel</h3>
+<p>JSON ⇒ Jackson/Gson; Excel ⇒ Apache POI. Chỉ thêm khi cần; nhớ ghim phiên bản và xem <code>dependency:tree</code> (<a href="../02-maven-and-project/06-dependency-management.html">maven/05</a>).</p>
+<h2 id="7-mô-hình-dữ-liệu-pojo--record">7. Mô hình dữ liệu (POJO / record)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">LoginData</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expectedMessage</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></code></pre></div>
+<p>Java 21 (🧩 dự án <code>release 21</code>) hỗ trợ <code>record</code> — ngắn gọn, bất biến. DataProvider có thể trả <code>Object[][]</code> chứa <code>LoginData</code>.</p>
+<h2 id="8-quản-lý-bí-mật">8. Quản lý bí mật</h2>
+<ul>
+<li>❌ Không commit mật khẩu thật. (Tài khoản <code>tomsmith</code> là demo <strong>công khai</strong> của trang luyện tập nên chấp nhận được.)</li>
+<li>✅ Dùng biến môi trường: <code>System.getenv("APP_PASSWORD")</code>.</li>
+<li>✅ Trên CI: secret của CI (GitHub Actions Secrets...).</li>
+<li>✅ File cấu hình cục bộ chứa bí mật: thêm vào <code>.gitignore</code>.</li>
+</ul>
+<h2 id="9-thứ-tự-ưu-tiên-khuyến-nghị">9. Thứ tự ưu tiên khuyến nghị</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">-D (command line)  &gt;  biến môi trường  &gt;  config-&lt;env&gt;.properties  &gt;  config.properties  &gt;  giá trị mặc định trong code</code></pre></div>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Một nguồn sự thật cho mỗi giá trị.</li>
+<li>Tách dữ liệu khỏi logic; test chỉ mô tả hành vi.</li>
+<li>Không commit bí mật.</li>
+<li>Giá trị mặc định hợp lý để test chạy "ngay" sau khi clone.</li>
+<li>Dữ liệu test <strong>độc lập</strong> và có thể dọn (không phụ thuộc dữ liệu có sẵn trên server).</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getResourceAsStream</code> trả <code>null</code></td>
+<td>File không nằm trong <code>src/test/resources</code> / sai tên</td>
+<td>Đặt đúng vị trí; chạy <code>test-compile</code> để copy resource</td>
+</tr>
+<tr>
+<td><code>-Dbrowser=firefox</code> không có tác dụng</td>
+<td>Property không tới JVM test / code không đọc</td>
+<td>In ra giá trị; dùng <code>systemPropertyVariables</code></td>
+</tr>
+<tr>
+<td>Tiếng Việt trong CSV bị lỗi</td>
+<td>Mã hoá</td>
+<td>Đọc bằng UTF-8</td>
+</tr>
+<tr>
+<td>Dữ liệu kỳ vọng hard-code lệch khi web đổi</td>
+<td>Phụ thuộc trang ngoài</td>
+<td>Dùng trang test ổn định/mock</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Liệt kê 4 giá trị hard-code trong <code>BaseTest</code> và <code>Exercise01</code>.</p>
+<p><strong>Input:</strong> Hai file</p>
+<p><strong>Expected Output:</strong> 4 giá trị</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Timeout, browser, URL, tài khoản.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>Config.get(key, default)</code> theo thứ tự <code>-D</code> &gt; file &gt; mặc định.</p>
+<p><strong>Input:</strong> <code>config.properties</code> trong classpath</p>
+<p><strong>Expected Output:</strong> Giá trị đúng theo ưu tiên</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>System.getProperty(key, props.getProperty(key, default))</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>@DataProvider</code> đọc <code>login.csv</code> (có dòng tiêu đề) thành <code>Object[][]</code>.</p>
+<p><strong>Input:</strong> <code>src/test/resources/login.csv</code></p>
+<p><strong>Expected Output:</strong> <code>Object[][]</code> các dòng dữ liệu</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>Files.readAllLines</code> hoặc <code>getResourceAsStream</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Thứ tự ưu tiên cấu hình khuyến nghị?</p>
+<ul>
+<li>A. mặc định &gt; file &gt; <code>-D</code></li>
+<li>B. <code>-D</code> &gt; file &gt; mặc định</li>
+<li>C. file &gt; <code>-D</code></li>
+<li>D. Ngẫu nhiên</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Cho phép ghi đè khi chạy.</p>
+</details>
+<p><strong>Câu 2.</strong> Mật khẩu thật nên lưu ở?</p>
+<ul>
+<li>A. Trong Git</li>
+<li>B. Biến môi trường / secret của CI</li>
+<li>C. <code>pom.xml</code></li>
+<li>D. <code>testng.xml</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Không commit bí mật.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>getResourceAsStream</code> trả <code>null</code> do?</p>
+<ul>
+<li>A. File không nằm trong <code>src/test/resources</code> / chưa <code>test-compile</code></li>
+<li>B. Mạng</li>
+<li>C. JDK</li>
+<li>D. Chrome</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Kiểm tra vị trí và biên dịch.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you manage test data and configuration?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Quản lý dữ liệu và cấu hình test?</li>
+<li><strong>Suggested answer (EN):</strong> I keep configuration in <code>config.properties</code> with command line overrides and defaults, and data in data providers or CSV/JSON files, with secrets in environment variables.</li>
+<li><strong>Giải thích (VI):</strong> Không hard-code.</li>
+<li><strong>Follow-up:</strong> <em>Where do you keep passwords?</em></li>
+</ul>
+<p><strong>2. Why separate data from test logic?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao tách dữ liệu?</li>
+<li><strong>Suggested answer (EN):</strong> So adding cases means adding data not code, changing environments is one edit, and tests describe behavior only.</li>
+<li><strong>Giải thích (VI):</strong> DataProvider.</li>
+<li><strong>Follow-up:</strong> <em>What is a risk of external data?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Dự án hiện hard-code (hợp lý cho học tập)</li>
+<li>Config: <code>-D</code> &gt; file &gt; mặc định</li>
+<li>Dữ liệu: DataProvider/CSV; bí mật: biến môi trường</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>Properties</code>, <code>System.getProperty</code>, <code>@DataProvider</code>, <code>getResourceAsStream</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Cấu hình build (pom) ≠ cấu hình test (properties)</li>
+<li>Property của Maven JVM ≠ JVM test (cần chuyển)</li>
+<li>CSV có dấu phẩy cần thư viện CSV</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="06-test-execution-and-reports.html">Chạy test và báo cáo</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>pageLoadTimeout(30s)</code>, <code>WebDriverWait(15s)</code>, <code>new ChromeDriver()</code> (browser), <code>LOGIN_URL</code>, <code>VALID_USERNAME/PASSWORD</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Properties</span><span class="w"> </span><span class="n">PROPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">util</span><span class="p">.</span><span class="na">Properties</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">InputStream</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Config</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">&quot;config.properties&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">in</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="s">&quot;Thiếu config.properties&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">PROPS</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="n">in</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">IOException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">UncheckedIOException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">Config</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">def</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">PROPS</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">def</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">browser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;browser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@DataProvider</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;csvLogin&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="nf">csvLogin</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">InputStream</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">&quot;login.csv&quot;</span><span class="p">);</span>
+<span class="w">         </span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">BufferedReader</span><span class="w"> </span><span class="n">br</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">BufferedReader</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">io</span><span class="p">.</span><span class="na">InputStreamReader</span><span class="p">(</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">nio</span><span class="p">.</span><span class="na">charset</span><span class="p">.</span><span class="na">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">br</span><span class="p">.</span><span class="na">lines</span><span class="p">().</span><span class="na">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">l</span><span class="p">.</span><span class="na">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)).</span><span class="na">toArray</span><span class="p">(</span><span class="n">Object</span><span class="o">[][]</span><span class="p">::</span><span class="k">new</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-test-setup-and-teardown.html"><small>← Bài trước</small><span>Test Setup và Teardown</span></a><a class="next" href="06-test-execution-and-reports.html"><small>Bài tiếp theo →</small><span>Chạy test và báo cáo</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/05-test-data-and-configuration.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

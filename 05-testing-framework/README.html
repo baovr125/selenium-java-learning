@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 5 — Testing Framework (Chapter 20) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="05-testing-framework/README" data-root="../" data-lesson="0" data-title="Phase 5 — Testing Framework (Chapter 20)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-5--testing-framework-chapter-20">Phase 5 — Testing Framework (Chapter 20)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/framework-interview.html">framework-interview</a>
+Dự án dùng <strong>TestNG 7.10.2</strong> (không có JUnit); JUnit 5 để so sánh.</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="01-testng-fundamentals.html">TestNG Fundamentals</a> (Annotations, XML, groups, DataProvider, Parameters)</td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-junit-fundamentals.html">JUnit Fundamentals</a></td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-assertions-and-verification.html">Assertions &amp; Verification</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-test-setup-and-teardown.html">Setup &amp; Teardown</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="05-test-data-and-configuration.html">Test Data &amp; Configuration</a></td>
+<td>Essential</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="06-test-execution-and-reports.html">Test Execution &amp; Reports</a></td>
+<td>Essential</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="thành-phần-testng-đang-dùng-trong-dự-án">Thành phần TestNG đang dùng trong dự án</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Nơi dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Test</code></td>
+<td>11 test method (10 Exercise + <code>EnvironmentCheckTest</code>)</td>
+</tr>
+<tr>
+<td><code>@BeforeMethod</code>, <code>@AfterMethod</code></td>
+<td><a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a></td>
+</tr>
+<tr>
+<td><code>Assert.assertEquals/assertTrue/assertFalse/assertNotEquals</code></td>
+<td>Exercise 1–10</td>
+</tr>
+<tr>
+<td><code>testng.xml</code></td>
+<td><a href="../../../../testng.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">testng.xml</a></td>
+</tr>
+<tr>
+<td>API <code>org.testng.TestNG</code></td>
+<td><a href="../../../../src/test/java/tests/AllExercisesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">AllExercisesTest</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Chưa dùng (đáng học tiếp):</strong> <code>@DataProvider</code>, <code>@Parameters</code>, <code>groups</code>, <code>dependsOnMethods</code>, <code>SoftAssert</code>, <code>ITestListener</code>, <code>parallel</code>, <code>retryAnalyzer</code>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../04-wait-mechanisms/08-wait-best-practices.html"><small>← Bài trước</small><span>Wait Best Practices</span></a><a class="next" href="01-testng-fundamentals.html"><small>Bài tiếp theo →</small><span>TestNG Fundamentals</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

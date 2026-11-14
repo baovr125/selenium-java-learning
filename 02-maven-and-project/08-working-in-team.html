@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quy trình làm việc với Maven trong team · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/08-working-in-team" data-root="../" data-lesson="1" data-title="Quy trình làm việc với Maven trong team">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="quy-trình-làm-việc-với-maven-trong-team">Quy trình làm việc với Maven trong team</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 12 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="07-build-and-test-execution.html">Build và chạy Automation Test bằng Maven</a> · ➡️ <a href="09-maven-troubleshooting.html">Troubleshooting</a></p>
+<p>Quy trình 9 bước từ clone đến khi đồng đội pull về chạy lại. Mỗi bước có <strong>lệnh</strong>, <strong>giải thích</strong>, <strong>kết quả mong đợi</strong>.
+Liên quan: <a href="README.html">Mục lục</a> · <a href="03-maven-wrapper.html">Maven Wrapper</a> · <a href="09-maven-troubleshooting.html">Troubleshooting</a> · <a href="../interview/git-interview.html">Git phỏng vấn</a></p>
+<p>ℹ️ Thư mục <code>Selenium1</code> hiện <strong>chưa phải Git repository</strong>. Các lệnh Git dưới đây là quy trình chuẩn bạn sẽ dùng khi dự án nằm trên GitHub/GitLab; hãy thực hành trên bản sao hoặc repo thử nghiệm.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Thực hiện quy trình 9 bước từ clone đến khi đồng đội pull</li>
+<li>Đọc nhanh một dự án Maven lạ</li>
+<li>Thêm/cập nhật dependency an toàn</li>
+<li>Dùng checklist trước khi push</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="03-maven-wrapper.html">Maven Wrapper</a></li>
+<li><a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals</a></li>
+</ul>
+<h2 id="tổng-quan">Tổng quan</h2>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"> ┌─ Bạn ──────────────────────────────────────────────────────────────┐   ┌─ Đồng đội ──────────────┐
+ │ 1 clone → 2 kiểm tra JDK/mvnw → 3 đọc pom → 4 clean test →         │   │ 9 git pull              │
+ │ 5 đọc kết quả → 6 thêm dependency → 7 test lại → 8 commit &amp; push ──┼──►│   .\mvnw.cmd clean test │
+ └────────────────────────────────────────────────────────────────────┘   └─────────────────────────┘</code></pre></div>
+<hr />
+<h2 id="bước-1-clone-dự-án">Bước 1. Clone dự án</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/&lt;</span><span class="n">tổ-chức</span><span class="p">&gt;/&lt;</span><span class="n">repo</span><span class="p">&gt;.</span><span class="n">git</span>
+<span class="nb">cd </span><span class="p">&lt;</span><span class="n">repo</span><span class="p">&gt;</span></code></pre></div>
+<p><strong>Giải thích:</strong> <code>clone</code> tải toàn bộ mã nguồn và lịch sử.
+<strong>Kết quả mong đợi:</strong> có <code>pom.xml</code>, <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/</code>, <code>src/</code>, <code>testng.xml</code>. <strong>Không</strong> có <code>target/</code>, <code>.mvn/repository/</code> (bị <code>.gitignore</code>).</p>
+<p>Kiểm tra:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Get-ChildItem</span> <span class="n">-Force</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span></code></pre></div>
+<p>⚠️ Nếu thiếu <code>mvnw.cmd</code> hoặc <code>.mvn/wrapper</code> ⇒ Wrapper chưa được commit; báo nhóm (xem <a href="04-maven-wrapper-in-team-and-git.html#2-maven-wrapper-và-git">03</a>).</p>
+<h2 id="bước-2-kiểm-tra-java-và-maven-wrapper">Bước 2. Kiểm tra Java và Maven Wrapper</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">java</span> <span class="n">-version</span>
+<span class="n">javac</span> <span class="n">-version</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
+<p><strong>Giải thích:</strong> <code>java</code>/<code>javac</code> xác nhận JDK; <code>mvnw -version</code> xác nhận Wrapper chạy được (lần đầu tải Maven, cần Internet).
+<strong>Kết quả mong đợi (máy tác giả):</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">java version &quot;25.0.1&quot; ...
+Apache Maven 3.9.16 (...)
+Maven home: C:\Users\&lt;tên&gt;\.m2\wrapper\dists\apache-maven-3.9.16\&lt;hash&gt;
+Java version: 25.0.1 ...</code></pre></div>
+<p>Điều kiện: JDK ≥ 21 (theo <code>maven.compiler.release=21</code>). Không cần cài Maven.</p>
+<h2 id="bước-3-đọc-pomxml-và-file-cấu-hình-liên-quan">Bước 3. Đọc <code>pom.xml</code> (và file cấu hình liên quan)</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Get-Content</span> <span class="n">pom</span><span class="p">.</span><span class="n">xml</span>
+<span class="nb">Get-Content</span> <span class="p">.</span><span class="n">mvn</span><span class="p">\</span><span class="n">wrapper</span><span class="p">\</span><span class="n">maven-wrapper</span><span class="p">.</span><span class="n">properties</span>
+<span class="nb">Get-Content</span> <span class="p">.</span><span class="n">mvn</span><span class="p">\</span><span class="n">maven</span><span class="p">.</span><span class="n">config</span>
+<span class="nb">Get-Content</span> <span class="n">testng</span><span class="p">.</span><span class="n">xml</span></code></pre></div>
+<p><strong>Cần xác định:</strong> phiên bản Java (<code>maven.compiler.release</code>), Selenium (<code>selenium.version</code>), framework test (TestNG), suite nào được chạy (<code>testng.xml</code>), Local Repository ở đâu (<code>.mvn/maven.config</code> ⇒ <code>.mvn/repository</code>).
+<strong>Kết quả mong đợi:</strong> bạn trả lời được "dự án dùng gì, chạy thế nào" trong 2 phút — xem checklist ở <a href="02-pom-xml.html#8-checklist-đọc-pomxml-của-một-dự-án-lạ">02</a>.</p>
+<h2 id="bước-4-chạy-clean-test">Bước 4. Chạy <code>clean test</code></h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">clean</span> <span class="n">test</span></code></pre></div>
+<p><strong>Giải thích:</strong> <code>clean</code> xoá <code>target/</code>; <code>test</code> biên dịch và chạy toàn bộ suite. <strong>Lần đầu</strong> chậm vì tải ~40 jar vào <code>.mvn/repository</code>. Chrome mở/đóng lần lượt.
+<strong>Kết quả mong đợi:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS</code></pre></div>
+<p>Nếu lỗi: tra <a href="09-maven-troubleshooting.html">08</a>.</p>
+<h2 id="bước-5-phân-tích-kết-quả-test">Bước 5. Phân tích kết quả test</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">Get-Content</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">TestSuite</span><span class="p">.</span><span class="n">txt</span>
+<span class="nb">Start-Process</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">emailable-report</span><span class="p">.</span><span class="n">html</span></code></pre></div>
+<p><strong>Câu hỏi cần trả lời:</strong></p>
+<ol>
+<li><code>Tests run</code> có đúng 10 không? (0 = không chạy gì!)</li>
+<li><code>Skipped</code> có bằng 0 không?</li>
+<li>Nếu fail: exception là gì (<code>NoSuchElementException</code>? <code>TimeoutException</code>? <code>AssertionError</code>)? Xem <a href="../03-selenium-fundamentals/10-selenium-exceptions.html">selenium/09</a>.</li>
+<li>Lỗi do code của mình hay do website/mạng?</li>
+</ol>
+<p><strong>Kết quả mong đợi:</strong> 10/10 pass (khớp báo cáo mẫu <code>ket-qua/emailable-report.html</code>).</p>
+<h2 id="bước-6-thêm-hoặc-cập-nhật-dependency-khi-cần">Bước 6. Thêm hoặc cập nhật dependency khi cần</h2>
+<p>Tạo nhánh riêng trước:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">git</span> <span class="n">checkout</span> <span class="n">-b</span> <span class="n">feature</span><span class="p">/</span><span class="nb">add-logging</span></code></pre></div>
+<p>Sửa <code>pom.xml</code> (ví dụ thêm một thư viện test). Rồi:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">dependency</span><span class="p">:</span><span class="n">tree</span></code></pre></div>
+<p><strong>Giải thích:</strong> xem thư viện mới kéo thêm gì và có xung đột phiên bản không (<a href="06-dependency-management.html">05</a>).
+<strong>Kết quả mong đợi:</strong> <code>BUILD SUCCESS</code>, thư viện mới xuất hiện trong cây; không có cảnh báo xung đột bất thường.</p>
+<p>Cập nhật phiên bản có sẵn: đổi giá trị <code>&lt;selenium.version&gt;</code> — <strong>chỉ ở một chỗ</strong>.</p>
+<h2 id="bước-7-kiểm-tra-lại-toàn-bộ-test">Bước 7. Kiểm tra lại toàn bộ test</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">clean</span> <span class="n">test</span></code></pre></div>
+<p><strong>Giải thích:</strong> bảo đảm thay đổi không làm hỏng gì. Đặc biệt khi nâng Selenium: đọc kỹ cảnh báo <em>deprecated</em> khi biên dịch.
+<strong>Kết quả mong đợi:</strong> vẫn <code>Tests run: 10, Failures: 0, Errors: 0, Skipped: 0</code>.</p>
+<h2 id="bước-8-commit-và-push">Bước 8. Commit và push</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">git</span> <span class="n">status</span>
+<span class="n">git</span> <span class="n">add</span> <span class="n">pom</span><span class="p">.</span><span class="n">xml</span>
+<span class="n">git</span> <span class="nb">diff </span><span class="p">-</span><span class="n">-staged</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="n">-m</span> <span class="s2">&quot;Add slf4j-simple test dependency to enable logging&quot;</span>
+<span class="n">git</span> <span class="n">push</span> <span class="n">-u</span> <span class="n">origin</span> <span class="n">feature</span><span class="p">/</span><span class="nb">add-logging</span></code></pre></div>
+<p><strong>Giải thích:</strong>
+- <code>git status</code> xem đã thay đổi gì — <strong>kiểm tra không có <code>target/</code>, <code>.mvn/repository/</code></strong> trong danh sách.
+- <code>git add pom.xml</code> thêm đúng file cần (tránh <code>git add .</code> bừa bãi).
+- <code>git diff --staged</code> đọc lại những dòng sẽ commit.
+- Thông điệp commit nêu <strong>vì sao</strong>.</p>
+<p><strong>Kết quả mong đợi:</strong> commit chỉ chứa <code>pom.xml</code>. Mở Pull Request; CI (nếu có) chạy <code>./mvnw clean test</code>.</p>
+<p>Nếu bạn đổi <strong>phiên bản Maven</strong>: commit thêm <code>.mvn/wrapper/maven-wrapper.properties</code> (+ <code>mvnw</code>, <code>mvnw.cmd</code> nếu được sinh lại) và nói rõ trong PR.</p>
+<h2 id="bước-9-đồng-đội-pull-và-chạy-lại">Bước 9. Đồng đội pull và chạy lại</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">git</span> <span class="n">checkout</span> <span class="n">main</span>
+<span class="n">git</span> <span class="n">pull</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">clean</span> <span class="n">test</span></code></pre></div>
+<p><strong>Giải thích:</strong> <code>pull</code> mang về <code>pom.xml</code> mới. Khi chạy Maven, thấy dependency mới chưa có trong Local Repository ⇒ <strong>tự tải</strong>. Đồng đội <strong>không phải cài hay làm gì thêm</strong>. Nếu IDE đang mở: <em>Reload Maven project</em>.
+<strong>Kết quả mong đợi:</strong> <code>BUILD SUCCESS</code>; nếu có khác biệt với máy bạn (Chrome, JDK...) thì thảo luận trong PR.</p>
+<hr />
+<h2 id="checklist-trước-khi-push">Checklist "trước khi push"</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <code>.\mvnw.cmd clean test</code> xanh (10/10, <code>Skipped: 0</code>).</li>
+<li class="task"><input type="checkbox" disabled> <code>git status</code> không có <code>target/</code>, <code>test-output/</code>, <code>.mvn/repository/</code>.</li>
+<li class="task"><input type="checkbox" disabled> Không commit thông tin nhạy cảm (mật khẩu thật, token).</li>
+<li class="task"><input type="checkbox" disabled> Commit nhỏ, thông điệp rõ.</li>
+<li class="task"><input type="checkbox" disabled> <code>pom.xml</code> đổi → ghi lý do trong PR.</li>
+</ul>
+<h2 id="tình-huống-thường-gặp-trong-nhóm">Tình huống thường gặp trong nhóm</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Máy tôi pass, CI fail"</td>
+<td>So phiên bản JDK/Chrome; xem log CI; chạy <code>clean test</code> cục bộ; xem <a href="09-maven-troubleshooting.html">08</a></td>
+</tr>
+<tr>
+<td>Xung đột khi merge <code>pom.xml</code></td>
+<td>Giải quyết thủ công, giữ <strong>cả hai</strong> dependency hợp lệ; chạy <code>dependency:tree</code>; chạy lại <code>clean test</code></td>
+</tr>
+<tr>
+<td>Đồng đội báo <code>Could not resolve dependencies</code> sau khi pull</td>
+<td>Kiểm tra tọa độ bạn vừa thêm; mạng của họ; thử <code>-U</code></td>
+</tr>
+<tr>
+<td>Hai người cùng nâng Selenium</td>
+<td>Thống nhất một PR, không để hai phiên bản song song</td>
+</tr>
+<tr>
+<td>Có người dùng IDE "bundled Maven"</td>
+<td>Yêu cầu dùng Maven Wrapper trong IDE</td>
+</tr>
+<tr>
+<td>Ai đó vô tình commit <code>target/</code></td>
+<td><code>git rm -r --cached target</code> rồi commit; đảm bảo <code>.gitignore</code> đúng</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="vai-trò-của-mỗi-công-cụ">Vai trò của mỗi công cụ</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Công cụ</th>
+<th>Giữ gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Git</td>
+<td><strong>Công thức</strong>: <code>pom.xml</code>, <code>maven-wrapper.properties</code>, mã nguồn</td>
+</tr>
+<tr>
+<td>Maven Wrapper</td>
+<td><strong>Đúng phiên bản Maven</strong></td>
+</tr>
+<tr>
+<td>Maven</td>
+<td><strong>Tải và dựng</strong> theo công thức</td>
+</tr>
+<tr>
+<td>CI</td>
+<td><strong>Trọng tài</strong> chạy cùng lệnh trên máy sạch</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Liệt kê 4 file cần đọc đầu tiên khi nhận một dự án Maven.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 4 file</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Cấu hình build và suite.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Trình bày quy trình thêm một dependency từ nhánh đến PR (5 bước).</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 5 bước</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Nhánh riêng, tree, test, commit chỉ <code>pom.xml</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Đồng đội báo <code>Could not resolve dependencies</code> sau khi pull. Viết 5 câu hỏi/hành động chẩn đoán.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 5 mục</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Lỗi đầu tiên, tọa độ, mạng, <code>mvnw -version</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Lệnh nên chạy trước khi push?</p>
+<ul>
+<li>A. <code>mvnw clean test</code></li>
+<li>B. <code>mvnw clean</code></li>
+<li>C. <code>git add .</code></li>
+<li>D. <code>mvnw -version</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Kiểm chứng toàn bộ trên môi trường sạch.</p>
+</details>
+<p><strong>Câu 2.</strong> Khi đổi <code>pom.xml</code>, cần commit gì?</p>
+<ul>
+<li>A. <code>pom.xml</code> (và lý do trong PR)</li>
+<li>B. <code>target/</code></li>
+<li>C. <code>.mvn/repository/</code></li>
+<li>D. Mọi jar</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Chỉ cấu hình/mã nguồn.</p>
+</details>
+<p><strong>Câu 3.</strong> Ai chịu trách nhiệm tải thư viện mới khi <code>pom.xml</code> đổi?</p>
+<ul>
+<li>A. Người đẩy code</li>
+<li>B. Mỗi máy tự tải khi chạy Maven</li>
+<li>C. CI duy nhất</li>
+<li>D. Git</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Git chỉ chia sẻ công thức; Maven tải thư viện.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Describe your workflow when you join a Maven Selenium project.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Mô tả cách bạn bắt đầu với dự án Maven Selenium.</li>
+<li><strong>Suggested answer (EN):</strong> Clone, check the JDK, run <code>mvnw -version</code>, read <code>pom.xml</code> and the suite file, run <code>mvnw clean test</code>, read the report, then pick a small task on a branch.</li>
+<li><strong>Giải thích (VI):</strong> Có lệnh cụ thể cho từng bước.</li>
+<li><strong>Follow-up:</strong> <em>What do you do if the first run fails?</em></li>
+</ul>
+<p><strong>2. How do you keep the team on the same environment?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Giữ cả nhóm cùng môi trường?</li>
+<li><strong>Suggested answer (EN):</strong> Commit the wrapper, pin library and plugin versions, document the required JDK in the README and let CI run <code>mvnw clean test</code> on a clean machine.</li>
+<li><strong>Giải thích (VI):</strong> Wrapper chưa khoá JDK/Chrome.</li>
+<li><strong>Follow-up:</strong> <em>How could you enforce the JDK version?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Quy trình 9 bước: clone → kiểm tra → đọc pom → clean test → phân tích → dependency → test lại → commit/push → đồng đội pull</li>
+<li>Checklist trước khi push</li>
+<li>CI là trọng tài trên máy sạch</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>git clone/pull/switch/add/commit/push</code>, <code>.\mvnw.cmd clean test</code>, <code>dependency:tree</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>git add .</code> ≠ add từng file</li>
+<li>Local pass ≠ CI pass</li>
+<li>PR cần nêu cách kiểm chứng</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="09-maven-troubleshooting.html">Troubleshooting</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>pom.xml</code>, <code>.mvn/wrapper/maven-wrapper.properties</code>, <code>.mvn/maven.config</code>, <code>testng.xml</code> (và <code>README.md</code>).</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<ol>
+<li><code>git switch -c feature/add-logging</code>.</li>
+<li>Sửa <code>pom.xml</code>; <code>.\mvnw.cmd dependency:tree</code>.</li>
+<li><code>.\mvnw.cmd clean test</code>.</li>
+<li><code>git add pom.xml</code> → <code>git commit</code> → <code>git push -u origin ...</code>.</li>
+<li>Mở PR kèm kết quả <code>Tests run</code>.</li>
+</ol>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Xin dòng <code>[ERROR]</code> đầu tiên và lệnh đã chạy.</li>
+<li><code>.\mvnw.cmd -version</code> (JDK/Maven).</li>
+<li>Kiểm tra tọa độ/phiên bản vừa thêm có tồn tại.</li>
+<li>Kiểm tra mạng/proxy; thử <code>-U</code>.</li>
+<li>Tái hiện trong clone mới.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="07-build-and-test-execution.html"><small>← Bài trước</small><span>Build và chạy Automation Test bằng Maven</span></a><a class="next" href="09-maven-troubleshooting.html"><small>Bài tiếp theo →</small><span>Troubleshooting</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/08-working-in-team.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

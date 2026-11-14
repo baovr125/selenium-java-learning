@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TestNG Fundamentals · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="05-testing-framework/01-testng-fundamentals" data-root="../" data-lesson="1" data-title="TestNG Fundamentals">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="testng-fundamentals">TestNG Fundamentals</h1>
+<blockquote>
+<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="../04-wait-mechanisms/08-wait-best-practices.html">Wait Best Practices</a> · ➡️ <a href="02-junit-fundamentals.html">JUnit Fundamentals (so sánh với TestNG)</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="02-junit-fundamentals.html">Sau: JUnit</a> · <a href="04-test-setup-and-teardown.html">Setup/Teardown</a> · <a href="../interview/framework-interview.html">Phỏng vấn</a>
+Phiên bản dự án: <strong>TestNG 7.10.2</strong> (<code>org.testng:testng</code>, scope <code>test</code>).</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích TestNG làm gì so với Selenium</li>
+<li>Nhớ thứ tự annotation và dùng <code>@BeforeMethod/@AfterMethod</code></li>
+<li>Viết <code>@DataProvider</code>, <code>groups</code>, <code>testng.xml</code></li>
+<li>Hiểu vì sao <code>&lt;test&gt;</code> trong XML không phải một test method</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../01-java-fundamentals/11-lambda-and-generics.html">Java Lambda &amp; Generics (annotations)</a></li>
+<li><a href="../01-java-fundamentals/05-arrays.html">Java Arrays (Object[][])</a></li>
+</ul>
+<h2 id="1-testng-là-gì">1. TestNG là gì?</h2>
+<p><strong>TestNG</strong> (Test Next Generation) là framework kiểm thử cho Java lấy cảm hứng từ JUnit và NUnit, thêm nhiều tính năng hữu ích cho automation: nhóm test (<code>groups</code>), phụ thuộc (<code>dependsOnMethods</code>), <code>@DataProvider</code>, chạy song song, cấu hình bằng XML, báo cáo HTML.</p>
+<p>Nó <strong>không</strong> điều khiển trình duyệt; nó <strong>tổ chức và chạy</strong> test, còn Selenium điều khiển trình duyệt. Hai thư viện bổ sung cho nhau.</p>
+<h2 id="2-annotation-chính">2. Annotation chính</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Chạy khi nào</th>
+<th>Dùng cho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@BeforeSuite</code> / <code>@AfterSuite</code></td>
+<td>1 lần trước/sau <strong>cả suite</strong></td>
+<td>Khởi tạo report, đọc config</td>
+</tr>
+<tr>
+<td><code>@BeforeTest</code> / <code>@AfterTest</code></td>
+<td>Trước/sau thẻ <code>&lt;test&gt;</code> trong XML</td>
+<td>Hiếm dùng</td>
+</tr>
+<tr>
+<td><code>@BeforeClass</code> / <code>@AfterClass</code></td>
+<td>1 lần trước/sau <strong>mỗi class</strong></td>
+<td>Mở browser dùng chung cho class</td>
+</tr>
+<tr>
+<td><code>@BeforeMethod</code> / <code>@AfterMethod</code></td>
+<td>Trước/sau <strong>mỗi <code>@Test</code></strong></td>
+<td>🧩 <code>BaseTest.setup()/tearDown()</code></td>
+</tr>
+<tr>
+<td><code>@Test</code></td>
+<td>Là một test</td>
+<td></td>
+</tr>
+<tr>
+<td><code>@DataProvider</code></td>
+<td>Cung cấp dữ liệu cho test</td>
+<td>Data-driven</td>
+</tr>
+<tr>
+<td><code>@Parameters</code></td>
+<td>Nhận tham số từ <code>testng.xml</code></td>
+<td>Browser, URL</td>
+</tr>
+<tr>
+<td><code>@BeforeGroups</code> / <code>@AfterGroups</code></td>
+<td>Quanh nhóm</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="thứ-tự-thực-thi">Thứ tự thực thi</h3>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">@BeforeSuite
+  @BeforeTest
+    @BeforeClass
+      @BeforeMethod   ← 🧩 mở Chrome
+        @Test
+      @AfterMethod    ← 🧩 quit()
+      @BeforeMethod
+        @Test
+      @AfterMethod
+    @AfterClass
+  @AfterTest
+@AfterSuite</code></pre></div>
+<h2 id="3-thuộc-tính-của-test">3. Thuộc tính của <code>@Test</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="p">(</span><span class="n">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;smoke&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">},</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Đăng nhập đúng&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">timeOut</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">60000</span><span class="p">,</span><span class="w"> </span><span class="n">invocationCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="n">dependsOnMethods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;testOpenHerokuApp&quot;</span><span class="p">})</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLoginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thuộc tính</th>
+<th>Ý nghĩa</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>priority</code></td>
+<td>Số nhỏ chạy trước (mặc định 0)</td>
+<td>Thứ tự test <strong>không</strong> nên là bắt buộc</td>
+</tr>
+<tr>
+<td><code>groups</code></td>
+<td>Gắn nhãn</td>
+<td>Chạy theo nhóm</td>
+</tr>
+<tr>
+<td><code>enabled=false</code></td>
+<td>Test <strong>không được chạy</strong> (thường không xuất hiện trong kết quả)</td>
+<td>Dùng cẩn thận: dễ quên và tạo "test ẩn"</td>
+</tr>
+<tr>
+<td><code>dependsOnMethods</code></td>
+<td>Phụ thuộc test khác; nếu cái kia fail ⇒ test này <strong>skipped</strong></td>
+<td>Tạo skipped; tránh lạm dụng</td>
+</tr>
+<tr>
+<td><code>timeOut</code></td>
+<td>Quá thời gian (ms) ⇒ fail</td>
+<td></td>
+</tr>
+<tr>
+<td><code>invocationCount</code></td>
+<td>Chạy N lần</td>
+<td>Dùng thử flaky</td>
+</tr>
+<tr>
+<td><code>expectedExceptions</code></td>
+<td>Mong đợi exception</td>
+<td>Test negative</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>Mô tả trong báo cáo</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Dự án chỉ dùng <code>@Test</code> trần; mỗi class đúng 1 <code>@Test</code>.</p>
+<h2 id="4-thứ-tự-chạy-test">4. Thứ tự chạy test</h2>
+<ul>
+<li>Mặc định TestNG chạy method theo <strong>thứ tự bảng chữ cái</strong> (không phải thứ tự viết trong file) — không nên dựa vào đó.</li>
+<li>Muốn thứ tự: <code>priority</code>, <code>dependsOnMethods</code>, hoặc <code>testng.xml</code> liệt kê method.</li>
+<li>✅ Nguyên tắc tốt: <strong>test độc lập</strong>, không cần thứ tự.</li>
+</ul>
+<h2 id="5-testngxml">5. <code>testng.xml</code></h2>
+<p>🧩 <a href="../../../../testng.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">testng.xml</a> của dự án:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Selenium Getting Started&quot;</span><span class="w"> </span><span class="na">verbose=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;test</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Exercises 1-10&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;classes&gt;</span>
+<span class="w">            </span><span class="nt">&lt;class</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests.Exercise01_LoginTest&quot;</span><span class="nt">/&gt;</span>
+<span class="w">            </span>...
+<span class="w">            </span><span class="nt">&lt;class</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests.Exercise10_DynamicControlsTest&quot;</span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/classes&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/test&gt;</span>
+<span class="nt">&lt;/suite&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thẻ</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;suite&gt;</code></td>
+<td>Bộ gốc; <code>name</code>, <code>verbose</code> (0-10 mức log), <code>parallel</code>, <code>thread-count</code></td>
+</tr>
+<tr>
+<td><code>&lt;test&gt;</code></td>
+<td>Một nhóm test (không phải một method!)</td>
+</tr>
+<tr>
+<td><code>&lt;classes&gt;</code>/<code>&lt;class name="package.Class"&gt;</code></td>
+<td>Class tham gia</td>
+</tr>
+<tr>
+<td><code>&lt;methods&gt;&lt;include/&gt;&lt;exclude/&gt;&lt;/methods&gt;</code></td>
+<td>Chọn method</td>
+</tr>
+<tr>
+<td><code>&lt;groups&gt;&lt;run&gt;&lt;include name="smoke"/&gt;&lt;/run&gt;&lt;/groups&gt;</code></td>
+<td>Chọn nhóm</td>
+</tr>
+<tr>
+<td><code>&lt;packages&gt;</code></td>
+<td>Chọn theo package</td>
+</tr>
+<tr>
+<td><code>&lt;parameter name="..." value="..."/&gt;</code></td>
+<td>Tham số</td>
+</tr>
+<tr>
+<td><code>&lt;listeners&gt;</code></td>
+<td>Gắn listener</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="ví-dụ-chạy-nhóm-smoke">Ví dụ: chạy nhóm smoke</h3>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Smoke&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;test</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Smoke tests&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groups&gt;&lt;run&gt;&lt;include</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;smoke&quot;</span><span class="nt">/&gt;&lt;/run&gt;&lt;/groups&gt;</span>
+<span class="w">    </span><span class="nt">&lt;packages&gt;&lt;package</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests&quot;</span><span class="nt">/&gt;&lt;/packages&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/test&gt;</span>
+<span class="nt">&lt;/suite&gt;</span></code></pre></div>
+<h3 id="tên-test--test-method">Tên <code>&lt;test&gt;</code> ≠ test method</h3>
+<p>Lỗi phổ biến của người mới: tưởng <code>&lt;test name="Exercises 1-10"&gt;</code> là một test case. Thực ra là một <strong>nhóm</strong> gồm nhiều class. Log Surefire thể hiện kết quả như <code>Tests run: 10</code> (số method <code>@Test</code>).</p>
+<h2 id="6-groups">6. Groups</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="p">(</span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;smoke&quot;</span><span class="p">})</span><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{...}</span>
+<span class="nd">@Test</span><span class="p">(</span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;regression&quot;</span><span class="p">})</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testTable</span><span class="p">()</span><span class="w"> </span><span class="p">{...}</span></code></pre></div>
+<p>Chạy: trong <code>testng.xml</code> (như trên). Dùng cho smoke / regression / sanity. Với Maven (Surefire): <code>-Dgroups=smoke</code> cũng được <strong>nhưng</strong> nếu <code>suiteXmlFiles</code> đã khai báo thì ưu tiên XML; khi dùng <code>-Dtest</code> thì XML bị bỏ qua (<a href="../02-maven-and-project/07-build-and-test-execution.html">maven/06</a>).</p>
+<h2 id="7-data-provider-data-driven">7. Data Provider (data-driven)</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@DataProvider</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;loginData&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="nf">loginData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">{</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">  </span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wrong&quot;</span><span class="p">,</span><span class="w">                 </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Your password is invalid!&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">&quot;nobody&quot;</span><span class="p">,</span><span class="w">   </span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w">                     </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Your username is invalid!&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
+
+<span class="nd">@Test</span><span class="p">(</span><span class="n">dataProvider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;loginData&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogin</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">ok</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expectedMessage</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">user</span><span class="p">);</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">pass</span><span class="p">);</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">))).</span><span class="na">getText</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">expectedMessage</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Thông báo thực tế: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+<ul>
+<li>Mỗi hàng <code>Object[]</code> = một lần chạy test (kèm <code>@BeforeMethod</code>/<code>@AfterMethod</code> ⇒ mở/đóng Chrome mỗi hàng).</li>
+<li>Nguồn dữ liệu: mảng, file CSV/JSON/Excel (đọc rồi trả <code>Object[][]</code>).</li>
+<li>DataProvider có thể ở class khác: <code>@Test(dataProvider = "x", dataProviderClass = TestData.class)</code> (method <code>static</code>).</li>
+<li>Muốn song song: <code>@DataProvider(parallel = true)</code>.</li>
+</ul>
+<p>⚠️ Thông báo thực tế của trang sai tài khoản là kiểm chứng trên trang chạy thật của bạn; chạy thử để lấy chuỗi chính xác, đừng chép mù.</p>
+<h2 id="8-parameters-từ-testngxml">8. Parameters từ <code>testng.xml</code></h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Cross&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;test</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Chrome&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;parameter</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;browser&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;chrome&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;classes&gt;&lt;class</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests.Exercise01_LoginTest&quot;</span><span class="nt">/&gt;&lt;/classes&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/test&gt;</span>
+<span class="nt">&lt;/suite&gt;</span></code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeMethod</span>
+<span class="nd">@Parameters</span><span class="p">(</span><span class="s">&quot;browser&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="nd">@Optional</span><span class="p">(</span><span class="s">&quot;chrome&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">browser</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<p><code>@Optional</code> cho giá trị mặc định nếu XML không có (hữu ích khi chạy <code>-Dtest</code>).</p>
+<h2 id="9-chạy-song-song-parallel">9. Chạy song song (Parallel)</h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Parallel&quot;</span><span class="w"> </span><span class="na">parallel=</span><span class="s">&quot;classes&quot;</span><span class="w"> </span><span class="na">thread-count=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>parallel</code></th>
+<th>Chạy song song theo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>methods</code></td>
+<td>Từng <code>@Test</code></td>
+</tr>
+<tr>
+<td><code>classes</code></td>
+<td>Từng class</td>
+</tr>
+<tr>
+<td><code>tests</code></td>
+<td>Từng <code>&lt;test&gt;</code></td>
+</tr>
+<tr>
+<td><code>instances</code></td>
+<td>Từng instance</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Điều kiện để an toàn:</strong> mỗi luồng có <code>WebDriver</code> riêng ⇒ <strong>không</strong> dùng <code>static WebDriver</code>; dùng <code>ThreadLocal&lt;WebDriver&gt;</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRIVER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="nf">driver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<p>🧩 Dự án chạy <strong>tuần tự</strong>, driver là field instance (đúng nhưng chỉ an toàn nếu mỗi instance một luồng). Chạy song song theo <code>methods</code> với cùng instance sẽ giẫm nhau. Surefire cũng có cấu hình <code>parallel</code>/<code>threadCount</code> riêng; nhưng với TestNG hãy ưu tiên cấu hình trong <code>testng.xml</code>.</p>
+<h2 id="10-listener-và-retry">10. Listener và retry</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ScreenshotListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ITestListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onTestFailure</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* chụp ảnh */</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Gắn: <code>&lt;listeners&gt;&lt;listener class-name="listeners.ScreenshotListener"/&gt;&lt;/listeners&gt;</code> hoặc <code>@Listeners(...)</code>.
+<code>IRetryAnalyzer</code>: thử lại test fail — chỉ dùng khi đã hiểu flaky (<a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">selenium/10</a>).</p>
+<h2 id="11-testng-tạo-gì-sau-khi-chạy">11. TestNG tạo gì sau khi chạy?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cách chạy</th>
+<th>Báo cáo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Surefire (<code>mvnw test</code>)</td>
+<td><code>target/surefire-reports/</code> (<code>index.html</code>, <code>emailable-report.html</code>, <code>testng-results.xml</code>, <code>TEST-TestSuite.xml</code>)</td>
+</tr>
+<tr>
+<td><code>TestNG</code> chạy bằng code/IDE (<code>AllExercisesTest</code>)</td>
+<td><code>test-output/</code> (có sẵn trong dự án: <code>index.html</code>, <code>testng-failed.xml</code>...)</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>testng-failed.xml</code> liệt kê test fail để chạy lại. Dự án có bản cũ chứa <code>Exercise07_InfiniteScrollTest</code>.</p>
+<h2 id="12-so-sánh-nhanh-với-junit">12. So sánh nhanh với JUnit</h2>
+<p>Xem <a href="02-junit-fundamentals.html#6-so-sánh-testng-và-junit-5">02-junit-fundamentals.md</a>.</p>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ol>
+<li>Test độc lập; không dựa thứ tự.</li>
+<li>Dùng <code>@BeforeMethod</code>/<code>@AfterMethod</code> cho browser; <code>@BeforeClass</code> khi cần nhanh và test không phá trạng thái.</li>
+<li>Dùng <code>groups</code> cho smoke/regression.</li>
+<li>Dùng DataProvider cho dữ liệu lặp lại.</li>
+<li>Song song ⇒ <code>ThreadLocal</code>.</li>
+<li><code>enabled=false</code>/<code>dependsOnMethods</code> dùng tiết chế vì tạo "test ẩn" hoặc skipped.</li>
+</ol>
+<h2 id="-lỗi-thường-gặp">⚠️ Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test không chạy</td>
+<td>Import <code>org.junit.Test</code> thay vì <code>org.testng.annotations.Test</code></td>
+<td>Sửa import</td>
+</tr>
+<tr>
+<td><code>ClassNotFoundException</code> trong <code>testng.xml</code></td>
+<td>Sai tên package/class</td>
+<td><code>tests.Exercise01_LoginTest</code> (có package)</td>
+</tr>
+<tr>
+<td><code>@BeforeMethod</code> không chạy</td>
+<td>Method <code>private</code>/ không <code>public</code>; class không kế thừa</td>
+<td><code>public</code>, <code>extends BaseTest</code></td>
+</tr>
+<tr>
+<td>DataProvider lỗi "provider not found"</td>
+<td>Sai tên/ không <code>static</code> khi ở class khác</td>
+<td>Kiểm tra <code>name</code>, <code>static</code></td>
+</tr>
+<tr>
+<td>Skipped bất ngờ</td>
+<td><code>dependsOnMethods</code> của test trước fail</td>
+<td>Xem báo cáo</td>
+</tr>
+<tr>
+<td>Song song mà trình duyệt "đánh nhau"</td>
+<td><code>static WebDriver</code></td>
+<td><code>ThreadLocal</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết class in thứ tự chạy của <code>@BeforeClass</code>, <code>@BeforeMethod</code>, <code>@Test</code> (hai test), <code>@AfterMethod</code>, <code>@AfterClass</code>.</p>
+<p><strong>Input:</strong> Hai test method</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Thứ tự `BeforeClass → (BeforeMethod → Test → AfterMethod) ×2 → AfterClass`</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Dùng <code>System.out.println</code> trong mỗi method.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>@DataProvider</code> cho 3 bộ (username, password, thông báo mong đợi) và test dùng nó.</p>
+<p><strong>Input:</strong> 3 bộ dữ liệu đăng nhập</p>
+<p><strong>Expected Output:</strong> Test chạy 3 lần</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>@Test(dataProvider = "loginData")</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>smoke.xml</code> chỉ chạy nhóm <code>smoke</code> trong package <code>tests</code>.</p>
+<p><strong>Input:</strong> Test gắn <code>groups = {"smoke"}</code></p>
+<p><strong>Expected Output:</strong> Suite chỉ chạy test smoke</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>&lt;groups&gt;&lt;run&gt;&lt;include .../&gt;</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Thứ tự đúng?</p>
+<ul>
+<li>A. <code>@Test</code> → <code>@BeforeMethod</code></li>
+<li>B. <code>@BeforeMethod</code> → <code>@Test</code> → <code>@AfterMethod</code></li>
+<li>C. <code>@AfterClass</code> → <code>@Test</code></li>
+<li>D. Ngẫu nhiên</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Setup trước, teardown sau mỗi test.</p>
+</details>
+<p><strong>Câu 2.</strong> Mỗi hàng <code>Object[]</code> của DataProvider tạo ra?</p>
+<ul>
+<li>A. Một class</li>
+<li>B. Một lần chạy test</li>
+<li>C. Một suite</li>
+<li>D. Một group</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Kèm <code>@BeforeMethod/@AfterMethod</code> mỗi hàng.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>&lt;test name="Exercises 1-10"&gt;</code> trong <code>testng.xml</code> là?</p>
+<ul>
+<li>A. Một test method</li>
+<li>B. Một nhóm các class</li>
+<li>C. Một annotation</li>
+<li>D. Một browser</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Số <code>Tests run</code> đếm method <code>@Test</code>.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is TestNG and why use it with Selenium?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> TestNG là gì, vì sao dùng với Selenium?</li>
+<li><strong>Suggested answer (EN):</strong> TestNG organizes and runs tests with annotations, groups, data providers, parallel execution, XML suites and reports; Selenium controls the browser while TestNG manages lifecycle and results.</li>
+<li><strong>Giải thích (VI):</strong> Dự án: TestNG 7.10.2.</li>
+<li><strong>Follow-up:</strong> <em>Can Selenium run without TestNG?</em></li>
+</ul>
+<p><strong>2. Explain the TestNG annotation order.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Thứ tự annotation TestNG?</li>
+<li><strong>Suggested answer (EN):</strong> BeforeSuite, BeforeTest, BeforeClass, BeforeMethod, the test, AfterMethod, AfterClass, AfterTest, AfterSuite.</li>
+<li><strong>Giải thích (VI):</strong> BaseTest dùng BeforeMethod/AfterMethod.</li>
+<li><strong>Follow-up:</strong> <em>When use BeforeClass?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Annotation: <code>@Test</code>, <code>@BeforeMethod/@AfterMethod</code>, <code>@BeforeClass</code>, <code>@DataProvider</code>, <code>@Parameters</code></li>
+<li><code>testng.xml</code>: suite → test → classes/groups</li>
+<li>Test nên độc lập, không dựa thứ tự</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>@Test(groups, dataProvider, priority, enabled)</code>, <code>testng.xml</code>, <code>parallel</code>, <code>thread-count</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>&lt;test&gt;</code> ≠ test method</li>
+<li><code>@BeforeMethod</code> ≠ <code>@BeforeClass</code></li>
+<li><code>dependsOnMethods</code> có thể tạo skipped</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-junit-fundamentals.html">JUnit Fundamentals (so sánh với TestNG)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.*</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">OrderTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@BeforeClass</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">bc</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;BeforeClass&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">bm</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;BeforeMethod&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@Test</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">t1</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;t1&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@Test</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">t2</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;t2&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@AfterMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">am</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;AfterMethod&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@AfterClass</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ac</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;AfterClass&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.*</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginDataTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@DataProvider</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;loginData&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="nf">loginData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[][]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="p">{</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wrong&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Your password is invalid!&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="s">&quot;nobody&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Your username is invalid!&quot;</span><span class="p">}</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Test</span><span class="p">(</span><span class="n">dataProvider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;loginData&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">user</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; -&gt; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">expected</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE suite SYSTEM &quot;https://testng.org/testng-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Smoke&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;test</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Smoke tests&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groups&gt;&lt;run&gt;&lt;include</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;smoke&quot;</span><span class="nt">/&gt;&lt;/run&gt;&lt;/groups&gt;</span>
+<span class="w">    </span><span class="nt">&lt;packages&gt;&lt;package</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests&quot;</span><span class="nt">/&gt;&lt;/packages&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/test&gt;</span>
+<span class="nt">&lt;/suite&gt;</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 5 — Testing Framework (Chapter 20)</span></a><a class="next" href="02-junit-fundamentals.html"><small>Bài tiếp theo →</small><span>JUnit Fundamentals (so sánh với TestNG)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/01-testng-fundamentals.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

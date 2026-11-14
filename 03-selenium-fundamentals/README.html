@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 3 — Selenium Fundamentals (Chapter 13–18) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/README" data-root="../" data-lesson="0" data-title="Phase 3 — Selenium Fundamentals (Chapter 13–18)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="phase-3--selenium-fundamentals-chapter-1318">Phase 3 — Selenium Fundamentals (Chapter 13–18)</h1>
+<blockquote>
+<p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Phỏng vấn: <a href="../interview/selenium-interview.html">selenium-interview</a>
+Phiên bản: <strong>Selenium 4.52.0</strong>, Chrome, TestNG 7.10.2. Ví dụ dùng API Selenium 4 (<code>Duration</code>).</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bài</th>
+<th>Chapter</th>
+<th>Ưu tiên</th>
+<th>Exercise của dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td><a href="01-selenium-introduction.html">Selenium Introduction</a></td>
+<td>13</td>
+<td>Essential</td>
+<td>—</td>
+</tr>
+<tr>
+<td>02</td>
+<td><a href="02-webdriver.html">WebDriver</a></td>
+<td>14</td>
+<td>Essential</td>
+<td><code>BaseTest</code></td>
+</tr>
+<tr>
+<td>03</td>
+<td><a href="03-locators.html">Locators</a></td>
+<td>15</td>
+<td>Essential</td>
+<td>1, 2, 3, 5, 6</td>
+</tr>
+<tr>
+<td>04</td>
+<td><a href="04-webelement.html">WebElement</a></td>
+<td>16</td>
+<td>Essential</td>
+<td>1, 2, 10</td>
+</tr>
+<tr>
+<td>05</td>
+<td><a href="05-browser-navigation.html">Browser Navigation</a></td>
+<td>14</td>
+<td>Essential</td>
+<td>tất cả</td>
+</tr>
+<tr>
+<td>06</td>
+<td><a href="06-element-interactions.html">Element Interactions</a> (+ Dropdown)</td>
+<td>17</td>
+<td>Essential</td>
+<td>1, 2, 3, 4</td>
+</tr>
+<tr>
+<td>07</td>
+<td><a href="07-browser-interactions.html">Browser Interactions</a> (Alert/Frame/Window)</td>
+<td>18</td>
+<td>Essential</td>
+<td>—</td>
+</tr>
+<tr>
+<td>08</td>
+<td><a href="08-mouse-and-keyboard-actions.html">Mouse &amp; Keyboard Actions</a></td>
+<td>18</td>
+<td>Important</td>
+<td>5, 9</td>
+</tr>
+<tr>
+<td>09</td>
+<td><a href="09-javascript-executor.html">JavaScript Executor</a></td>
+<td>18</td>
+<td>Important</td>
+<td>7</td>
+</tr>
+<tr>
+<td>10</td>
+<td><a href="10-selenium-exceptions.html">Selenium Exceptions</a></td>
+<td>16</td>
+<td>Essential</td>
+<td>—</td>
+</tr>
+<tr>
+<td>11</td>
+<td><a href="11-debugging-and-best-practices.html">Debugging &amp; Best Practices</a></td>
+<td>16</td>
+<td>Essential</td>
+<td>7 (flaky)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="bản-đồ-nhanh-muốn-làm-x-dùng-api-nào">Bản đồ nhanh: muốn làm X, dùng API nào?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục tiêu</th>
+<th>API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mở trang</td>
+<td><code>driver.get(url)</code></td>
+</tr>
+<tr>
+<td>Tìm 1 / nhiều phần tử</td>
+<td><code>findElement(by)</code> / <code>findElements(by)</code></td>
+</tr>
+<tr>
+<td>Nhập chữ / bấm</td>
+<td><code>sendKeys</code> / <code>click</code></td>
+</tr>
+<tr>
+<td>Chờ phần tử hiện / bấm được / biến mất</td>
+<td><code>visibilityOfElementLocated</code> / <code>elementToBeClickable</code> / <code>invisibilityOfElementLocated</code> (<a href="../04-wait-mechanisms/README.html">Wait</a>)</td>
+</tr>
+<tr>
+<td>Dropdown</td>
+<td><code>new Select(el).selectByVisibleText(..)</code></td>
+</tr>
+<tr>
+<td>Alert / iframe / tab mới</td>
+<td><code>switchTo().alert()</code> / <code>switchTo().frame(..)</code> / <code>switchTo().window(..)</code></td>
+</tr>
+<tr>
+<td>Hover / kéo thả</td>
+<td><code>new Actions(driver).moveToElement(..)</code> / <code>dragAndDrop(a, b)</code></td>
+</tr>
+<tr>
+<td>Cuộn trang</td>
+<td><code>((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight)")</code></td>
+</tr>
+<tr>
+<td>Chụp màn hình</td>
+<td><code>((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE)</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="ghi-chú">Ghi chú</h2>
+<ul>
+<li>Nội dung các bài này <strong>giữ nguyên</strong> từ bản trước (đã kiểm chứng), được sắp lại theo chương; bài Locators/WebElement được tách từ một file dài, Dropdown được gộp vào Element Interactions.</li>
+<li>Selenium Manager tự tải driver (không cần WebDriverManager).</li>
+<li>🧩 = có trong dự án; code dự án: <a href="../../../../src/test/java" class="ext" title="File của dự án (chỉ mở được khi xem local)">src/test/java</a>.</li>
+</ul>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../02-maven-and-project/09-maven-troubleshooting.html"><small>← Bài trước</small><span>Troubleshooting</span></a><a class="next" href="01-selenium-introduction.html"><small>Bài tiếp theo →</small><span>Selenium là gì?</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

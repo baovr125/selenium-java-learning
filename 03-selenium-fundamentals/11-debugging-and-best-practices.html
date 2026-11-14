@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debugging và Best Practices · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/11-debugging-and-best-practices" data-root="../" data-lesson="1" data-title="Debugging và Best Practices">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="debugging-và-best-practices">Debugging và Best Practices</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 16 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="10-selenium-exceptions.html">Exception Handling</a> · ➡️ <a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="10-selenium-exceptions.html">Trước: Exception</a> · <a href="../06-automation-framework/README.html">Framework design</a> · <a href="../interview/scenario-based-interview.html">Phỏng vấn scenario</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Áp dụng quy trình debug 8 bước</li>
+<li>Chụp screenshot khi fail</li>
+<li>Nhận diện và xử lý test flaky</li>
+<li>Dùng checklist khi viết test mới</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="10-selenium-exceptions.html">Selenium Exceptions</a></li>
+<li><a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction</a></li>
+</ul>
+<h2 id="1-quy-trình-gỡ-lỗi-một-test-fail">1. Quy trình gỡ lỗi một test fail</h2>
+<ol>
+<li><strong>Đọc lỗi:</strong> exception, message, dòng code của bạn (<a href="10-selenium-exceptions.html#3-đọc-stacktrace-như-thế-nào">09</a>).</li>
+<li><strong>Chạy lại một mình:</strong> <code>.\mvnw.cmd test "-Dtest=Exercise07_InfiniteScrollTest"</code> — pass lẻ nhưng fail cả bộ ⇒ test phụ thuộc/nhiễu.</li>
+<li><strong>Chạy lại 3-5 lần:</strong> lúc pass lúc fail ⇒ <strong>flaky</strong> ⇒ nghi ngờ đồng bộ hoá.</li>
+<li><strong>Quan sát:</strong> chạy có giao diện, nhìn Chrome làm gì; tạm thời <code>Thread.sleep</code> <strong>chỉ để xem</strong> (xoá sau).</li>
+<li><strong>Kiểm tra locator</strong> trong DevTools (<code>$$()</code>, <code>$x()</code>).</li>
+<li><strong>Thu thập bằng chứng:</strong> screenshot, <code>getPageSource()</code>, log.</li>
+<li><strong>Sửa nguyên nhân gốc</strong> (Wait đúng điều kiện), không "vá" bằng <code>sleep</code>.</li>
+<li><strong>Chạy lại nhiều lần</strong> để chắc đã hết flaky.</li>
+</ol>
+<p>🧩 Ví dụ thật: <a href="../../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise07</a> từng gây <code>TimeoutException</code> (dấu vết: <code>test-output/testng-failed.xml</code>). Nguyên nhân gốc: sự kiện scroll bị bỏ qua khi plugin đang tải ⇒ sửa bằng custom wait có cuộn lặp — không phải tăng timeout.</p>
+<h2 id="2-công-cụ-gỡ-lỗi">2. Công cụ gỡ lỗi</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Công cụ</th>
+<th>Dùng cho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chrome DevTools (F12)</td>
+<td>Kiểm tra locator, network, console</td>
+</tr>
+<tr>
+<td>Breakpoint trong IDE</td>
+<td>Dừng giữa test, xem trình duyệt</td>
+</tr>
+<tr>
+<td>Log (<code>System.out</code>, SLF4J)</td>
+<td>Theo dõi luồng</td>
+</tr>
+<tr>
+<td>Screenshot</td>
+<td>Bằng chứng giao diện lúc lỗi</td>
+</tr>
+<tr>
+<td><code>getPageSource()</code></td>
+<td>HTML hiện tại</td>
+</tr>
+<tr>
+<td>Báo cáo Surefire/TestNG</td>
+<td>Test nào fail, vì sao</td>
+</tr>
+<tr>
+<td><code>-Dtest=Class#method</code></td>
+<td>Cô lập</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-screenshot-khi-test-fail">3. Screenshot khi test fail</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.OutputType</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.TakesScreenshot</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.ITestResult</span><span class="p">;</span>
+
+<span class="nd">@AfterMethod</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ITestResult</span><span class="p">.</span><span class="na">FAILURE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">File</span><span class="w"> </span><span class="n">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">TakesScreenshot</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">getScreenshotAs</span><span class="p">(</span><span class="n">OutputType</span><span class="p">.</span><span class="na">FILE</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Files</span><span class="p">.</span><span class="na">createDirectories</span><span class="p">(</span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;target&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;screenshots&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Files</span><span class="p">.</span><span class="na">copy</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="na">toPath</span><span class="p">(),</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;target&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;screenshots&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.png&quot;</span><span class="p">),</span>
+<span class="w">                   </span><span class="n">StandardCopyOption</span><span class="p">.</span><span class="na">REPLACE_EXISTING</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>
+<span class="p">}</span></code></pre></div>
+<p>Gợi ý cải tiến (🧩 <code>BaseTest</code> hiện chưa chụp ảnh). Đặt vào <code>target/</code> để không bị commit.</p>
+<h2 id="4-log">4. Log</h2>
+<p>Hiện dự án dùng <code>System.out.println</code> với thông tin trạng thái (hữu ích). Khi lớn hơn: SLF4J + Log4j2/slf4j-simple. Mỗi log nên nói <strong>đang làm gì</strong> và <strong>dữ liệu</strong>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;Click Add Element; số nút Delete hiện tại = {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">count</span><span class="p">);</span></code></pre></div>
+<h2 id="5-flaky-test">5. Flaky test</h2>
+<p><strong>Flaky</strong> = cùng code, cùng dữ liệu, lúc pass lúc fail.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nguyên nhân</th>
+<th>Dấu hiệu</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thiếu/Sai Wait</td>
+<td><code>NoSuchElement</code>, <code>Stale</code>, <code>Intercepted</code> ngẫu nhiên</td>
+<td>Wait đúng điều kiện (<a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>)</td>
+</tr>
+<tr>
+<td>Phụ thuộc thứ tự/ dữ liệu chung</td>
+<td>Pass lẻ, fail chạy bộ</td>
+<td>Test độc lập; dọn dữ liệu</td>
+</tr>
+<tr>
+<td>Môi trường (mạng, website chậm)</td>
+<td>Fail theo giờ</td>
+<td>Timeout hợp lý; mock/ môi trường ổn định</td>
+</tr>
+<tr>
+<td>Animation</td>
+<td>Click vào chỗ đang di chuyển</td>
+<td>Chờ animation xong; tắt animation ở môi trường test</td>
+</tr>
+<tr>
+<td>Thao tác khó (HTML5 drag)</td>
+<td>Ngẫu nhiên</td>
+<td>Phương án dự phòng (<a href="08-mouse-and-keyboard-actions.html">07</a>)</td>
+</tr>
+<tr>
+<td>Cửa sổ nhỏ/headless</td>
+<td>Phần tử bị che</td>
+<td>Đặt <code>--window-size</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>⚠️ Retry tự động (<code>rerunFailingTestsCount</code>) chỉ <strong>che</strong> flaky; hãy tìm nguyên nhân.</p>
+<h2 id="6-bảng-best-practices-tổng-hợp">6. Bảng Best Practices tổng hợp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lĩnh vực</th>
+<th>Khuyến nghị</th>
+<th>🧩 Dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Driver</td>
+<td>Khai báo <code>WebDriver</code>; <code>quit()</code> trong teardown</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Wait</td>
+<td>Explicit; không implicit; không <code>sleep</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Locator</td>
+<td><code>id</code>/<code>data-testid</code>/CSS &gt; XPath; tập trung vào Page Object</td>
+<td>◐ (chưa có POM)</td>
+</tr>
+<tr>
+<td>Dữ liệu</td>
+<td>Không hard-code; dùng DataProvider/config</td>
+<td>❌ hard-code</td>
+</tr>
+<tr>
+<td>Assertion</td>
+<td>Có message; kiểm chứng trạng thái trước/sau</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Độc lập</td>
+<td>Mỗi test tự dọn</td>
+<td>✅ (<code>@BeforeMethod</code>)</td>
+</tr>
+<tr>
+<td>Báo cáo</td>
+<td>Screenshot + log khi fail</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Cấu hình</td>
+<td>Browser/URL/timeout từ file/<code>-D</code></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Chạy</td>
+<td>CI chạy <code>./mvnw clean test</code></td>
+<td>(chưa có CI)</td>
+</tr>
+<tr>
+<td>Song song</td>
+<td><code>ThreadLocal&lt;WebDriver&gt;</code></td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Bảo mật</td>
+<td>Không commit mật khẩu thật</td>
+<td>✅ (chỉ tài khoản demo công khai)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-checklist-khi-viết-một-test-mới">7. Checklist khi viết một test mới</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> Test có <strong>một mục tiêu</strong> rõ ràng, tên mô tả (<code>testLoginSuccess</code>).</li>
+<li class="task"><input type="checkbox" disabled> Không phụ thuộc test khác.</li>
+<li class="task"><input type="checkbox" disabled> Mọi bước bất đồng bộ đều có Wait theo điều kiện.</li>
+<li class="task"><input type="checkbox" disabled> Assert có message mô tả.</li>
+<li class="task"><input type="checkbox" disabled> Locator ổn định, kiểm tra trong DevTools.</li>
+<li class="task"><input type="checkbox" disabled> Không có <code>Thread.sleep</code>.</li>
+<li class="task"><input type="checkbox" disabled> Dữ liệu/URL là hằng số hoặc đọc từ config.</li>
+<li class="task"><input type="checkbox" disabled> Chạy 3 lần liên tiếp đều pass.</li>
+</ul>
+<h2 id="8-lỗi-thường-gặp-của-người-mới">8. Lỗi thường gặp của người mới</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chỉ kiểm tra "không có exception"</td>
+<td>Test pass nhưng không kiểm chứng gì — phải <code>Assert</code></td>
+</tr>
+<tr>
+<td>Copy-paste locator tuyệt đối từ DevTools (<code>/html/body/div[2]/...</code>)</td>
+<td>Gãy khi layout đổi</td>
+</tr>
+<tr>
+<td><code>Thread.sleep(5000)</code> khắp nơi</td>
+<td>Chậm, vẫn flaky</td>
+</tr>
+<tr>
+<td>Một test dài 100 bước</td>
+<td>Khó biết lỗi ở đâu; tách nhỏ</td>
+</tr>
+<tr>
+<td>Dùng <code>static WebDriver</code></td>
+<td>Không an toàn khi song song</td>
+</tr>
+<tr>
+<td>Không dọn trình duyệt</td>
+<td>Process mồ côi</td>
+</tr>
+<tr>
+<td>Bỏ qua test fail "vì flaky"</td>
+<td>Mất niềm tin vào bộ test</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Liệt kê 4 nguyên nhân phổ biến của test flaky.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 4 nguyên nhân</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Wait, phụ thuộc thứ tự, môi trường, animation.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết helper <code>Screenshots.take(WebDriver, String)</code> lưu ảnh vào <code>target/screenshots</code>.</p>
+<p><strong>Input:</strong> <code>driver</code>, <code>name</code></p>
+<p><strong>Expected Output:</strong> File <code>.png</code> trong <code>target/screenshots</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>TakesScreenshot</code>, <code>Files.copy</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Một test thỉnh thoảng fail với <code>ElementClickInterceptedException</code>. Viết 5 bước điều tra.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> 5 bước</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Chạy lẻ, nhiều lần, DevTools, bằng chứng, sửa gốc.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Chụp screenshot nên thực hiện?</p>
+<ul>
+<li>A. Sau <code>quit()</code></li>
+<li>B. Trước <code>quit()</code></li>
+<li>C. Không cần driver</li>
+<li>D. Bằng <code>Thread.sleep</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Driver đã đóng thì không chụp được.</p>
+</details>
+<p><strong>Câu 2.</strong> Retry tự động test fail là?</p>
+<ul>
+<li>A. Cách tốt nhất để hết flaky</li>
+<li>B. Chỉ che flaky, cần điều tra nguyên nhân</li>
+<li>C. Bắt buộc</li>
+<li>D. Không dùng được</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Điều tra đồng bộ hoá trước.</p>
+</details>
+<p><strong>Câu 3.</strong> Test pass lẻ nhưng fail khi chạy cả bộ nghi ngờ?</p>
+<ul>
+<li>A. Test phụ thuộc/nhiễu dữ liệu</li>
+<li>B. JDK</li>
+<li>C. Maven</li>
+<li>D. Chrome</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Test phải độc lập.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Walk me through debugging a failing UI test.</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Mô tả cách debug một test UI fail.</li>
+<li><strong>Suggested answer (EN):</strong> Read the exception and my first stack frame, rerun the single test several times, check the locator in DevTools, collect evidence like a screenshot, fix the root cause usually synchronization, and rerun repeatedly.</li>
+<li><strong>Giải thích (VI):</strong> Nêu quy trình có hệ thống.</li>
+<li><strong>Follow-up:</strong> <em>How do you tell flaky from broken?</em></li>
+</ul>
+<p><strong>2. What causes flaky tests?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Nguyên nhân flaky?</li>
+<li><strong>Suggested answer (EN):</strong> Missing or wrong waits, test dependencies, environment slowness, animations and window size differences.</li>
+<li><strong>Giải thích (VI):</strong> Chỉ xử lý được khi hiểu nguyên nhân.</li>
+<li><strong>Follow-up:</strong> <em>Is retry a solution?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Debug có quy trình; thu bằng chứng</li>
+<li>Flaky thường do đồng bộ hoá</li>
+<li>Chụp ảnh trước <code>quit()</code></li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>TakesScreenshot</code>, <code>getPageSource</code>, <code>-Dtest=Class#method</code>, <code>ITestResult</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Flaky ≠ hỏng</li>
+<li>Retry ≠ sửa</li>
+<li>Pass lẻ ≠ độc lập</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>Thiếu/sai Wait · test phụ thuộc thứ tự/dữ liệu · mạng/website chậm · animation/overlay · cửa sổ nhỏ/headless.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Screenshots</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">Screenshots</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Path</span><span class="w"> </span><span class="nf">take</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">File</span><span class="w"> </span><span class="n">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">TakesScreenshot</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">).</span><span class="na">getScreenshotAs</span><span class="p">(</span><span class="n">OutputType</span><span class="p">.</span><span class="na">FILE</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Path</span><span class="w"> </span><span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;target&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;screenshots&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">Files</span><span class="p">.</span><span class="na">createDirectories</span><span class="p">(</span><span class="n">dir</span><span class="p">);</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Files</span><span class="p">.</span><span class="na">copy</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="na">toPath</span><span class="p">(),</span><span class="w"> </span><span class="n">dir</span><span class="p">.</span><span class="na">resolve</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.png&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">StandardCopyOption</span><span class="p">.</span><span class="na">REPLACE_EXISTING</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">IOException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UncheckedIOException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<ol>
+<li>Chạy riêng test 5 lần (<code>-Dtest=Class#method</code>) để xác nhận flaky.</li>
+<li>Đọc message: phần tử nào che.</li>
+<li>Quan sát overlay/spinner/animation.</li>
+<li>Thêm <code>invisibilityOfElementLocated</code> cho overlay trước <code>elementToBeClickable</code>.</li>
+<li>Chạy lại nhiều lần; không dùng <code>sleep</code>/retry để che.</li>
+</ol>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="10-selenium-exceptions.html"><small>← Bài trước</small><span>Exception Handling</span></a><a class="next" href="../04-wait-mechanisms/README.html"><small>Bài tiếp theo →</small><span>Phase 4 — Wait and Synchronization (Chapter 19)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/11-debugging-and-best-practices.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

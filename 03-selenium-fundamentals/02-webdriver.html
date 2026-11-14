@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebDriver Fundamentals · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="03-selenium-fundamentals/02-webdriver" data-root="../" data-lesson="1" data-title="WebDriver Fundamentals">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="webdriver-fundamentals">WebDriver Fundamentals</h1>
+<blockquote>
+<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 14 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="01-selenium-introduction.html">Selenium là gì?</a> · ➡️ <a href="03-locators.html">Selenium: Locators (cách tìm phần tử)</a></p>
+<p>Liên quan: <a href="README.html">Mục lục</a> · <a href="01-selenium-introduction.html">Giới thiệu Selenium</a> · <a href="03-locators.html">Tiếp: Locators</a> · <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a></p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Khởi tạo <code>ChromeDriver</code> và cấu hình <code>ChromeOptions</code></li>
+<li>Phân biệt ba loại timeout của <code>manage().timeouts()</code> và <code>WebDriverWait</code></li>
+<li>Hiểu vòng đời driver trong <code>BaseTest</code></li>
+<li>Biết API cũ đã bị loại bỏ</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-selenium-introduction.html">Selenium Introduction</a></li>
+<li><a href="../01-java-fundamentals/08-oop-concepts.html">Java OOP Concepts</a></li>
+</ul>
+<h2 id="1-interface-webdriver--các-nhóm-method">1. Interface <code>WebDriver</code> — các nhóm method</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhóm</th>
+<th>Method</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Điều hướng</td>
+<td><code>get(url)</code>, <code>navigate()</code>, <code>getCurrentUrl()</code>, <code>getTitle()</code>, <code>getPageSource()</code></td>
+<td><a href="05-browser-navigation.html">03</a></td>
+</tr>
+<tr>
+<td>Tìm phần tử</td>
+<td><code>findElement(By)</code>, <code>findElements(By)</code></td>
+<td><a href="03-locators.html">02</a></td>
+</tr>
+<tr>
+<td>Quản lý</td>
+<td><code>manage()</code> → <code>window()</code>, <code>timeouts()</code>, <code>getCookies()</code>...</td>
+<td>Mục 3</td>
+</tr>
+<tr>
+<td>Chuyển ngữ cảnh</td>
+<td><code>switchTo()</code> → <code>frame</code>, <code>window</code>, <code>alert</code>, <code>activeElement</code>, <code>defaultContent</code>, <code>newWindow</code></td>
+<td><a href="07-browser-interactions.html">06</a></td>
+</tr>
+<tr>
+<td>Cửa sổ</td>
+<td><code>getWindowHandle()</code>, <code>getWindowHandles()</code></td>
+<td><a href="07-browser-interactions.html">06</a></td>
+</tr>
+<tr>
+<td>Kết thúc</td>
+<td><code>close()</code>, <code>quit()</code></td>
+<td><a href="05-browser-navigation.html">03</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Các interface mở rộng mà <code>ChromeDriver</code> cũng implement: <code>JavascriptExecutor</code>, <code>TakesScreenshot</code>, <code>HasDevTools</code>, <code>Interactive</code>...</p>
+<h2 id="2-khởi-tạo-trình-duyệt">2. Khởi tạo trình duyệt</h2>
+<p>🧩 <strong>Trong dự án</strong> (<a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.setup()</a>):</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w">                                   </span><span class="c1">// 1. mở Chrome</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span><span class="w">                           </span><span class="c1">// 2. phóng to</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">pageLoadTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span><span class="w"> </span><span class="c1">// 3. giới hạn load trang</span>
+<span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span><span class="w">      </span><span class="c1">// 4. explicit wait</span></code></pre></div>
+<p>Điều gì xảy ra ở <code>new ChromeDriver()</code>:</p>
+<ol>
+<li><strong>Selenium Manager</strong> (nhúng trong <code>selenium-manager-4.52.0.jar</code>) xác định phiên bản Chrome đã cài, tải <strong>ChromeDriver tương ứng</strong> vào cache (<code>~/.cache/selenium</code>), trả đường dẫn driver.</li>
+<li>Khởi động process <code>chromedriver</code>.</li>
+<li>Gửi <code>New Session</code> → Chrome được mở với một profile tạm.</li>
+<li>Trả về đối tượng <code>ChromeDriver</code> giữ <code>sessionId</code>.</li>
+</ol>
+<p>⚠️ Lần chạy đầu tiên có thể chậm hơn vì tải driver; thiếu Internet ⇒ <code>SessionNotCreatedException</code>/<code>NoSuchDriverException</code>.</p>
+<h3 id="các-trình-duyệt-khác">Các trình duyệt khác</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FirefoxDriver</span><span class="p">();</span><span class="w">   </span><span class="c1">// geckodriver</span>
+<span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EdgeDriver</span><span class="p">();</span><span class="w">      </span><span class="c1">// msedgedriver</span></code></pre></div>
+<p>Chọn theo cấu hình ⇒ <code>DriverFactory</code> (<a href="../06-automation-framework/03-reusable-components.html">framework-design/03</a>).</p>
+<h2 id="3-cấu-hình-browser-chromeoptions">3. Cấu hình Browser: <code>ChromeOptions</code></h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeOptions</span><span class="p">;</span>
+
+<span class="n">ChromeOptions</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeOptions</span><span class="p">();</span>
+<span class="n">options</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--start-maximized&quot;</span><span class="p">);</span><span class="w">          </span><span class="c1">// thay cho window().maximize()</span>
+<span class="n">options</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--headless=new&quot;</span><span class="p">);</span><span class="w">             </span><span class="c1">// chạy không giao diện (Chrome mới)</span>
+<span class="n">options</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--window-size=1920,1080&quot;</span><span class="p">);</span><span class="w">    </span><span class="c1">// headless nên đặt kích thước</span>
+<span class="n">options</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--disable-notifications&quot;</span><span class="p">);</span>
+<span class="n">options</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--incognito&quot;</span><span class="p">);</span>
+<span class="n">options</span><span class="p">.</span><span class="na">setPageLoadStrategy</span><span class="p">(</span><span class="n">PageLoadStrategy</span><span class="p">.</span><span class="na">EAGER</span><span class="p">);</span><span class="w">  </span><span class="c1">// NORMAL (mặc định) | EAGER | NONE</span>
+<span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">(</span><span class="n">options</span><span class="p">);</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Tác dụng</th>
+<th>Dùng khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--headless=new</code></td>
+<td>Không mở cửa sổ</td>
+<td>CI, server không có màn hình</td>
+</tr>
+<tr>
+<td><code>--window-size=W,H</code></td>
+<td>Kích thước cố định</td>
+<td>Headless; test responsive</td>
+</tr>
+<tr>
+<td><code>--incognito</code></td>
+<td>Không dùng cache/cookie cũ</td>
+<td>Test độc lập</td>
+</tr>
+<tr>
+<td><code>--disable-notifications</code></td>
+<td>Tắt popup xin quyền</td>
+<td>Trang đòi thông báo</td>
+</tr>
+<tr>
+<td><code>PageLoadStrategy</code></td>
+<td>Khi nào <code>get()</code> coi là "xong"</td>
+<td>Trang tải chậm vì quảng cáo</td>
+</tr>
+</tbody>
+</table></div>
+<p>🧩 Dự án <strong>chưa dùng</strong> <code>ChromeOptions</code> (mặc định hoàn toàn). Đề xuất: thêm option để chạy CI headless.</p>
+<h3 id="page-load-strategy">Page Load Strategy</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Giá trị</th>
+<th><code>get()</code> trả về khi</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NORMAL</code> (mặc định)</td>
+<td><code>document.readyState = "complete"</code></td>
+<td>Chờ cả ảnh, CSS</td>
+</tr>
+<tr>
+<td><code>EAGER</code></td>
+<td><code>"interactive"</code> (DOM sẵn sàng)</td>
+<td>Nhanh hơn</td>
+</tr>
+<tr>
+<td><code>NONE</code></td>
+<td>Ngay sau khi nhận phản hồi đầu</td>
+<td>Bạn <strong>phải tự Wait</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-timeouts-3-loại">4. Timeouts (3 loại)</h2>
+<p><code>driver.manage().timeouts()</code> cấu hình 3 giới hạn thời gian <strong>khác nhau hoàn toàn</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Timeout</th>
+<th>Method</th>
+<th>Mặc định</th>
+<th>Ý nghĩa</th>
+<th>Trong dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Page load</strong></td>
+<td><code>pageLoadTimeout(Duration)</code></td>
+<td>300 s</td>
+<td>Tối đa chờ <code>get()</code>/<code>navigate()</code></td>
+<td>✅ 30 s</td>
+</tr>
+<tr>
+<td><strong>Implicit wait</strong></td>
+<td><code>implicitlyWait(Duration)</code></td>
+<td>0</td>
+<td>Thời gian <code>findElement(s)</code> thử lại</td>
+<td>❌ <strong>cố ý không dùng</strong></td>
+</tr>
+<tr>
+<td><strong>Script</strong></td>
+<td><code>scriptTimeout(Duration)</code></td>
+<td>30 s</td>
+<td>Chờ <code>executeAsyncScript</code></td>
+<td>❌ mặc định</td>
+</tr>
+</tbody>
+</table></div>
+<p>Khi page load vượt giới hạn ⇒ <code>TimeoutException</code> từ <code>driver.get()</code>.</p>
+<blockquote>
+<p><code>WebDriverWait</code> (15 s trong dự án) <strong>không phải</strong> loại timeout nào trong 3 loại trên: nó là <strong>cơ chế chờ ở phía test code</strong>. Xem <a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>.</p>
+</blockquote>
+<h2 id="5-quản-lý-cửa-sổ">5. Quản lý cửa sổ</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span><span class="w">                  </span><span class="c1">// 🧩 dự án dùng</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">minimize</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">fullscreen</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">setSize</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Dimension</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span><span class="w"> </span><span class="mi">720</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">setPosition</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+<span class="n">Dimension</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">getSize</span><span class="p">();</span></code></pre></div>
+<p>Lưu ý: <code>maximize()</code> trong chế độ headless có thể không có hiệu quả như mong đợi → dùng <code>--window-size</code>.</p>
+<h2 id="6-cookie">6. Cookie</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">addCookie</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Cookie</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">));</span>
+<span class="n">Cookie</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookieNamed</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">deleteAllCookies</span><span class="p">();</span></code></pre></div>
+<p>Ứng dụng: đăng nhập một lần rồi dùng lại cookie phiên cho các test sau (tránh login UI lặp lại).</p>
+<h2 id="7-browser-session">7. Browser Session</h2>
+<ul>
+<li><strong>Session</strong> = một "cuộc hội thoại" giữa test và browser; giữ cookie, localStorage, cửa sổ, timeout.</li>
+<li><code>driver.getSessionId()</code> có trên <code>RemoteWebDriver</code>/<code>ChromeDriver</code> (không có trong interface <code>WebDriver</code>).</li>
+<li>Mỗi <code>new ChromeDriver()</code> là <strong>một session và một process Chrome riêng</strong> ⇒ 10 test = 10 lần mở Chrome (🧩 <code>@BeforeMethod</code>).</li>
+<li>Kết thúc session đúng cách: <code>quit()</code>. Nếu test bị kill giữa chừng thì process mồ côi — xem <a href="../02-maven-and-project/09-maven-troubleshooting.html">maven/08 #17</a>.</li>
+</ul>
+<h2 id="8-vòng-đời-đúng-của-driver-trong-test">8. Vòng đời đúng của driver trong test</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeMethod</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@Test</span><span class="w">          </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test</span><span class="p">()</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(...);</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@AfterMethod</span><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">(){</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li>Kiểm tra <code>null</code> vì nếu <code>setup()</code> fail (ví dụ không tải được driver) thì <code>driver</code> vẫn <code>null</code> và <code>tearDown</code> sẽ ném <code>NullPointerException</code>, che mất lỗi gốc.</li>
+<li>⚠️ Không dùng <code>static WebDriver</code> rồi chạy song song: các test <strong>giẫm</strong> lên nhau. Dùng <code>ThreadLocal</code>.</li>
+</ul>
+<h2 id="9-phiên-bản-và-api-cần-cẩn-thận-selenium-4x">9. Phiên bản và API cần cẩn thận (Selenium 4.x)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cũ (đã bỏ/deprecated)</th>
+<th>Dùng thay thế</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new WebDriverWait(driver, 10)</code> (số giây <code>long</code>)</td>
+<td><code>new WebDriverWait(driver, Duration.ofSeconds(10))</code> ✅ (🧩 dự án)</td>
+</tr>
+<tr>
+<td><code>implicitlyWait(10, TimeUnit.SECONDS)</code></td>
+<td><code>implicitlyWait(Duration.ofSeconds(10))</code></td>
+</tr>
+<tr>
+<td><code>System.setProperty("webdriver.chrome.driver", "...")</code></td>
+<td>Không cần: Selenium Manager tự xử lý (vẫn dùng được nếu cần chỉ định cụ thể)</td>
+</tr>
+<tr>
+<td><code>DesiredCapabilities</code> cho Chrome</td>
+<td><code>ChromeOptions</code></td>
+</tr>
+<tr>
+<td><code>findElementsBy...</code></td>
+<td><code>findElements(By...)</code></td>
+</tr>
+<tr>
+<td><code>WebDriverManager.chromedriver().setup()</code></td>
+<td>Không bắt buộc từ Selenium 4.6+</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="10-best-practices">10. Best Practices</h2>
+<ol>
+<li>Khai báo <code>WebDriver</code>, khởi tạo trong setup, <code>quit()</code> trong teardown.</li>
+<li>Mỗi test độc lập; mở browser mới hoặc dọn cookie.</li>
+<li>Không <code>Thread.sleep()</code> thay cho Wait.</li>
+<li>Cấu hình browser qua <code>Options</code>, đọc từ file/<code>-D</code>.</li>
+<li>Đặt kích thước cửa sổ cố định khi chạy CI.</li>
+</ol>
+<h2 id="11-lỗi-thường-gặp">11. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SessionNotCreatedException</code></td>
+<td>Chrome/driver không khớp, Chrome bị chặn</td>
+<td>Cập nhật Chrome, kiểm tra mạng</td>
+</tr>
+<tr>
+<td><code>NoSuchDriverException</code></td>
+<td>Selenium Manager không tải được driver</td>
+<td>Mạng/proxy; hoặc tải driver thủ công và dùng <code>System.setProperty</code></td>
+</tr>
+<tr>
+<td><code>WebDriverException: unknown error: Chrome failed to start: crashed</code></td>
+<td>Thiếu <code>--no-sandbox</code> trên Linux container, thiếu RAM</td>
+<td>Thêm option phù hợp môi trường Docker/CI</td>
+</tr>
+<tr>
+<td><code>NullPointerException</code> ở <code>driver.get()</code></td>
+<td><code>driver</code> chưa khởi tạo (quên <code>@BeforeMethod</code>/ không <code>extends BaseTest</code>)</td>
+<td>Kiểm tra kế thừa</td>
+</tr>
+<tr>
+<td>Cửa sổ nhỏ nên phần tử bị che</td>
+<td>Không maximize/size</td>
+<td><code>maximize()</code>/<code>--window-size</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Đọc <code>BaseTest.setup()</code> và liệt kê 4 thao tác khởi tạo.</p>
+<p><strong>Input:</strong> File <code>BaseTest.java</code></p>
+<p><strong>Expected Output:</strong> 4 dòng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Chrome, maximize, pageLoad, wait.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết đoạn tạo <code>ChromeDriver</code> headless kích thước 1920×1080.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Driver chạy không giao diện</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>ChromeOptions.addArguments</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>DriverFactory.create(String browser, boolean headless)</code> hỗ trợ chrome/firefox/edge bằng <code>switch</code>.</p>
+<p><strong>Input:</strong> browser = "firefox"</p>
+<p><strong>Expected Output:</strong> <code>FirefoxDriver</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Java 21: <code>switch</code> expression.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Timeout nào KHÔNG thuộc <code>manage().timeouts()</code>?</p>
+<ul>
+<li>A. pageLoad</li>
+<li>B. implicit wait</li>
+<li>C. script</li>
+<li>D. <code>WebDriverWait</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: D.</strong> <code>WebDriverWait</code> là cơ chế chờ ở code test.</p>
+</details>
+<p><strong>Câu 2.</strong> API nào đã lỗi thời?</p>
+<ul>
+<li>A. <code>new WebDriverWait(driver, Duration.ofSeconds(10))</code></li>
+<li>B. <code>new WebDriverWait(driver, 10)</code></li>
+<li>C. <code>new ChromeDriver(options)</code></li>
+<li>D. <code>driver.quit()</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Phiên bản số giây <code>long</code> bị loại; dùng <code>Duration</code>.</p>
+</details>
+<p><strong>Câu 3.</strong> Vì sao <code>tearDown</code> kiểm tra <code>driver != null</code>?</p>
+<ul>
+<li>A. Cho đẹp</li>
+<li>B. <code>setup()</code> có thể fail trước khi gán <code>driver</code></li>
+<li>C. Bắt buộc</li>
+<li>D. Không cần</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Tránh <code>NullPointerException</code> che lỗi gốc.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you run Chrome in headless mode?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Chạy Chrome headless thế nào?</li>
+<li><strong>Suggested answer (EN):</strong> Pass <code>--headless=new</code> and an explicit <code>--window-size</code> through <code>ChromeOptions</code> to <code>new ChromeDriver(options)</code>.</li>
+<li><strong>Giải thích (VI):</strong> Cần cho CI.</li>
+<li><strong>Follow-up:</strong> <em>Why set the window size?</em></li>
+</ul>
+<p><strong>2. What are the different timeouts in Selenium?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Các loại timeout?</li>
+<li><strong>Suggested answer (EN):</strong> Page load, implicit wait and script timeouts in <code>manage().timeouts()</code>; explicit waits are separate and controlled by <code>WebDriverWait</code>.</li>
+<li><strong>Giải thích (VI):</strong> Dự án: pageLoad 30 s + WebDriverWait 15 s, không implicit.</li>
+<li><strong>Follow-up:</strong> <em>What happens when page load times out?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>WebDriver</code> là interface; <code>ChromeDriver</code> là hiện thực</li>
+<li><code>ChromeOptions</code> cấu hình browser</li>
+<li>3 timeout + WebDriverWait là việc khác nhau</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>manage().window().maximize()</code>, <code>manage().timeouts().pageLoadTimeout(Duration)</code>, <code>ChromeOptions</code>, <code>quit()</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>pageLoadTimeout</code> ≠ <code>WebDriverWait</code></li>
+<li>Số giây <code>long</code> (cũ) ≠ <code>Duration</code></li>
+<li>Không dùng <code>var</code> cho driver</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-locators.html">Selenium: Locators (cách tìm phần tử)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>1) <code>new ChromeDriver()</code> 2) <code>window().maximize()</code> 3) <code>pageLoadTimeout(30s)</code> 4) <code>new WebDriverWait(driver, 15s)</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đoạn code khởi tạo)</span>
+<span class="n">ChromeOptions</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeOptions</span><span class="p">();</span>
+<span class="n">options</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--headless=new&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;--window-size=1920,1080&quot;</span><span class="p">);</span>
+<span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">(</span><span class="n">options</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DriverFactory</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">DriverFactory</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">browser</span><span class="p">,</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="n">headless</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">browser</span><span class="p">.</span><span class="na">toLowerCase</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">ChromeOptions</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeOptions</span><span class="p">();</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">headless</span><span class="p">)</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="na">addArguments</span><span class="p">(</span><span class="s">&quot;--headless=new&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;--window-size=1920,1080&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="kd">yield</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nf">ChromeDriver</span><span class="p">(</span><span class="n">o</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;firefox&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FirefoxDriver</span><span class="p">();</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;edge&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EdgeDriver</span><span class="p">();</span>
+<span class="w">            </span><span class="k">default</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s">&quot;Không hỗ trợ: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">browser</span><span class="p">);</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-selenium-introduction.html"><small>← Bài trước</small><span>Selenium là gì?</span></a><a class="next" href="03-locators.html"><small>Bài tiếp theo →</small><span>Selenium: Locators (cách tìm phần tử)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/02-webdriver.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

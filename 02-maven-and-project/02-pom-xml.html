@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pom.xml và Dependencies · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="02-maven-and-project/02-pom-xml" data-root="../" data-lesson="1" data-title="pom.xml và Dependencies">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="pomxml-và-dependencies"><code>pom.xml</code> và Dependencies</h1>
+<blockquote>
+<p>🧭 Phase 2 · Maven and Project Management · Chapter 09 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="01-maven-fundamentals.html">Maven Fundamentals</a> · ➡️ <a href="03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a></p>
+<p>Liên quan: <a href="01-maven-fundamentals.html">Trước: Fundamentals</a> · <a href="03-maven-wrapper.html">Sau: Maven Wrapper</a> · <a href="06-dependency-management.html">Dependency Management</a>
+Nguồn thật: <a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a> (62 dòng)</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Đọc từng khối của <code>pom.xml</code> thật của dự án</li>
+<li>Giải thích <code>properties</code>, <code>dependencies</code>, <code>scope</code>, <code>plugins</code></li>
+<li>Biết <code>dependencyManagement</code>, <code>profiles</code>, <code>repositories</code> dùng khi nào</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="01-maven-fundamentals.html">Maven Fundamentals</a></li>
+</ul>
+<h2 id="1-pomxml-của-dự-án-đọc-từng-khối">1. <code>pom.xml</code> của dự án, đọc từng khối</h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+<span class="nt">&lt;groupId&gt;</span>com.fresher<span class="nt">&lt;/groupId&gt;</span>
+<span class="nt">&lt;artifactId&gt;</span>SeleniumPractice<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thẻ</th>
+<th>Ý nghĩa</th>
+<th>Giá trị ở dự án</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>modelVersion</code></td>
+<td>Phiên bản cấu trúc POM</td>
+<td><code>4.0.0</code></td>
+<td>Luôn là <code>4.0.0</code> với Maven 3</td>
+</tr>
+<tr>
+<td><code>groupId</code></td>
+<td>Nhóm/tổ chức, thường là tên miền đảo ngược</td>
+<td><code>com.fresher</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>artifactId</code></td>
+<td>Tên dự án</td>
+<td><code>SeleniumPractice</code></td>
+<td>Tên artifact sinh ra: <code>SeleniumPractice-1.0-SNAPSHOT.jar</code></td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>Phiên bản dự án</td>
+<td><code>1.0-SNAPSHOT</code></td>
+<td><code>-SNAPSHOT</code> = bản đang phát triển, chưa phát hành</td>
+</tr>
+<tr>
+<td><code>packaging</code></td>
+<td>Kiểu đóng gói</td>
+<td><strong>không khai báo</strong> ⇒ mặc định <code>jar</code></td>
+<td>Log <code>[ jar ]</code> khi build</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Tổ hợp <code>groupId:artifactId:version</code> = tọa độ <strong>của chính dự án</strong>, giống như tọa độ của thư viện khác.</p>
+</blockquote>
+<h2 id="2-properties--biến-dùng-chung">2. <code>&lt;properties&gt;</code> — biến dùng chung</h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<span class="w">    </span><span class="nt">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.reporting.outputEncoding&gt;</span>
+<span class="w">    </span><span class="nt">&lt;maven.compiler.release&gt;</span>21<span class="nt">&lt;/maven.compiler.release&gt;</span>
+<span class="w">    </span><span class="nt">&lt;selenium.version&gt;</span>4.52.0<span class="nt">&lt;/selenium.version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;testng.version&gt;</span>7.10.2<span class="nt">&lt;/testng.version&gt;</span>
+<span class="nt">&lt;/properties&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Tác dụng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>project.build.sourceEncoding</code></td>
+<td>Mã hoá file nguồn. <strong>Quan trọng</strong> vì code có comment tiếng Việt; thiếu thì có thể sinh cảnh báo/ lỗi ký tự trên Windows</td>
+</tr>
+<tr>
+<td><code>project.reporting.outputEncoding</code></td>
+<td>Mã hoá báo cáo</td>
+</tr>
+<tr>
+<td><code>maven.compiler.release</code></td>
+<td>Mức ngôn ngữ <strong>và</strong> API Java dùng khi biên dịch (tương đương <code>javac --release 21</code>)</td>
+</tr>
+<tr>
+<td><code>selenium.version</code>, <code>testng.version</code></td>
+<td>Biến tự đặt, tham chiếu bằng <code>${selenium.version}</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>🔎 <code>release</code> khác <code>source/target</code>: <code>--release 21</code> không chỉ chọn cú pháp mà còn <strong>giới hạn API</strong> về JDK 21, nên biên dịch bằng JDK 25 vẫn không vô tình dùng API chỉ có ở JDK 25. Đó là lý do máy dự án dùng JDK 25 nhưng vẫn khớp mức 21.</p>
+<p>Ưu điểm biến phiên bản: đổi <code>4.52.0</code> ở <strong>một</strong> chỗ, mọi artifact Selenium cùng đổi.</p>
+<h2 id="3-dependencies">3. <code>&lt;dependencies&gt;</code></h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>selenium-java<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>${selenium.version}<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>org.testng<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>testng<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>${testng.version}<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Dependency</th>
+<th>Cung cấp</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selenium-java</code></td>
+<td>Gói tổng hợp: <code>selenium-api</code>, <code>chrome-driver</code>, <code>support</code> (<code>WebDriverWait</code>, <code>ExpectedConditions</code>, <code>Select</code>), <code>remote-driver</code>, <code>selenium-manager</code>...</td>
+<td>"Một dòng, ~40 jar"</td>
+</tr>
+<tr>
+<td><code>testng</code></td>
+<td><code>@Test</code>, <code>Assert</code>, <code>TestNG</code>...</td>
+<td>Kéo <code>jcommander</code>, <code>slf4j-api</code>, <code>jquery</code> webjar</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Scope <code>test</code></strong> nghĩa là: thư viện <strong>chỉ có trong classpath khi biên dịch và chạy test</strong>, không vào classpath <code>src/main</code> và không đóng gói theo artifact chính. Phù hợp vì <strong>toàn bộ code Selenium của dự án nằm ở <code>src/test/java</code></strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Compile <code>src/main</code></th>
+<th>Compile + chạy <code>src/test</code></th>
+<th>Runtime</th>
+<th>Có trong artifact/WAR?</th>
+<th>Dùng cho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compile</code> (mặc định)</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>Thư viện sản phẩm</td>
+</tr>
+<tr>
+<td><code>provided</code></td>
+<td>✔</td>
+<td>✔</td>
+<td>✖</td>
+<td>✖</td>
+<td>Servlet API... môi trường có sẵn</td>
+</tr>
+<tr>
+<td><code>runtime</code></td>
+<td>✖</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>JDBC driver</td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td>✖</td>
+<td>✔</td>
+<td>✖</td>
+<td>✖</td>
+<td>Selenium, TestNG, JUnit, Mockito</td>
+</tr>
+<tr>
+<td><code>system</code> / <code>import</code></td>
+<td>(hiếm)</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Tránh dùng <code>system</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>⚠️ Nếu sau này bạn tạo <code>BasePage</code>/<code>DriverFactory</code> trong <code>src/main/java</code>, dòng <code>&lt;scope&gt;test&lt;/scope&gt;</code> của <code>selenium-java</code> sẽ gây lỗi <code>package org.openqa.selenium does not exist</code>. Khi đó đổi sang <code>compile</code>, hoặc (tốt hơn) tiếp tục để mã framework trong <code>src/test/java</code>.</p>
+<h2 id="4-build-và-plugins">4. <code>&lt;build&gt;</code> và <code>&lt;plugins&gt;</code></h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;build&gt;</span>
+<span class="w">    </span><span class="nt">&lt;plugins&gt;</span>
+<span class="w">        </span><span class="nt">&lt;plugin&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>3.13.0<span class="nt">&lt;/version&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/plugin&gt;</span>
+<span class="w">        </span><span class="nt">&lt;plugin&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>3.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">            </span><span class="nt">&lt;configuration&gt;</span>
+<span class="w">                </span><span class="nt">&lt;suiteXmlFiles&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;suiteXmlFile&gt;</span>testng.xml<span class="nt">&lt;/suiteXmlFile&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/suiteXmlFiles&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/plugin&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/plugins&gt;</span>
+<span class="nt">&lt;/build&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Plugin</th>
+<th>Gắn vào phase</th>
+<th>Làm gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maven-compiler-plugin</code> 3.13.0</td>
+<td><code>compile</code>, <code>test-compile</code></td>
+<td>Biên dịch <code>src/main</code> và <code>src/test</code></td>
+</tr>
+<tr>
+<td><code>maven-surefire-plugin</code> 3.5.2</td>
+<td><code>test</code></td>
+<td>Chạy test; tự nhận <strong>TestNG provider</strong> vì có <code>testng</code> trong classpath</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>&lt;suiteXmlFiles&gt;</code> bảo Surefire chạy theo <code>testng.xml</code> thay vì tự quét <code>*Test</code>. Hậu quả đã kiểm chứng:</p>
+<ul>
+<li><code>mvnw test</code> chạy <strong>10 class</strong> trong <code>testng.xml</code>, <strong>không</strong> chạy <code>EnvironmentCheckTest</code>.</li>
+<li>Khi có <code>-Dtest=...</code>, Surefire <strong>bỏ qua</strong> <code>suiteXmlFiles</code> và chọn class/method theo <code>-Dtest</code> (<a href="07-build-and-test-execution.html">06</a>).</li>
+</ul>
+<p>Plugin còn <strong>được dùng ngầm</strong> dù không khai báo: <code>maven-resources-plugin</code> 3.4.0 (copy <code>src/test/resources</code>), và <code>maven-dependency-plugin</code> 3.7.0 khi bạn gọi <code>dependency:tree</code>. Bản không khai báo do Super POM/Maven mặc định quyết định ⇒ thông tin này thể hiện trong log (<code>--- resources:3.4.0:resources ---</code>).</p>
+<p>✅ Nên <strong>ghim phiên bản plugin</strong> như dự án đã làm với compiler và surefire để kết quả build lặp lại được.</p>
+<h2 id="5-những-thẻ-không-có-trong-dự-án-nhưng-cần-biết">5. Những thẻ KHÔNG có trong dự án (nhưng cần biết)</h2>
+<h3 id="51-dependencymanagement">5.1. <code>&lt;dependencyManagement&gt;</code></h3>
+<p>Khai báo <strong>phiên bản/scope trung tâm</strong> mà không thật sự thêm thư viện vào dự án. Hữu ích cho dự án nhiều module:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;dependencyManagement&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dependencies&gt;</span>
+<span class="w">        </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.testng<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>testng<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>7.10.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/dependencyManagement&gt;</span>
+
+<span class="nt">&lt;dependencies&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">        </span><span class="nt">&lt;groupId&gt;</span>org.testng<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">        </span><span class="nt">&lt;artifactId&gt;</span>testng<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">        </span><span class="cm">&lt;!-- không cần &lt;version&gt;: lấy từ dependencyManagement --&gt;</span>
+<span class="w">        </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span></code></pre></div>
+<p>Sau đó <code>&lt;dependency&gt;</code> con <strong>không cần ghi version</strong>. <code>dependencyManagement</code> còn <strong>ép phiên bản</strong> cho cả thư viện transitive (ví dụ ép <code>guava</code> về một bản cố định để xử lý xung đột — xem <a href="06-dependency-management.html">05</a>). Ngoài ra nó có thể <code>import</code> một <strong>BOM</strong> (<code>&lt;type&gt;pom&lt;/type&gt;&lt;scope&gt;import&lt;/scope&gt;</code>), ví dụ <code>junit-bom</code> mà bạn thấy trong <code>.mvn/repository/org/junit/junit-bom/</code>.</p>
+<p>Với một module như <code>Selenium1</code>, <code>&lt;properties&gt;</code> đã đủ; không cần thêm độ phức tạp này.</p>
+<h3 id="52-repositories-và-pluginrepositories">5.2. <code>&lt;repositories&gt;</code> và <code>&lt;pluginRepositories&gt;</code></h3>
+<p>Mặc định Maven chỉ dùng Central. Thêm repository nội bộ công ty:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;repositories&gt;</span>
+<span class="w">    </span><span class="nt">&lt;repository&gt;</span>
+<span class="w">        </span><span class="nt">&lt;id&gt;</span>company-nexus<span class="nt">&lt;/id&gt;</span>
+<span class="w">        </span><span class="nt">&lt;url&gt;</span>https://nexus.example.com/repository/maven-public/<span class="nt">&lt;/url&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/repository&gt;</span>
+<span class="nt">&lt;/repositories&gt;</span></code></pre></div>
+<p>Trong dự án thực tế, URL, tài khoản thường đặt ở <code>~/.m2/settings.xml</code> (không commit).</p>
+<h3 id="53-profiles">5.3. <code>&lt;profiles&gt;</code></h3>
+<p>Cho phép cấu hình theo môi trường (<code>-Pstaging</code>). Ví dụ:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;profiles&gt;</span>
+<span class="w">    </span><span class="nt">&lt;profile&gt;</span>
+<span class="w">        </span><span class="nt">&lt;id&gt;</span>staging<span class="nt">&lt;/id&gt;</span>
+<span class="w">        </span><span class="nt">&lt;properties&gt;&lt;base.url&gt;</span>https://staging.example.com<span class="nt">&lt;/base.url&gt;&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/profile&gt;</span>
+<span class="nt">&lt;/profiles&gt;</span></code></pre></div>
+<p>Chạy: <code>.\mvnw.cmd test -Pstaging</code>. Xem <a href="../08-practical-project/labs/07-run-tests-with-maven.html">practice/07</a>.</p>
+<h3 id="54-parent">5.4. <code>&lt;parent&gt;</code></h3>
+<p>Kế thừa cấu hình từ POM cha (ví dụ Spring Boot parent). Dự án Selenium độc lập thường không dùng.</p>
+<h2 id="6-ví-dụ-pomxml-mở-rộng-cho-dự-án-selenium-java-minh-hoạ--không-phải-cấu-hình-của-dự-án">6. Ví dụ <code>pom.xml</code> mở rộng cho dự án Selenium Java (minh hoạ — KHÔNG phải cấu hình của dự án)</h2>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;project</span><span class="w"> </span><span class="err">...</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>com.fresher<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>SeleniumFramework<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+<span class="w">    </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">        </span><span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<span class="w">        </span><span class="nt">&lt;maven.compiler.release&gt;</span>21<span class="nt">&lt;/maven.compiler.release&gt;</span>
+<span class="w">        </span><span class="nt">&lt;selenium.version&gt;</span>4.52.0<span class="nt">&lt;/selenium.version&gt;</span>
+<span class="w">        </span><span class="nt">&lt;testng.version&gt;</span>7.10.2<span class="nt">&lt;/testng.version&gt;</span>
+<span class="w">        </span><span class="nt">&lt;slf4j.version&gt;</span>1.7.36<span class="nt">&lt;/slf4j.version&gt;</span>
+<span class="w">        </span><span class="cm">&lt;!-- cho phép chạy: mvnw test -Dbrowser=firefox --&gt;</span>
+<span class="w">        </span><span class="nt">&lt;browser&gt;</span>chrome<span class="nt">&lt;/browser&gt;</span>
+<span class="w">        </span><span class="nt">&lt;suiteFile&gt;</span>testng.xml<span class="nt">&lt;/suiteFile&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/properties&gt;</span>
+
+<span class="w">    </span><span class="nt">&lt;dependencies&gt;</span>
+<span class="w">        </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>selenium-java<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>${selenium.version}<span class="nt">&lt;/version&gt;</span>
+<span class="w">            </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="w">        </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.testng<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>testng<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>${testng.version}<span class="nt">&lt;/version&gt;</span>
+<span class="w">            </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="w">        </span><span class="cm">&lt;!-- Cho phép log, hết cảnh báo StaticLoggerBinder. Phải KHỚP slf4j-api 1.7.36 mà TestNG 7.10.2 kéo vào --&gt;</span>
+<span class="w">        </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>slf4j-simple<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>${slf4j.version}<span class="nt">&lt;/version&gt;</span>
+<span class="w">            </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/dependencies&gt;</span>
+
+<span class="w">    </span><span class="nt">&lt;build&gt;</span>
+<span class="w">        </span><span class="nt">&lt;plugins&gt;</span>
+<span class="w">            </span><span class="nt">&lt;plugin&gt;</span>
+<span class="w">                </span><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">                </span><span class="nt">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">                </span><span class="nt">&lt;version&gt;</span>3.13.0<span class="nt">&lt;/version&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/plugin&gt;</span>
+<span class="w">            </span><span class="nt">&lt;plugin&gt;</span>
+<span class="w">                </span><span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">                </span><span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">                </span><span class="nt">&lt;version&gt;</span>3.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">                </span><span class="nt">&lt;configuration&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;suiteXmlFiles&gt;</span>
+<span class="w">                        </span><span class="nt">&lt;suiteXmlFile&gt;</span>${suiteFile}<span class="nt">&lt;/suiteXmlFile&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;/suiteXmlFiles&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;systemPropertyVariables&gt;</span>
+<span class="w">                        </span><span class="nt">&lt;browser&gt;</span>${browser}<span class="nt">&lt;/browser&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;/systemPropertyVariables&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/plugin&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/plugins&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/build&gt;</span>
+<span class="nt">&lt;/project&gt;</span></code></pre></div>
+<p>Giải thích điểm mới:</p>
+<ul>
+<li><code>systemPropertyVariables</code> truyền <code>browser</code> vào JVM chạy test; trong Java đọc bằng <code>System.getProperty("browser", "chrome")</code>.</li>
+<li><code>${suiteFile}</code> cho phép <code>.\mvnw.cmd test -DsuiteFile=smoke.xml</code>.</li>
+<li>SLF4J: TestNG 7.10.2 kéo <code>slf4j-api 1.7.36</code> (đã thấy trong dependency tree thật). <code>slf4j-simple</code> phải cùng dòng <code>1.7.x</code> để binding khớp (SLF4J 2.x dùng cơ chế khác, trộn hai dòng sẽ lại báo lỗi binding). Hãy chạy <code>dependency:tree</code> sau khi thêm để xác nhận chỉ có một phiên bản <code>slf4j-api</code>. Đây là ví dụ minh hoạ — bạn cần tự chạy kiểm chứng trước khi áp dụng vào dự án thật.</li>
+</ul>
+<h2 id="7-xem-pom-thực-sự-mà-maven-dùng">7. Xem POM "thực sự" mà Maven dùng</h2>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">help</span><span class="p">:</span><span class="n">effective-pom</span></code></pre></div>
+<p>In ra POM sau khi cộng <strong>Super POM</strong> (mặc định của Maven) với <code>pom.xml</code> của bạn: bạn sẽ thấy <code>repositories</code> Central, thư mục <code>src/main/java</code>, <code>target</code>... dù không viết. (Plugin <code>maven-help-plugin</code> có thể cần tải lần đầu.)</p>
+<h2 id="8-checklist-đọc-pomxml-của-một-dự-án-lạ">8. Checklist đọc <code>pom.xml</code> của một dự án lạ</h2>
+<ol>
+<li><code>groupId:artifactId:version</code>, <code>packaging</code>.</li>
+<li><code>properties</code>: phiên bản Java, phiên bản thư viện.</li>
+<li><code>dependencies</code>: thư viện test (Selenium? TestNG hay JUnit?), scope.</li>
+<li><code>build/plugins</code>: compiler, surefire/failsafe, có <code>suiteXmlFiles</code>/<code>profiles</code> không.</li>
+<li><code>profiles</code>, <code>parent</code>, <code>repositories</code>.</li>
+<li>File phụ: <code>.mvn/maven.config</code>, <code>.mvn/jvm.config</code>, <code>testng.xml</code>.</li>
+</ol>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Chỉ ra trong <code>pom.xml</code> của <code>Selenium1</code>: phiên bản Selenium, TestNG và Java.</p>
+<p><strong>Input:</strong> Mở <code>pom.xml</code></p>
+<p><strong>Expected Output:</strong> <code>4.52.0</code>, <code>7.10.2</code>, <code>21</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Xem khối <code>&lt;properties&gt;</code>.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Giải thích vì sao hai dependency có <code>&lt;scope&gt;test&lt;/scope&gt;</code>.</p>
+<p><strong>Input:</strong> —</p>
+<p><strong>Expected Output:</strong> Một đoạn văn 3-4 câu</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Code Selenium nằm ở đâu trong dự án?</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Sửa (trên bản sao) để chạy suite khác qua <code>-DsuiteFile=smoke.xml</code>: thêm property và dùng <code>${suiteFile}</code> trong Surefire.</p>
+<p><strong>Input:</strong> pom.xml bản sao</p>
+<p><strong>Expected Output:</strong> <code>mvnw test</code> chạy <code>all.xml</code>; <code>-DsuiteFile=smoke.xml</code> chạy tập con</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>&lt;suiteXmlFile&gt;${suiteFile}&lt;/suiteXmlFile&gt;</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> <code>maven.compiler.release=21</code> khác <code>source/target</code> ở điểm nào?</p>
+<ul>
+<li>A. Không khác</li>
+<li>B. Còn giới hạn API về JDK 21</li>
+<li>C. Chỉ đổi encoding</li>
+<li>D. Dành cho Android</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>--release</code> chọn cả cú pháp lẫn API của JDK đích.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>${selenium.version}</code> được thay ở đâu?</p>
+<ul>
+<li>A. Ở <code>&lt;properties&gt;</code> khi Maven đọc POM</li>
+<li>B. Ở runtime Java</li>
+<li>C. Ở IDE</li>
+<li>D. Ở Git</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Maven nội suy biến.</p>
+</details>
+<p><strong>Câu 3.</strong> Plugin nào chạy test trong phase <code>test</code>?</p>
+<ul>
+<li>A. maven-compiler-plugin</li>
+<li>B. maven-surefire-plugin</li>
+<li>C. maven-jar-plugin</li>
+<li>D. maven-clean-plugin</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Surefire.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is the purpose of pom.xml?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Mục đích của <code>pom.xml</code>?</li>
+<li><strong>Suggested answer (EN):</strong> It is the Project Object Model: coordinates, properties, dependencies and build plugins that tell Maven what to download and how to build.</li>
+<li><strong>Giải thích (VI):</strong> Nêu các khối chính.</li>
+<li><strong>Follow-up:</strong> <em>Properties vs dependencyManagement?</em></li>
+</ul>
+<p><strong>2. Why pin plugin versions?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao ghim phiên bản plugin?</li>
+<li><strong>Suggested answer (EN):</strong> To make builds reproducible; default plugin versions depend on the Maven version and can change behavior.</li>
+<li><strong>Giải thích (VI):</strong> Dự án ghim compiler 3.13.0 và surefire 3.5.2.</li>
+<li><strong>Follow-up:</strong> <em>How do you see which plugin versions are used?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li><code>pom.xml</code> = GAV + properties + dependencies + build/plugins</li>
+<li>Scope <code>test</code> cho thư viện chỉ dùng trong test</li>
+<li>Ghim phiên bản để build lặp lại được</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>validate</code>, <code>help:effective-pom</code>, <code>dependency:tree</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li><code>properties</code> ≠ <code>dependencyManagement</code></li>
+<li><code>release</code> ≠ <code>source/target</code></li>
+<li>Plugin không khai báo vẫn được dùng ngầm (resources, jar...)</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p><code>&lt;selenium.version&gt;4.52.0&lt;/selenium.version&gt;</code>, <code>&lt;testng.version&gt;7.10.2&lt;/testng.version&gt;</code>, <code>&lt;maven.compiler.release&gt;21&lt;/maven.compiler.release&gt;</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<p>Toàn bộ code Selenium nằm trong <code>src/test/java</code>, nên chỉ cần thư viện lúc biên dịch/chạy test. Scope <code>test</code> giữ chúng ngoài classpath của <code>src/main</code>. Nếu sau này đặt <code>BasePage</code> trong <code>src/main</code>, sẽ lỗi <code>package org.openqa.selenium does not exist</code> và phải đổi scope.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;properties&gt;&lt;suiteFile&gt;</span>all.xml<span class="nt">&lt;/suiteFile&gt;&lt;/properties&gt;</span>
+...
+<span class="nt">&lt;plugin&gt;</span>
+<span class="w">  </span><span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;version&gt;</span>3.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">  </span><span class="nt">&lt;configuration&gt;</span>
+<span class="w">    </span><span class="nt">&lt;suiteXmlFiles&gt;&lt;suiteXmlFile&gt;</span>${suiteFile}<span class="nt">&lt;/suiteXmlFile&gt;&lt;/suiteXmlFiles&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span></code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-maven-fundamentals.html"><small>← Bài trước</small><span>Maven Fundamentals</span></a><a class="next" href="03-maven-wrapper.html"><small>Bài tiếp theo →</small><span>Maven Wrapper (mvnw, mvnw.cmd)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/02-pom-xml.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wait Introduction: vì sao Selenium cần Wait? · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="04-wait-mechanisms/01-wait-introduction" data-root="../" data-lesson="1" data-title="Wait Introduction: vì sao Selenium cần Wait?">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="wait-introduction-vì-sao-selenium-cần-wait">Wait Introduction: vì sao Selenium cần Wait?</h1>
+<blockquote>
+<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
+⬅️ <a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging và Best Practices</a> · ➡️ <a href="02-implicit-wait.html">Implicit Wait</a></p>
+<p>Chapter 19 (Phase 4) · <a href="../03-selenium-fundamentals/README.html">README chương</a> · Tiếp: <a href="02-implicit-wait.html">Implicit Wait</a>
+Phiên bản áp dụng: <strong>Selenium 4.52.0</strong> (<code>selenium-support-4.52.0.jar</code>). Mọi ví dụ dùng <code>Duration</code>.</p>
+</blockquote>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Giải thích vì sao Selenium cần Wait (vấn đề đồng bộ hoá)</li>
+<li>Kể tên 3 cơ chế chờ và phạm vi của chúng</li>
+<li>Tái hiện lỗi do thiếu Wait và nhận ra triệu chứng flaky</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../03-selenium-fundamentals/04-webelement.html">WebElement</a></li>
+<li><a href="../03-selenium-fundamentals/05-browser-navigation.html">Browser Navigation</a></li>
+</ul>
+<h2 id="1-vì-sao-cần-wait">1. Vì sao cần Wait?</h2>
+<p>Trình duyệt và test chạy <strong>bất đồng bộ</strong>:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Test code:  click() ──► findElement(by &quot;#message&quot;) ── ngay lập tức ──►  ❌ NoSuchElementException
+Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──► JS vẽ &lt;p id=&quot;message&quot;&gt; ──► ✅ xuất hiện</code></pre></div>
+<p>Selenium <strong>không biết</strong> "AJAX đã xong chưa". Nó chỉ làm đúng lệnh bạn gửi, ngay lúc đó. Nếu phần tử chưa sẵn sàng ⇒ lỗi. Đó là <strong>vấn đề đồng bộ hoá (synchronization)</strong> — nguyên nhân số 1 của test flaky ("lúc xanh lúc đỏ").</p>
+<p><strong>Wait = cho test đợi cho đến khi một điều kiện đúng, nhưng không đợi thừa.</strong></p>
+<h2 id="2-ba-cơ-chế-chờ-tổng-quan">2. Ba cơ chế chờ (tổng quan)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Implicit Wait</th>
+<th>Explicit Wait</th>
+<th>Fluent Wait</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lớp</td>
+<td><code>driver.manage().timeouts().implicitlyWait(Duration)</code></td>
+<td><code>WebDriverWait</code></td>
+<td><code>FluentWait&lt;T&gt;</code></td>
+</tr>
+<tr>
+<td>Phạm vi</td>
+<td><strong>Toàn bộ</strong> <code>findElement(s)</code> của session</td>
+<td><strong>Một điều kiện cụ thể</strong> tại chỗ gọi</td>
+<td>Một điều kiện, cấu hình chi tiết</td>
+</tr>
+<tr>
+<td>Điều kiện chờ</td>
+<td>Chỉ "phần tử có trong DOM"</td>
+<td><strong>Bất kỳ</strong> (visible, clickable, text, URL, số lượng, alert...)</td>
+<td>Bất kỳ</td>
+</tr>
+<tr>
+<td>Polling</td>
+<td>Do driver quyết định</td>
+<td>Mặc định 500 ms</td>
+<td>Tuỳ chỉnh</td>
+</tr>
+<tr>
+<td>Ignore exception</td>
+<td>Không cấu hình</td>
+<td>Mặc định <code>NotFoundException</code></td>
+<td>Tuỳ chỉnh</td>
+</tr>
+<tr>
+<td>Độ khuyến nghị</td>
+<td>⚠️ Tránh (🧩 dự án cấm)</td>
+<td>✅ <strong>Dùng chính</strong> (🧩 dự án)</td>
+<td>✅ Khi cần tinh chỉnh</td>
+</tr>
+</tbody>
+</table></div>
+<p>Quan hệ: <code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code> với cấu hình mặc định hợp lý (polling 500 ms, bỏ qua <code>NotFoundException</code>).</p>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Trên <code>/dynamic_loading/2</code>, bấm Start rồi <code>findElement(By.id("finish"))</code> <strong>ngay</strong> — quan sát exception.</p>
+<p><strong>Input:</strong> <code>/dynamic_loading/2</code></p>
+<p><strong>Expected Output:</strong> <code>NoSuchElementException</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Phần tử chỉ được thêm vào DOM sau vài giây.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Sửa bài trên bằng Explicit Wait và assert <code>Hello World!</code>.</p>
+<p><strong>Input:</strong> <code>/dynamic_loading/2</code></p>
+<p><strong>Expected Output:</strong> <code>Hello World!</code></p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>visibilityOfElementLocated</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Nêu 3 chỗ trong dự án <code>Selenium1</code> cần Wait và loại điều kiện tương ứng.</p>
+<p><strong>Input:</strong> Các Exercise 1, 5, 10</p>
+<p><strong>Expected Output:</strong> Bảng 3 hàng</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Flash message, hover caption, thông báo AJAX.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Nguyên nhân số 1 của test flaky?</p>
+<ul>
+<li>A. Thiếu/sai đồng bộ hoá</li>
+<li>B. Thiếu JDK</li>
+<li>C. Sai Maven</li>
+<li>D. Sai Git</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> Trình duyệt bất đồng bộ, Selenium chạy lệnh ngay.</p>
+</details>
+<p><strong>Câu 2.</strong> Có mấy cơ chế chờ chính trong Selenium?</p>
+<ul>
+<li>A. 1</li>
+<li>B. 3 (Implicit, Explicit, Fluent)</li>
+<li>C. 5</li>
+<li>D. 0</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>Thread.sleep</code> không phải cơ chế của Selenium.</p>
+</details>
+<p><strong>Câu 3.</strong> Timeout 15 s của <code>WebDriverWait</code> nghĩa là?</p>
+<ul>
+<li>A. Luôn chờ đủ 15 s</li>
+<li>B. Giới hạn tối đa; dừng ngay khi điều kiện đúng</li>
+<li>C. Chờ ít nhất 15 s</li>
+<li>D. Không có ý nghĩa</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Khác với <code>Thread.sleep</code>.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. Why do we need waits in Selenium?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao Selenium cần Wait?</li>
+<li><strong>Suggested answer (EN):</strong> Pages update asynchronously but Selenium runs commands immediately, so elements may not be ready; waits synchronize the test with the application by waiting for a condition.</li>
+<li><strong>Giải thích (VI):</strong> Đồng bộ hoá.</li>
+<li><strong>Follow-up:</strong> <em>What is a flaky test?</em></li>
+</ul>
+<p><strong>2. What types of waits does Selenium provide?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Có những loại Wait nào?</li>
+<li><strong>Suggested answer (EN):</strong> Implicit wait, explicit wait with <code>WebDriverWait</code> and <code>ExpectedConditions</code>, and <code>FluentWait</code>; plus custom conditions with lambdas.</li>
+<li><strong>Giải thích (VI):</strong> Phạm vi khác nhau.</li>
+<li><strong>Follow-up:</strong> <em>Is pageLoadTimeout a wait?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Browser bất đồng bộ → cần Wait</li>
+<li>3 cơ chế: Implicit, Explicit, Fluent</li>
+<li>Timeout là giới hạn trên, không phải thời gian chờ cố định</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>WebDriverWait</code>, <code>ExpectedConditions</code>, <code>until</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Wait ≠ <code>Thread.sleep</code></li>
+<li><code>pageLoadTimeout</code> ≠ <code>WebDriverWait</code></li>
+<li>Tồn tại trong DOM ≠ hiển thị</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-implicit-wait.html">Implicit Wait</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">));</span><span class="w">      </span><span class="c1">// quá sớm → NoSuchElementException</span></code></pre></div>
+<p>(Đã chạy thật: test <code>@Test(expectedExceptions = NoSuchElementException.class)</code> pass.)</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Hello World!&quot;</span><span class="p">);</span></code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>Tình huống</th>
+<th>Chờ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Login</td>
+<td>Flash xuất hiện sau chuyển trang</td>
+<td><code>visibilityOfElementLocated(By.id("flash"))</code></td>
+</tr>
+<tr>
+<td>5 Hover</td>
+<td>Caption hiện sau hover</td>
+<td><code>visibilityOf(captionHeader)</code></td>
+</tr>
+<tr>
+<td>10 Dynamic</td>
+<td>Thông báo mới sau AJAX</td>
+<td><code>textToBe(messageLocator, "It's enabled!")</code></td>
+</tr>
+</tbody>
+</table></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 4 — Wait and Synchronization (Chapter 19)</span></a><a class="next" href="02-implicit-wait.html"><small>Bài tiếp theo →</small><span>Implicit Wait</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/01-wait-introduction.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

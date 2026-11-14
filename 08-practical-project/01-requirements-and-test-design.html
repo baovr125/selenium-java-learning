@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/01-requirements-and-test-design" data-root="../" data-lesson="1" data-title="Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="project-step-13-phân-tích-requirement-test-scenarios-và-test-cases">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</h1>
+<blockquote>
+<p>🧭 Phase 8 · Real-world Automation Project · Chapter 24
+⬅️ <a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">Git: <code>.gitignore</code> và quản lý dự án Maven + Selenium</a> · ➡️ <a href="02-build-the-project.html">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</a></p>
+<p>Phase 8 · Chapter 24 · Mức ưu tiên: <strong>Essential</strong>
+Ứng dụng được kiểm thử: <code>https://the-internet.herokuapp.com</code> (trang luyện tập công khai — dùng làm "hệ thống cần kiểm thử")</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước của Phase 8</th>
+<th>Nằm ở bài này</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Phân tích Requirement</td>
+<td>✔</td>
+</tr>
+<tr>
+<td>2. Xác định Test Scenarios</td>
+<td>✔</td>
+</tr>
+<tr>
+<td>3. Thiết kế Test Cases</td>
+<td>✔</td>
+</tr>
+<tr>
+<td>4–12</td>
+<td><a href="02-build-the-project.html">02-build-the-project</a>, <a href="03-run-debug-report-and-git.html">03-run-debug-report-and-git</a></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Chuyển Requirement thành Test Scenario và Test Case</li>
+<li>Quyết định cái gì nên tự động hoá</li>
+<li>Viết kết quả mong đợi kiểm chứng được</li>
+<li>Lập bảng traceability và tìm khoảng trống</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium Introduction</a></li>
+<li><a href="../05-testing-framework/01-testng-fundamentals.html">TestNG Fundamentals</a></li>
+</ul>
+<h2 id="1-khái-niệm">1. Khái niệm</h2>
+<p>Automation <strong>không bắt đầu bằng code</strong> mà bằng câu hỏi: <em>kiểm thử cái gì, vì sao, dữ liệu nào, kết quả mong đợi ra sao</em>. Chuỗi suy nghĩ:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Requirement ─► Test Scenario (kịch bản ở mức cao) ─► Test Case (bước + dữ liệu + kết quả mong đợi)
+            ─► Chọn cái nào tự động hoá ─► Test Script (Selenium)</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thuật ngữ</th>
+<th>Ý nghĩa</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Requirement</strong></td>
+<td>Điều hệ thống phải làm</td>
+<td>"Người dùng đăng nhập bằng tài khoản hợp lệ thì vào khu vực bảo mật"</td>
+</tr>
+<tr>
+<td><strong>Test Scenario</strong></td>
+<td>Một tình huống cần kiểm tra</td>
+<td>"Đăng nhập thành công", "Đăng nhập sai mật khẩu"</td>
+</tr>
+<tr>
+<td><strong>Test Case</strong></td>
+<td>Scenario cụ thể hoá: precondition, bước, dữ liệu, kết quả mong đợi</td>
+<td>TC_LOGIN_01</td>
+</tr>
+<tr>
+<td><strong>Traceability</strong></td>
+<td>Bảng nối Requirement ↔ Test Case</td>
+<td>Đảm bảo không sót</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-syntax-mẫu-test-case">2. Syntax: mẫu Test Case</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trường</th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ID</td>
+<td><code>TC_&lt;MODULE&gt;_&lt;số&gt;</code></td>
+</tr>
+<tr>
+<td>Tiêu đề</td>
+<td>Ngắn, nêu hành vi</td>
+</tr>
+<tr>
+<td>Mức ưu tiên</td>
+<td>High / Medium / Low</td>
+</tr>
+<tr>
+<td>Precondition</td>
+<td>Trạng thái ban đầu</td>
+</tr>
+<tr>
+<td>Bước</td>
+<td>Các bước đánh số</td>
+</tr>
+<tr>
+<td>Dữ liệu</td>
+<td>Input cụ thể</td>
+</tr>
+<tr>
+<td>Kết quả mong đợi</td>
+<td><strong>Quan sát được</strong> và kiểm chứng được</td>
+</tr>
+<tr>
+<td>Tự động hoá?</td>
+<td>Có/Không + lý do</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-ví-dụ-phân-tích-các-chức-năng-trong-đề-demd">3. Ví dụ: phân tích các chức năng trong đề <code>de.md</code></h2>
+<h3 id="31-requirement-rút-từ-10-bài-tập-của-dự-án">3.1. Requirement (rút từ 10 bài tập của dự án)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>Requirement (mô tả hành vi)</th>
+<th>Trang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>Đăng nhập hợp lệ vào khu vực bảo mật; sai thông tin bị từ chối với thông báo</td>
+<td><code>/login</code></td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Có thể tích/bỏ tích checkbox</td>
+<td><code>/checkboxes</code></td>
+</tr>
+<tr>
+<td>R3</td>
+<td>Bảng dữ liệu hiển thị đúng thông tin từng hàng</td>
+<td><code>/tables</code></td>
+</tr>
+<tr>
+<td>R4</td>
+<td>Dropdown cho chọn tuỳ chọn</td>
+<td><code>/dropdown</code></td>
+</tr>
+<tr>
+<td>R5</td>
+<td>Hover hiện thông tin người dùng</td>
+<td><code>/hovers</code></td>
+</tr>
+<tr>
+<td>R6</td>
+<td>Thêm/xoá phần tử động</td>
+<td><code>/add_remove_elements/</code></td>
+</tr>
+<tr>
+<td>R7</td>
+<td>Nội dung tải thêm khi cuộn</td>
+<td><code>/infinite_scroll</code></td>
+</tr>
+<tr>
+<td>R8</td>
+<td>Modal quảng cáo xuất hiện và đóng được</td>
+<td><code>/entry_ad</code></td>
+</tr>
+<tr>
+<td>R9</td>
+<td>Kéo thả đổi chỗ hai khối</td>
+<td><code>/drag_and_drop</code></td>
+</tr>
+<tr>
+<td>R10</td>
+<td>Điều khiển động: remove/add checkbox, enable/disable input kèm thông báo</td>
+<td><code>/dynamic_controls</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="32-test-scenarios-và-quyết-định-tự-động-hoá">3.2. Test Scenarios và quyết định tự động hoá</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Req</th>
+<th>Ưu tiên</th>
+<th>Tự động hoá?</th>
+<th>Lý do / rủi ro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1 Đăng nhập thành công</td>
+<td>R1</td>
+<td>High</td>
+<td>✅ Smoke</td>
+<td>Luồng quan trọng, ổn định</td>
+</tr>
+<tr>
+<td>S2 Đăng nhập sai mật khẩu/username</td>
+<td>R1</td>
+<td>High</td>
+<td>✅ (DataProvider)</td>
+<td>Nhiều dữ liệu, lặp lại</td>
+</tr>
+<tr>
+<td>S3 Tích cả hai checkbox</td>
+<td>R2</td>
+<td>Medium</td>
+<td>✅</td>
+<td>Ổn định</td>
+</tr>
+<tr>
+<td>S4 Đọc 4 hàng bảng</td>
+<td>R3</td>
+<td>Medium</td>
+<td>✅</td>
+<td>Dữ liệu cố định của trang</td>
+</tr>
+<tr>
+<td>S5 Chọn từng tuỳ chọn dropdown</td>
+<td>R4</td>
+<td>Medium</td>
+<td>✅</td>
+<td>Ổn định</td>
+</tr>
+<tr>
+<td>S6 Hover từng ảnh</td>
+<td>R5</td>
+<td>Low</td>
+<td>✅</td>
+<td>Cần chờ visibility</td>
+</tr>
+<tr>
+<td>S7 Thêm rồi xoá phần tử</td>
+<td>R6</td>
+<td>Medium</td>
+<td>✅</td>
+<td>Cần chờ biến mất</td>
+</tr>
+<tr>
+<td>S8 Cuộn vô hạn</td>
+<td>R7</td>
+<td>Low</td>
+<td>✅ (cẩn thận flaky)</td>
+<td>Phụ thuộc sự kiện scroll (từng flaky ở Ex7)</td>
+</tr>
+<tr>
+<td>S9 Modal quảng cáo</td>
+<td>R8</td>
+<td>Low</td>
+<td>✅</td>
+<td>Có độ trễ hiển thị</td>
+</tr>
+<tr>
+<td>S10 Kéo thả</td>
+<td>R9</td>
+<td>Low</td>
+<td>✅ (dễ flaky)</td>
+<td>HTML5 DnD</td>
+</tr>
+<tr>
+<td>S11 Dynamic controls</td>
+<td>R10</td>
+<td>High</td>
+<td>✅</td>
+<td>Điển hình cho Wait</td>
+</tr>
+<tr>
+<td>S12 "Trông đẹp/dễ dùng"</td>
+<td>—</td>
+<td>—</td>
+<td>❌</td>
+<td>Chủ quan → kiểm thử thủ công</td>
+</tr>
+</tbody>
+</table></div>
+<p>Tiêu chí chọn tự động hoá: <strong>lặp lại thường xuyên · ổn định · giá trị cao · kết quả mong đợi rõ ràng · chi phí bảo trì thấp.</strong> Không tự động hoá: kiểm tra một lần, UI thay đổi liên tục, đánh giá chủ quan.</p>
+<h3 id="33-test-cases-trích">3.3. Test Cases (trích)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Tiêu đề</th>
+<th>Ưu tiên</th>
+<th>Precondition</th>
+<th>Bước</th>
+<th>Dữ liệu</th>
+<th>Kết quả mong đợi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TC_LOGIN_01</td>
+<td>Đăng nhập thành công</td>
+<td>High</td>
+<td>Ở <code>/login</code></td>
+<td>1. Nhập username 2. Nhập password 3. Bấm Login</td>
+<td><code>tomsmith</code> / <code>SuperSecretPassword!</code></td>
+<td>URL kết thúc <code>/secure</code>; thông báo chứa <code>You logged into a secure area!</code></td>
+</tr>
+<tr>
+<td>TC_LOGIN_02</td>
+<td>Sai mật khẩu</td>
+<td>High</td>
+<td>Ở <code>/login</code></td>
+<td>như trên</td>
+<td><code>tomsmith</code> / <code>wrong</code></td>
+<td>Ở lại <code>/login</code>; thông báo chứa <code>Your password is invalid!</code></td>
+</tr>
+<tr>
+<td>TC_LOGIN_03</td>
+<td>Sai username</td>
+<td>High</td>
+<td>Ở <code>/login</code></td>
+<td>như trên</td>
+<td><code>nobody</code> / <code>SuperSecretPassword!</code></td>
+<td>Thông báo chứa <code>Your username is invalid!</code></td>
+</tr>
+<tr>
+<td>TC_CHK_01</td>
+<td>Tích cả hai checkbox</td>
+<td>Medium</td>
+<td>Ở <code>/checkboxes</code></td>
+<td>Bấm để cả hai cùng được chọn (lưu ý checkbox 2 mặc định đã tích)</td>
+<td>—</td>
+<td>Cả hai <code>isSelected() == true</code></td>
+</tr>
+<tr>
+<td>TC_DYN_01</td>
+<td>Remove checkbox</td>
+<td>High</td>
+<td>Ở <code>/dynamic_controls</code></td>
+<td>Bấm Remove, chờ</td>
+<td>—</td>
+<td>Thông báo <code>It's gone!</code>; checkbox không còn</td>
+</tr>
+<tr>
+<td>TC_DYN_02</td>
+<td>Enable input</td>
+<td>High</td>
+<td>Sau TC_DYN_01 hoặc trang mới</td>
+<td>Bấm Enable, chờ</td>
+<td>—</td>
+<td>Thông báo <code>It's enabled!</code>; input enabled, gõ được</td>
+</tr>
+</tbody>
+</table></div>
+<p>Cột "Kết quả mong đợi" phải <strong>kiểm chứng được bằng code</strong> (text, URL, trạng thái) — nếu không viết được assertion thì test case chưa đủ rõ.</p>
+<h3 id="34-traceability">3.4. Traceability</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Test Cases</th>
+<th>Script (dự án <code>Selenium1</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>TC_LOGIN_01..03</td>
+<td><code>Exercise01_LoginTest</code> (mới có ca thành công)</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>TC_CHK_01</td>
+<td><code>Exercise02_CheckboxesTest</code></td>
+</tr>
+<tr>
+<td>R10</td>
+<td>TC_DYN_01..02</td>
+<td><code>Exercise10_DynamicControlsTest</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>→ Phát hiện <strong>khoảng trống</strong>: dự án chưa có test cho đăng nhập <strong>sai</strong> (TC_LOGIN_02/03). Đó là việc cần bổ sung ở <a href="labs/05-form-automation.html">Lab 05</a>.</p>
+<h2 id="4-ứng-dụng-với-dự-án-selenium-maven-real-world">4. Ứng dụng với dự án Selenium Maven (Real-world)</h2>
+<ul>
+<li>Mỗi <code>@Test</code> nên ánh xạ về một Test Case (tên method nêu hành vi: <code>shouldRejectInvalidPassword</code>).</li>
+<li>Mã Test Case có thể ghi ở <code>description</code> của <code>@Test</code> hoặc Javadoc (dự án hiện dùng Javadoc mô tả yêu cầu mỗi Exercise).</li>
+<li>Phân nhóm <code>groups = {"smoke"}</code> cho TC_LOGIN_01, TC_DYN_*; còn lại <code>regression</code> (<a href="../05-testing-framework/01-testng-fundamentals.html">TestNG groups</a>).</li>
+<li>Test <strong>độc lập</strong>: không để TC_DYN_02 phụ thuộc kết quả TC_DYN_01.</li>
+</ul>
+<h2 id="5-lỗi-thường-gặp">5. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Hậu quả</th>
+<th>Cách tránh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Viết code ngay, không có test case</td>
+<td>Test không bám yêu cầu, sót case âm</td>
+<td>Viết scenario/test case trước</td>
+</tr>
+<tr>
+<td>Kết quả mong đợi mơ hồ ("hiển thị đúng")</td>
+<td>Không viết được assertion</td>
+<td>Nêu text/URL/trạng thái cụ thể</td>
+</tr>
+<tr>
+<td>Chỉ có case dương</td>
+<td>Bỏ lỡ bug xử lý lỗi</td>
+<td>Thêm case âm (sai mật khẩu, thiếu dữ liệu)</td>
+</tr>
+<tr>
+<td>Tự động hoá mọi thứ</td>
+<td>Chi phí bảo trì cao</td>
+<td>Dùng tiêu chí chọn tự động hoá</td>
+</tr>
+<tr>
+<td>Test phụ thuộc nhau</td>
+<td>Fail dây chuyền, khó debug</td>
+<td>Mỗi test tự chuẩn bị trạng thái</td>
+</tr>
+<tr>
+<td>Hard-code dữ liệu nhạy cảm</td>
+<td>Rò rỉ</td>
+<td>Config/biến môi trường</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Viết 3 requirement từ trang <code>/login</code> và <code>/dynamic_controls</code>.</p>
+<p><strong>Input:</strong> Hai trang</p>
+<p><strong>Expected Output:</strong> 3 requirement</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Mô tả hành vi, không mô tả cách làm.</p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Viết một Test Case đầy đủ cho <code>Sai mật khẩu</code> (ID, ưu tiên, precondition, bước, dữ liệu, kết quả mong đợi).</p>
+<p><strong>Input:</strong> R2</p>
+<p><strong>Expected Output:</strong> 1 test case</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Kết quả mong đợi phải assert được.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Lập traceability cho R1–R3 với test của <code>Selenium1</code> và chỉ ra khoảng trống.</p>
+<p><strong>Input:</strong> Các Exercise</p>
+<p><strong>Expected Output:</strong> Bảng + 1 khoảng trống</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Chưa có test đăng nhập sai.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Test Case khác Test Scenario ở?</p>
+<ul>
+<li>A. Không khác</li>
+<li>B. Case có bước, dữ liệu, kết quả mong đợi cụ thể</li>
+<li>C. Scenario có code</li>
+<li>D. Case không có kết quả</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Scenario ở mức cao hơn.</p>
+</details>
+<p><strong>Câu 2.</strong> Không nên tự động hoá?</p>
+<ul>
+<li>A. Smoke login</li>
+<li>B. Kiểm tra chủ quan "đẹp/dễ dùng"</li>
+<li>C. Regression lặp lại</li>
+<li>D. Case âm</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Kiểm thử thủ công.</p>
+</details>
+<p><strong>Câu 3.</strong> Kết quả mong đợi tốt là?</p>
+<ul>
+<li>A. "Hiển thị đúng"</li>
+<li>B. Thông báo/URL/trạng thái cụ thể</li>
+<li>C. "Không lỗi"</li>
+<li>D. "OK"</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Viết được assertion.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. How do you decide what to automate?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Quyết định tự động hoá cái gì?</li>
+<li><strong>Suggested answer (EN):</strong> Repetitive, stable, high-value and regression-prone scenarios with clear expected results; not one-off checks, rapidly changing UI or subjective checks.</li>
+<li><strong>Giải thích (VI):</strong> Bắt đầu từ smoke.</li>
+<li><strong>Follow-up:</strong> <em>How do you measure ROI?</em></li>
+</ul>
+<p><strong>2. What is traceability?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Traceability là gì?</li>
+<li><strong>Suggested answer (EN):</strong> A mapping between requirements and test cases that shows coverage and gaps.</li>
+<li><strong>Giải thích (VI):</strong> Phát hiện thiếu test đăng nhập sai.</li>
+<li><strong>Follow-up:</strong> <em>How do you keep it up to date?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Requirement → Scenario → Test Case → Script</li>
+<li>Kết quả mong đợi phải assert được</li>
+<li>Traceability tìm khoảng trống</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li>Mẫu Test Case: ID, ưu tiên, precondition, bước, dữ liệu, mong đợi</li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Scenario ≠ Test Case</li>
+<li>Tự động hoá mọi thứ ≠ tốt</li>
+<li>Test phụ thuộc nhau</li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-build-the-project.html">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<p>R1 Đăng nhập hợp lệ vào khu vực bảo mật. R2 Đăng nhập sai bị từ chối kèm thông báo. R3 Remove/Add checkbox có thông báo tương ứng.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<p>ID TC_LOGIN_02 · High · Precondition: ở <code>/login</code> · Bước: nhập user/pass, bấm Login · Dữ liệu: <code>tomsmith</code>/<code>wrong</code> · Mong đợi: ở lại <code>/login</code>, thông báo chứa <code>Your password is invalid!</code>.</p>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<p>R1 → <code>Exercise01_LoginTest</code>; R3 → <code>Exercise10_DynamicControlsTest</code>; <strong>R2 chưa có test</strong> → cần bổ sung (Lab 05).</p>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 8 — Real-world Automation Project (Chapter 24)</span></a><a class="next" href="02-build-the-project.html"><small>Bài tiếp theo →</small><span>Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/01-requirements-and-test-design.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

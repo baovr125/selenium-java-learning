@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Progress · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="LEARNING_PROGRESS" data-root="" data-lesson="0" data-title="Learning Progress">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<div id="progress-app" class="dashboard"></div>
+<p class="muted">Bên dưới là bản tĩnh sinh từ <code>LEARNING_PROGRESS.md</code>. Tiến độ tương tác ở trên được lưu trong trình duyệt của bạn.</p>
+<h1 id="learning-progress">Learning Progress</h1>
+<blockquote>
+<p>Cập nhật lần cuối: 14/11/2026 · Liên quan: <a href="index.html">README</a> · <a href="LEARNING_ROADMAP.html">Roadmap</a> · <a href="progress/README.html">progress/</a></p>
+</blockquote>
+<p><strong>Trạng thái:</strong> ⬜ Not Started · 🟡 In Progress · ✅ Completed. <strong>Không đánh Completed khi chưa có bằng chứng</strong> (đã chạy ví dụ, làm đủ 3 bài tập với kết quả khớp, trả lời đúng Knowledge Check).</p>
+<blockquote>
+<p>Các mục 🟡 bên dưới có <strong>bằng chứng thực hành liên quan trong dự án <code>Selenium1</code></strong> (code/báo cáo thật) — đó <strong>chưa phải</strong> bài tập của giáo trình mới nên chưa tính Completed. Khi bạn làm xong bài tập, hãy tự đổi sang ✅ và ghi bằng chứng ở <a href="progress/exercise-tracker.html">exercise-tracker</a>.</p>
+</blockquote>
+<h2 id="phase-1-java-fundamentals">Phase 1: Java Fundamentals</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/00-environment-setup.html">Cài đặt môi trường</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/02-variables-and-data-types.html">Java: Variables, Data Types và Type Casting</a> — 🟡 In Progress — <em>bằng chứng: Biến/kiểu dữ liệu trong <code>src/test/java</code> (Exercise01–10)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/03-operators-and-strings.html">Java: Operators, Strings, Math và Booleans</a> — 🟡 In Progress — <em>bằng chứng: <code>contains/trim/endsWith/toUpperCase</code> (Exercise01, 03, 08)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/04-control-flow.html">Java: Control Flow (If...Else, Switch, Loops, Break/Continue)</a> — 🟡 In Progress — <em>bằng chứng: <code>for/for-each/if</code> (Exercise02, 04, 05, 07)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/05-arrays.html">Java: Arrays (mảng)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/06-methods.html">Java: Methods (tham số, giá trị trả về, overloading, scope, recursion)</a> — 🟡 In Progress — <em>bằng chứng: Helper <code>getRowData</code>, <code>clickAndVerifyToggled</code>, <code>scrollToBottom</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/07-classes-and-objects.html">Java: Classes và Objects (attributes, methods, constructors, <code>this</code>, modifiers, static)</a> — 🟡 In Progress — <em>bằng chứng: <code>BaseTest</code>, <code>new Actions(driver)</code>, <code>main()</code> + <code>new</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/08-oop-concepts.html">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</a> — 🟡 In Progress — <em>bằng chứng: <code>extends BaseTest</code>, ép kiểu <code>(JavascriptExecutor) driver</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/09-collections.html">Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</a> — 🟡 In Progress — <em>bằng chứng: <code>List&lt;WebElement&gt;</code>, <code>List&lt;String&gt;</code> (Exercise02–04)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/10-exception-handling.html">Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</a> — 🟡 In Progress — <em>bằng chứng: <code>try/finally</code> trong <code>main()</code> các Exercise</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/11-lambda-and-generics.html">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</a> — 🟡 In Progress — <em>bằng chứng: <code>wait.until(d -&gt; ...)</code> (Exercise07), annotations TestNG</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="01-java-fundamentals/12-file-handling.html">Java: File Handling, Properties và Configuration</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="phase-2-maven-and-project-management">Phase 2: Maven and Project Management</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a> — 🟡 In Progress — <em>bằng chứng: Dự án Maven chạy được (<code>pom.xml</code>, <code>mvnw.cmd</code>)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/01-maven-fundamentals.html">Maven Fundamentals</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/02-pom-xml.html"><code>pom.xml</code> và Dependencies</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a> — 🟡 In Progress — <em>bằng chứng: Dự án dùng <code>mvnw.cmd</code> (README, báo cáo Surefire)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/05-maven-lifecycle.html">Commands và Build Lifecycle</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/06-dependency-management.html">Dependency Management</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/07-build-and-test-execution.html">Build và chạy Automation Test bằng Maven</a> — 🟡 In Progress — <em>bằng chứng: Báo cáo <code>Tests run: 10, Failures: 0</code> (12/11/2026)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/08-working-in-team.html">Quy trình làm việc với Maven trong team</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="02-maven-and-project/09-maven-troubleshooting.html">Troubleshooting</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="phase-3-selenium-fundamentals">Phase 3: Selenium Fundamentals</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/01-selenium-introduction.html">Selenium là gì?</a> — 🟡 In Progress — <em>bằng chứng: <code>EnvironmentCheckTest</code> chạy được</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/02-webdriver.html">WebDriver Fundamentals</a> — 🟡 In Progress — <em>bằng chứng: <code>BaseTest.setup()</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/03-locators.html">Selenium: Locators (cách tìm phần tử)</a> — 🟡 In Progress — <em>bằng chứng: Exercise01, 02, 03, 05, 06</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/04-webelement.html">Selenium: WebElement API</a> — 🟡 In Progress — <em>bằng chứng: Exercise01, 02, 10</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/05-browser-navigation.html">Browser Navigation</a> — 🟡 In Progress — <em>bằng chứng: <code>get/getTitle/getCurrentUrl</code> (các Exercise)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/06-element-interactions.html">Web Element Interactions</a> — 🟡 In Progress — <em>bằng chứng: Exercise01–04</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions: Alert, Frame/iFrame, Window/Tab</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a> — 🟡 In Progress — <em>bằng chứng: Exercise05, 09</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/09-javascript-executor.html">JavaScript Executor</a> — 🟡 In Progress — <em>bằng chứng: Exercise07</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/10-selenium-exceptions.html">Exception Handling</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging và Best Practices</a> — 🟡 In Progress — <em>bằng chứng: Exercise07 (flaky đã xử lý)</em></li>
+</ul>
+<h2 id="phase-4-wait-and-synchronization">Phase 4: Wait and Synchronization</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/02-implicit-wait.html">Implicit Wait</a> — 🟡 In Progress — <em>bằng chứng: Quyết định không dùng Implicit Wait (Javadoc <code>BaseTest</code>)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/03-explicit-wait.html">Explicit Wait và WebDriverWait</a> — 🟡 In Progress — <em>bằng chứng: <code>WebDriverWait</code> 15 s trong <code>BaseTest</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a> — 🟡 In Progress — <em>bằng chứng: Exercise01, 05, 06, 07, 08, 10</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/05-fluent-wait.html">Fluent Wait và Custom Wait</a> — 🟡 In Progress — <em>bằng chứng: Custom wait bằng lambda (Exercise07)</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/06-wait-comparison.html">So sánh các cơ chế chờ (và Thread.sleep)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/07-real-world-scenarios.html">Wait: 15 tình huống thực tế</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="04-wait-mechanisms/08-wait-best-practices.html">Wait Best Practices</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="phase-5-testing-framework">Phase 5: Testing Framework</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="05-testing-framework/01-testng-fundamentals.html">TestNG Fundamentals</a> — 🟡 In Progress — <em>bằng chứng: <code>@Test</code>, <code>@BeforeMethod</code>, <code>testng.xml</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="05-testing-framework/02-junit-fundamentals.html">JUnit Fundamentals (so sánh với TestNG)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="05-testing-framework/03-assertions-and-verification.html">Assertions và Verification</a> — 🟡 In Progress — <em>bằng chứng: <code>Assert</code> trong Exercise01–10</em></li>
+<li class="task"><input type="checkbox" disabled> <a href="05-testing-framework/04-test-setup-and-teardown.html">Test Setup và Teardown</a> — 🟡 In Progress — <em>bằng chứng: <code>BaseTest</code> <code>@BeforeMethod/@AfterMethod</code></em></li>
+<li class="task"><input type="checkbox" disabled> <a href="05-testing-framework/05-test-data-and-configuration.html">Test Data và Configuration</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="05-testing-framework/06-test-execution-and-reports.html">Chạy test và báo cáo</a> — 🟡 In Progress — <em>bằng chứng: Báo cáo <code>ket-qua/emailable-report.html</code></em></li>
+</ul>
+<h2 id="phase-6-page-object-model-and-framework-design">Phase 6: Page Object Model and Framework Design</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="06-automation-framework/01-page-object-model.html">Page Object Model (POM)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="06-automation-framework/02-automation-framework-architecture.html">Kiến trúc Automation Framework</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="06-automation-framework/03-reusable-components.html">Reusable Components</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="06-automation-framework/04-configuration-management.html">Configuration Management</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="06-automation-framework/05-maintainable-test-framework.html">Maintainable Test Framework</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="phase-7-git-and-team-collaboration">Phase 7: Git and Team Collaboration</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="07-git-and-team-workflow/02-branch-merge-rebase.html">Git: Branch, Merge và Rebase</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="07-git-and-team-workflow/03-pull-request-and-conflicts.html">Git: Pull Request và Giải quyết Conflict</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">Git: <code>.gitignore</code> và quản lý dự án Maven + Selenium</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="phase-8-real-world-automation-project">Phase 8: Real-world Automation Project</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/01-requirements-and-test-design.html">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/02-build-the-project.html">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/03-run-debug-report-and-git.html">Project Step 9–12: Thực thi Suite, Debug, Báo cáo và Git</a> — ⬜ Not Started</li>
+</ul>
+<p><strong>Labs (12 bài tập tăng dần):</strong></p>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/01-first-selenium-test.html">Lab 01 — Khởi tạo dự án + test đầu tiên (Bài 1–2)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/02-locator-practice.html">Lab 02 — Locator (Bài 5)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/03-wait-practice.html">Lab 03 — Explicit Wait &amp; Dynamic Elements (Bài 8–9)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/04-maven-and-mvnw-practice.html">Lab 04 — Maven Wrapper &amp; chạy bằng <code>mvnw.cmd</code> (Bài 3–4)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/05-form-automation.html">Lab 05 — Login, Dropdown, Alert, Frame (Bài 6–7)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/06-page-object-model-practice.html">Lab 06 — Page Object Model (Bài 10)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/07-run-tests-with-maven.html">Lab 07 — TestNG Suite + Maven (Bài 11)</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="08-practical-project/labs/08-mini-automation-project.html">Lab 08 — Mini Automation Framework (Bài 12)</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="phỏng-vấn">Phỏng vấn</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <a href="interview/java-interview.html">Java for Automation</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="interview/maven-interview.html">Maven &amp; Maven Wrapper</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="interview/selenium-interview.html">Selenium, Locators, Exceptions</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="interview/wait-interview.html">Wait &amp; Synchronization</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="interview/framework-interview.html">TestNG &amp; Page Object Model</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="interview/git-interview.html">Git &amp; Team Workflow</a> — ⬜ Not Started</li>
+<li class="task"><input type="checkbox" disabled> <a href="interview/scenario-based-interview.html">Scenario-based</a> — ⬜ Not Started</li>
+</ul>
+<h2 id="tổng-quan">Tổng quan</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trạng thái</th>
+<th>Số bài</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⬜ Not Started</td>
+<td>31</td>
+</tr>
+<tr>
+<td>🟡 In Progress (có bằng chứng thực hành liên quan)</td>
+<td>29</td>
+</tr>
+<tr>
+<td>✅ Completed</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Tổng bài học</strong></td>
+<td><strong>60</strong> (+ 8 Labs)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="dự-án-gốc-những-gì-đã-có-bằng-chứng">Dự án gốc: những gì đã có bằng chứng</h2>
+<p>Kết quả chạy gần nhất (báo cáo Surefire 12/11/2026): <code>Tests run: 10, Failures: 0, Errors: 0, Skipped: 0</code> (91,32 s). Chi tiết công nghệ, vấn đề phát hiện và đề xuất: <a href="00-project-analysis.html">00-project-analysis.md</a>.</p>
+<h2 id="kiến-thức-cần-cải-thiện-từ-phân-tích-source-code">Kiến thức cần cải thiện (từ phân tích source code)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Chủ đề</th>
+<th>Bài</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Page Object Model</td>
+<td><a href="06-automation-framework/01-page-object-model.html">POM</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Cấu hình/ dữ liệu ngoài code</td>
+<td><a href="05-testing-framework/05-test-data-and-configuration.html">Test Data &amp; Config</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Screenshot khi fail, logging</td>
+<td><a href="03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Headless + <code>ChromeOptions</code></td>
+<td><a href="03-selenium-fundamentals/02-webdriver.html">WebDriver</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>ThreadLocal&lt;WebDriver&gt;</code> + song song</td>
+<td><a href="01-java-fundamentals/11-lambda-and-generics.html">Lambda &amp; Generics</a>, <a href="05-testing-framework/01-testng-fundamentals.html">TestNG</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Git + CI (dự án chưa là Git repo)</td>
+<td><a href="07-git-and-team-workflow/README.html">Git</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Alert / Frame / Window; FluentWait; <code>stalenessOf</code></td>
+<td><a href="03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions</a>, <a href="04-wait-mechanisms/05-fluent-wait.html">Fluent Wait</a></td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="LEARNING_ROADMAP.html"><small>← Bài trước</small><span>Learning Roadmap — Selenium Java cho Junior Automation Test Engineer</span></a><a class="next" href="UPDATE_REPORT.html"><small>Bài tiếp theo →</small><span>Báo cáo cập nhật: thiết kế lại lộ trình theo phương pháp bài học nhỏ (kiểu W3Schools)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/LEARNING_PROGRESS.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="assets/nav.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

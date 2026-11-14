@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 03: Wait Practice (Bài 8 + Bài 9) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/03-wait-practice" data-root="../../" data-lesson="0" data-title="Lab 03: Wait Practice (Bài 8 + Bài 9)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-03-wait-practice-bài-8--bài-9">Lab 03: Wait Practice (Bài 8 + Bài 9)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../04-wait-mechanisms/01-wait-introduction.html">selenium/05 Wait</a> · <a href="../../interview/wait-interview.html">Interview 05</a>
+Đối chiếu: <a href="../../../../../src/test/java/tests/Exercise06_AddRemoveElementsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise06</a>, <a href="../../../../../src/test/java/tests/Exercise08_EntryAdModalTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise08</a>, <a href="../../../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise10</a></p>
+</blockquote>
+<hr />
+<h2 id="bài-8-explicit-wait">Bài 8. Explicit Wait</h2>
+<p><strong>Mục tiêu:</strong> Dùng <code>WebDriverWait</code> + <code>ExpectedConditions</code>; thấy tận mắt lỗi khi <strong>không</strong> chờ; so sánh với <code>Thread.sleep</code>.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>visibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>invisibilityOfElementLocated</code>, <code>textToBe</code>, <code>numberOfElementsToBe</code>.</p>
+<p><strong>Yêu cầu:</strong> trên <code>https://the-internet.herokuapp.com/dynamic_loading/1</code> (phần tử có sẵn nhưng <strong>ẩn</strong> cho đến khi bấm Start) và <code>/dynamic_loading/2</code> (phần tử được <strong>thêm vào DOM</strong> sau khi bấm Start):</p>
+<ol>
+<li>Test <strong>không chờ</strong> → quan sát lỗi, ghi lại exception.</li>
+<li>Test <strong>chờ đúng</strong> bằng Explicit Wait.</li>
+<li>Đo thời gian chạy; so với <code>Thread.sleep(10000)</code>.</li>
+</ol>
+<h3 id="code-tham-khảo">Code tham khảo</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">package</span><span class="w"> </span><span class="nn">tests</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">base.BaseTest</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.By</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.NoSuchElementException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.WebElement</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.support.ui.ExpectedConditions</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.Assert</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.testng.annotations.Test</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">WaitPracticeTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">START</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">By</span><span class="w"> </span><span class="n">FINISH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 1) Phần tử có trong DOM nhưng ẩn → presence ĐÚNG, visibility CHƯA</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example1_hiddenElement_presenceVsVisibility</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/1&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">);</span><span class="w">               </span><span class="c1">// tìm được ngay (presence)</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">isDisplayed</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Lúc đầu phần tử còn ẩn&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phần tử ẩn thì getText() rỗng&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">FINISH</span><span class="p">));</span><span class="w">   </span><span class="c1">// chờ hiện</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Hello World!&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 2) Phần tử chưa tồn tại trong DOM → phải chờ presence/visibility</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example2_elementAddedLater</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// KHÔNG chờ → thường ném NoSuchElementException ngay:</span>
+<span class="w">        </span><span class="c1">// driver.findElement(FINISH);</span>
+
+<span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">FINISH</span><span class="p">));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Hello World!&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 3) Chứng minh: tìm ngay sau click KHÔNG chờ sẽ lỗi</span>
+<span class="w">    </span><span class="nd">@Test</span><span class="p">(</span><span class="n">expectedExceptions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example3_noWait_failsFast</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">);</span><span class="w">          </span><span class="c1">// quá sớm → NoSuchElementException</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 4) Chờ biến mất: loading bar</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example4_waitLoadingDisappears</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;loading&quot;</span><span class="p">)));</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">).</span><span class="na">isDisplayed</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 5) Đo thời gian: wait chỉ chờ đúng lượng cần thiết</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example5_measureWait</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">FINISH</span><span class="p">));</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="p">;</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Đã chờ &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; ms (timeout tối đa 15000 ms)&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">ms</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">15_000</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="kết-quả-mong-đợi">Kết quả mong đợi</h3>
+<ul>
+<li><code>example1</code>, <code>example2</code>, <code>example4</code>, <code>example5</code> pass; <code>example3</code> pass (vì <strong>mong đợi</strong> exception).</li>
+<li><code>example5</code> in thời gian chờ nhỏ hơn timeout rất nhiều ⇒ Explicit Wait <strong>không chờ thừa</strong>.</li>
+</ul>
+<h3 id="thử-nghiệm-bắt-buộc-rút-ra-bài-học">Thử nghiệm bắt buộc (rút ra bài học)</h3>
+<ol>
+<li>Đổi <code>Duration.ofSeconds(15)</code> trong <code>wait</code> thành <code>Duration.ofSeconds(1)</code> ⇒ quan sát <code>TimeoutException</code> và <strong>đọc message</strong> (có điều kiện đang chờ).</li>
+<li>Thay chờ bằng <code>Thread.sleep(10000)</code> ⇒ đo tổng thời gian và so sánh.</li>
+<li>Bật <code>implicitlyWait(10s)</code> ở một test riêng rồi gọi <code>driver.findElements(By.id("khong-co"))</code> ⇒ đo: mất ~10 giây (lý do dự án cấm implicit).</li>
+</ol>
+<h3 id="lỗi-thường-gặp">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TimeoutException</code></td>
+<td>Locator sai hoặc timeout quá ngắn</td>
+<td>Kiểm tra locator; đọc message</td>
+</tr>
+<tr>
+<td><code>getText()</code> rỗng</td>
+<td>Phần tử còn ẩn</td>
+<td>Chờ <code>visibility...</code></td>
+</tr>
+<tr>
+<td>Test pass nhưng lấy dữ liệu cũ</td>
+<td>Điều kiện chờ đúng từ trước</td>
+<td>Chờ điều kiện đặc trưng cho trạng thái mới</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="bài-9-xử-lý-dynamic-web-elements">Bài 9. Xử lý Dynamic Web Elements</h2>
+<p><strong>Mục tiêu:</strong> Xử lý phần tử thay đổi trạng thái, bị xoá/thêm, và <strong>thông báo cũ còn trên màn hình</strong> — chính xác tình huống của <a href="../../../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise10</a>.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>textToBe</code>, <code>elementToBeClickable</code>, <code>invisibilityOfElementLocated</code>, <code>stalenessOf</code>, custom wait.</p>
+<p><strong>Yêu cầu:</strong> trên <code>/dynamic_controls</code>:</p>
+<ol>
+<li>Bấm <strong>Remove</strong> → chờ <code>"It's gone!"</code> → xác nhận checkbox không còn.</li>
+<li>Bấm <strong>Add</strong> → chờ <code>"It's back!"</code> → xác nhận checkbox xuất hiện lại.</li>
+<li>Bấm <strong>Enable</strong> → chờ ô input được bật → nhập chữ → xác nhận.</li>
+<li>Bấm <strong>Disable</strong> → chờ ô input bị khoá lại.</li>
+<li><strong>Không</strong> dùng <code>Thread.sleep</code>.</li>
+</ol>
+<h3 id="code-tham-khảo_1">Code tham khảo</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dynamicControls</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_controls&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">By</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Remove</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkbox-example button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;It&#39;s gone!&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;checkbox&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Checkbox phải biến mất khỏi DOM&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Add</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkbox-example button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;It&#39;s back!&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;checkbox&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Enable</span>
+<span class="w">    </span><span class="n">WebElement</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example input&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="na">isEnabled</span><span class="p">());</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;It&#39;s enabled!&quot;</span><span class="p">));</span><span class="w">      </span><span class="c1">// KHÔNG chỉ chờ visibility</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">input</span><span class="p">));</span>
+<span class="w">    </span><span class="n">input</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Dynamic OK&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Dynamic OK&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Disable</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="w">    </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;It&#39;s disabled!&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example input&quot;</span><span class="p">)).</span><span class="na">isEnabled</span><span class="p">());</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="thử-thách-bài-học-thông-báo-cũ">Thử thách: Bài học "thông báo cũ"</h3>
+<p>Thay <code>textToBe(message, "It's enabled!")</code> bằng <code>visibilityOfElementLocated(message)</code> rồi đọc <code>getText()</code>. Chạy nhiều lần: quan sát đọc nhầm <code>"It's gone!"</code>/<code>"It's back!"</code> (thông báo cũ). Viết 3 dòng giải thích bằng lời của bạn.</p>
+<h3 id="kết-quả-mong-đợi_1">Kết quả mong đợi</h3>
+<ul>
+<li>Test xanh 5 lần liên tiếp.</li>
+<li>Bạn giải thích được vì sao <code>textToBe</code> đúng hơn <code>visibility</code> ở bước 3-4.</li>
+</ul>
+<h3 id="lỗi-thường-gặp_1">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>StaleElementReferenceException</code> ở <code>input</code></td>
+<td>Trang vẽ lại ô input</td>
+<td>Tìm lại <code>input</code> sau mỗi thao tác (dự án gốc dùng biến cũ vì trang giữ phần tử)</td>
+</tr>
+<tr>
+<td>Đọc nhầm thông báo</td>
+<td>Chờ không đặc trưng</td>
+<td><code>textToBe</code></td>
+</tr>
+<tr>
+<td><code>ElementNotInteractableException</code> khi <code>sendKeys</code></td>
+<td>Input chưa enabled</td>
+<td><code>elementToBeClickable</code></td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>✅ Cả hai bài đã được chạy thật (Selenium 4.52.0, Chrome, JDK 25 với <code>--release 21</code>): 5 test của Bài 8 và 1 test của Bài 9 đều pass; các thông báo <code>It's gone!</code>, <code>It's back!</code>, <code>It's enabled!</code>, <code>It's disabled!</code> khớp trang thực tế tại thời điểm viết. Nếu trang đổi, hãy chạy thử và đối chiếu.</p>
+</blockquote>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-locator-practice.html"><small>← Bài trước</small><span>Lab 02: Locator Practice (Bài 5)</span></a><a class="next" href="04-maven-and-mvnw-practice.html"><small>Bài tiếp theo →</small><span>Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/03-wait-practice.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 07: Test Suite với TestNG và chạy bằng Maven (Bài 11) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../../assets/style.css">
+<link rel="stylesheet" href="../../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="08-practical-project/labs/07-run-tests-with-maven" data-root="../../" data-lesson="0" data-title="Lab 07: Test Suite với TestNG và chạy bằng Maven (Bài 11)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="lab-07-test-suite-với-testng-và-chạy-bằng-maven-bài-11">Lab 07: Test Suite với TestNG và chạy bằng Maven (Bài 11)</h1>
+<blockquote>
+<p>Liên quan: <a href="README.html">Mục lục bài tập</a> · <a href="../../05-testing-framework/01-testng-fundamentals.html">testing-framework/01</a> · <a href="../../02-maven-and-project/07-build-and-test-execution.html">maven/06</a>
+Đối chiếu: <a href="../../../../../testng.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">testng.xml</a>, <a href="../../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a> (<code>suiteXmlFile</code>), <a href="../../../../../src/test/java/tests/AllExercisesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">AllExercisesTest</a></p>
+</blockquote>
+<h2 id="bài-11-tạo-test-suite-bằng-testng">Bài 11. Tạo Test Suite bằng TestNG</h2>
+<p><strong>Mục tiêu:</strong> Tạo nhiều suite (<code>smoke</code>, <code>regression</code>) bằng <code>testng.xml</code> và <code>groups</code>, chạy qua Maven; hiểu chính xác Surefire chọn test nào.</p>
+<p><strong>Kiến thức cần dùng:</strong> <code>testng.xml</code>, <code>groups</code>, <code>@Test(groups=...)</code>, Surefire <code>suiteXmlFiles</code>, <code>-Dtest</code>, <code>systemPropertyVariables</code>.</p>
+<h3 id="phần-a-gắn-nhóm">Phần A. Gắn nhóm</h3>
+<p>Trong <code>SeleniumLab</code>, đặt nhóm cho test:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="p">(</span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;smoke&quot;</span><span class="p">})</span><span class="w">       </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">validLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@Test</span><span class="p">(</span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;regression&quot;</span><span class="p">})</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@Test</span><span class="p">(</span><span class="n">groups</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;regression&quot;</span><span class="p">})</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dropdownSelectsEachOption</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<h3 id="phần-b-tạo-ba-file-suite">Phần B. Tạo ba file suite</h3>
+<p><code>smoke.xml</code>:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE suite SYSTEM &quot;https://testng.org/testng-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Smoke&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;test</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Smoke tests&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groups&gt;&lt;run&gt;&lt;include</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;smoke&quot;</span><span class="nt">/&gt;&lt;/run&gt;&lt;/groups&gt;</span>
+<span class="w">    </span><span class="nt">&lt;packages&gt;&lt;package</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tests&quot;</span><span class="nt">/&gt;&lt;/packages&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/test&gt;</span>
+<span class="nt">&lt;/suite&gt;</span></code></pre></div>
+<p><code>regression.xml</code>: tương tự, <code>include name="regression"</code>.</p>
+<p><code>all.xml</code>: liệt kê trực tiếp các class (như <a href="../../../../../testng.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">testng.xml</a> của dự án gốc).</p>
+<h3 id="phần-c-cho-phép-chọn-suite-khi-chạy">Phần C. Cho phép chọn suite khi chạy</h3>
+<p>Trong <code>pom.xml</code> của <code>SeleniumLab</code>:</p>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;suiteFile&gt;</span>all.xml<span class="nt">&lt;/suiteFile&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+...
+<span class="nt">&lt;plugin&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>3.5.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;configuration&gt;</span>
+<span class="w">        </span><span class="nt">&lt;suiteXmlFiles&gt;</span>
+<span class="w">            </span><span class="nt">&lt;suiteXmlFile&gt;</span>${suiteFile}<span class="nt">&lt;/suiteXmlFile&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/suiteXmlFiles&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span></code></pre></div>
+<p>Chạy:</p>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span>                          <span class="c"># all.xml (mặc định)</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-DsuiteFile=smoke.xml&quot;</span>
+<span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-DsuiteFile=regression.xml&quot;</span></code></pre></div>
+<h3 id="phần-d-quan-sát-và-ghi-lại">Phần D. Quan sát và ghi lại</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th><code>Tests run</code></th>
+<th>Class/Method chạy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-DsuiteFile=smoke.xml</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-DsuiteFile=regression.xml</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>-Dtest=LoginPracticeTest</code></td>
+<td></td>
+<td>(suite có được dùng không?)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phần-e-so-sánh-với-dự-án-gốc">Phần E. So sánh với dự án gốc</h3>
+<p>Trả lời:</p>
+<ol>
+<li><code>Selenium1</code> chạy <code>AllExercisesTest.main()</code> khác gì <code>mvnw test</code>? Báo cáo nằm ở đâu (<code>test-output/</code> vs <code>target/surefire-reports/</code>)?</li>
+<li>Vì sao <code>EnvironmentCheckTest</code> không chạy khi <code>mvnw test</code>?</li>
+<li>Làm sao chạy <code>EnvironmentCheckTest</code> bằng Maven?</li>
+</ol>
+<details>
+<summary>Đáp án gợi ý</summary>
+<ol>
+<li><code>main()</code> dùng API <code>TestNG</code> trực tiếp, không qua Surefire, báo cáo vào <code>test-output/</code>. <code>mvnw test</code> qua Surefire, báo cáo vào <code>target/surefire-reports/</code>.</li>
+<li>Không có trong <code>testng.xml</code>, mà Surefire dùng <code>suiteXmlFile</code>.</li>
+<li><code>.\mvnw.cmd test "-Dtest=EnvironmentCheckTest"</code> (bỏ qua suite file).</li>
+</ol>
+</details>
+<h3 id="phần-f-kiểm-tra-tests-run">Phần F. Kiểm tra "Tests run"</h3>
+<p>Chạy <code>.\mvnw.cmd test "-DsuiteFile=khong-ton-tai.xml"</code> ⇒ ghi lại kết quả (kỳ vọng: <strong>lỗi</strong> vì file suite không có — khác với <code>-Dtest=NoSuchTest</code> im lặng). So sánh hai trường hợp và rút ra quy tắc kiểm tra CI.</p>
+<h3 id="kết-quả-mong-đợi">Kết quả mong đợi</h3>
+<ul>
+<li><code>smoke.xml</code> chạy số test nhỏ; <code>regression.xml</code> chạy phần còn lại; <code>all.xml</code> chạy tất cả.</li>
+<li>Bạn giải thích được thứ tự ưu tiên giữa <code>-Dtest</code> và <code>suiteXmlFiles</code>.</li>
+</ul>
+<h3 id="lỗi-thường-gặp">Lỗi thường gặp</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tests run: 0</code></td>
+<td>Group sai tên / package sai</td>
+<td>Kiểm tra <code>groups</code> và <code>&lt;package name&gt;</code></td>
+</tr>
+<tr>
+<td><code>-DsuiteFile</code> không có tác dụng</td>
+<td>POM ghi cứng <code>testng.xml</code></td>
+<td>Dùng <code>${suiteFile}</code></td>
+</tr>
+<tr>
+<td><code>ClassNotFoundException</code></td>
+<td>Tên class thiếu package</td>
+<td><code>tests.LoginPracticeTest</code></td>
+</tr>
+<tr>
+<td>Nhầm <code>&lt;test&gt;</code> là một test method</td>
+<td>Hiểu sai</td>
+<td><code>&lt;test&gt;</code> = nhóm class</td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-page-object-model-practice.html"><small>← Bài trước</small><span>Lab 06: Page Object Model (Bài 10)</span></a><a class="next" href="08-mini-automation-project.html"><small>Bài tiếp theo →</small><span>Lab 08: Mini Automation Framework (Bài 12)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/07-run-tests-with-maven.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../../assets/nav.js"></script>
+<script src="../../assets/app.js"></script>
+</body>
+</html>

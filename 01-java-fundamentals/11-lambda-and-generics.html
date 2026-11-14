@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="01-java-fundamentals/11-lambda-and-generics" data-root="../" data-lesson="1" data-title="Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="java-generics-lambda-annotations-regex-và-threads-mức-cần-cho-selenium">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</h1>
+<blockquote>
+<p>🧭 Phase 1 · Java Fundamentals · Chapter 07
+⬅️ <a href="10-exception-handling.html">Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</a> · ➡️ <a href="12-file-handling.html">Java: File Handling, Properties và Configuration</a></p>
+<p>Chapter 07 (tiếp) · Mức ưu tiên: <strong>Important</strong> (Generics, Lambda, Annotations), <strong>Optional</strong> (Streams nâng cao, RegEx, Threads)</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generics (<code>List&lt;WebElement&gt;</code>, <code>Wait&lt;WebDriver&gt;</code>)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Functional interface, Lambda</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Method reference (<code>WebElement::getText</code>)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Stream cơ bản (<code>map</code>, <code>filter</code>, <code>toList</code>)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Annotations (<code>@Test</code>, <code>@Override</code>)</td>
+<td>Essential (để <em>đọc hiểu</em>)</td>
+</tr>
+<tr>
+<td>RegEx cơ bản</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Threads, <code>ThreadLocal</code> (giới thiệu)</td>
+<td>Optional (cần khi chạy song song)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="-learning-objectives">🎯 Learning Objectives</h2>
+<p>Sau bài này bạn có thể:</p>
+<ul>
+<li>Đọc hiểu và viết lambda, method reference</li>
+<li>Hiểu generics trong <code>List&lt;WebElement&gt;</code>, <code>Wait&lt;WebDriver&gt;</code></li>
+<li>Biết annotation là gì và TestNG đọc chúng thế nào</li>
+<li>Hiểu <code>ThreadLocal</code> để chạy song song</li>
+</ul>
+<h2 id="-prerequisites">📋 Prerequisites</h2>
+<ul>
+<li><a href="09-collections.html">Collections</a></li>
+<li><a href="10-exception-handling.html">Exception Handling</a></li>
+</ul>
+<h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
+<p><code>wait.until(d -&gt; { scrollToBottom(js); return d.findElements(LOC).size() &gt; countBeforeScroll; })</code> (Exercise07); <code>@Test</code>, <code>@BeforeMethod</code> (BaseTest).</p>
+<h2 id="1-khái-niệm">1. Khái niệm</h2>
+<ul>
+<li><strong>Generics:</strong> viết <code>List&lt;String&gt;</code> để compiler <strong>kiểm tra kiểu</strong> lúc biên dịch, không cần ép kiểu.</li>
+<li><strong>Lambda:</strong> cách viết ngắn một <strong>hàm ẩn danh</strong>, truyền như tham số. Selenium dùng trong Wait: <code>wait.until(d -&gt; ...)</code>.</li>
+<li><strong>Functional interface:</strong> interface có <strong>đúng một</strong> method trừu tượng (<code>Function</code>, <code>Predicate</code>, <code>Runnable</code>) — lambda "khớp" với nó.</li>
+<li><strong>Annotation:</strong> thẻ <code>@...</code> gắn metadata cho class/method; framework (TestNG, JUnit) đọc để biết cách chạy.</li>
+<li><strong>Thread:</strong> luồng thực thi; chạy test song song cần mỗi luồng có <code>WebDriver</code> riêng.</li>
+</ul>
+<h2 id="2-syntax">2. Syntax</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">          </span><span class="c1">// generics + diamond &lt;&gt;</span>
+<span class="n">Function</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="p">,</span><span class="w"> </span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">getTitle</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Home&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// lambda: (tham_số) -&gt; biểu_thức</span>
+<span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">notEmpty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">();</span>
+<span class="n">list</span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">s</span><span class="p">));</span><span class="w">       </span><span class="c1">// lambda với forEach</span>
+<span class="n">list</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">map</span><span class="p">(</span><span class="n">String</span><span class="p">::</span><span class="n">toUpperCase</span><span class="p">).</span><span class="na">toList</span><span class="p">();</span><span class="w">  </span><span class="c1">// method reference</span>
+<span class="nd">@Test</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w">               </span><span class="c1">// annotation</span>
+<span class="n">Pattern</span><span class="p">.</span><span class="na">compile</span><span class="p">(</span><span class="s">&quot;\\d+&quot;</span><span class="p">)</span><span class="w">                         </span><span class="c1">// RegEx</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cú pháp lambda</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x -&gt; x * 2</code></td>
+<td>1 tham số, biểu thức</td>
+</tr>
+<tr>
+<td><code>(a, b) -&gt; a + b</code></td>
+<td>nhiều tham số</td>
+</tr>
+<tr>
+<td><code>d -&gt; { ...; return true; }</code></td>
+<td>nhiều câu lệnh, cần <code>return</code></td>
+</tr>
+<tr>
+<td><code>ClassName::method</code></td>
+<td>method reference (viết gọn lambda gọi 1 method)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Biến cục bộ được dùng trong lambda phải là <strong>final hoặc effectively final</strong> (không được gán lại).</p>
+<h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
+<h3 id="ví-dụ-1--generics">Ví dụ 1 — Generics</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.ArrayList</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.HashMap</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Map</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// method generic: dùng được cho mọi kiểu T</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">firstOrNull</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">items</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">items</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">items</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">names</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="s">&quot;user1&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// names.add(5);              // ❌ lỗi biên dịch: List&lt;String&gt; chỉ nhận String</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">names</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">      </span><span class="c1">// không cần ép kiểu</span>
+
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">scores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">scores</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;login&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span>
+
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">firstOrNull</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">firstOrNull</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">()));</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">scores</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;login&quot;</span><span class="p">).</span><span class="na">size</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">user1 user1 null
+3</code></pre></div>
+<h3 id="ví-dụ-2--lambda-và-functional-interface">Ví dụ 2 — Lambda và Functional Interface</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.function.Function</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.function.Predicate</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">isSecureUrl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">url</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">String</span><span class="p">::</span><span class="n">length</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">isSecureUrl</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="s">&quot;https://x.com/secure&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">isSecureUrl</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="s">&quot;https://x.com/login&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">length</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">));</span>
+
+<span class="w">        </span><span class="n">Runnable</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;chạy một bước&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">step</span><span class="p">.</span><span class="na">run</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">true
+false
+8
+chạy một bước</code></pre></div>
+<h3 id="ví-dụ-3--mô-phỏng-waituntillambda-polling">Ví dụ 3 — Mô phỏng <code>wait.until(lambda)</code> (polling)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.function.Function</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pollCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// mô phỏng Wait.until: lặp lại đến khi điều kiện trả truthy hoặc hết số lần</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="nf">until</span><span class="p">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">condition</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxPolls</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">maxPolls</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">condition</span><span class="p">.</span><span class="na">apply</span><span class="p">(</span><span class="s">&quot;driver&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">Boolean</span><span class="p">.</span><span class="na">FALSE</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;điều kiện đạt ở lần poll &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="s">&quot;Timeout sau &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">maxPolls</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; lần&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Boolean</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">pollCount</span><span class="o">++</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">pollCount</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w">          </span><span class="c1">// đạt ở lần thứ 3</span>
+<span class="w">        </span><span class="p">},</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;kết quả = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ok</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">điều kiện đạt ở lần poll 3
+kết quả = true</code></pre></div>
+<p>Đây là cơ chế bên trong <code>WebDriverWait.until(...)</code>: gọi lại hàm điều kiện theo chu kỳ cho tới khi trả giá trị truthy hoặc hết timeout.</p>
+<h3 id="ví-dụ-4--stream--method-reference">Ví dụ 4 — Stream + method reference</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">captions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;name: user1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name: user2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name: user3&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">captions</span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w">              </span><span class="c1">// bỏ chuỗi rỗng</span>
+<span class="w">                </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">String</span><span class="p">::</span><span class="n">toUpperCase</span><span class="p">)</span><span class="w">               </span><span class="c1">// đổi hoa</span>
+<span class="w">                </span><span class="p">.</span><span class="na">toList</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">upper</span><span class="p">);</span>
+
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">captions</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">filter</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)).</span><span class="na">count</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">count</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[NAME: USER1, NAME: USER2, NAME: USER3]
+3</code></pre></div>
+<p>Trong Selenium: <code>driver.findElements(...).stream().map(WebElement::getText).toList()</code>.</p>
+<h3 id="ví-dụ-5--annotation-tự-định-nghĩa-để-hiểu-cách-testngjunit-hoạt-động">Ví dụ 5 — Annotation tự định nghĩa (để hiểu cách TestNG/JUnit hoạt động)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.annotation.ElementType</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.annotation.Retention</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.annotation.RetentionPolicy</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.annotation.Target</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.Method</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Retention</span><span class="p">(</span><span class="n">RetentionPolicy</span><span class="p">.</span><span class="na">RUNTIME</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@Target</span><span class="p">(</span><span class="n">ElementType</span><span class="p">.</span><span class="na">METHOD</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@interface</span><span class="w"> </span><span class="n">MyTest</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">description</span><span class="p">()</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@MyTest</span><span class="p">(</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;login ok&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;chạy testLogin&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">helper</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Main</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Main</span><span class="p">();</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Method</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">Main</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getDeclaredMethods</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">MyTest</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="na">getAnnotation</span><span class="p">(</span><span class="n">MyTest</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                               </span><span class="c1">// &quot;framework&quot; thấy @MyTest</span>
+<span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;tìm thấy test: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; (&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="na">description</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;)&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">m</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">instance</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">tìm thấy test: testLogin (login ok)
+chạy testLogin</code></pre></div>
+<p>TestNG làm điều tương tự (quét <code>@Test</code>, <code>@BeforeMethod</code>, <code>@AfterMethod</code> bằng reflection rồi gọi đúng thứ tự).</p>
+<h3 id="ví-dụ-6--regex-cơ-bản-và-threadlocal-giới-thiệu">Ví dụ 6 — RegEx cơ bản và <code>ThreadLocal</code> (giới thiệu)</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.regex.Matcher</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.regex.Pattern</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRIVER_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Matcher</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pattern</span><span class="p">.</span><span class="na">compile</span><span class="p">(</span><span class="s">&quot;\\$(\\d+\\.\\d{2})&quot;</span><span class="p">).</span><span class="na">matcher</span><span class="p">(</span><span class="s">&quot;Due: $50.00&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="na">find</span><span class="p">())</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;số tiền = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;12345&quot;</span><span class="p">.</span><span class="na">matches</span><span class="p">(</span><span class="s">&quot;\\d+&quot;</span><span class="p">));</span>
+
+<span class="w">        </span><span class="n">Thread</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Thread</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">DRIVER_NAME</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;driver-A&quot;</span><span class="p">);</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;T1 thấy &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DRIVER_NAME</span><span class="p">.</span><span class="na">get</span><span class="p">());</span><span class="w"> </span><span class="p">});</span>
+<span class="w">        </span><span class="n">t1</span><span class="p">.</span><span class="na">start</span><span class="p">();</span>
+<span class="w">        </span><span class="n">t1</span><span class="p">.</span><span class="na">join</span><span class="p">();</span><span class="w">                                           </span><span class="c1">// chờ t1 xong</span>
+<span class="w">        </span><span class="n">DRIVER_NAME</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;driver-main&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;main thấy &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DRIVER_NAME</span><span class="p">.</span><span class="na">get</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">số tiền = 50.00
+true
+T1 thấy driver-A
+main thấy driver-main</code></pre></div>
+<p>Mỗi luồng thấy <strong>giá trị riêng</strong> của <code>ThreadLocal</code> — đó là lý do <code>ThreadLocal&lt;WebDriver&gt;</code> giúp chạy test song song an toàn.</p>
+<h2 id="4-ứng-dụng-trong-selenium-real-world">4. Ứng dụng trong Selenium (Real-world)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kiến thức</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generics</td>
+<td><code>List&lt;WebElement&gt;</code>, <code>FluentWait&lt;WebDriver&gt;</code>, <code>wait.until(...)</code> trả <code>WebElement</code>/<code>Boolean</code> tuỳ điều kiện</td>
+</tr>
+<tr>
+<td>Lambda (Custom Wait)</td>
+<td><code>wait.until(d -&gt; { scrollToBottom(js); return d.findElements(LOC).size() &gt; before; });</code> (<code>Exercise07</code>)</td>
+</tr>
+<tr>
+<td><code>final</code> cho lambda</td>
+<td><code>final int countBeforeScroll = currentCount;</code> (<code>Exercise07</code>)</td>
+</tr>
+<tr>
+<td>Stream/method ref</td>
+<td><code>elements.stream().map(WebElement::getText).toList()</code></td>
+</tr>
+<tr>
+<td>Annotations</td>
+<td><code>@Test</code>, <code>@BeforeMethod</code>, <code>@AfterMethod</code> (TestNG, <code>BaseTest</code>); <code>@DataProvider</code>; <code>@Override</code></td>
+</tr>
+<tr>
+<td>RegEx</td>
+<td>Tách số từ <code>"$50.00"</code>, kiểm tra định dạng email/URL</td>
+</tr>
+<tr>
+<td><code>ThreadLocal</code></td>
+<td><code>ThreadLocal&lt;WebDriver&gt;</code> khi chạy song song</td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Boolean</span><span class="w"> </span><span class="n">closed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;modal&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// generics: V = Boolean</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span><span class="w">    </span><span class="c1">// V = WebElement</span></code></pre></div>
+<h2 id="5-lỗi-thường-gặp">5. Lỗi thường gặp</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lỗi</th>
+<th>Nguyên nhân</th>
+<th>Cách sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>local variables referenced from a lambda expression must be final or effectively final</code></td>
+<td>Gán lại biến bên ngoài lambda</td>
+<td>Dùng biến <code>final</code>/sao chép giá trị</td>
+</tr>
+<tr>
+<td><code>incompatible types</code> với generics</td>
+<td>Gán <code>List&lt;Object&gt;</code> cho <code>List&lt;String&gt;</code></td>
+<td>Khai báo đúng kiểu tham số</td>
+</tr>
+<tr>
+<td>Dùng generic với kiểu nguyên thủy (<code>List&lt;int&gt;</code>)</td>
+<td>Generics chỉ nhận kiểu tham chiếu</td>
+<td><code>List&lt;Integer&gt;</code></td>
+</tr>
+<tr>
+<td>Lambda có side effect khó đoán</td>
+<td>Điều kiện chờ gọi nhiều lần</td>
+<td>Giữ điều kiện đơn giản; side effect có chủ đích (như cuộn lặp) cần ghi chú</td>
+</tr>
+<tr>
+<td>Quên <code>@Test</code>/sai import annotation</td>
+<td>Test không chạy</td>
+<td><code>org.testng.annotations.Test</code></td>
+</tr>
+<tr>
+<td><code>static</code> driver dùng chung khi song song</td>
+<td>Các luồng giẫm nhau</td>
+<td><code>ThreadLocal&lt;WebDriver&gt;</code> + <code>remove()</code></td>
+</tr>
+<tr>
+<td>RegEx quên escape <code>\\</code></td>
+<td>Trong chuỗi Java phải viết <code>"\\d"</code></td>
+<td>Dùng <code>\\</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="-practice-exercises">✍️ Practice Exercises</h2>
+<blockquote>
+<p>Hãy <strong>tự làm trước</strong>; lời giải mẫu nằm ở cuối bài, mục <a href="#-reference-solutions">Reference Solutions</a>.</p>
+</blockquote>
+<h3 id="exercise-1-basic">Exercise 1 (Basic)</h3>
+<p><strong>Yêu cầu:</strong> Dùng <code>Predicate&lt;String&gt;</code> kiểm tra chuỗi bắt đầu bằng <code>name</code>; thử với hai chuỗi.</p>
+<p><strong>Input:</strong> "name: user1", "title"</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">true
+false</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>Predicate&lt;String&gt; p = s -&gt; s.startsWith("name");</code></p>
+</blockquote>
+<h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
+<p><strong>Yêu cầu:</strong> Với danh sách <code>a, ,b</code> (có chuỗi rỗng), dùng stream lọc rỗng và đổi HOA.</p>
+<p><strong>Input:</strong> List.of("a", "", "b")</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[A, B]</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> <code>filter(s -&gt; !s.isEmpty()).map(String::toUpperCase).toList()</code>.</p>
+</blockquote>
+<h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
+<p><strong>Yêu cầu:</strong> Viết <code>waitUntil(Supplier&lt;Boolean&gt; cond, int maxPolls)</code> trả số lần poll khi <code>cond</code> đúng, hoặc ném <code>IllegalStateException</code> nếu hết lượt. Thử với điều kiện đúng ở lần 2.</p>
+<p><strong>Input:</strong> maxPolls = 5</p>
+<p><strong>Expected Output:</strong></p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">đạt ở lần 2</code></pre></div>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Vòng <code>for</code>; <code>Supplier.get()</code>.</p>
+</blockquote>
+<h2 id="-knowledge-check">✅ Knowledge Check</h2>
+<p><strong>Câu 1.</strong> Biến cục bộ dùng trong lambda phải thế nào?</p>
+<ul>
+<li>A. <code>static</code></li>
+<li>B. final hoặc effectively final</li>
+<li>C. <code>public</code></li>
+<li>D. <code>volatile</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Không được gán lại sau khi khai báo.</p>
+</details>
+<p><strong>Câu 2.</strong> <code>List&lt;int&gt;</code> có hợp lệ không?</p>
+<ul>
+<li>A. Có</li>
+<li>B. Không, generics cần kiểu tham chiếu (<code>List&lt;Integer&gt;</code>)</li>
+<li>C. Chỉ trong lambda</li>
+<li>D. Chỉ với <code>var</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Generics không nhận kiểu nguyên thủy.</p>
+</details>
+<p><strong>Câu 3.</strong> <code>wait.until(d -&gt; ...)</code> nhận lambda thuộc kiểu nào?</p>
+<ul>
+<li>A. <code>Runnable</code></li>
+<li>B. <code>Function&lt;WebDriver, V&gt;</code></li>
+<li>C. <code>Comparator</code></li>
+<li>D. <code>Thread</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>until(Function&lt;? super T, V&gt;)</code>: gọi lặp đến khi kết quả truthy.</p>
+</details>
+<h2 id="-interview-corner">💼 Interview Corner</h2>
+<p><strong>1. What is a lambda expression and where do you use it in Selenium?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Lambda là gì, dùng ở đâu trong Selenium?</li>
+<li><strong>Suggested answer (EN):</strong> A lambda is a concise anonymous function. In Selenium it is used in custom waits such as <code>wait.until(d -&gt; d.findElements(by).size() &gt; n)</code> and in streams over elements.</li>
+<li><strong>Giải thích (VI):</strong> Biến bắt vào lambda phải effectively final.</li>
+<li><strong>Follow-up:</strong> <em>Why must captured variables be final?</em></li>
+</ul>
+<p><strong>2. Why use ThreadLocal<WebDriver> for parallel tests?</strong></p>
+<ul>
+<li>🇻🇳 <em>Dịch:</em> Vì sao <code>ThreadLocal&lt;WebDriver&gt;</code> cho test song song?</li>
+<li><strong>Suggested answer (EN):</strong> Each thread needs its own driver; a shared static driver would be overwritten by other threads. ThreadLocal gives each thread its own value, and I call <code>remove()</code> in teardown.</li>
+<li><strong>Giải thích (VI):</strong> Chỉ cần khi chạy song song.</li>
+<li><strong>Follow-up:</strong> <em>What happens if you forget remove()?</em></li>
+</ul>
+<h2 id="-lesson-summary">📌 Lesson Summary</h2>
+<p><strong>Kiến thức cần nhớ</strong></p>
+<ul>
+<li>Generics bắt lỗi kiểu lúc biên dịch</li>
+<li>Lambda = hàm ẩn danh; <code>wait.until(...)</code> dùng <code>Function</code></li>
+<li>Annotation là metadata mà framework đọc bằng reflection</li>
+</ul>
+<p><strong>Method / lệnh cần biết</strong></p>
+<ul>
+<li><code>Predicate</code>, <code>Function</code>, <code>Supplier</code>, <code>stream().filter/map/toList()</code>, <code>ClassName::method</code>, <code>ThreadLocal.get/set/remove</code></li>
+</ul>
+<p><strong>Điểm dễ nhầm lẫn</strong></p>
+<ul>
+<li>Lambda ≠ method reference (cú pháp viết gọn)</li>
+<li><code>List&lt;int&gt;</code> không hợp lệ</li>
+<li><code>static WebDriver</code> ≠ <code>ThreadLocal&lt;WebDriver&gt;</code></li>
+</ul>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="12-file-handling.html">Java: File Handling, Properties và Configuration</a></p>
+<h2 id="-reference-solutions">🔑 Reference Solutions</h2>
+<blockquote>
+<p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
+</blockquote>
+<details>
+<summary>Lời giải Exercise 1</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.function.Predicate</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Predicate</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">isName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">startsWith</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">isName</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="s">&quot;name: user1&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">isName</span><span class="p">.</span><span class="na">test</span><span class="p">(</span><span class="s">&quot;title&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">true
+false</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 2</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">).</span><span class="na">stream</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">s</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span>
+<span class="w">                </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">String</span><span class="p">::</span><span class="n">toUpperCase</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">toList</span><span class="p">();</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">out</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[A, B]</code></pre></div>
+</details>
+<details>
+<summary>Lời giải Exercise 3</summary>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.function.Supplier</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">calls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">waitUntil</span><span class="p">(</span><span class="n">Supplier</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cond</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxPolls</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">maxPolls</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cond</span><span class="p">.</span><span class="na">get</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="s">&quot;Timeout&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">polls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">waitUntil</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">++</span><span class="n">calls</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;đạt ở lần &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">polls</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">đạt ở lần 2</code></pre></div>
+</details>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="10-exception-handling.html"><small>← Bài trước</small><span>Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</span></a><a class="next" href="12-file-handling.html"><small>Bài tiếp theo →</small><span>Java: File Handling, Properties và Configuration</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/11-lambda-and-generics.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
