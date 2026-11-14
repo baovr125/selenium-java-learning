@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · Kế hoạch học căn bản Selenium + Java (đã có nền OOP, cần ôn lại; chuẩn bị cho Playwright) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/09-foundation-plan-selenium-java" data-root="../" data-lesson="0" data-title="09 · Kế hoạch học căn bản Selenium + Java (đã có nền OOP, cần ôn lại; chuẩn bị cho Playwright)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="09--kế-hoạch-học-căn-bản-selenium--java-đã-có-nền-oop-cần-ôn-lại-chuẩn-bị-cho-playwright">09 · Kế hoạch học căn bản Selenium + Java (đã có nền OOP, cần ôn lại; chuẩn bị cho Playwright)</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Thay thế bản trước (giả định Java từ đầu) và file <a href="08-two-week-fast-track.html">08</a> (giả định Java vững).
+Phiên bản này dựa trên: <strong>đã học OOP Java ở đại học nhưng quên nhiều, còn nhớ sơ sơ</strong> · đã có Testing/API/SQL · chỉ có ~2 tuần · mục tiêu căn bản Selenium + Java · sau này học Playwright.</p>
+</blockquote>
+<h2 id="1-điều-chỉnh-vì-bạn-đã-học-oop">1. Điều chỉnh vì bạn đã học OOP</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trước (Java từ đầu)</th>
+<th>Bây giờ (ôn lại)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>~12–14 giờ cho Java, học từng bài</td>
+<td><strong>~8–9 giờ</strong> — <em>ôn</em> nhanh (nhớ lại nhanh hơn học mới)</td>
+</tr>
+<tr>
+<td>Học OOP như kiến thức mới</td>
+<td>OOP chỉ cần <strong>ôn + gắn vào code Selenium</strong> (<code>WebDriver</code> là interface, <code>BaseTest</code> là kế thừa, Page là đóng gói)</td>
+</tr>
+<tr>
+<td>POM nhập môn (chỉ Login)</td>
+<td><strong>POM đầy đủ hơn</strong> (BasePage + DriverFactory + Config) vì nền OOP cho phép</td>
+</tr>
+<tr>
+<td>Chạm Selenium ngày 3</td>
+<td><strong>Chạm Selenium ngày 2</strong></td>
+</tr>
+<tr>
+<td>Java là điểm yếu nhất</td>
+<td>Điểm yếu chuyển sang <strong>phần Java ngoài OOP</strong>: Collections, Generics, Lambda, Exceptions — các môn OOP đại học thường dạy ít hoặc không dạy (<strong>giả định của tôi</strong>, hãy kiểm chứng ở bài chẩn đoán Ngày 1)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Thời gian giả định: ~2,5–3 giờ/ngày trong tuần, ~4 giờ/ngày cuối tuần ≈ <strong>40 giờ / 14 ngày</strong>; mục ★ là lộ trình tối thiểu (~24 giờ).</p>
+<h2 id="2-bài-chẩn-đoán-java-ngày-1-45-phút-không-tra-cứu">2. Bài chẩn đoán Java (Ngày 1, 45 phút, không tra cứu)</h2>
+<p>Viết bằng tay hoặc trong IDE tắt gợi ý:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Yêu cầu</th>
+<th>Kiểm tra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>class Account</code>: field <code>private</code>, constructor, getter, <code>deposit(amount)</code> ném <code>IllegalArgumentException</code> nếu âm</td>
+<td>Đóng gói, constructor, exception</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>SavingsAccount extends Account</code> ghi đè <code>toString()</code>; gọi <code>super(...)</code></td>
+<td>Kế thừa, <code>super</code>, override</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>interface Notifier { void send(String msg); }</code> + 2 lớp cài đặt; <code>List&lt;Notifier&gt;</code> duyệt và gọi <code>send</code></td>
+<td>Interface, đa hình, <code>List</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Đếm số lần xuất hiện của từng từ trong một <code>String</code> bằng <code>Map&lt;String,Integer&gt;</code></td>
+<td>Collections, <code>String.split</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>Integer.parseInt("abc")</code> bọc trong <code>try/catch/finally</code>; giải thích <code>finally</code></td>
+<td>Exceptions</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Cách đọc kết quả:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kết quả</th>
+<th>Việc làm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5/5 hoặc 4/5</td>
+<td>Đi nhanh: bỏ phần "ôn OOP" ở Ngày 3, dùng thời gian đó cho Selenium</td>
+</tr>
+<tr>
+<td>2–3/5</td>
+<td>Làm đúng kế hoạch bên dưới</td>
+</tr>
+<tr>
+<td>0–1/5</td>
+<td>Tuy bạn nói đã học OOP nhưng thực tế cần học lại: thêm 2 ngày Java (xem <a href="../01-java-fundamentals/07-classes-and-objects.html">07 Classes</a>, <a href="../01-java-fundamentals/08-oop-concepts.html">08 OOP</a> đầy đủ + Exercise 1–3) trước khi sang Ngày 3</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ghi lại <strong>danh sách chỗ quên</strong> — đó là danh sách ôn của bạn, không cần ôn những gì đã nhớ.</p>
+<h2 id="3-cách-học-mỗi-ngày">3. Cách học (mỗi ngày)</h2>
+<ol>
+<li><strong>Ôn Java bằng cách gõ lại</strong>: đọc Syntax + 1–2 ví dụ (~15–20 phút/bài), rồi làm <strong>Exercise 3</strong> (Practical); mở lời giải sau khi chạy. Chỉ đọc kỹ chỗ bài chẩn đoán cho thấy bạn quên.</li>
+<li><strong>Mỗi chủ đề Java phải xuất hiện trong code Selenium</strong> bạn tự gõ cuối buổi.</li>
+<li><strong>Bỏ qua:</strong> Knowledge Check (đáp án lệch: 135/180 câu là B), Interview Corner cuối bài, Lesson Summary.</li>
+<li>Mỗi buổi <strong>commit lên GitHub</strong> (repo riêng <code>selenium-java-basics</code>).</li>
+<li>Mỗi 3–4 ngày có <em>Checkpoint</em> tự kiểm không nhìn tài liệu.</li>
+</ol>
+<p>Đường dẫn bài: thư mục <code>docs/selenium-learning/</code>.</p>
+<h2 id="4-bản-đồ-oop--selenium-ôn-xong-phải-giải-thích-được">4. Bản đồ OOP → Selenium (ôn xong phải giải thích được)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Khái niệm OOP</th>
+<th>Xuất hiện ở đâu trong Selenium/dự án</th>
+<th>Bạn phải nói được</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Class, object, constructor</td>
+<td><code>new LoginPage(driver)</code>; <code>new WebDriverWait(driver, …)</code></td>
+<td>Constructor nhận <code>driver</code> để làm gì</td>
+</tr>
+<tr>
+<td>Đóng gói (<code>private</code>, getter)</td>
+<td>Page: <code>private By username</code>; method công khai <code>loginAs(...)</code></td>
+<td>Vì sao giấu locator trong Page</td>
+</tr>
+<tr>
+<td>Kế thừa (<code>extends</code>, <code>super</code>)</td>
+<td><code>Exercise01_LoginTest extends BaseTest</code>; <code>LoginPage extends BasePage</code></td>
+<td>Test dùng lại <code>driver</code>/<code>wait</code> từ lớp cha</td>
+</tr>
+<tr>
+<td>Đa hình + Interface</td>
+<td><code>WebDriver driver = new ChromeDriver()</code></td>
+<td>Vì sao khai báo kiểu <code>WebDriver</code>, đổi trình duyệt không đổi test</td>
+</tr>
+<tr>
+<td>Abstract class</td>
+<td><code>BasePage</code>/<code>BaseTest</code> có thể <code>abstract</code></td>
+<td>Khác interface ở đâu</td>
+</tr>
+<tr>
+<td><code>static</code>, <code>final</code></td>
+<td>Hằng số URL; <code>DriverFactory.create(...)</code>; <code>ThreadLocal</code> (khái niệm)</td>
+<td>Khi nào dùng static, vì sao driver <strong>không</strong> nên là <code>static</code> khi song song</td>
+</tr>
+<tr>
+<td>Overloading</td>
+<td><code>click(By)</code> và <code>click(WebElement)</code> trong BasePage</td>
+<td>Khác overriding</td>
+</tr>
+<tr>
+<td>Package, access modifier</td>
+<td><code>base/</code>, <code>pages/</code>, <code>tests/</code>; <code>protected WebDriver driver</code></td>
+<td>Vì sao <code>protected</code></td>
+</tr>
+<tr>
+<td>Generics, lambda <em>(thường chưa học)</em></td>
+<td><code>List&lt;WebElement&gt;</code>; <code>wait.until(d -&gt; …)</code></td>
+<td>Hiểu cú pháp đọc được</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-kế-hoạch-14-ngày">5. Kế hoạch 14 ngày</h2>
+<p>★ = bắt buộc.</p>
+<h3 id="tuần-1--ôn-java--selenium-nhập-môn">Tuần 1 — Ôn Java + Selenium nhập môn</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Giờ</th>
+<th>Nội dung</th>
+<th>Sản phẩm cuối ngày</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>3</td>
+<td>★ <a href="../01-java-fundamentals/00-environment-setup.html">Environment Setup</a>; ★ <strong>bài chẩn đoán §2</strong>; ★ chạy <code>.\mvnw.cmd clean test</code> trên <code>Selenium1</code>; đọc <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a> và <strong>ghi lại dòng nào chưa hiểu</strong>; ★ <a href="../02-maven-and-project/03-maven-wrapper.html">Maven Wrapper</a> đọc nhanh</td>
+<td>Test xanh; danh sách chỗ quên; repo GitHub có commit đầu</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>3</td>
+<td>Java ôn nhanh: <a href="../01-java-fundamentals/03-operators-and-strings.html">Strings</a> (<code>equals</code>, <code>contains</code>, <code>trim</code>), <a href="../01-java-fundamentals/04-control-flow.html">Control Flow</a>, <a href="../01-java-fundamentals/06-methods.html">Methods</a> — <strong>chỉ phần bạn quên</strong>; ★ <a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium Intro</a> + <a href="../03-selenium-fundamentals/02-webdriver.html">WebDriver</a>; ★ <strong>test đầu tay</strong> theo <a href="../08-practical-project/labs/01-first-selenium-test.html">Lab 01</a> (mở trang, kiểm tra <code>title</code>)</td>
+<td>Dự án riêng chạy <code>mvnw test</code> xanh, đã push</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>3</td>
+<td>★ <strong>Ôn OOP gắn Selenium</strong> (bản đồ §4): <a href="../01-java-fundamentals/07-classes-and-objects.html">Classes</a>, <a href="../01-java-fundamentals/08-oop-concepts.html">OOP</a> — Syntax + ví dụ kế thừa/interface/đa hình; ★ <strong>tự viết lại <code>BaseTest</code> không nhìn</strong> và giải thích 5 điểm trong bảng §4; ★ <a href="../03-selenium-fundamentals/03-locators.html">Locators</a> phần id/name/CSS</td>
+<td><code>BaseTest</code> của bạn chạy; bạn giải thích được <code>WebDriver driver = new ChromeDriver()</code></td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>3</td>
+<td>★ <a href="../01-java-fundamentals/09-collections.html">Collections</a> (<code>List</code>, <code>Map</code>, <code>Set</code> — thường quên/chưa học); ★ <a href="../01-java-fundamentals/10-exception-handling.html">Exceptions</a>; ★ Locators phần XPath (axes) + chọn locator ổn định; ★ <a href="../03-selenium-fundamentals/04-webelement.html">WebElement</a></td>
+<td>Dùng <code>List&lt;WebElement&gt;</code> + <code>try/catch</code> trong 1 test</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>3</td>
+<td>★ <a href="../08-practical-project/labs/02-locator-practice.html">Lab 02</a>; ★ <a href="../03-selenium-fundamentals/05-browser-navigation.html">Navigation</a>; ★ <a href="../03-selenium-fundamentals/06-element-interactions.html">Element Interactions + Dropdown</a></td>
+<td>15 locator ổn định, ≥ 13/15 đúng</td>
+</tr>
+<tr>
+<td><strong>6</strong> (cuối tuần)</td>
+<td>4</td>
+<td>★ Tự viết lại Exercise 1–4 <strong>không nhìn đáp án</strong>; ★ <a href="../03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions: Alert/Frame/Window</a> + <a href="../08-practical-project/labs/05-form-automation.html">Lab 05</a></td>
+<td>4 test xanh 3/3; Alert + Frame + Window chạy</td>
+</tr>
+<tr>
+<td><strong>7</strong> (cuối tuần)</td>
+<td>3</td>
+<td><strong>Checkpoint:</strong> <a href="../interview/java-interview.html">java-interview</a> Q1–Q7 trả lời thành tiếng; viết 8 locator + 1 test Login không nhìn; <a href="../03-selenium-fundamentals/08-mouse-and-keyboard-actions.html">Actions</a> nếu còn giờ</td>
+<td>Danh sách 5 điểm yếu → xử lý ngay</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="tuần-2--wait-java-nâng-cao-vừa-đủ-testng-pom">Tuần 2 — Wait, Java nâng cao vừa đủ, TestNG, POM</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Giờ</th>
+<th>Nội dung</th>
+<th>Sản phẩm cuối ngày</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>8</strong></td>
+<td>3</td>
+<td>★ <a href="../03-selenium-fundamentals/10-selenium-exceptions.html">Selenium Exceptions</a> (Stale, NoSuchElement, ClickIntercepted, NotInteractable); ★ <a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging</a> (screenshot, headless); ★ <a href="../01-java-fundamentals/11-lambda-and-generics.html">Lambda &amp; Generics</a> — <strong>chỉ lambda, <code>Function</code>, <code>List&lt;T&gt;</code></strong> (cần cho Wait)</td>
+<td>Test tự chụp ảnh khi fail; đọc được <code>d -&gt; …</code></td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td>3</td>
+<td>★ <strong>Wait:</strong> <a href="../04-wait-mechanisms/01-wait-introduction.html">01</a>, <a href="../04-wait-mechanisms/03-explicit-wait.html">03 Explicit</a>, <a href="../04-wait-mechanisms/04-expected-conditions.html">04 ExpectedConditions</a>; <a href="../04-wait-mechanisms/02-implicit-wait.html">02 Implicit</a> đọc kết luận</td>
+<td>Giải thích <code>until()</code>, timeout, polling, ignored exceptions</td>
+</tr>
+<tr>
+<td><strong>10</strong></td>
+<td>3</td>
+<td>★ Wait <a href="../04-wait-mechanisms/05-fluent-wait.html">05 Fluent/Custom</a>, <a href="../04-wait-mechanisms/06-wait-comparison.html">06 So sánh</a>, <a href="../04-wait-mechanisms/07-real-world-scenarios.html">07 tình huống</a>; ★ <a href="../08-practical-project/labs/03-wait-practice.html">Lab 03</a></td>
+<td>Giải thích Exercise 7 và Exercise 10</td>
+</tr>
+<tr>
+<td><strong>11</strong></td>
+<td>3</td>
+<td>★ <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG</a> (annotations, <code>testng.xml</code>, Groups; DataProvider đọc ví dụ); ★ <a href="../05-testing-framework/03-assertions-and-verification.html">Assertions</a>; <strong>tự tạo 3 ca flaky</strong> (sleep cứng, spinner che nút, thông báo cũ) và sửa</td>
+<td>Suite chạy bằng <code>mvnw</code>; 3 ca "triệu chứng → nguyên nhân → sửa"</td>
+</tr>
+<tr>
+<td><strong>12</strong></td>
+<td>3</td>
+<td>★ <a href="../06-automation-framework/01-page-object-model.html">POM</a> + <a href="../08-practical-project/labs/06-page-object-model-practice.html">Lab 06</a>: <code>BasePage</code> (overloading <code>click</code>), <code>LoginPage</code>, <code>SecureAreaPage</code>; <strong>không</strong> dùng <code>PageFactory</code></td>
+<td>Test Login qua POM, không còn <code>By</code> trong test</td>
+</tr>
+<tr>
+<td><strong>13</strong></td>
+<td>3</td>
+<td>★ <a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a> (<code>DriverFactory</code>) + <a href="../06-automation-framework/04-configuration-management.html">Configuration</a>; Java <a href="../01-java-fundamentals/12-file-handling.html">File/Properties</a> chỉ <code>Properties</code>; refactor Exercise 1, 4, 10 sang POM + <code>config.properties</code> + screenshot khi fail (không chép code Lab 08)</td>
+<td>≥ 6 test, <code>-Dheadless=true</code> chạy</td>
+</tr>
+<tr>
+<td><strong>14</strong></td>
+<td>3</td>
+<td><strong>Checkpoint cuối:</strong> <a href="../interview/wait-interview.html">wait-interview</a> Q1–Q10 + <a href="../interview/selenium-interview.html">selenium-interview</a> Q1–Q10 (nói tiếng Anh, ghi âm); README repo; ghi chú "đã học / còn yếu"; đọc §6</td>
+<td>Repo hoàn chỉnh</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Tiêu chí "đạt căn bản":</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tiêu chí</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Chạy <code>mvnw clean test</code>, đọc <code>Tests run</code>; biết <code>Tests run: 0</code> là cờ đỏ</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Giải thích được bản đồ OOP §4 bằng code của chính bạn (không chỉ định nghĩa)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Dùng <code>List</code>/<code>Map</code> và <code>try/catch</code> trong test; đọc hiểu lambda của <code>wait.until(d -&gt; …)</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Locator CSS/XPath ổn định (Lab 02 ≥ 13/15)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Xử lý Dropdown, Alert, Frame, Window</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Chọn đúng Wait; <strong>không</strong> <code>Thread.sleep</code>/Implicit; sửa được 3 ca flaky tự tạo</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Phân biệt 4 exception chính của Selenium</td>
+</tr>
+<tr>
+<td>8</td>
+<td>TestNG có <code>testng.xml</code> + group; 10 Exercise tự viết lại xanh</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Framework nhỏ: POM + <code>BasePage</code> + <code>DriverFactory</code> + config + screenshot</td>
+</tr>
+</tbody>
+</table></div>
+<p>Đạt ≥ 7/9 → chuyển giai đoạn sau; dưới 7 → giữ chủ đề, kéo dài vài ngày, không thêm nội dung mới.</p>
+<h2 id="6-chuẩn-bị-cho-playwright">6. Chuẩn bị cho Playwright</h2>
+<blockquote>
+<p>Là kiến thức chung của tôi, <strong>chưa kiểm chứng trên máy bạn</strong>; khi học hãy đối chiếu tài liệu chính thức của Playwright (bản Java/TS/Python), vì API đổi theo phiên bản.</p>
+</blockquote>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kiến thức học bây giờ</th>
+<th>Trong Playwright</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Locator (CSS/XPath, ổn định)</td>
+<td>Vẫn dùng được; khuyến khích locator theo ngữ nghĩa (role, text, label, test-id) — cùng tư duy</td>
+</tr>
+<tr>
+<td>Wait &amp; đồng bộ hoá</td>
+<td>Playwright tự chờ trước hành động và có assertion tự thử lại; bạn hiểu <em>vì sao</em> cần cơ chế đó và biết ca nào vẫn cần điều kiện riêng</td>
+</tr>
+<tr>
+<td>POM, <code>BasePage</code>, kế thừa, interface</td>
+<td>Dùng nguyên (và nền OOP của bạn dùng được ngay)</td>
+</tr>
+<tr>
+<td>Test độc lập, assert ở test, chẩn đoán flaky</td>
+<td>Y hệt</td>
+</tr>
+<tr>
+<td>Java, Maven, TestNG/JUnit</td>
+<td>Dùng lại 100% nếu học Playwright bản Java; nếu chọn TypeScript/Python thì chỉ còn khái niệm</td>
+</tr>
+<tr>
+<td>Alert/Frame/Window/Actions/JS</td>
+<td>Có tương đương (dialog, frame locator, page/context, hover/drag, evaluate); cú pháp khác</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Thói quen nên có ngay:</strong> không <code>Thread.sleep</code>, không Implicit Wait, không XPath tuyệt đối; locator trong Page, assertion trong test; ghi lại nguyên nhân mỗi lần test fail.
+<strong>Không đầu tư sâu:</strong> <code>PageFactory</code>/<code>@FindBy</code>, Selenium Grid, helper wait tự chế phức tạp, trường hợp biên của <code>Actions</code>, Maven Profile/Failsafe.
+<strong>Chuyển tiếp hiệu quả nhất:</strong> viết lại 10 Exercise của <code>Selenium1</code> bằng Playwright để so sánh số dòng code, số chỗ chờ thủ công, độ ổn định. Chọn ngôn ngữ Playwright dựa trên JD, chưa cần quyết bây giờ; còn phân vân thì giữ Java để tận dụng nền hiện có. Đọc thêm JUnit 5 khoảng 1 giờ (nhiều ví dụ Playwright Java dùng JUnit).</p>
+<h2 id="7-tuần-3-tuỳ-chọn">7. Tuần 3 tuỳ chọn</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Mục đích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10–15 kata Java (<code>List</code>/<code>Map</code>/chuỗi/exception) + <a href="../interview/java-interview.html">java-interview</a> Q8–Q10</td>
+<td>Vá phần Java ngoài OOP</td>
+</tr>
+<tr>
+<td>Git: branch + PR + giải quyết 1 conflict (<a href="../07-git-and-team-workflow/03-pull-request-and-conflicts.html">Git 03</a>)</td>
+<td>Chuẩn bị làm việc nhóm</td>
+</tr>
+<tr>
+<td>Thêm 2 ca flaky: stale, tab mới</td>
+<td>Củng cố Wait</td>
+</tr>
+<tr>
+<td><a href="../interview/scenario-based-interview.html">scenario-based-interview</a> S1–S7</td>
+<td>Luyện nói tiếng Anh</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-nếu-thời-gian-ít-hơn-dự-kiến">8. Nếu thời gian ít hơn dự kiến</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Giờ/ngày</th>
+<th>Điều chỉnh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>~1,5 giờ (≈ 21 giờ)</td>
+<td>Chỉ làm ★; bỏ Actions, bỏ Ngày 13 (DriverFactory/Config), POM chỉ Login</td>
+</tr>
+<tr>
+<td>~2 giờ (≈ 28 giờ)</td>
+<td>Chỉ ★ + Checkpoint; bỏ Ngày 13 phần refactor Exercise 4, 10</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Không cắt:</strong> Locators (Ngày 3–5), Wait (Ngày 9–11), tự viết lại Exercise (Ngày 6).</p>
+<h2 id="9-rủi-ro">9. Rủi ro</h2>
+<ol>
+<li><strong>Tự tin quá về OOP:</strong> "đã học" ≠ "viết được". Dựa vào kết quả bài chẩn đoán, không dựa vào cảm giác.</li>
+<li><strong>Collections/Generics/Lambda bị bỏ sót</strong> vì tưởng thuộc OOP — đây là các mảng dễ vướng nhất khi đọc code Selenium.</li>
+<li><strong>Đọc nhiều, gõ ít:</strong> giữ ≥ 60% thời gian là gõ và chạy.</li>
+<li>Ước lượng giờ có thể lệch: đo giờ thực ở Ngày 1–3; nếu chậm hơn 30%, chuyển mục không ★ sang tuần 3.</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="08-two-week-fast-track.html"><small>← Bài trước</small><span>08 · Lộ trình cấp tốc 2 tuần (đã có Testing / API / SQL, chỉ cần Selenium)</span></a><a class="next" href="10-changes-applied.html"><small>Bài tiếp theo →</small><span>10 · Nhật ký thay đổi đã áp dụng sau đánh giá (14/11/2026)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/09-foundation-plan-selenium-java.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

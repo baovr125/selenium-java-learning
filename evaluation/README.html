@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo cáo đánh giá lộ trình Automation Testing (Selenium Java) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/README" data-root="../" data-lesson="0" data-title="Báo cáo đánh giá lộ trình Automation Testing (Selenium Java)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="báo-cáo-đánh-giá-lộ-trình-automation-testing-selenium-java">Báo cáo đánh giá lộ trình Automation Testing (Selenium Java)</h1>
+<blockquote>
+<p>Vai trò đánh giá: Senior Automation Test Engineer · Automation Architect · Technical Interviewer (tuyển Fresher/Junior).
+Ngày đánh giá: 14/11/2026 · Phạm vi: <code>docs/selenium-learning/</code> + source <code>Selenium1</code> (<code>pom.xml</code>, <code>testng.xml</code>, <code>src/test/java</code>, <code>.mvn/</code>, <code>mvnw*</code>).
+<strong>Nguyên tắc:</strong> chỉ <strong>đọc</strong> — không sửa tài liệu học hay source. Mọi file mới nằm trong thư mục <code>evaluation/</code> này.</p>
+</blockquote>
+<h2 id="kết-luận-trong-30-giây">Kết luận trong 30 giây</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Trả lời ngắn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lộ trình hiện tại là tài liệu tốt không?</td>
+<td><strong>Có.</strong> Là một bộ tham khảo chất lượng cao: bám source thật, Wait/Maven Wrapper rất sâu, 93 ví dụ Java đã chạy thật, bộ câu hỏi tình huống tốt.</td>
+</tr>
+<tr>
+<td>Là <em>lộ trình đưa người mới đến mức ứng tuyển Junior</em> thì sao?</td>
+<td><strong>Chưa đạt.</strong> Thiếu hẳn 3 mảng (Software Testing, API/SQL, CI thực hành); thứ tự cho phép chạm Selenium muộn (tuần 4) và đưa Lab thực hành về cuối (tuần 9–10); "dự án" cuối chỉ dựng lại các bài đã làm.</td>
+</tr>
+<tr>
+<td>Điểm mạnh nhất?</td>
+<td>Wait &amp; Synchronization, Maven Wrapper, phân tích source thật, câu hỏi phỏng vấn tình huống.</td>
+</tr>
+<tr>
+<td>Lỗ hổng lớn nhất?</td>
+<td><strong>0 lần xuất hiện</strong> các từ khoá ISTQB, STLC, BVA, Equivalence Partitioning, Severity, Bug Report, Scrum, SQL, Postman (xem <a href="02-knowledge-gap-analysis.html">02</a>).</td>
+</tr>
+<tr>
+<td>Hoàn thành đủ lộ trình hiện tại → ứng tuyển được chưa?</td>
+<td><strong>Chưa nên.</strong> Đủ để qua phần Selenium/Wait/Maven của vòng kỹ thuật, nhưng sẽ rớt ở câu hỏi lý thuyết kiểm thử, Java "bản chất" và CV không có dự án khác biệt. Ước lượng thời gian thật: <strong>~200 giờ</strong>, tức ~20 tuần ở 10 giờ/tuần (không phải 10 tuần).</td>
+</tr>
+<tr>
+<td>Cần làm gì?</td>
+<td>6 thay đổi cốt lõi ở <a href="07-final-recommendations.html">07-final-recommendations.md</a>; lộ trình tối ưu <strong>~30 tuần bán thời gian</strong> ở <a href="06-recommended-learning-roadmap.html">06</a>.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="danh-sách-file">Danh sách file</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="01-current-roadmap-audit.html">01-current-roadmap-audit.md</a></td>
+<td>Phạm vi đã đọc, xác định tài liệu chính, điểm không nhất quán, điểm mạnh/yếu, chấm điểm</td>
+</tr>
+<tr>
+<td><a href="02-knowledge-gap-analysis.html">02-knowledge-gap-analysis.md</a></td>
+<td>9 nhóm năng lực: Có/Thiếu/Quá sâu; bảng 14 chủ đề (Critical/High/Medium/Low)</td>
+</tr>
+<tr>
+<td><a href="03-learning-sequence-review.html">03-learning-sequence-review.md</a></td>
+<td>Đánh giá thứ tự học (giữ/chuyển/chia/gộp/thêm/Optional) + đánh giá cấu trúc bài học kiểu W3Schools</td>
+</tr>
+<tr>
+<td><a href="04-practical-exercise-assessment.html">04-practical-exercise-assessment.md</a></td>
+<td>Đánh giá bài tập Level 1–5, chất lượng quiz, dự án mô phỏng; đề xuất Capstone</td>
+</tr>
+<tr>
+<td><a href="05-interview-readiness-assessment.html">05-interview-readiness-assessment.md</a></td>
+<td>Rubric phỏng vấn, bảng năng lực 0–4, 4 mức sẵn sàng, bộ 95 câu hỏi mô phỏng</td>
+</tr>
+<tr>
+<td><a href="06-recommended-learning-roadmap.html">06-recommended-learning-roadmap.md</a></td>
+<td>Lộ trình tối ưu theo Phase: mục tiêu, kiến thức, thực hành, Exit Criteria, thời lượng</td>
+</tr>
+<tr>
+<td><a href="07-final-recommendations.html">07-final-recommendations.md</a></td>
+<td>Đề xuất ưu tiên, kế hoạch triển khai 4 sprint, trả lời 11 câu hỏi của bạn</td>
+</tr>
+<tr>
+<td><a href="09-foundation-plan-selenium-java.html">09-foundation-plan-selenium-java.md</a></td>
+<td><strong>Kế hoạch hiện hành:</strong> học căn bản Selenium + Java trong 2 tuần cho người đã học OOP nhưng quên nhiều, có chuẩn bị chuyển sang Playwright (thay thế 08)</td>
+</tr>
+<tr>
+<td><a href="10-changes-applied.html">10-changes-applied.md</a></td>
+<td><strong>Nhật ký thay đổi đã áp dụng</strong> (mở rộng phỏng vấn, sửa lỗi nhất quán, xáo đáp án quiz) và những gì cố ý chưa làm</td>
+</tr>
+<tr>
+<td><a href="11-html-sync-plan.html">11-html-sync-plan.md</a></td>
+<td><strong>Kế hoạch bàn giao cho phiên sau:</strong> đồng bộ và kiểm chứng bản HTML (<code>site/</code>), quyết định về <code>evaluation/</code> trên web, xuất bản online</td>
+</tr>
+<tr>
+<td><a href="08-two-week-fast-track.html">08-two-week-fast-track.md</a></td>
+<td><strong>Phiên bản cấp tốc 2 tuần</strong> cho người đã có Testing/API/SQL, chỉ cần Selenium (01–07 viết cho người mới hoàn toàn)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="phương-pháp--độ-tin-cậy-nói-thẳng">Phương pháp &amp; độ tin cậy (nói thẳng)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Việc đã làm</th>
+<th>Mức độ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đọc <strong>toàn bộ</strong>: <code>README.md</code>, <code>LEARNING_ROADMAP.md</code>, <code>LEARNING_PROGRESS.md</code>, <code>00-project-analysis.md</code>, <code>UPDATE_REPORT.md</code>, <code>labs/README.md</code>, <code>interview/README.md</code>, <code>progress/README.md</code></td>
+<td>Đọc kỹ từng dòng</td>
+</tr>
+<tr>
+<td>Đọc <strong>toàn bộ source thật</strong> đã dùng làm bằng chứng: <code>pom.xml</code>, <code>testng.xml</code>, <code>.mvn/maven.config</code>, <code>maven-wrapper.properties</code>, <code>BaseTest.java</code>, <code>Exercise01</code>, <code>Exercise10</code>, <code>.gitignore</code>, <code>test-output/testng-failed.xml</code>; đối chiếu 8 Exercise còn lại qua <code>00-project-analysis.md</code></td>
+<td>Đọc kỹ + đối chiếu</td>
+</tr>
+<tr>
+<td>Đọc kỹ các bài mẫu đại diện: Java <code>02-variables</code>, Wait <code>03-explicit-wait</code>, <code>07-real-world-scenarios</code> (đầu bài), Phase 8 <code>01-requirements-and-test-design</code> (toàn bài), <code>02-build-the-project</code>, <code>03-run-debug-report-and-git</code>, Git <code>01</code>/<code>03</code>, Labs <code>01</code>, <code>03</code>, <code>06</code>, <code>08</code></td>
+<td>Đọc kỹ</td>
+</tr>
+<tr>
+<td>Quét <strong>cấu trúc 60/60 bài học</strong> bằng script (số mục, số bài tập, số câu quiz, số câu phỏng vấn, số dòng), thống kê phân bố đáp án quiz, đếm từ khoá trên toàn bộ 96 file <code>.md</code></td>
+<td>Tự động, toàn bộ</td>
+</tr>
+<tr>
+<td>Đọc <strong>danh sách câu hỏi</strong> của cả 7 bộ phỏng vấn; đọc kỹ <code>scenario-based</code> (S1–S7) và 5 câu đầu của <code>wait-interview</code></td>
+<td>Đọc kỹ phần đại diện</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Giới hạn:</strong> tài liệu có ~25.000 dòng; tôi <strong>không</strong> đọc từng dòng của mọi bài. Các nhận định về những bài chưa đọc kỹ dựa trên quét cấu trúc + từ khoá và được ghi rõ là <em>suy ra từ quét</em>. Tôi <strong>không chạy lại</strong> test hay ví dụ Java (dùng số liệu kiểm chứng trong <a href="../UPDATE_REPORT.html">UPDATE_REPORT.md</a> §7, chưa tự xác minh lại). Nhận định về <em>yêu cầu tuyển dụng</em> là kinh nghiệm chuyên môn, <strong>không</strong> dựa trên khảo sát tin tuyển dụng — xem khuyến nghị tự đối chiếu 5–10 JD thật ở <a href="07-final-recommendations.html#8-việc-bạn-nên-tự-kiểm-chứng">07</a>.</p>
+<h2 id="quy-ước-mức-ưu-tiên-dùng-trong-báo-cáo">Quy ước mức ưu tiên dùng trong báo cáo</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhãn</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Critical</strong></td>
+<td>Thiếu sót ảnh hưởng nghiêm trọng đến mục tiêu ứng tuyển</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>Nên bổ sung sớm</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>Nên cải thiện</td>
+</tr>
+<tr>
+<td><strong>Low</strong></td>
+<td>Có thể học sau</td>
+</tr>
+<tr>
+<td>Essential / Important / Optional</td>
+<td>Mức cần thiết của <em>kiến thức</em> với Junior Automation Tester</td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../interview/interview-cheatsheet.html"><small>← Bài trước</small><span>Interview Cheatsheet — tóm tắt lý thuyết để ôn nhanh</span></a><a class="next" href="01-current-roadmap-audit.html"><small>Bài tiếp theo →</small><span>01 · Audit tổng quan lộ trình hiện tại</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

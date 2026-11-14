@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-file-handling-properties-và-configuration">Java: File Handling, Properties và Configuration</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 08
-⬅️ <a href="11-lambda-and-generics.html">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</a> · ➡️ <a href="../02-maven-and-project/00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a></p>
 <p>Chapter 08 · Mức ưu tiên: <strong>Essential</strong> (đọc <code>Properties</code>/cấu hình), <strong>Important</strong> (đọc/ghi file văn bản, <code>Path</code>/<code>Files</code>), <strong>Optional</strong> (I/O streams nhị phân)</p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -162,7 +160,7 @@ false</code></pre></div>
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">content</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;&quot;</span>
-<span class="s">                base.url=https://the-internet.herokuapp.com</span>
+<span class="s">                base.url=https://example.com</span>
 <span class="s">                browser=chrome</span>
 <span class="s">                timeout.seconds=15</span>
 <span class="s">                headless=false</span>
@@ -181,7 +179,7 @@ false</code></pre></div>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">chrome 15 false
-https://the-internet.herokuapp.com
+https://example.com
 (không có)</code></pre></div>
 <p><code>Properties</code> luôn trả <code>String</code>: tự chuyển kiểu bằng <code>Integer.parseInt</code>, <code>Boolean.parseBoolean</code>.</p>
 <h3 id="ví-dụ-3--config-với-thứ-tự-ưu-tiên--d--file--mặc-định">Ví dụ 3 — <code>Config</code> với thứ tự ưu tiên <code>-D</code> &gt; file &gt; mặc định</h3>
@@ -446,7 +444,7 @@ bộ dữ liệu: 2</code></pre></div>
 <li><code>IOException</code> là checked</li>
 <li><code>Properties</code> luôn trả <code>String</code></li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../02-maven-and-project/00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../06-automation-framework/02-automation-framework-architecture.html">Kiến trúc Automation Framework</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -505,7 +503,7 @@ bộ dữ liệu: 2</code></pre></div>
 <div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">2 OK</code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="11-lambda-and-generics.html"><small>← Bài trước</small><span>Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</span></a><a class="next" href="13-java-selenium-cheatsheet.html"><small>Bài tiếp theo →</small><span>Java Fundamentals cho Selenium</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../06-automation-framework/01-page-object-model.html"><small>← Bài trước</small><span>Page Object Model (POM)</span></a><a class="next" href="../06-automation-framework/02-automation-framework-architecture.html"><small>Bài tiếp theo →</small><span>Kiến trúc Automation Framework</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/12-file-handling.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

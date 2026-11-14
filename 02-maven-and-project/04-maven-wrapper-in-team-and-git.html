@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="maven-wrapper-làm-việc-nhóm-git-và-lỗi-thường-gặp-">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp ⭐</h1>
-<blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 10 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a> · ➡️ <a href="05-maven-lifecycle.html">Commands và Build Lifecycle</a></p>
-<p>Chapter 10 · <a href="README.html">README chương</a> · Trước: <a href="03-maven-wrapper.html">Maven Wrapper</a> · Tiếp: <a href="05-maven-lifecycle.html">Maven Lifecycle</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -599,24 +594,24 @@ git<span class="w"> </span>update-index<span class="w"> </span>--chmod<span clas
 <p><strong>Câu 1.</strong> Thành viên mới clone dự án và chưa cài Maven. Cần gì để chạy test?</p>
 <ul>
 <li>A. Cài Maven thủ công</li>
-<li>B. JDK + <code>mvnw</code> + Internet</li>
-<li>C. Chỉ Chrome</li>
+<li>B. Chỉ Chrome</li>
+<li>C. JDK + <code>mvnw</code> + Internet</li>
 <li>D. Không cần gì</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Wrapper tải Maven; vẫn cần JDK.</p>
+<p><strong>Đáp án: C.</strong> Wrapper tải Maven; vẫn cần JDK.</p>
 </details>
 <p><strong>Câu 2.</strong> Khi thêm dependency vào <code>pom.xml</code>, đồng đội cần làm gì?</p>
 <ul>
-<li>A. Cài lại Maven</li>
-<li>B. <code>git pull</code> rồi chạy Maven (tự tải)</li>
+<li>A. <code>git pull</code> rồi chạy Maven (tự tải)</li>
+<li>B. Cài lại Maven</li>
 <li>C. Copy jar</li>
 <li>D. Không thể</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Maven tự tải thư viện mới vào Local Repository.</p>
+<p><strong>Đáp án: A.</strong> Maven tự tải thư viện mới vào Local Repository.</p>
 </details>
 <p><strong>Câu 3.</strong> Wrapper có đảm bảo mọi máy chạy giống hệt nhau?</p>
 <ul>
@@ -704,7 +699,7 @@ git<span class="w"> </span>ls-files<span class="w"> </span>--stage<span class="w
 git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Make mvnw executable&quot;</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-maven-wrapper.html"><small>← Bài trước</small><span>Maven Wrapper (mvnw, mvnw.cmd)</span></a><a class="next" href="05-maven-lifecycle.html"><small>Bài tiếp theo →</small><span>Commands và Build Lifecycle</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../08-practical-project/labs/08-mini-automation-project.html"><small>← Bài trước</small><span>Lab 08: Mini Automation Framework (Bài 12)</span></a><a class="next" href="05-maven-lifecycle.html"><small>Bài tiếp theo →</small><span>Commands và Build Lifecycle</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/04-maven-wrapper-in-team-and-git.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

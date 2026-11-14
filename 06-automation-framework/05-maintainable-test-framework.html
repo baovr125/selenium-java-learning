@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="maintainable-test-framework">Maintainable Test Framework</h1>
 <blockquote>
-<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="04-configuration-management.html">Configuration Management</a> · ➡️ <a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="04-configuration-management.html">Trước: Configuration</a> · <a href="../08-practical-project/labs/08-mini-automation-project.html">Practice: Mini project</a> · <a href="../interview/framework-interview.html">Phỏng vấn</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -332,36 +330,36 @@
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Dấu hiệu framework dễ bảo trì?</p>
 <ul>
-<li>A. UI đổi nhỏ chỉ sửa một chỗ</li>
-<li>B. Nhiều lớp trừu tượng</li>
+<li>A. Nhiều lớp trừu tượng</li>
+<li>B. UI đổi nhỏ chỉ sửa một chỗ</li>
 <li>C. Test phụ thuộc nhau</li>
 <li>D. Dùng <code>sleep</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Đó là mục tiêu của POM.</p>
+<p><strong>Đáp án: B.</strong> Đó là mục tiêu của POM.</p>
 </details>
 <p><strong>Câu 2.</strong> Không nên làm gì với test flaky?</p>
 <ul>
 <li>A. Điều tra nguyên nhân</li>
-<li>B. Che bằng retry</li>
-<li>C. Wait đúng điều kiện</li>
-<li>D. Tách test</li>
+<li>B. Wait đúng điều kiện</li>
+<li>C. Tách test</li>
+<li>D. Che bằng retry</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Retry che lỗi.</p>
+<p><strong>Đáp án: D.</strong> Retry che lỗi.</p>
 </details>
 <p><strong>Câu 3.</strong> Test method nên đặt tên?</p>
 <ul>
 <li>A. <code>test1</code></li>
-<li>B. Động từ + kỳ vọng (<code>shouldLoginWith...</code>)</li>
-<li>C. Tên dài vô nghĩa</li>
+<li>B. Tên dài vô nghĩa</li>
+<li>C. Động từ + kỳ vọng (<code>shouldLoginWith...</code>)</li>
 <li>D. Số thứ tự</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Mô tả hành vi.</p>
+<p><strong>Đáp án: C.</strong> Mô tả hành vi.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What makes a test framework maintainable?</strong></p>
@@ -395,7 +393,7 @@
 <li>Retry ≠ sửa flaky</li>
 <li>Refactor mỗi bước phải <code>clean test</code> xanh</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../08-practical-project/labs/06-page-object-model-practice.html">Lab 06: Page Object Model (Bài 10)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -415,7 +413,7 @@
 </ol>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-configuration-management.html"><small>← Bài trước</small><span>Configuration Management</span></a><a class="next" href="../07-git-and-team-workflow/README.html"><small>Bài tiếp theo →</small><span>Phase 7 — Git và Team Collaboration (Chapter 23)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-configuration-management.html"><small>← Bài trước</small><span>Configuration Management</span></a><a class="next" href="../08-practical-project/labs/06-page-object-model-practice.html"><small>Bài tiếp theo →</small><span>Lab 06: Page Object Model (Bài 10)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/05-maintainable-test-framework.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="debugging-và-best-practices">Debugging và Best Practices</h1>
 <blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 16 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="10-selenium-exceptions.html">Exception Handling</a> · ➡️ <a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="10-selenium-exceptions.html">Trước: Exception</a> · <a href="../06-automation-framework/README.html">Framework design</a> · <a href="../interview/scenario-based-interview.html">Phỏng vấn scenario</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -306,35 +304,35 @@
 <p><strong>Câu 1.</strong> Chụp screenshot nên thực hiện?</p>
 <ul>
 <li>A. Sau <code>quit()</code></li>
-<li>B. Trước <code>quit()</code></li>
-<li>C. Không cần driver</li>
-<li>D. Bằng <code>Thread.sleep</code></li>
+<li>B. Không cần driver</li>
+<li>C. Bằng <code>Thread.sleep</code></li>
+<li>D. Trước <code>quit()</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Driver đã đóng thì không chụp được.</p>
+<p><strong>Đáp án: D.</strong> Driver đã đóng thì không chụp được.</p>
 </details>
 <p><strong>Câu 2.</strong> Retry tự động test fail là?</p>
 <ul>
-<li>A. Cách tốt nhất để hết flaky</li>
-<li>B. Chỉ che flaky, cần điều tra nguyên nhân</li>
+<li>A. Chỉ che flaky, cần điều tra nguyên nhân</li>
+<li>B. Cách tốt nhất để hết flaky</li>
 <li>C. Bắt buộc</li>
 <li>D. Không dùng được</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Điều tra đồng bộ hoá trước.</p>
+<p><strong>Đáp án: A.</strong> Điều tra đồng bộ hoá trước.</p>
 </details>
 <p><strong>Câu 3.</strong> Test pass lẻ nhưng fail khi chạy cả bộ nghi ngờ?</p>
 <ul>
-<li>A. Test phụ thuộc/nhiễu dữ liệu</li>
-<li>B. JDK</li>
+<li>A. JDK</li>
+<li>B. Test phụ thuộc/nhiễu dữ liệu</li>
 <li>C. Maven</li>
 <li>D. Chrome</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Test phải độc lập.</p>
+<p><strong>Đáp án: B.</strong> Test phải độc lập.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Walk me through debugging a failing UI test.</strong></p>
@@ -368,7 +366,7 @@
 <li>Retry ≠ sửa</li>
 <li>Pass lẻ ≠ độc lập</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../08-practical-project/labs/05-form-automation.html">Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -405,7 +403,7 @@
 </ol>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="10-selenium-exceptions.html"><small>← Bài trước</small><span>Exception Handling</span></a><a class="next" href="../04-wait-mechanisms/README.html"><small>Bài tiếp theo →</small><span>Phase 4 — Wait and Synchronization (Chapter 19)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="10-selenium-exceptions.html"><small>← Bài trước</small><span>Exception Handling</span></a><a class="next" href="../08-practical-project/labs/05-form-automation.html"><small>Bài tiếp theo →</small><span>Lab 05: Form Automation: Login, Dropdown, Alert, Frame (Bài 6 + Bài 7)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/11-debugging-and-best-practices.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

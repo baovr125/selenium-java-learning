@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="troubleshooting">Troubleshooting</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 12 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="08-working-in-team.html">Quy trình làm việc với Maven trong team</a> · ➡️ <a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium là gì?</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="04-maven-wrapper-in-team-and-git.html#3-các-lỗi-thường-gặp">Wrapper &amp; lỗi</a> · <a href="07-build-and-test-execution.html">Build &amp; test</a> · <a href="../interview/maven-interview.html">Phỏng vấn: troubleshoot</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -366,36 +364,36 @@ Chạy nhưng BUILD FAILURE?
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Dòng nào nên đọc đầu tiên trong log lỗi?</p>
 <ul>
-<li>A. Dòng cuối</li>
-<li>B. Dòng <code>[ERROR]</code> đầu tiên</li>
+<li>A. Dòng <code>[ERROR]</code> đầu tiên</li>
+<li>B. Dòng cuối</li>
 <li>C. Dòng <code>[INFO]</code> đầu</li>
 <li>D. Không đọc</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Nó nêu plugin/goal lỗi.</p>
+<p><strong>Đáp án: A.</strong> Nó nêu plugin/goal lỗi.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>release version 21 not supported</code> nghĩa là?</p>
 <ul>
-<li>A. JDK thấp hơn 21</li>
-<li>B. Thiếu Chrome</li>
-<li>C. Thiếu mạng</li>
+<li>A. Thiếu Chrome</li>
+<li>B. Thiếu mạng</li>
+<li>C. JDK thấp hơn 21</li>
 <li>D. Sai TestNG</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Cần JDK ≥ 21.</p>
+<p><strong>Đáp án: C.</strong> Cần JDK ≥ 21.</p>
 </details>
 <p><strong>Câu 3.</strong> Cảnh báo <code>StaticLoggerBinder</code> có làm hỏng test không?</p>
 <ul>
 <li>A. Có</li>
-<li>B. Không, vô hại</li>
-<li>C. Chỉ trên Linux</li>
-<li>D. Làm test skipped</li>
+<li>B. Chỉ trên Linux</li>
+<li>C. Làm test skipped</li>
+<li>D. Không, vô hại</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>slf4j-api</code> không có binding; chỉ là cảnh báo.</p>
+<p><strong>Đáp án: D.</strong> <code>slf4j-api</code> không có binding; chỉ là cảnh báo.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you troubleshoot Maven build failures?</strong></p>
@@ -429,7 +427,7 @@ Chạy nhưng BUILD FAILURE?
 <li><code>JAVA_HOME</code> trống (OK) ≠ sai (lỗi)</li>
 <li><code>-o</code> thiếu cache gây lỗi tải</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../03-selenium-fundamentals/01-selenium-introduction.html">Selenium là gì?</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../07-git-and-team-workflow/README.html">Phase 7 — Git và Team Collaboration (Chapter 23)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -449,7 +447,7 @@ Chạy nhưng BUILD FAILURE?
 </ol>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="08-working-in-team.html"><small>← Bài trước</small><span>Quy trình làm việc với Maven trong team</span></a><a class="next" href="../03-selenium-fundamentals/README.html"><small>Bài tiếp theo →</small><span>Phase 3 — Selenium Fundamentals (Chapter 13–18)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="08-working-in-team.html"><small>← Bài trước</small><span>Quy trình làm việc với Maven trong team</span></a><a class="next" href="../07-git-and-team-workflow/README.html"><small>Bài tiếp theo →</small><span>Phase 7 — Git và Team Collaboration (Chapter 23)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/09-maven-troubleshooting.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

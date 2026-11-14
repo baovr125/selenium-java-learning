@@ -28,10 +28,7 @@
     <article id="content" class="md">
 <h1 id="wait-introduction-vì-sao-selenium-cần-wait">Wait Introduction: vì sao Selenium cần Wait?</h1>
 <blockquote>
-<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging và Best Practices</a> · ➡️ <a href="02-implicit-wait.html">Implicit Wait</a></p>
-<p>Chapter 19 (Phase 4) · <a href="../03-selenium-fundamentals/README.html">README chương</a> · Tiếp: <a href="02-implicit-wait.html">Implicit Wait</a>
-Phiên bản áp dụng: <strong>Selenium 4.52.0</strong> (<code>selenium-support-4.52.0.jar</code>). Mọi ví dụ dùng <code>Duration</code>.</p>
+<p>Phiên bản áp dụng: <strong>Selenium 4.52.0</strong> (<code>selenium-support-4.52.0.jar</code>). Mọi ví dụ dùng <code>Duration</code>.</p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
@@ -130,14 +127,14 @@ Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──►
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Nguyên nhân số 1 của test flaky?</p>
 <ul>
-<li>A. Thiếu/sai đồng bộ hoá</li>
-<li>B. Thiếu JDK</li>
-<li>C. Sai Maven</li>
+<li>A. Thiếu JDK</li>
+<li>B. Sai Maven</li>
+<li>C. Thiếu/sai đồng bộ hoá</li>
 <li>D. Sai Git</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Trình duyệt bất đồng bộ, Selenium chạy lệnh ngay.</p>
+<p><strong>Đáp án: C.</strong> Trình duyệt bất đồng bộ, Selenium chạy lệnh ngay.</p>
 </details>
 <p><strong>Câu 2.</strong> Có mấy cơ chế chờ chính trong Selenium?</p>
 <ul>
@@ -153,13 +150,13 @@ Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──►
 <p><strong>Câu 3.</strong> Timeout 15 s của <code>WebDriverWait</code> nghĩa là?</p>
 <ul>
 <li>A. Luôn chờ đủ 15 s</li>
-<li>B. Giới hạn tối đa; dừng ngay khi điều kiện đúng</li>
-<li>C. Chờ ít nhất 15 s</li>
+<li>B. Chờ ít nhất 15 s</li>
+<li>C. Giới hạn tối đa; dừng ngay khi điều kiện đúng</li>
 <li>D. Không có ý nghĩa</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Khác với <code>Thread.sleep</code>.</p>
+<p><strong>Đáp án: C.</strong> Khác với <code>Thread.sleep</code>.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Why do we need waits in Selenium?</strong></p>
@@ -201,7 +198,7 @@ Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──►
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">));</span><span class="w">      </span><span class="c1">// quá sớm → NoSuchElementException</span></code></pre></div>
 <p>(Đã chạy thật: test <code>@Test(expectedExceptions = NoSuchElementException.class)</code> pass.)</p>
@@ -209,7 +206,7 @@ Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──►
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">getText</span><span class="p">().</span><span class="na">trim</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Hello World!&quot;</span><span class="p">);</span></code></pre></div>
@@ -244,7 +241,7 @@ Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──►
 </table></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 4 — Wait and Synchronization (Chapter 19)</span></a><a class="next" href="02-implicit-wait.html"><small>Bài tiếp theo →</small><span>Implicit Wait</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../01-java-fundamentals/11-lambda-and-generics.html"><small>← Bài trước</small><span>Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</span></a><a class="next" href="02-implicit-wait.html"><small>Bài tiếp theo →</small><span>Implicit Wait</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/04-wait-mechanisms/01-wait-introduction.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

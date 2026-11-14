@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="page-object-model-pom">Page Object Model (POM)</h1>
 <blockquote>
-<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 21 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="../05-testing-framework/06-test-execution-and-reports.html">Chạy test và báo cáo</a> · ➡️ <a href="02-automation-framework-architecture.html">Kiến trúc Automation Framework</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="02-automation-framework-architecture.html">Sau: Kiến trúc</a> · <a href="../08-practical-project/labs/06-page-object-model-practice.html">Practice POM</a> · <a href="../interview/framework-interview.html">Phỏng vấn POM</a>
 🔎 <code>Selenium1</code> <strong>chưa dùng POM</strong>: locator và thao tác nằm ngay trong test (ví dụ <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a>). Đây là điểm khởi đầu hợp lý cho người học, và cũng là chỗ POM sẽ phát huy tác dụng.</p>
 </blockquote>
@@ -92,7 +90,7 @@
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Exercise01_LoginTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLoginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">usernameTextbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
 <span class="w">        </span><span class="n">usernameTextbox</span><span class="p">.</span><span class="na">clear</span><span class="p">();</span>
 <span class="w">        </span><span class="n">usernameTextbox</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
@@ -164,7 +162,7 @@
 <p>Test giờ ngắn, đọc như tiếng người. Assertion ở <strong>test</strong>, locator ở <strong>page</strong>.</p>
 <p><code>BasePage</code> (xem <a href="03-reusable-components.html">03</a>):</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BasePage</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">;</span><span class="w">   </span><span class="c1">// đặt địa chỉ site demo của bạn</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
 
@@ -464,35 +462,35 @@
 <p><strong>Câu 1.</strong> Page Object nên chứa assertion?</p>
 <ul>
 <li>A. Luôn</li>
-<li>B. Thường không; trả dữ liệu để test assert</li>
-<li>C. Chỉ khi fail</li>
+<li>B. Chỉ khi fail</li>
+<li>C. Thường không; trả dữ liệu để test assert</li>
 <li>D. Bắt buộc</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Giữ Page tái sử dụng.</p>
+<p><strong>Đáp án: C.</strong> Giữ Page tái sử dụng.</p>
 </details>
 <p><strong>Câu 2.</strong> Locator trong Page nên là?</p>
 <ul>
-<li>A. <code>public</code></li>
-<li>B. <code>private</code></li>
+<li>A. <code>private</code></li>
+<li>B. <code>public</code></li>
 <li>C. <code>static</code> toàn cục</li>
 <li>D. Không cần</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Test không biết cách tìm.</p>
+<p><strong>Đáp án: A.</strong> Test không biết cách tìm.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>By</code> field hay <code>@FindBy</code>?</p>
 <ul>
 <li>A. Chỉ <code>@FindBy</code></li>
-<li>B. <code>By</code> field đơn giản, tìm lại mỗi lần (ít stale)</li>
-<li>C. Không dùng được</li>
-<li>D. Giống hệt</li>
+<li>B. Không dùng được</li>
+<li>C. Giống hệt</li>
+<li>D. <code>By</code> field đơn giản, tìm lại mỗi lần (ít stale)</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>PageFactory</code> vẫn có nhưng khó debug hơn.</p>
+<p><strong>Đáp án: D.</strong> <code>PageFactory</code> vẫn có nhưng khó debug hơn.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the Page Object Model and why use it?</strong></p>
@@ -526,7 +524,7 @@
 <li>Locator <code>public</code></li>
 <li>Lưu <code>WebElement</code> làm field → stale</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-automation-framework-architecture.html">Kiến trúc Automation Framework</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../01-java-fundamentals/12-file-handling.html">Java: File Handling, Properties và Configuration</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -585,7 +583,7 @@
 <span class="p">}</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 6 — Page Object Model và Framework Design (Chapter 21–22)</span></a><a class="next" href="02-automation-framework-architecture.html"><small>Bài tiếp theo →</small><span>Kiến trúc Automation Framework</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 6 — Page Object Model và Framework Design (Chapter 21–22)</span></a><a class="next" href="../01-java-fundamentals/12-file-handling.html"><small>Bài tiếp theo →</small><span>Java: File Handling, Properties và Configuration</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/01-page-object-model.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

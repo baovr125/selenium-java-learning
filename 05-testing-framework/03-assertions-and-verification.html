@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="assertions-và-verification">Assertions và Verification</h1>
 <blockquote>
-<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="02-junit-fundamentals.html">JUnit Fundamentals (so sánh với TestNG)</a> · ➡️ <a href="04-test-setup-and-teardown.html">Test Setup và Teardown</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="02-junit-fundamentals.html">Trước: JUnit</a> · <a href="04-test-setup-and-teardown.html">Sau: Setup/Teardown</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -219,7 +217,7 @@
 <h2 id="7-kiểm-tra-exception-mong-đợi">7. Kiểm tra exception mong đợi</h2>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="p">(</span><span class="n">expectedExceptions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
 <span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shouldNotFindMissingElement</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">));</span>
 <span class="p">}</span>
 
@@ -319,24 +317,24 @@
 <p><strong>Câu 2.</strong> <code>assertTrue(a == b)</code> với <code>String</code> có vấn đề gì?</p>
 <ul>
 <li>A. Không</li>
-<li>B. So sánh tham chiếu</li>
-<li>C. Chậm</li>
+<li>B. Chậm</li>
+<li>C. So sánh tham chiếu</li>
 <li>D. Lỗi cú pháp</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Dùng <code>assertEquals</code>.</p>
+<p><strong>Đáp án: C.</strong> Dùng <code>assertEquals</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Assertion tốt nên có?</p>
 <ul>
 <li>A. Không message</li>
-<li>B. Message mô tả + dữ liệu thực tế</li>
-<li>C. Nhiều ý trong một</li>
+<li>B. Nhiều ý trong một</li>
+<li>C. Message mô tả + dữ liệu thực tế</li>
 <li>D. <code>catch (AssertionError)</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Giúp chẩn đoán nhanh.</p>
+<p><strong>Đáp án: C.</strong> Giúp chẩn đoán nhanh.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Hard assert vs soft assert?</strong></p>
@@ -401,7 +399,7 @@
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">().</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;URL thực tế: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">());</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-junit-fundamentals.html"><small>← Bài trước</small><span>JUnit Fundamentals (so sánh với TestNG)</span></a><a class="next" href="04-test-setup-and-teardown.html"><small>Bài tiếp theo →</small><span>Test Setup và Teardown</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-testng-fundamentals.html"><small>← Bài trước</small><span>TestNG Fundamentals</span></a><a class="next" href="04-test-setup-and-teardown.html"><small>Bài tiếp theo →</small><span>Test Setup và Teardown</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/03-assertions-and-verification.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

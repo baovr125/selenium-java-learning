@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automation Concepts — Interview (lý thuyết tự động hoá) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/automation-concepts-interview" data-root="../" data-lesson="0" data-title="Automation Concepts — Interview (lý thuyết tự động hoá)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="automation-concepts--interview-lý-thuyết-tự-động-hoá">Automation Concepts — Interview (lý thuyết tự động hoá)</h1>
+<blockquote>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a>
+Nhóm câu "tư duy automation" mà interviewer dùng để phân biệt người <em>biết dùng công cụ</em> với người <em>hiểu vì sao</em>. Không cần chạy code để học — chỉ cần hiểu và nói được.</p>
+</blockquote>
+<h3 id="ac1-what-is-test-automation-what-are-its-benefits-and-limits">AC1. What is test automation? What are its benefits and limits?</h3>
+<p><strong>Dịch:</strong> Tự động hoá kiểm thử là gì; lợi ích và giới hạn?</p>
+<p><strong>Sample answer:</strong> Test automation uses scripts and tools to execute tests and compare actual results with expected results without manual effort. Benefits: fast and repeatable regression, earlier feedback in CI, consistent execution. Limits: high initial and maintenance cost, it only checks what it is told to check, and it cannot judge usability or exploratory aspects. It complements manual testing and does not replace it.</p>
+<p><strong>Giải thích:</strong> Nêu cả hai mặt. Câu trả lời "automation thay thế manual" là dấu hiệu thiếu kinh nghiệm.</p>
+<p><strong>Ví dụ:</strong> Dự án <code>Selenium1</code>: 10 test chạy ~91 s lặp lại được; nhưng "giao diện có dễ dùng không" vẫn phải kiểm tra thủ công.</p>
+<p><strong>Đào sâu:</strong> <em>Which tests would you never automate?</em> → kiểm tra một lần, UI thay đổi liên tục, đánh giá chủ quan.</p>
+<hr />
+<h3 id="ac2-what-is-the-test-pyramid-why-fewer-ui-tests">AC2. What is the test pyramid? Why fewer UI tests?</h3>
+<p><strong>Dịch:</strong> Test pyramid là gì? Vì sao UI test ít hơn?</p>
+<p><strong>Sample answer:</strong> The pyramid suggests many fast unit tests at the base, fewer integration or API tests in the middle, and few UI end-to-end tests at the top. UI tests are slower, more fragile because of the browser and timing, and costlier to maintain, so I keep them for critical user flows and verify business logic at lower levels.</p>
+<p><strong>Giải thích:</strong> Liên hệ kiến thức API/SQL của bạn: kiểm tra logic ở API, UI chỉ kiểm tra luồng người dùng.</p>
+<p><strong>Ví dụ:</strong> Đăng nhập để chuẩn bị dữ liệu bằng API, rồi chỉ dùng UI cho bước cần kiểm tra.</p>
+<p><strong>Đào sâu:</strong> <em>Is the pyramid always right?</em> → Là hướng dẫn, không phải luật; tuỳ kiến trúc hệ thống.</p>
+<hr />
+<h3 id="ac3-how-do-you-decide-what-to-automate">AC3. How do you decide what to automate?</h3>
+<p><strong>Dịch:</strong> Quyết định tự động hoá cái gì?</p>
+<p><strong>Sample answer:</strong> I automate scenarios that are repetitive, stable, high-value or regression-prone, with a clear expected result and data I can control. I start with smoke tests of critical flows. I avoid one-off checks, rapidly changing UI and subjective checks. I weigh the cost of writing and maintaining the test against the manual effort it saves.</p>
+<p><strong>Giải thích:</strong> Có tiêu chí + có ROI.</p>
+<p><strong>Ví dụ:</strong> <a href="../08-practical-project/01-requirements-and-test-design.html">Phase 8/01</a>: bảng S1–S12, S12 "trông đẹp/dễ dùng" không tự động hoá.</p>
+<p><strong>Đào sâu:</strong> <em>How do you measure ROI?</em> → so sánh thời gian chạy tay lặp lại với chi phí viết + bảo trì + thời gian sửa flaky.</p>
+<hr />
+<h3 id="ac4-what-types-of-automation-frameworks-do-you-know">AC4. What types of automation frameworks do you know?</h3>
+<p><strong>Dịch:</strong> Các loại automation framework?</p>
+<p><strong>Sample answer:</strong> Linear (record and playback, scripts top to bottom), modular (reusable functions per module), data-driven (test logic separated from data, for example TestNG <code>@DataProvider</code>), keyword-driven (actions described by keywords in tables), hybrid (a mix), and behavior-driven (Gherkin scenarios, for example Cucumber). My own project is a hybrid of modular and data-driven using Page Objects and TestNG.</p>
+<p><strong>Giải thích:</strong> Chỉ cần nêu đúng tên và đặc trưng; nói rõ bạn <em>đã dùng</em> loại nào.</p>
+<p><strong>Ví dụ:</strong> Page Object + <code>@DataProvider</code> + <code>testng.xml</code>.</p>
+<p><strong>Đào sâu:</strong> <em>When is BDD worth it?</em> → khi cần cộng tác với BA/PO viết kịch bản; thêm chi phí duy trì.</p>
+<hr />
+<h3 id="ac5-which-design-patterns-are-used-in-automation-frameworks">AC5. Which design patterns are used in automation frameworks?</h3>
+<p><strong>Dịch:</strong> Design pattern thường dùng trong framework?</p>
+<p><strong>Sample answer:</strong> Page Object Model separates locators and page actions from tests. Factory creates the right driver from configuration, for example a <code>DriverFactory</code>. Singleton or a static holder gives one access point for configuration, but I avoid sharing a single <code>WebDriver</code> between threads. Builder or fluent style can make test data and page calls readable. Facade can hide a multi-step flow such as "login".</p>
+<p><strong>Giải thích:</strong> Nói được <em>vấn đề mỗi pattern giải quyết</em>, không chỉ tên.</p>
+<p><strong>Ví dụ:</strong> <code>DriverFactory.create(browser, headless)</code>; <code>LoginPage.open().loginAs(...)</code> trả về Page kế tiếp.</p>
+<p><strong>Đào sâu:</strong> <em>Why is a Singleton <code>WebDriver</code> risky?</em> → không an toàn luồng, test nhiễm trạng thái của nhau.</p>
+<hr />
+<h3 id="ac6-what-causes-flaky-tests-and-how-do-you-deal-with-them">AC6. What causes flaky tests, and how do you deal with them?</h3>
+<p><strong>Dịch:</strong> Nguyên nhân test flaky và cách xử lý?</p>
+<p><strong>Sample answer:</strong> Common causes: synchronization (not waiting for the right condition), unstable locators, shared or changing test data, tests depending on each other or on order, environment differences such as speed and browser version, and real intermittent bugs. My approach: reproduce by rerunning, read the exact exception, replace fixed sleeps with a condition specific to the new state, make tests independent and data controlled, then rerun many times. I use retry only as a temporary measure with tracking, because it hides the root cause.</p>
+<p><strong>Giải thích:</strong> Câu then chốt của vòng Selenium — phải có quy trình, không chỉ "tăng timeout".</p>
+<p><strong>Ví dụ:</strong> Exercise 10: thông báo cũ vẫn hiển thị ⇒ dùng <code>textToBe</code>; Exercise 7: <code>testng-failed.xml</code> ghi lại lần flaky thật.</p>
+<p><strong>Đào sâu:</strong> <em>Is retry on failure a good solution?</em> → chỉ là biện pháp tạm; che nguyên nhân gốc, làm mất niềm tin vào bộ test.</p>
+<hr />
+<h3 id="ac7-how-do-you-manage-test-data">AC7. How do you manage test data?</h3>
+<p><strong>Dịch:</strong> Quản lý dữ liệu kiểm thử thế nào?</p>
+<p><strong>Sample answer:</strong> I keep data out of the test logic: simple values in <code>config.properties</code> or a data file (CSV/JSON), multiple input sets through <code>@DataProvider</code>. Tests should create or reset the data they need so they are independent. Credentials must not be committed; I read them from environment variables or system properties. For stateful systems I prepare data through API or database setup instead of the UI.</p>
+<p><strong>Giải thích:</strong> Kết hợp kiến thức API/SQL: setup/cleanup bằng API/SQL.</p>
+<p><strong>Ví dụ:</strong> Dự án hiện hard-code <code>tomsmith</code>/<code>SuperSecretPassword!</code> (trang demo công khai) — <a href="../00-project-analysis.html">00-project-analysis</a> mục 10 #5 đề xuất tách ra.</p>
+<p><strong>Đào sâu:</strong> <em>How do you avoid tests interfering through shared data?</em> → dữ liệu riêng cho mỗi test hoặc dọn dẹp sau test.</p>
+<hr />
+<h3 id="ac8-what-makes-an-automation-failure-report-useful-what-do-you-log">AC8. What makes an automation failure report useful? What do you log?</h3>
+<p><strong>Dịch:</strong> Báo cáo lỗi automation thế nào là hữu ích?</p>
+<p><strong>Sample answer:</strong> It states which test failed, the exact exception and message, the step, the environment (browser, version, build), and evidence such as a screenshot and relevant logs. The timeout message should describe the condition that was awaited. I separate "test failed because the product is wrong" from "test failed because the script is wrong" before reporting a bug.</p>
+<p><strong>Giải thích:</strong> Phân loại lỗi sản phẩm vs lỗi script — kỹ năng quan trọng của automation tester.</p>
+<p><strong>Ví dụ:</strong> <code>TimeoutException: Expected condition failed: waiting for visibility of element located by By.id: flash (tried for 15 second(s) …)</code>.</p>
+<p><strong>Đào sâu:</strong> <em>How do you capture a screenshot on failure?</em> → <code>TakesScreenshot</code> trong <code>@AfterMethod</code> hoặc Listener, trước <code>quit()</code>.</p>
+<hr />
+<h3 id="ac9-what-role-does-automation-play-in-cicd">AC9. What role does automation play in CI/CD?</h3>
+<p><strong>Dịch:</strong> Automation trong CI/CD đóng vai trò gì?</p>
+<p><strong>Sample answer:</strong> The pipeline runs the tests automatically on each change, usually a fast smoke suite on every commit and a fuller regression nightly or before release. Tests must run headless, be independent, and produce reports and artifacts such as screenshots. A failing test should block or alert, so tests must be stable enough to be trusted. The Maven Wrapper lets the pipeline use the same Maven version as developers.</p>
+<p><strong>Giải thích:</strong> Nêu điều kiện để chạy được trong CI: headless, độc lập, ổn định, có báo cáo.</p>
+<p><strong>Ví dụ:</strong> <code>./mvnw -B clean test</code> (minh hoạ GitHub Actions ở <a href="../05-testing-framework/06-test-execution-and-reports.html">06-test-execution-and-reports</a>).</p>
+<p><strong>Đào sâu:</strong> <em>Tests pass locally but fail in CI — why?</em> → <a href="scenario-based-interview.html">scenario S7</a>: khác JDK/browser/headless/kích thước cửa sổ/tốc độ.</p>
+<hr />
+<h3 id="ac10-what-do-you-need-for-safe-parallel-execution">AC10. What do you need for safe parallel execution?</h3>
+<p><strong>Dịch:</strong> Cần gì để chạy song song an toàn?</p>
+<p><strong>Sample answer:</strong> Each test must be independent with its own data, and each thread needs its own <code>WebDriver</code>, typically through <code>ThreadLocal&lt;WebDriver&gt;</code>. I configure TestNG <code>parallel</code> and <code>thread-count</code>, avoid shared mutable static state, and make sure reports and logs are thread-aware. Parallelism exposes hidden dependencies between tests.</p>
+<p><strong>Giải thích:</strong> Song song làm lộ ra test phụ thuộc nhau và dữ liệu dùng chung.</p>
+<p><strong>Ví dụ:</strong> <code>&lt;suite parallel="classes" thread-count="3"&gt;</code> (<a href="../05-testing-framework/01-testng-fundamentals.html">TestNG</a> mục 9).</p>
+<p><strong>Đào sâu:</strong> <em>Why not a static <code>WebDriver</code>?</em> → các luồng giẫm lên cùng một trình duyệt.</p>
+<hr />
+<h3 id="ac11-selenium-vs-playwright-vs-cypress--how-do-they-differ">AC11. Selenium vs Playwright vs Cypress — how do they differ?</h3>
+<p><strong>Dịch:</strong> So sánh Selenium, Playwright, Cypress.</p>
+<p><strong>Sample answer:</strong> Selenium implements the W3C WebDriver protocol, supports many languages and browsers, and has the largest ecosystem; waiting is mostly my responsibility through explicit waits. Playwright drives browsers directly with a modern API, has auto-waiting for actionability, web-first assertions that retry, isolated browser contexts, and tooling such as a trace viewer; it supports several languages including Java, TypeScript and Python. Cypress runs inside the browser, is JavaScript/TypeScript only, and has a great developer experience but different constraints for things like multiple tabs. My choice would depend on the team's language, browser needs and existing suite.</p>
+<p><strong>Giải thích:</strong> Đây là kiến thức chung của người soạn, <strong>chưa kiểm chứng ở thời điểm bạn phỏng vấn</strong> — hãy kiểm tra lại tài liệu chính thức của từng công cụ. Câu trả lời tốt là so sánh có tiêu chí, không "công cụ nào tốt hơn".</p>
+<p><strong>Ví dụ:</strong> Bạn có thể nói: "I'm solid on Selenium synchronization, so I understand why auto-wait exists, and I plan to rewrite my 10 Selenium exercises in Playwright to compare."</p>
+<p><strong>Đào sâu:</strong> <em>What do you still need explicit waits for in Playwright?</em> → các điều kiện nghiệp vụ không thuộc kiểm tra "actionability" mặc định (ví dụ chờ dữ liệu đổi sang giá trị cụ thể).</p>
+<hr />
+<h3 id="ac12-ui-vs-api-automation-when-do-you-use-each-what-is-a-hybrid-approach">AC12. UI vs API automation: when do you use each? What is a hybrid approach?</h3>
+<p><strong>Dịch:</strong> Khi nào UI, khi nào API; cách kết hợp?</p>
+<p><strong>Sample answer:</strong> I verify business rules and data at API level because it is faster and more stable, and use UI tests for critical user flows and rendering behavior. A hybrid approach uses API or database calls for setup and cleanup, for example creating a user or logging in by API, and the UI only for the step under test. That cuts runtime and flakiness.</p>
+<p><strong>Giải thích:</strong> Điểm mạnh của bạn (API/SQL) — hãy nói theo hướng này.</p>
+<p><strong>Ví dụ:</strong> 50 test cần đăng nhập (<a href="scenario-based-interview.html">scenario S8</a>): đăng nhập qua API/cookie thay vì UI cho mỗi test.</p>
+<p><strong>Đào sâu:</strong> <em>Risks of skipping the UI login?</em> → không kiểm tra được chính chức năng đăng nhập; vẫn cần ít nhất một test UI cho nó.</p>
+<hr />
+<h3 id="ac13-how-do-you-handle-different-environments-dev-staging-and-configuration">AC13. How do you handle different environments (dev, staging) and configuration?</h3>
+<p><strong>Dịch:</strong> Xử lý nhiều môi trường và cấu hình?</p>
+<p><strong>Sample answer:</strong> I externalize base URL, browser, headless flag and timeouts into a properties file, and allow overrides with system properties, for example <code>-Dbase.url=...</code> and <code>-Dheadless=true</code> when running through Maven. Secrets come from environment variables, not from the repository. A Maven profile or separate config file per environment is an option for larger projects.</p>
+<p><strong>Giải thích:</strong> Cho thấy bạn tách "cấu hình" khỏi "code".</p>
+<p><strong>Ví dụ:</strong> <code>Config.get(key, default)</code> trong Lab 08: <code>System.getProperty(k, P.getProperty(k, d))</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why must system properties reach the test JVM when using Maven?</em> → Surefire fork JVM; cần cấu hình để truyền property (xem Lab 08, bảng lỗi thường gặp).</p>
+<hr />
+<h3 id="ac14-how-do-you-keep-automation-maintainable-what-do-you-check-in-code-review">AC14. How do you keep automation maintainable? What do you check in code review?</h3>
+<p><strong>Dịch:</strong> Giữ test dễ bảo trì; review code test kiểm tra gì?</p>
+<p><strong>Sample answer:</strong> Locators live in page classes, tests read like business steps, assertions stay in tests, and each test is independent and has one clear reason to fail. In review I look for fixed sleeps, absolute XPaths, hard-coded data, duplicated code, missing waits for the right condition, unclear names, and assertions without messages. I also agree with developers on stable attributes such as <code>data-test-id</code>.</p>
+<p><strong>Giải thích:</strong> Nêu checklist cụ thể.</p>
+<p><strong>Ví dụ:</strong> Checklist PR ở <a href="../07-git-and-team-workflow/03-pull-request-and-conflicts.html">Git bài 03</a>.</p>
+<p><strong>Đào sâu:</strong> <em>A locator breaks every sprint. What do you do?</em> → <a href="scenario-based-interview.html">scenario S11</a>.</p>
+<hr />
+<h3 id="ac15-what-would-you-improve-in-your-own-project">AC15. What would you improve in your own project?</h3>
+<p><strong>Dịch:</strong> Bạn sẽ cải thiện gì trong project của mình?</p>
+<p><strong>Sample answer:</strong> Today it runs 10 independent UI exercises with a shared <code>BaseTest</code> and explicit waits only. I would add Page Objects to remove locators from tests, move credentials and URLs into configuration, add a <code>DriverFactory</code> with headless support, take screenshots on failure, use <code>@DataProvider</code> for negative login cases, and run it in CI. I would also split tests that cover two features, like the dynamic controls test.</p>
+<p><strong>Giải thích:</strong> Trả lời trung thực, dựa trên phân tích thật (<a href="../00-project-analysis.html">00-project-analysis</a> mục 10–11) cho thấy bạn biết giới hạn của chính mình — điểm cộng lớn với Fresher/Junior.</p>
+<p><strong>Ví dụ:</strong> Các điểm trên khớp với "Những gì dự án CHƯA có" trong phân tích dự án.</p>
+<p><strong>Đào sâu:</strong> <em>Which one first, and why?</em> → POM + config (giảm chi phí bảo trì nhiều nhất), sau đó screenshot/CI.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="scenario-based-interview.html"><small>← Bài trước</small><span>Scenario-based — Interview</span></a><a class="next" href="code-reading-interview.html"><small>Bài tiếp theo →</small><span>Code Reading — Interview (đọc code, tìm lỗi, nói output)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/automation-concepts-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

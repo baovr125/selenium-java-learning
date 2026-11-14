@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · Nhật ký thay đổi đã áp dụng sau đánh giá (14/11/2026) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/10-changes-applied" data-root="../" data-lesson="0" data-title="10 · Nhật ký thay đổi đã áp dụng sau đánh giá (14/11/2026)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="10--nhật-ký-thay-đổi-đã-áp-dụng-sau-đánh-giá-14112026">10 · Nhật ký thay đổi đã áp dụng sau đánh giá (14/11/2026)</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a>. Các file 01–07 mô tả trạng thái <strong>trước</strong> khi sửa; file này ghi những gì đã sửa và những gì <strong>chưa</strong> làm.
+Bản sao lưu nguyên trạng trước khi sửa nằm ngoài dự án (thư mục tạm của phiên làm việc, có thể bị dọn). Dự án <strong>không phải Git repository</strong>, nên nếu cần khôi phục lâu dài hãy <code>git init</code> và commit trạng thái hiện tại.</p>
+</blockquote>
+<h2 id="1-ưu-tiên-của-lần-sửa-này">1. Ưu tiên của lần sửa này</h2>
+<p>Theo yêu cầu: <strong>lý thuyết phỏng vấn trước, thực hành bổ sung sau.</strong> Vì vậy phần phỏng vấn được mở rộng nhiều nhất; các lỗi nhất quán rẻ để sửa cũng được xử lý. Nội dung lớn (Capstone, Track Testing, API/SQL, tái cấu trúc thư mục) <strong>không</strong> làm vì bạn đã có nền Testing/API/SQL và thời gian ngắn.</p>
+<h2 id="2-đã-sửa">2. Đã sửa</h2>
+<h3 id="21-phỏng-vấn-mới-và-mở-rộng">2.1. Phỏng vấn (mới và mở rộng)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thay đổi</th>
+<th>Chi tiết</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../interview/java-interview.html">java-interview.md</a></td>
+<td>10 → <strong>31 câu</strong>: thêm Phần B (Q11–Q31): JDK/JRE/JVM, <code>==</code>/<code>equals</code>, String, overload/override, 4 trụ cột OOP, <code>final/finally/finalize</code>, checked/unchecked, <code>ArrayList/LinkedList</code>, <code>HashMap</code>/<code>hashCode</code>, Set/Map, wrapper/Integer cache, pass-by-value, <code>this/super</code>, static/private override, interface Java 8, try-with-resources, 3 câu <strong>viết code</strong> (đảo chuỗi/palindrome, tần suất ký tự/trùng lặp, số lớn thứ hai), <code>ThreadLocal</code>, Stream</td>
+</tr>
+<tr>
+<td><a href="../interview/automation-concepts-interview.html">automation-concepts-interview.md</a> 🆕</td>
+<td>15 câu tư duy automation: pyramid, chọn cái cần tự động hoá, framework, design pattern, flaky, test data, báo cáo lỗi, CI/CD, song song, <strong>Selenium vs Playwright vs Cypress</strong>, UI vs API, cấu hình, bảo trì, cải thiện project của bạn</td>
+</tr>
+<tr>
+<td><a href="../interview/code-reading-interview.html">code-reading-interview.md</a> 🆕</td>
+<td>14 đoạn code để nói output/tìm lỗi (Java, Selenium, TestNG, POM)</td>
+</tr>
+<tr>
+<td><a href="../interview/behavioral-and-english-interview.html">behavioral-and-english-interview.md</a> 🆕</td>
+<td>Tự giới thiệu 30 giây/2 phút, 12 câu hành vi (STAR), cách nói khi chưa biết, cụm từ tiếng Anh, phát âm; nguyên tắc chỉ kể điều có thật</td>
+</tr>
+<tr>
+<td><a href="../interview/interview-cheatsheet.html">interview-cheatsheet.md</a> 🆕</td>
+<td>Tóm tắt lý thuyết một trang</td>
+</tr>
+<tr>
+<td><a href="../interview/README.html">interview/README.md</a></td>
+<td>Viết lại: bảng 11 tài liệu, <strong>185 câu</strong>, lộ trình ôn lý thuyết 10 buổi (~15–18 giờ, không cần chạy code)</td>
+</tr>
+<tr>
+<td>Tracker</td>
+<td><code>progress/interview-preparation.md</code> và <code>LEARNING_PROGRESS.md</code> thêm 4 mục mới</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-sửa-lỗi-nhất-quán-từ-01-2">2.2. Sửa lỗi nhất quán (từ <a href="01-current-roadmap-audit.html">01 §2</a>)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Lỗi</th>
+<th>Đã sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>Quiz lệch đáp án (135/180 câu = B; 23 bài có 3 đáp án giống nhau)</td>
+<td><strong>Xáo vị trí đáp án đúng</strong> bằng script: 180/180 câu khớp trước–sau (đã kiểm chứng tự động); phân bố mới A 43 · B 52 · C 42 · D 43; <strong>0</strong> bài có 3 đáp án giống nhau. Giữ nguyên 9 câu không an toàn để xáo (đáp án nhắc chữ cái, "tất cả đều đúng", hoặc lựa chọn số theo thứ tự)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Mâu thuẫn R1/R2/R3 trong Phase 8/01</td>
+<td>Sửa Exercise 2 và lời giải Exercise 1, 3</td>
+</tr>
+<tr>
+<td>5</td>
+<td>8 liên kết "README chương" của bài Wait trỏ sai</td>
+<td>Trỏ về <code>README.md</code> của Phase 4</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Mô tả số Labs lệch (12 vs 8)</td>
+<td>Ghi rõ "8 file, gồm 12 bài tập" trong <code>LEARNING_PROGRESS.md</code> và <code>labs/README.md</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>README.md</code> gốc nói sai về <code>JAVA_HOME</code></td>
+<td>Sửa theo phát hiện đã kiểm chứng; ghi chú "đã sửa" trong <code>00-project-analysis.md</code></td>
+</tr>
+<tr>
+<td>1, 2, 10</td>
+<td>Lab dồn cuối; TestNG dùng trước khi dạy; thời lượng 10 tuần không thực tế</td>
+<td><strong>Không di chuyển file.</strong> Thêm vào <code>LEARNING_ROADMAP.md</code>: quy tắc làm Lab ngay sau Phase tương ứng, quy tắc đọc TestNG tối thiểu trước Phase 3, cảnh báo khối lượng thật ~190–245 giờ, và lối vào lộ trình rút gọn</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="23-lối-vào-cho-đối-tượng-của-bạn">2.3. Lối vào cho đối tượng của bạn</h3>
+<ul>
+<li><code>README.md</code> và <code>LEARNING_ROADMAP.md</code> có đường dẫn tới <a href="09-foundation-plan-selenium-java.html">lộ trình 2 tuần</a> và tới phần phỏng vấn.</li>
+</ul>
+<h3 id="24-gỡ-địa-chỉ-trang-web-bên-thứ-ba-khỏi-tài-liệu-và-bản-web-theo-yêu-cầu-15112026">2.4. Gỡ địa chỉ trang web bên thứ ba khỏi tài liệu và bản web (theo yêu cầu, 15/11/2026)</h3>
+<ul>
+<li>Mọi chỗ ghi địa chỉ/tên của trang demo bên thứ ba (49 file, 104 dòng) được thay bằng <strong>mô tả</strong>; kiểm tra lại: 0 kết quả trong cả Markdown lẫn <code>site/</code>.</li>
+<li>Ví dụ <strong>Java thuần</strong> dùng <code>https://example.com</code> (tên miền dành riêng cho tài liệu) nên ví dụ vẫn chạy và output vẫn khớp. Ví dụ <strong>Selenium</strong> dùng <code>BASE_URL + "/đường-dẫn"</code>; hằng <code>BASE_URL</code> được khai báo trong <code>BaseTest</code> mẫu ở bài Project Initialization (và trong các lớp độc lập/JUnit mẫu).</li>
+<li>Quy ước nằm ở mục "Quy ước <code>BASE_URL</code>" trong <code>README.md</code>.</li>
+<li>Các tên riêng khác (tên liên kết chân trang, một site demo khác tôi từng gợi ý) cũng được đổi thành mô tả.</li>
+<li><strong>Chưa đổi:</strong> <code>src/</code>, <code>testng.xml</code>, <code>README.md</code>/<code>HUONG_DAN_LAM_LAI.md</code>/<code>de.md</code> ở thư mục gốc dự án, <code>target/</code>, <code>test-output/</code>, <code>ket-qua/</code> (không thuộc bản web; code thật cần địa chỉ để chạy). Tiêu đề trang <code>"The Internet"</code> trong bài Lab 01 là giá trị assert cụ thể nên được giữ.</li>
+</ul>
+<h2 id="3-cố-ý-chưa-làm">3. Cố ý chưa làm</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hạng mục</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sửa mã nguồn (<code>src/</code>, <code>pom.xml</code>, <code>testng.xml</code>, <code>mvnw*</code>, <code>.mvn/</code>)</strong></td>
+<td>Không có lỗi nào cần sửa: 10 test đang pass (91 s) và đó là bài làm của bạn. Các "thiếu sót" của source (POM, DriverFactory, config, screenshot) là <strong>bài tập cho giai đoạn thực hành sau</strong>; điền sẵn sẽ lấy mất bài tập và làm sai các lời giải tham chiếu trong tài liệu. Nếu bạn muốn, tôi có thể thêm một số cải tiến nhỏ, an toàn (ví dụ <code>@AfterMethod(alwaysRun = true)</code>, hoặc tách thêm class) — hãy nói rõ muốn gì</td>
+</tr>
+<tr>
+<td>Track Testing, API/SQL, Capstone</td>
+<td>Bạn đã có nền; thời gian ngắn</td>
+</tr>
+<tr>
+<td>Viết lại Expected Output của 140 bài tập; thêm Flaky Clinic/Broken Build</td>
+<td>Thuộc phần thực hành — làm sau</td>
+</tr>
+<tr>
+<td>Gộp/chia bài (Maven 10 → 6, TestNG Core/Advanced, Java 11a/11b), bỏ khối điều hướng lặp</td>
+<td>Cần chỉnh nhiều file; để dành khi bạn học đến phần đó</td>
+</tr>
+<tr>
+<td>Bài tập "đọc &amp; giải thích" cho từng bài Selenium</td>
+<td>Đã có <code>code-reading-interview.md</code> ở dạng lý thuyết</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-việc-nên-làm-tiếp-theo-thứ-tự">4. Việc nên làm tiếp (theo thứ tự)</h2>
+<ol>
+<li>Đọc <a href="../interview/README.html">interview/README.md</a> và đi theo lộ trình 10 buổi (★ trước).</li>
+<li>Tự viết lại <strong>3 câu chuyện thật</strong> (STAR) và bản giới thiệu 30 giây; ghi âm.</li>
+<li>Kiểm tra các câu hỏi so sánh Playwright/Cypress (<a href="../interview/automation-concepts-interview.html">AC11</a>) với tài liệu chính thức vì công cụ thay đổi nhanh.</li>
+<li><code>git init</code> repo tài liệu để có lịch sử thay đổi.</li>
+<li>Khi chuyển sang thực hành: quay lại <a href="09-foundation-plan-selenium-java.html">09</a>.</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="09-foundation-plan-selenium-java.html"><small>← Bài trước</small><span>09 · Kế hoạch học căn bản Selenium + Java (đã có nền OOP, cần ôn lại; chuẩn bị cho Playwright)</span></a><a class="next" href="11-html-sync-plan.html"><small>Bài tiếp theo →</small><span>11 · Kế hoạch đồng bộ bản HTML (dành cho phiên làm việc sau)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/10-changes-applied.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

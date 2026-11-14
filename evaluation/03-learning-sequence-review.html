@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Đánh giá thứ tự học và cấu trúc bài học · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/03-learning-sequence-review" data-root="../" data-lesson="0" data-title="03 · Đánh giá thứ tự học và cấu trúc bài học">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="03--đánh-giá-thứ-tự-học-và-cấu-trúc-bài-học">03 · Đánh giá thứ tự học và cấu trúc bài học</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Trước: <a href="02-knowledge-gap-analysis.html">02 Khoảng trống</a> · Tiếp: <a href="04-practical-exercise-assessment.html">04 Bài tập</a></p>
+</blockquote>
+<h2 id="phần-a--thứ-tự-học">Phần A — Thứ tự học</h2>
+<h3 id="a1-trình-tự-hiện-tại">A.1. Trình tự hiện tại</h3>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">P1 Java (14 bài) → P2 Maven (10) → P3 Selenium (11) → P4 Wait (8) → P5 TestNG (6) → P6 POM (5) → P7 Git (4) → P8 Dự án + Labs
+ tuần 1–2           tuần 3          tuần 4              tuần 5         tuần 6           tuần 7        tuần 8      tuần 9–10</code></pre></div>
+<p>(<code>LEARNING_ROADMAP.md:116-127</code>)</p>
+<h3 id="a2-trả-lời-từng-câu-hỏi-trong-đề-bài">A.2. Trả lời từng câu hỏi trong đề bài</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Nhận định</th>
+<th>Bằng chứng / lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thứ tự các chủ đề có hợp lý không?</td>
+<td><strong>Phần lõi hợp lý</strong> (Java → Selenium → Wait → POM). Sai ở 4 chỗ: Lab dồn cuối, TestNG dùng trước dạy, Git muộn, Testing Fundamentals vắng.</td>
+<td><a href="01-current-roadmap-audit.html">01 §2 #1, #2</a></td>
+</tr>
+<tr>
+<td>Java có học đủ trước Selenium không?</td>
+<td><strong>Quá đủ, và quá lâu.</strong> 14 bài/6.073 dòng trước khi mở trình duyệt lần đầu (tuần 4). Selenium cơ bản chỉ cần Java đến <em>methods + classes/OOP + List + try/catch</em> (bài 01–10). Lambda/Generics/File Handling có thể học <strong>khi gặp</strong> (Wait cần lambda; Config cần <code>Properties</code>).</td>
+<td>Prerequisite của Selenium là <code>08-oop-concepts</code> (<a href="../03-selenium-fundamentals/01-selenium-introduction.html"><code>01-selenium-introduction.md</code></a>) — bài 09–12 không cần cho bài đầu Selenium</td>
+</tr>
+<tr>
+<td>Khi nào bắt đầu thực hành Selenium?</td>
+<td><strong>Sau khi hoàn thành Java bài 01–08 (~tuần 3 theo nhịp thật), qua một "Selenium Smoke" 1–2 giờ</strong> (mở trang, in <code>title</code>) rồi học Java còn lại xen kẽ. Người học bị "đói thành quả" nếu 6+ tuần chưa thấy trình duyệt tự chạy.</td>
+<td>Tâm lý học tập + việc <code>BaseTest</code> đã có sẵn trong dự án để chép</td>
+</tr>
+<tr>
+<td>Học Maven trước hay sau Selenium?</td>
+<td><strong>Maven Lite trước/cùng Selenium, Maven Deep sau Wait.</strong> Dự án Selenium cần <code>pom.xml</code> + <code>mvnw test</code> ngay buổi đầu; nhưng Lifecycle/Dependency/Troubleshooting/Profile học sâu khi đã có test để chạy.</td>
+<td><code>02-maven-and-project/00-project-initialization</code> đã làm vai trò "Maven Lite"; 6 bài sau là "Deep"</td>
+</tr>
+<tr>
+<td>OOP đã học đúng thời điểm áp dụng POM chưa?</td>
+<td>OOP (bài 07–08) học <strong>tuần 2</strong> nhưng POM ở <strong>tuần 7</strong> → năm tuần để quên. Cách tốt hơn: áp OOP ngay với <code>BaseTest</code>/<code>BasePage</code> mini ở đầu Phase Selenium, rồi POM đầy đủ sau Wait.</td>
+<td>Roadmap §3: Phase 1 → Phase 6</td>
+</tr>
+<tr>
+<td>TestNG/JUnit có đúng giai đoạn không?</td>
+<td><strong>Không.</strong> <code>@Test</code>, <code>@BeforeMethod</code>, <code>Assert</code> đã được dùng từ Phase 2–4 (16 bài) nhưng bài TestNG ở Phase 5. Cần <em>TestNG Core</em> (annotations, Assert, <code>testng.xml</code>, chạy bằng <code>mvnw</code>) <strong>trước Selenium/Wait</strong>; DataProvider/Parameters/Parallel/Listener <em>sau</em>.</td>
+<td><a href="01-current-roadmap-audit.html">01 §2 #2</a></td>
+</tr>
+<tr>
+<td>Wait có học đủ sâu không?</td>
+<td><strong>Có</strong> về kiến thức; thiếu <em>kỹ năng chẩn đoán</em> (không có bài flaky cho sẵn) và mẫu page-ready. Không nên mở rộng thêm lý thuyết.</td>
+<td><a href="02-knowledge-gap-analysis.html">02 Nhóm 4</a></td>
+</tr>
+<tr>
+<td>Automation Framework có sau khi hiểu Selenium cơ bản không?</td>
+<td><strong>Có, đúng.</strong> POM/Framework sau Wait là hợp lý. Chỉ cần thêm <em>giai đoạn đệm</em>: refactor dần từ BaseTest → BasePage thay vì nhảy vào kiến trúc đầy đủ.</td>
+<td>Roadmap §2</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="a3-quyết-định-cho-từng-chủ-đề">A.3. Quyết định cho từng chủ đề</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Quyết định</th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Environment Setup (Java 00)</td>
+<td><strong>Giữ</strong>, đưa lên <strong>Phase 0</strong> cùng Git Lite</td>
+<td>Cần cho mọi thứ</td>
+</tr>
+<tr>
+<td>Java 01–10</td>
+<td><strong>Giữ</strong>, <strong>cắt phần Optional ra</strong> (recursion, <code>float/byte/short</code>, <code>LinkedList/TreeMap</code>, inner class)</td>
+<td>Mỗi bài còn 200–280 dòng</td>
+</tr>
+<tr>
+<td>Java 11 <em>Lambda &amp; Generics (+ Annotations, RegEx, Threads)</em></td>
+<td><strong>Chia nhỏ:</strong> (a) Lambda + Generics cơ bản = Essential, học ngay trước Wait; (b) Annotations/RegEx/Threads = Optional</td>
+<td>Hiện gộp 4 chủ đề khác nhau trong 494 dòng</td>
+</tr>
+<tr>
+<td>Java 12 File Handling &amp; Properties</td>
+<td><strong>Chuyển vị trí:</strong> học khi làm Config (Phase POM/Framework)</td>
+<td>Không cần cho Selenium cơ bản</td>
+</tr>
+<tr>
+<td>Java 13 Cheatsheet</td>
+<td><strong>Giữ</strong> (đã đúng vai trò tra cứu)</td>
+<td></td>
+</tr>
+<tr>
+<td>Maven 00 Project Init + 01 Fundamentals + 02 <code>pom.xml</code> + 03 Wrapper</td>
+<td><strong>Gộp thành "Maven Lite" (3 bài)</strong>, học <strong>cùng tuần Selenium đầu</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>Maven 04 Wrapper-in-team + 05 Lifecycle + 06 Dependency + 07 Build/Test + 08 Team + 09 Troubleshooting</td>
+<td><strong>Gộp còn 3 bài "Maven Deep"</strong>, học sau Wait; Failsafe/Profile → Advanced</td>
+<td>3.612 → ~2.000 dòng</td>
+</tr>
+<tr>
+<td>Selenium 01–06 (Intro, WebDriver, Locators, WebElement, Navigation, Interactions)</td>
+<td><strong>Giữ</strong>; thêm headless/<code>ChromeOptions</code> bài tập</td>
+<td></td>
+</tr>
+<tr>
+<td>Selenium 07–11 (Browser Interactions, Actions, JS Executor, Exceptions, Debugging)</td>
+<td><strong>Giữ</strong>; <em>Exceptions</em> chuyển lên ngay sau Locators (người học gặp lỗi từ bài đầu)</td>
+<td></td>
+</tr>
+<tr>
+<td>Wait 01–08</td>
+<td><strong>Giữ nguyên cấu trúc</strong>; chia nhãn <em>Core</em> (01, 03, 04, 06, 07) / <em>Advanced</em> (02 Implicit, 05 Fluent/Custom, 08); thêm Lab "Flaky Clinic"</td>
+<td></td>
+</tr>
+<tr>
+<td>TestNG 01</td>
+<td><strong>Chia 2:</strong> <em>TestNG Core</em> (annotations, Assert, <code>testng.xml</code>) học trước Selenium; <em>TestNG Advanced</em> (DataProvider, Parameters, Groups, Parallel, Listener) học sau Wait</td>
+<td>Bài hiện 429 dòng gom tất cả</td>
+</tr>
+<tr>
+<td>TestNG 02 JUnit</td>
+<td><strong>Optional</strong> (đọc 1 giờ)</td>
+<td></td>
+</tr>
+<tr>
+<td>TestNG 03–06</td>
+<td>Giữ; <em>Reports</em> gộp vào Phase POM/Framework</td>
+<td></td>
+</tr>
+<tr>
+<td>POM 01–05</td>
+<td>Giữ; <code>PageFactory</code> → Optional</td>
+<td></td>
+</tr>
+<tr>
+<td>Git 01 (fundamentals)</td>
+<td><strong>Chuyển lên Phase 0 ("Git Lite")</strong>: init/add/commit/push/branch/.gitignore</td>
+<td></td>
+</tr>
+<tr>
+<td>Git 02–04 (Branch/Merge/Rebase, PR/Conflict, <code>.gitignore</code>+Maven)</td>
+<td>Giữ ở sau POM; Rebase nâng cao → Optional</td>
+<td></td>
+</tr>
+<tr>
+<td>Phase 8 (3 bài + 8 Labs)</td>
+<td><strong>Phân tán Labs vào từng Phase</strong>; Phase 8 chỉ còn Capstone</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Software Testing Fundamentals</strong></td>
+<td><strong>Thêm</strong> Track T (5–6 bài ngắn), chạy song song Phase 0–2</td>
+<td><a href="02-knowledge-gap-analysis.html">02 Nhóm 1</a></td>
+</tr>
+<tr>
+<td><strong>API/SQL/CI</strong></td>
+<td><strong>Thêm</strong> Phase "Bổ trợ" trước Capstone</td>
+<td><a href="02-knowledge-gap-analysis.html">02 Nhóm 9</a></td>
+</tr>
+<tr>
+<td>Interview</td>
+<td><strong>Rải theo Phase</strong> (mock mỗi cuối Phase) thay vì dồn cuối</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="a4-sơ-đồ-phụ-thuộc-đã-điều-chỉnh">A.4. Sơ đồ phụ thuộc đã điều chỉnh</h3>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Phase 0: Môi trường + Git Lite + (Track T bắt đầu)
+        │
+Phase 1: Java Core (01–10) ──────────────┐   Track T: Testing Fundamentals chạy song song (≈1 bài/tuần)
+        │                                │
+Phase 2: Maven Lite + TestNG Core + Selenium Basics (Lab 01, 02)   ← lần đầu chạm trình duyệt ≈ tuần 5–6 (đã có Java 01–08)
+        │
+Phase 3: Selenium Interactions + Exceptions + Debugging (Lab 05)
+        │
+Phase 4: Wait &amp; Synchronization (Lab 03 + &quot;Flaky Clinic&quot;)
+        │
+Phase 5: TestNG Advanced + Maven Deep (Lab 07, 04)
+        │
+Phase 6: POM + Framework (Lab 06, 08-lite) + Java File/Config
+        │
+Phase 7: Git Team Workflow + CI (GitHub Actions)
+        │
+Phase 8: API + SQL (bổ trợ)
+        │
+Phase 9: Capstone (có Test Design, Bug Report, PR, CI)
+        │
+Phase 10: Interview Sprint (mock ×3)</code></pre></div>
+<hr />
+<h2 id="phần-b--đánh-giá-cấu-trúc-bài-học-phương-pháp-w3schools">Phần B — Đánh giá cấu trúc bài học (phương pháp W3Schools)</h2>
+<h3 id="b1-hiện-trạng">B.1. Hiện trạng</h3>
+<p>Mọi bài (60/60) dùng cùng khung: <em>Learning Objectives → Prerequisites → ☕ Java↔Selenium → Concept → Syntax → Examples → Real-world → Common Mistakes → 3 Exercises → 3 Quiz → 2 Interview → Summary → Solutions</em>. Độ dài <strong>198–515 dòng</strong>, trung bình ~390.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bằng chứng</th>
+<th>Số liệu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bài ngắn nhất / dài nhất</td>
+<td><code>04-wait-mechanisms/01</code> = 198 dòng · <code>01-java-fundamentals/08-oop-concepts</code> = 515 dòng</td>
+</tr>
+<tr>
+<td>Bài Java trung bình</td>
+<td>6.073 / 14 ≈ <strong>434 dòng/bài</strong></td>
+</tr>
+<tr>
+<td>Phần "học" trong một bài Java như <code>02-variables</code></td>
+<td>~215 dòng (đến trước mục Practice Exercises ở dòng 216); phần "kiểm tra/phụ trợ" (Exercises+Quiz+Interview+Summary+Solutions) ~190 dòng — gần một nửa bài. Tương tự <code>05-arrays</code> (bài tập bắt đầu dòng 210/404) và <code>08-oop-concepts</code> (dòng 284/515)</td>
+</tr>
+<tr>
+<td>Chính tài liệu thừa nhận</td>
+<td>UPDATE_REPORT §2: <em>chỉ đọc được mục lục W3Schools, không đọc nội dung từng bài</em></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="b2-đánh-giá">B.2. Đánh giá</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Nhận định</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đúng tinh thần W3Schools không?</td>
+<td><strong>Chưa.</strong> Thế mạnh của W3Schools là <strong>bài rất ngắn</strong> (một ý, vài ví dụ chạy thử ngay, một bài tập nhỏ). Ở đây "bài nhỏ" thực tế dài 200–500 dòng, kèm 11 mục cố định.</td>
+</tr>
+<tr>
+<td>Có quá dài với bài đơn giản không?</td>
+<td><strong>Có.</strong> Bài như <em>Arrays</em>, <em>Variables</em>, <em>Operators</em> không cần "Real-world Application", "Common Mistakes", "Interview Corner" dài ngang bài <em>Wait</em>. Khung cứng khiến bài đơn giản bị độn, bài phức tạp (Wait, POM) lại bị cắt chỗ vì phải nhường cho khung.</td>
+</tr>
+<tr>
+<td>Mục nào có giá trị cao</td>
+<td>Learning Objectives, Prerequisites, Code Examples (<strong>có kèm output</strong>), Common Mistakes, Exercises.</td>
+</tr>
+<tr>
+<td>Mục nào giá trị thấp/lặp</td>
+<td>"Interview Corner 2 câu/bài" — 120 câu cuối bài <strong>lặp</strong> nội dung 7 bộ phỏng vấn; một số "Giải thích (VI)" chỉ là một câu cụt (ví dụ <code>Giải thích (VI): Bắt đầu từ smoke.</code> ở Phase 8/01). "Lesson Summary" lặp lại Objectives. Khối điều hướng bị in hai lần.</td>
+</tr>
+<tr>
+<td>Quiz</td>
+<td>Hỏng chức năng: <strong>135/180 đáp án B</strong>, 23/60 bài có 3 đáp án cùng chữ (<a href="01-current-roadmap-audit.html">01 §2 #3</a>).</td>
+</tr>
+<tr>
+<td>Lời giải</td>
+<td>Để cuối <strong>cùng file</strong> (<code>&lt;details markdown="1"&gt;</code>): dễ mở sớm. Lab còn đưa <strong>code đầy đủ</strong> trước phần "Thử nghiệm" (Lab 03, Lab 08).</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="b3-cấu-trúc-linh-hoạt-đề-xuất--5-loại-bài">B.3. Cấu trúc linh hoạt đề xuất — 5 loại bài</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Loại</th>
+<th>Dùng cho</th>
+<th>Độ dài</th>
+<th>Bắt buộc có</th>
+<th>Không bắt buộc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>L1. Concept ngắn</strong></td>
+<td>Java cơ bản, từng API nhỏ (Arrays, Variables, Navigation, Locators cơ bản)</td>
+<td><strong>80–150 dòng</strong></td>
+<td>Objectives (2–3 gạch), Syntax, ≥ 2 ví dụ <strong>có output</strong>, 1 Common Mistake, <strong>2 bài tập</strong> (1 gõ lại + 1 biến thể)</td>
+<td>Real-world, Interview, Summary</td>
+</tr>
+<tr>
+<td><strong>L2. Practice (Lab)</strong></td>
+<td>Gắn ngay sau 2–4 bài L1</td>
+<td>1–2 giờ làm</td>
+<td>Mục tiêu đo được, đề bài <strong>không kèm code đáp án</strong>, tiêu chí "xong" (lệnh + kết quả cụ thể), commit lên Git</td>
+<td>Gợi ý theo cấp (Hint 1/2/3)</td>
+</tr>
+<tr>
+<td><strong>L3. Integrative</strong></td>
+<td>Cuối mỗi Phase: <em>Java ↔ Selenium</em>, <em>Selenium + Wait + TestNG</em>, <em>POM refactor</em></td>
+<td>1 bài + 1 mini-project</td>
+<td>Refactor từ code Phase trước; đối chiếu <code>Selenium1</code>; ghi nhật ký lỗi</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>L4. Deep-dive</strong></td>
+<td>Wait, POM, Maven Wrapper, Exceptions</td>
+<td>200–350 dòng</td>
+<td>Mô hình cơ chế (sơ đồ), bảng so sánh, <strong>bẫy thật đã tái hiện</strong>, Common Mistakes, Interview Corner <strong>kèm follow-up</strong></td>
+<td>Quiz trắc nghiệm</td>
+</tr>
+<tr>
+<td><strong>L5. Interview Review</strong></td>
+<td>Cuối Phase</td>
+<td>1 trang/phase</td>
+<td>8–10 câu theo mức A/B/C, 1 câu giải thích code, 1 câu tình huống, checklist tự chấm</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Quy tắc chung:</strong> bài L1 ≤ 150 dòng; mọi bài có <strong>Objectives đo được</strong> + <strong>bài tập chạy được</strong>; Interview Corner chỉ ở L4/L5; quiz <strong>xáo đáp án</strong> và có câu dạng "chọn đoạn code sai" thay vì chỉ định nghĩa; lời giải đưa ra <strong>file riêng</strong> (<code>solutions/</code>) hoặc mở sau khi commit bài làm.</p>
+<h3 id="b4-tác-động-nếu-áp-dụng">B.4. Tác động nếu áp dụng</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chỉ số</th>
+<th>Hiện tại</th>
+<th>Sau cải tiến (ước lượng)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dòng Markdown người học phải đọc (Phase 1)</td>
+<td>~6.073</td>
+<td>~2.800–3.200 (cắt khung độn + Optional)</td>
+</tr>
+<tr>
+<td>Thời gian đọc/bài Java</td>
+<td>~25–35 phút + bài tập</td>
+<td>~10–15 phút + bài tập</td>
+</tr>
+<tr>
+<td>Thời gian <strong>thực hành</strong> trên tổng thời gian</td>
+<td>thấp (Lab ở cuối)</td>
+<td>≥ 55%</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Lưu ý: không cần viết lại 25.000 dòng. Phương án rẻ nhất: giữ nguyên file, thêm nhãn L1–L5 và <strong>thứ tự đọc/bỏ qua</strong> vào bản đồ học, rồi cắt dần khi sửa.</p>
+</blockquote>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-knowledge-gap-analysis.html"><small>← Bài trước</small><span>02 · Phân tích khoảng trống kiến thức</span></a><a class="next" href="04-practical-exercise-assessment.html"><small>Bài tiếp theo →</small><span>04 · Đánh giá hệ thống bài tập, thực hành và dự án</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/03-learning-sequence-review.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

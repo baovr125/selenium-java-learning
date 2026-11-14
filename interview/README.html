@@ -29,12 +29,14 @@
 <h1 id="interview-preparation--junior-automation-test-engineer">Interview Preparation — Junior Automation Test Engineer</h1>
 <blockquote>
 <p>Quay lại <a href="../index.html">README</a> · <a href="../LEARNING_ROADMAP.html">Roadmap</a> · Theo dõi ôn tập: <a href="../progress/interview-preparation.html">progress/interview-preparation.md</a>
-Đối tượng: Fresher / Junior Automation Tester (Selenium + Java + Maven + TestNG + Git).</p>
+Đối tượng: Fresher / Junior Automation Tester (Selenium + Java + Maven + TestNG + Git).
+<strong>Học lý thuyết phỏng vấn trước, thực hành bổ sung sau:</strong> toàn bộ phần này đọc và luyện nói được <strong>không cần chạy code</strong>.</p>
 </blockquote>
-<h2 id="hai-lớp-phỏng-vấn-xuyên-suốt-lộ-trình">Hai lớp phỏng vấn xuyên suốt lộ trình</h2>
+<h2 id="ba-lớp-phỏng-vấn">Ba lớp phỏng vấn</h2>
 <ol>
 <li><strong>Interview Corner</strong> — 2 câu ở <strong>cuối mỗi bài học</strong> (120 câu), bám sát nội dung bài vừa học.</li>
-<li><strong>Bộ câu hỏi theo chủ đề</strong> — các file dưới đây, ôn tổng hợp trước ngày phỏng vấn (123 câu và tình huống).</li>
+<li><strong>Bộ câu hỏi theo chủ đề</strong> — các file dưới đây, ôn tổng hợp trước ngày phỏng vấn (<strong>185 câu/tình huống</strong>).</li>
+<li><strong>Tài liệu ôn nhanh</strong> — <a href="interview-cheatsheet.html">interview-cheatsheet.md</a>: tóm tắt lý thuyết một trang.</li>
 </ol>
 <h2 id="bộ-câu-hỏi-theo-chủ-đề">Bộ câu hỏi theo chủ đề</h2>
 <div class="table-wrap"><table>
@@ -42,54 +44,162 @@
 <tr>
 <th>File</th>
 <th>Chủ đề</th>
+<th>Số câu</th>
 <th>Học xong Phase</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><a href="java-interview.html">java-interview.md</a></td>
-<td>Java for Automation</td>
+<td>Java: Phần A trong Selenium (Q1–Q10) + Phần B bản chất &amp; viết code (Q11–Q31)</td>
+<td>31</td>
 <td>1</td>
 </tr>
 <tr>
 <td><a href="maven-interview.html">maven-interview.md</a> ⭐</td>
-<td>Maven và Maven Wrapper (14 câu cốt lõi + tình huống: clone, chạy test, đổi dependency, phối hợp)</td>
+<td>Maven và Maven Wrapper (14 câu cốt lõi + bổ sung + 6 tình huống)</td>
+<td>17 + 6</td>
 <td>2</td>
 </tr>
 <tr>
 <td><a href="selenium-interview.html">selenium-interview.md</a></td>
 <td>Selenium Fundamentals, Locators/WebElement, Exception Handling</td>
+<td>30</td>
 <td>3</td>
 </tr>
 <tr>
 <td><a href="wait-interview.html">wait-interview.md</a> ⭐</td>
-<td>Wait và Synchronization (20 câu + 3 câu viết code)</td>
+<td>Wait và Synchronization (+ 3 câu viết code)</td>
+<td>20</td>
 <td>4</td>
 </tr>
 <tr>
 <td><a href="framework-interview.html">framework-interview.md</a></td>
 <td>TestNG/JUnit và Page Object Model</td>
+<td>10 + 8</td>
 <td>5–6</td>
 </tr>
 <tr>
 <td><a href="git-interview.html">git-interview.md</a></td>
 <td>Git và Team Workflow</td>
+<td>10</td>
 <td>7</td>
 </tr>
 <tr>
 <td><a href="scenario-based-interview.html">scenario-based-interview.md</a></td>
-<td>12 tình huống thực tế</td>
+<td>Tình huống thực tế</td>
+<td>12</td>
 <td>8</td>
+</tr>
+<tr>
+<td><a href="automation-concepts-interview.html">automation-concepts-interview.md</a> 🆕</td>
+<td>Tư duy automation: pyramid, framework, flaky, CI, parallel, Selenium vs Playwright vs Cypress, UI vs API</td>
+<td>15</td>
+<td>sau Phase 6</td>
+</tr>
+<tr>
+<td><a href="code-reading-interview.html">code-reading-interview.md</a> 🆕</td>
+<td>Đọc code, nói output, tìm lỗi (Java + Selenium + TestNG)</td>
+<td>14</td>
+<td>sau Phase 3</td>
+</tr>
+<tr>
+<td><a href="behavioral-and-english-interview.html">behavioral-and-english-interview.md</a> 🆕</td>
+<td>Tự giới thiệu, câu hỏi hành vi (STAR), cách nói khi chưa biết, cụm từ tiếng Anh</td>
+<td>12 + mẫu</td>
+<td>bất kỳ lúc nào</td>
+</tr>
+<tr>
+<td><a href="interview-cheatsheet.html">interview-cheatsheet.md</a> 🆕</td>
+<td>Tóm tắt lý thuyết một trang để ôn nhanh</td>
+<td>—</td>
+<td>ôn cuối</td>
 </tr>
 </tbody>
 </table></div>
-<p>Cấu trúc mỗi câu: <strong>Câu hỏi (EN) → Dịch (VI) → Câu trả lời mẫu (EN) → Giải thích (VI) → Ví dụ thực tế → Câu hỏi đào sâu.</strong></p>
+<p>Cấu trúc mỗi câu: <strong>Câu hỏi (EN) → Dịch (VI) → Câu trả lời mẫu (EN) → Giải thích (VI) → Ví dụ thực tế → Câu hỏi đào sâu.</strong> (<code>code-reading</code>: Code → Câu hỏi → Đáp án → Giải thích.)</p>
+<h2 id="lộ-trình-ôn-lý-thuyết-không-cần-chạy-code-1518-giờ">Lộ trình ôn lý thuyết (không cần chạy code, ~15–18 giờ)</h2>
+<p>★ = nhóm hay bị hỏi nhất; nếu thiếu thời gian, làm các buổi có ★ trước.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Buổi</th>
+<th>Giờ</th>
+<th>Nội dung</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 ★</td>
+<td>1,5</td>
+<td><a href="interview-cheatsheet.html">Cheatsheet</a> đọc 1 lượt; viết và nói <strong>tự giới thiệu 30 giây</strong>, câu chuyện project (<a href="behavioral-and-english-interview.html">Behavioral</a> B1–B3)</td>
+<td>Ghi âm lại</td>
+</tr>
+<tr>
+<td>2 ★</td>
+<td>2</td>
+<td><a href="java-interview.html">Java</a> Q1–Q16 (OOP, <code>==</code>/<code>equals</code>, String, overload/override, final/finally)</td>
+<td>Nói thành tiếng</td>
+</tr>
+<tr>
+<td>3 ★</td>
+<td>2</td>
+<td>Java Q17–Q31 (exception, collections, HashMap, wrapper, static, lambda, ThreadLocal) + 3 câu code Q27–Q29 (viết tay) + <a href="code-reading-interview.html">Code Reading</a> CR1–CR4</td>
+<td></td>
+</tr>
+<tr>
+<td>4 ★</td>
+<td>1,5</td>
+<td><a href="selenium-interview.html">Selenium</a> Q1–Q20 (kiến trúc, driver, locator, CSS/XPath, <code>findElement(s)</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td>5 ★</td>
+<td>1,5</td>
+<td>Selenium Q21–Q30 (exceptions) + Code Reading CR5–CR8</td>
+<td></td>
+</tr>
+<tr>
+<td>6 ★</td>
+<td>2</td>
+<td><a href="wait-interview.html">Wait</a> Q1–Q20 — <strong>ưu tiên cao nhất</strong></td>
+<td>Không nhìn đáp án</td>
+</tr>
+<tr>
+<td>7</td>
+<td>1,5</td>
+<td><a href="maven-interview.html">Maven</a> Q1–Q17 + S1–S6; <a href="git-interview.html">Git</a> Q1–Q10</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>1,5</td>
+<td><a href="framework-interview.html">TestNG/POM</a> 18 câu + Code Reading CR9–CR14</td>
+<td></td>
+</tr>
+<tr>
+<td>9 ★</td>
+<td>2</td>
+<td><a href="automation-concepts-interview.html">Automation Concepts</a> AC1–AC15 + <a href="scenario-based-interview.html">Scenario</a> S1–S12</td>
+<td></td>
+</tr>
+<tr>
+<td>10 ★</td>
+<td>1,5</td>
+<td><a href="behavioral-and-english-interview.html">Behavioral</a> B4–B12 + <strong>mock 45 phút</strong> với người khác/ghi âm</td>
+<td>Chấm 0–4: rõ ràng, cấu trúc, ví dụ, trade-off</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sau đó: mỗi ngày 5 câu ngẫu nhiên bằng tiếng Anh; tuần 1 mock. Khi học thực hành sau này, quay lại các câu đã trả lời và kiểm chứng bằng code.</p>
 <h2 id="cách-ôn">Cách ôn</h2>
 <ol>
 <li>Đọc câu hỏi tiếng Anh, <strong>tự trả lời thành tiếng bằng tiếng Anh</strong> trước khi xem đáp án.</li>
 <li>Đối chiếu câu mẫu; đọc giải thích tiếng Việt để hiểu bản chất, không học thuộc.</li>
 <li>Luôn chuẩn bị một <strong>ví dụ từ dự án <code>Selenium1</code></strong> (có đường dẫn file) — thuyết phục hơn lý thuyết.</li>
 <li>Tập trả lời <strong>câu hỏi đào sâu</strong>.</li>
+<li>Câu nào chưa nắm, ghi vào cột "Câu chưa chắc" của <a href="../progress/interview-preparation.html">interview-preparation.md</a>.</li>
 </ol>
 <div class="table-wrap"><table>
 <thead>
@@ -115,15 +225,19 @@
 <td>Gắn với dự án</td>
 <td>"<code>BaseTest</code> trong dự án của mình..."</td>
 </tr>
+<tr>
+<td>Chỉ kể điều có thật</td>
+<td>Interviewer sẽ đào sâu</td>
+</tr>
 </tbody>
 </table></div>
 <h2 id="tự-giới-thiệu-dự-án-mẫu-30-giây">Tự giới thiệu dự án (mẫu 30 giây)</h2>
 <blockquote>
-<p>"I built a Selenium practice project with Java 21, Selenium 4.52, TestNG and Maven. It covers 10 UI exercises on the-internet.herokuapp.com — login, checkboxes, tables, dropdowns, hover, dynamic elements, infinite scroll, modal and drag and drop. I use a shared <code>BaseTest</code> for the driver lifecycle, Explicit Waits only, and the Maven Wrapper so the project runs without installing Maven. I run the suite with <code>mvnw.cmd clean test</code> and the 10 tests pass. Next I plan to add Page Object Model, screenshots on failure and data-driven tests."</p>
+<p>"I built a Selenium practice project with Java 21, Selenium 4.52, TestNG and Maven. It covers 10 UI exercises on a public demo website — login, checkboxes, tables, dropdowns, hover, dynamic elements, infinite scroll, modal and drag and drop. I use a shared <code>BaseTest</code> for the driver lifecycle, Explicit Waits only, and the Maven Wrapper so the project runs without installing Maven. I run the suite with <code>mvnw.cmd clean test</code> and the 10 tests pass. Next I plan to add Page Object Model, screenshots on failure and data-driven tests."</p>
 </blockquote>
-<p>(Mọi chi tiết khớp dự án thật.)</p>
+<p>(Mọi chi tiết khớp dự án thật.) Mẫu tự giới thiệu đầy đủ (kèm nền tảng testing/API/SQL, kế hoạch học Playwright) ở <a href="behavioral-and-english-interview.html#1-tự-giới-thiệu-self-introduction">behavioral-and-english-interview.md</a>.</p>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../08-practical-project/labs/08-mini-automation-project.html"><small>← Bài trước</small><span>Lab 08: Mini Automation Framework (Bài 12)</span></a><a class="next" href="framework-interview.html"><small>Bài tiếp theo →</small><span>Testing Framework và Page Object Model — Interview</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../08-practical-project/labs/README.html"><small>← Bài trước</small><span>Practical Exercises — Mục lục</span></a><a class="next" href="java-interview.html"><small>Bài tiếp theo →</small><span>Java for Automation — Interview</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/README.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

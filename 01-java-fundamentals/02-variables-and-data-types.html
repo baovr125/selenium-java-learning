@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-variables-data-types-và-type-casting">Java: Variables, Data Types và Type Casting</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 02
-⬅️ <a href="01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a> · ➡️ <a href="03-operators-and-strings.html">Java: Operators, Strings, Math và Booleans</a></p>
 <p>Chapter 02 · Mức ưu tiên: <strong>Essential</strong></p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -195,7 +193,7 @@
 <span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;tomsmith&quot;</span><span class="p">;</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">attempts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 <span class="w">        </span><span class="kt">boolean</span><span class="w"> </span><span class="n">loggedIn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
-<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">LOGIN_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">LOGIN_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com/login&quot;</span><span class="p">;</span>
 
 <span class="w">        </span><span class="n">attempts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">attempts</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">     </span><span class="c1">// đổi giá trị</span>
 <span class="w">        </span><span class="n">loggedIn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
@@ -206,7 +204,7 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">tomsmith attempts=2 loggedIn=true
-https://the-internet.herokuapp.com/login</code></pre></div>
+https://example.com/login</code></pre></div>
 <h3 id="ví-dụ-2--nhiều-biến-số-nguyên-và-số-thực">Ví dụ 2 — Nhiều biến, số nguyên và số thực</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -304,7 +302,7 @@ A
 <tbody>
 <tr>
 <td>Hằng <code>static final String</code></td>
-<td><code>private static final String LOGIN_URL = "https://the-internet.herokuapp.com/login";</code> (<code>Exercise01_LoginTest</code>)</td>
+<td><code>private static final String LOGIN_URL = "https://example.com/login";</code> (<code>Exercise01_LoginTest</code>)</td>
 </tr>
 <tr>
 <td><code>int</code> đếm</td>
@@ -409,12 +407,12 @@ A
 <ul>
 <li>A. <code>int</code></li>
 <li>B. <code>boolean</code></li>
-<li>C. <code>String</code></li>
-<li>D. <code>double</code></li>
+<li>C. <code>double</code></li>
+<li>D. <code>String</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: C.</strong> <code>String</code> là kiểu tham chiếu (có method, có thể <code>null</code>).</p>
+<p><strong>Đáp án: D.</strong> <code>String</code> là kiểu tham chiếu (có method, có thể <code>null</code>).</p>
 </details>
 <p><strong>Câu 2.</strong> <code>int x = (int) 7.9;</code> cho giá trị nào?</p>
 <ul>
@@ -430,13 +428,13 @@ A
 <p><strong>Câu 3.</strong> Vì sao nên dùng <code>((Number) x).longValue()</code> với kết quả JavaScript?</p>
 <ul>
 <li>A. Nhanh hơn</li>
-<li>B. Vì kết quả có thể là <code>Long</code> hoặc <code>Double</code>, ép thẳng có thể gây <code>ClassCastException</code></li>
-<li>C. Bắt buộc bởi TestNG</li>
+<li>B. Bắt buộc bởi TestNG</li>
+<li>C. Vì kết quả có thể là <code>Long</code> hoặc <code>Double</code>, ép thẳng có thể gây <code>ClassCastException</code></li>
 <li>D. Không có lý do</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> JavaScript trả số dạng <code>Long</code>/<code>Double</code>; <code>Number</code> xử lý cả hai.</p>
+<p><strong>Đáp án: C.</strong> JavaScript trả số dạng <code>Long</code>/<code>Double</code>; <code>Number</code> xử lý cả hai.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the difference between primitive and reference types?</strong></p>

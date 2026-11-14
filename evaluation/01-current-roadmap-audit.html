@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · Audit tổng quan lộ trình hiện tại · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/01-current-roadmap-audit" data-root="../" data-lesson="0" data-title="01 · Audit tổng quan lộ trình hiện tại">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="01--audit-tổng-quan-lộ-trình-hiện-tại">01 · Audit tổng quan lộ trình hiện tại</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Tiếp: <a href="02-knowledge-gap-analysis.html">02 Khoảng trống kiến thức</a></p>
+</blockquote>
+<h2 id="1-xác-định-tài-liệu-chính">1. Xác định tài liệu chính</h2>
+<p>Dự án có nhiều lớp tài liệu; chỉ một lớp là "lộ trình":</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tài liệu</th>
+<th>Vai trò thực tế</th>
+<th>Là phiên bản chính?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../LEARNING_ROADMAP.html">LEARNING_ROADMAP.md</a></td>
+<td>Lộ trình 8 Phase, nhịp 10 tuần, bảng tự đánh giá</td>
+<td><strong>Có — nguồn chính</strong></td>
+</tr>
+<tr>
+<td><a href="../index.html">README.md</a></td>
+<td>Cổng vào, bảng 8 Phase, cấu trúc một bài học</td>
+<td>Có (mô tả cấu trúc)</td>
+</tr>
+<tr>
+<td><a href="../LEARNING_PROGRESS.html">LEARNING_PROGRESS.md</a> + <a href="../progress/README.html">progress/</a></td>
+<td>Theo dõi 3 trạng thái, checklist "Tôi có thể…"</td>
+<td>Phụ trợ</td>
+</tr>
+<tr>
+<td><a href="../UPDATE_REPORT.html">UPDATE_REPORT.md</a> §8</td>
+<td><strong>Bản tóm tắt lộ trình thứ hai</strong> (nhịp tuần lặp lại)</td>
+<td>Trùng lặp — không nên là nơi người học đọc</td>
+</tr>
+<tr>
+<td><a href="../00-project-analysis.html">00-project-analysis.md</a></td>
+<td>Phân tích source <code>Selenium1</code> (rất tốt, bằng chứng gốc)</td>
+<td>Tài liệu nền, không phải lộ trình</td>
+</tr>
+<tr>
+<td><code>../../README.md</code>, <code>../../HUONG_DAN_LAM_LAI.md</code>, <code>../../de.md</code></td>
+<td>Hướng dẫn <strong>dự án gốc</strong> (10 Exercise), 51 KB</td>
+<td>Không phải lộ trình; là "đề bài + hướng dẫn làm lại"</td>
+</tr>
+<tr>
+<td><code>site/</code> (100 file HTML) + <code>tools/build_site.py</code></td>
+<td>Bản web sinh tự động từ Markdown</td>
+<td>Sản phẩm phái sinh</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Kết luận:</strong> nguồn chính duy nhất là <code>LEARNING_ROADMAP.md</code>. Hai chỗ khác lặp lại nhịp tuần (<code>UPDATE_REPORT.md</code> §8, <code>README.md</code>) → nguy cơ lệch khi sửa một nơi.</p>
+<h2 id="2-điểm-không-nhất-quán-kèm-bằng-chứng">2. Điểm không nhất quán (kèm bằng chứng)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Phát hiện</th>
+<th>Bằng chứng</th>
+<th>Mức độ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Lab thực hành đặt ở cuối lộ trình dù gắn với bài đầu.</strong> Lab 01 là "Khởi tạo dự án + test đầu tiên (Bài 1–2)", nhưng thuộc Phase 8 (tuần 9–10). Người học làm Phase 1–7 gần như <strong>không có bài làm trên máy ngoài ví dụ cuối bài</strong>.</td>
+<td><a href="../LEARNING_ROADMAP.html">LEARNING_ROADMAP.md:112-114</a>, <a href="../08-practical-project/labs/README.html">labs/README.md</a>; UPDATE_REPORT §4.1 (thư mục <code>practice/</code> bị chuyển nguyên vào <code>labs/</code>)</td>
+<td><strong>Cao</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>TestNG được dùng trước khi dạy.</strong> <code>BaseTest</code> với <code>@BeforeMethod</code>/<code>@Test</code> xuất hiện ở Phase 2 bài <code>00-project-initialization</code> (dòng 144, 174) và ở 16 bài Phase 3–4 (8 bài Selenium + 8 bài Wait), nhưng "TestNG Fundamentals" nằm ở Phase 5. Sơ đồ phụ thuộc ở Roadmap §2 không thể hiện điều này.</td>
+<td><code>02-maven-and-project/00-project-initialization.md:144,174</code>; quét <code>@Test</code> trong <code>03-…/</code> và <code>04-…/</code></td>
+<td><strong>Cao</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Quiz lệch đáp án nghiêm trọng:</strong> trong 180 câu Knowledge Check, <strong>135 câu (75%) đáp án B</strong>, 34 câu A, 10 câu C, 1 câu D; <strong>23/60 bài có cả 3 đáp án giống nhau.</strong> Người học đoán "B" đúng 75%.</td>
+<td>Script đếm <code>**Đáp án: X</code> toàn bộ 60 bài</td>
+<td><strong>Cao</strong> (làm hỏng chức năng tự kiểm tra)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Bài tập Phase 8/01 mâu thuẫn nội bộ:</strong> bảng 3.1 định nghĩa R2 = Checkbox; Exercise 2 lại dùng "R2" cho <em>Sai mật khẩu</em>; lời giải Exercise 1 định nghĩa R2 = đăng nhập sai; lời giải Exercise 3 nói "R2 chưa có test" trong khi bảng traceability 3.4 ghi R2 → <code>Exercise02_CheckboxesTest</code>.</td>
+<td><a href="../08-practical-project/01-requirements-and-test-design.html">01-requirements-and-test-design.md:67,113,155-157,256,268</a></td>
+<td>Trung bình</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Liên kết "README chương" của cả 8 bài Wait trỏ sai</strong> sang README Phase 3 thay vì README Phase 4.</td>
+<td><code>04-wait-mechanisms/01…08-*.md:7</code> → <code>../03-selenium-fundamentals/README.md</code></td>
+<td>Thấp (nhưng lặp 8 lần)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Số lượng Labs mô tả không thống nhất:</strong> "12 bài tập tăng dần" nhưng chỉ có <strong>8 file</strong>; Progress ghi "Labs (12 bài tập)" rồi liệt kê 8, tổng quan ghi "+ 8 Labs". (12 "Bài" được nhồi vào 8 file.)</td>
+<td><code>LEARNING_PROGRESS.md:93,121</code>; <code>labs/README.md</code></td>
+<td>Thấp</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Hai hệ đánh số song song (Phase 1–8 và Chapter 01–24)</strong> không phục vụ việc học; Chapter 09/10/11/12 đều thuộc Phase 2, Chapter 18 gom 3 bài Selenium khác nhau.</td>
+<td><code>LEARNING_ROADMAP.md</code> các cột "Chapter"</td>
+<td>Thấp (thêm tải nhận thức)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Mỗi bài có 2 khối điều hướng lặp nhau</strong> (khối 🧭 + dòng <code>&gt; README chương · Trước · Tiếp</code>).</td>
+<td><code>03-explicit-wait.md:3-4</code> và <code>:7</code></td>
+<td>Thấp</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Hướng dẫn gốc còn sai điều đã được tài liệu mới chỉ ra:</strong> <code>README.md</code> dự án (dòng 133) nói <code>mvnw.cmd</code> "dùng <code>JAVA_HOME</code>", <code>00-project-analysis.md</code> §10 #1 đã tái hiện điều ngược lại nhưng không sửa (đúng nguyên tắc "không sửa source", song người học đọc README gốc vẫn bị dẫn sai).</td>
+<td><code>../../README.md:133</code>; <code>00-project-analysis.md:254</code></td>
+<td>Thấp</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Mốc thời gian không khớp khối lượng thật</strong> (xem §5 bên dưới).</td>
+<td><code>LEARNING_ROADMAP.md:24,116-127</code></td>
+<td><strong>Cao</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Tích cực: các con số tổng hợp trong <code>LEARNING_PROGRESS.md</code> (31 Not Started + 29 In Progress = 60 bài) <strong>khớp</strong> với danh sách; số bài/bài tập (60 bài × 3 bài tập, 3 quiz, 2 câu phỏng vấn) <strong>khớp 60/60</strong> theo quét cấu trúc.</p>
+<h2 id="3-source-code-thực-tế-đang-dạy-điều-gì">3. Source code thực tế đang dạy điều gì</h2>
+<p>Đã đọc trực tiếp (<a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a>, <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a>, <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a>, <a href="../../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise10</a>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hạng mục</th>
+<th>Thực tế</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java / Selenium / TestNG</td>
+<td><code>maven.compiler.release=21</code> · Selenium <strong>4.52.0</strong> · TestNG <strong>7.10.2</strong> (scope <code>test</code>) — tài liệu khớp 100% (13 lần nêu TestNG 7.10.2, 11 lần Selenium 4.52.0; không có phiên bản lệch)</td>
+</tr>
+<tr>
+<td>Build</td>
+<td>Maven 3.9.16 qua Wrapper 3.3.4 <code>only-script</code>, <code>.mvn/maven.config</code> đặt local repo vào <code>.mvn/repository</code></td>
+</tr>
+<tr>
+<td>Cấu trúc</td>
+<td>Chỉ <code>src/test/java</code>: 1 <code>BaseTest</code> + 10 class <code>ExerciseXX_*Test</code> (+ <code>AllExercisesTest</code>, <code>EnvironmentCheckTest</code>); <strong>không</strong> POM, DriverFactory, Config, Listener, Logging, DataProvider</td>
+</tr>
+<tr>
+<td>Phong cách code</td>
+<td>Mỗi Exercise = <strong>một <code>@Test</code> đơn khối</strong>; hard-code URL/credential; mỗi class có <code>main()</code> lặp mẫu; chỉ Chrome; 1 Chrome/test (~91 s cho 10 test)</td>
+</tr>
+<tr>
+<td>Wait</td>
+<td>Chỉ Explicit Wait 15 s, <strong>không</strong> Implicit Wait (có giải thích trong Javadoc <code>BaseTest</code>) — quyết định đúng</td>
+</tr>
+<tr>
+<td>Chưa từng dùng trong source</td>
+<td><code>navigate()</code>, <code>Alert</code>, <code>switchTo().frame/window</code>, <code>FluentWait</code>, <code>TakesScreenshot</code>, <code>Keys</code>, relative locator (<a href="../00-project-analysis.html">00-project-analysis.md:225</a>)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Hệ quả quan trọng cho người học:</strong> source <code>Selenium1</code> là <strong>bộ bài tập học Selenium</strong>, không phải mẫu framework. Nhiều chủ đề được dạy (Alert, Frame, Window, FluentWait, screenshot, POM, Config, DataProvider) <strong>không có bằng chứng thực hành</strong> nào trong dự án gốc. Ngay trong source có một điểm trái với lời khuyên của chính giáo trình: <a href="../../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise10</a> gộp <em>Remove</em> và <em>Enable</em> vào <strong>một</strong> <code>@Test</code>, trong khi Phase 8 dạy "test độc lập, không để TC_DYN_02 phụ thuộc TC_DYN_01" (<a href="../08-practical-project/01-requirements-and-test-design.html">01-requirements:124</a>).</p>
+<h2 id="4-điểm-mạnh-giữ-lại">4. Điểm mạnh (giữ lại)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Điểm mạnh</th>
+<th>Bằng chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Wait &amp; Synchronization sâu đúng chỗ:</strong> mô hình <code>until()</code> (timeout/polling/ignored exceptions), Presence vs Visibility vs Clickability, mẫu "thông báo cũ" (<code>textToBe</code>), custom wait có side-effect có chú thích, đo thực tế Implicit Wait (17 ms vs 3050 ms).</td>
+<td><code>04-wait-mechanisms/03-explicit-wait.md</code>; UPDATE_REPORT §7; Lab 03</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Bám source thật:</strong> mọi khái niệm có nhãn 🧩 trỏ về Exercise/<code>BaseTest</code>; có cả bằng chứng flaky thật (<code>testng-failed.xml</code> ghi Exercise07).</td>
+<td><code>00-project-analysis.md</code> §6; <code>test-output/testng-failed.xml</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Maven Wrapper hiếm gặp ở mức này:</strong> <code>only-script</code> vs jar, commit gì, mode <code>100755</code> của <code>mvnw</code>, bẫy <code>Tests run: 0 … BUILD SUCCESS</code> (đã tái hiện).</td>
+<td><code>02-maven-and-project/03,04,07</code>; <code>00-project-analysis.md</code> §10 #2</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Bộ câu hỏi tình huống tốt:</strong> S1–S12 là quy trình chẩn đoán thật (không "tăng timeout", dùng điều kiện đặc trưng trạng thái mới), có follow-up.</td>
+<td><code>interview/scenario-based-interview.md</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Trung thực về giới hạn kiểm chứng:</strong> nêu rõ cái gì <em>chưa</em> chạy (Allure/Extent/GitHub Actions/Profile/Linux).</td>
+<td>UPDATE_REPORT §6–7</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Ví dụ Java đã biên dịch + chạy</strong> (93/93, bắt được bẫy locale <code>75,5</code>).</td>
+<td>UPDATE_REPORT §7</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Cấu trúc bài đồng nhất, có Prerequisites + ưu tiên Essential/Important/Optional.</strong></td>
+<td>Quét 60/60 bài</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-điểm-yếu-cần-xử-lý">5. Điểm yếu (cần xử lý)</h2>
+<h3 id="51-khối-lượng--thời-gian-không-thực-tế">5.1. Khối lượng &amp; thời gian không thực tế</h3>
+<p>Roadmap nói "~1–2 giờ/bài gồm bài tập" (<a href="../LEARNING_ROADMAP.html">LEARNING_ROADMAP.md:24</a>) và 10 tuần. Khối lượng thực (tính từ file):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Số bài</th>
+<th>Tổng dòng</th>
+<th>Ước lượng <em>thực</em> cho người mới (giờ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Java</td>
+<td>14</td>
+<td>6.073</td>
+<td>40–50 (3 giờ/bài × 13 + cheatsheet)</td>
+</tr>
+<tr>
+<td>2 Maven</td>
+<td>10</td>
+<td>3.612</td>
+<td>20–25</td>
+</tr>
+<tr>
+<td>3 Selenium</td>
+<td>11</td>
+<td>3.490</td>
+<td>28–35</td>
+</tr>
+<tr>
+<td>4 Wait</td>
+<td>8</td>
+<td>1.999</td>
+<td>20–25</td>
+</tr>
+<tr>
+<td>5 TestNG</td>
+<td>6</td>
+<td>2.049</td>
+<td>15–20</td>
+</tr>
+<tr>
+<td>6 POM/Framework</td>
+<td>5</td>
+<td>1.765</td>
+<td>15–20</td>
+</tr>
+<tr>
+<td>7 Git</td>
+<td>4</td>
+<td>1.170</td>
+<td>8–12</td>
+</tr>
+<tr>
+<td>8 Dự án + 8 Labs</td>
+<td>3 + 8</td>
+<td>1.931</td>
+<td>30–40</td>
+</tr>
+<tr>
+<td>Phỏng vấn (7 bộ, ~123 câu)</td>
+<td>—</td>
+<td>1.670</td>
+<td>15–20</td>
+</tr>
+<tr>
+<td><strong>Tổng</strong></td>
+<td><strong>60 + 8</strong></td>
+<td><strong>~23.800</strong></td>
+<td><strong>~190–245 giờ</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>(Ước lượng của tôi, không phải số đo.) Với 10 giờ/tuần → <strong>19–25 tuần</strong>, không phải 10. Mốc "Phase 1 trong 2 tuần" (13 bài có bài tập = 39 bài tập + 39 câu quiz) đòi khoảng 20–25 giờ/tuần.</p>
+<h3 id="52-thiếu-hụt-cấu-trúc">5.2. Thiếu hụt cấu trúc</h3>
+<ul>
+<li><strong>Không có Software Testing Fundamentals</strong> (xem <a href="02-knowledge-gap-analysis.html">02</a>).</li>
+<li><strong>Không có API/SQL/CI</strong> thực hành.</li>
+<li><strong>Phase 8 không phải mô phỏng dự án thật</strong> (xem <a href="04-practical-exercise-assessment.html">04</a>).</li>
+<li><strong>Git đến quá muộn</strong> (Phase 7, tuần 8) trong khi người học nên commit mọi bài tập từ ngày đầu; và Git chỉ thực hành trên "repo thử" cục bộ (<code>01-git-fundamentals.md</code> chỉ có một dòng <code>git remote add origin &lt;url&gt;</code>; dự án gốc chưa là Git repo — <code>00-project-analysis.md:265</code>).</li>
+</ul>
+<h3 id="53-cân-bằng-nội-dung-lệch">5.3. Cân bằng nội dung lệch</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mảng</th>
+<th>Số dòng</th>
+<th>Nhận xét</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maven (10 bài)</td>
+<td>3.612</td>
+<td>Nhiều hơn Wait <strong>1,8 lần</strong>, trong khi yêu cầu của bạn xếp Wait là ưu tiên cao</td>
+</tr>
+<tr>
+<td>Wait (8 bài)</td>
+<td>1.999</td>
+<td>Chất lượng cao nhưng ít hơn Java gần 3 lần</td>
+</tr>
+<tr>
+<td>Java (14 bài)</td>
+<td>6.073</td>
+<td>26% toàn bộ tài liệu; gồm cả Threads, RegEx, recursion, annotations tự định nghĩa (đánh dấu Optional nhưng vẫn nằm trong bài dài 400–500 dòng)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-chấm-điểm-thang-15-đánh-giá-chủ-quan-của-reviewer">6. Chấm điểm (thang 1–5, đánh giá chủ quan của reviewer)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tiêu chí</th>
+<th>Điểm</th>
+<th>Lý do chính</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tính logic &amp; trình tự</td>
+<td>3,0</td>
+<td>Hợp lý ở lõi Java→Selenium→Wait→POM; sai ở Lab dồn cuối, TestNG dùng trước dạy, Git muộn</td>
+</tr>
+<tr>
+<td>Phù hợp Junior Automation Tester</td>
+<td>3,5</td>
+<td>Lõi Selenium/Wait/Maven/POM tốt; thiếu Testing/API/SQL/CI</td>
+</tr>
+<tr>
+<td>Cân bằng lý thuyết–thực hành</td>
+<td>2,5</td>
+<td>Bài lớn 200–515 dòng; bài tập mô tả ngắn, kết quả mong đợi dạng văn xuôi 140/180; Lab đưa sẵn code</td>
+</tr>
+<tr>
+<td>Chuẩn bị phỏng vấn</td>
+<td>3,0</td>
+<td>Selenium/Wait/Maven rất tốt; 0 câu Testing, Java chỉ 10 câu, không có mock/behavioral</td>
+</tr>
+<tr>
+<td>Chiều sâu Wait</td>
+<td>4,5</td>
+<td>Gần đủ; thiếu mẫu page-ready/jQuery.active (0 kết quả <code>readyState</code>/<code>jQuery.active</code>)</td>
+</tr>
+<tr>
+<td>Maven &amp; Wrapper</td>
+<td>4,5</td>
+<td>Rất mạnh; hơi thừa với Junior</td>
+</tr>
+<tr>
+<td>Dự án mô phỏng thực tế</td>
+<td>2,5</td>
+<td>Dựng lại chính 10 bài đã làm; không có defect report, không có review/bảo trì</td>
+</tr>
+<tr>
+<td>Git &amp; teamwork</td>
+<td>3,0</td>
+<td>Nội dung đúng, nhưng thực hành giả lập</td>
+</tr>
+<tr>
+<td>Độ nhất quán/QA tài liệu</td>
+<td>3,0</td>
+<td>10 điểm bất nhất §2; quiz lệch đáp án</td>
+</tr>
+<tr>
+<td><strong>Tổng hợp</strong></td>
+<td><strong>~3,3 / 5</strong></td>
+<td><strong>Tài liệu tham khảo ≈ 4/5; lộ trình đến "sẵn sàng ứng tuyển" ≈ 3/5</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-kết-luận">7. Kết luận</h2>
+<ol>
+<li><strong>Giữ</strong> lõi: Selenium + Wait + Maven Wrapper + POM + bộ phỏng vấn tình huống.</li>
+<li><strong>Sửa trình tự:</strong> Lab đi cùng bài; TestNG tối thiểu trước Wait; Git Lite ngay đầu; Maven chia Lite/Deep.</li>
+<li><strong>Bổ sung</strong> Software Testing Fundamentals, API/SQL/CI mức Junior, dự án Capstone thật.</li>
+<li><strong>Cắt/Optional hoá</strong> nội dung Junior chưa cần (Threads, RegEx, Failsafe/Profile, rebase nâng cao, PageFactory, Extent/Allure chi tiết).</li>
+<li><strong>Sửa chất lượng bài kiểm tra:</strong> xáo đáp án, viết lại Expected Output cụ thể, thêm bài debug test hỏng cho sẵn.</li>
+</ol>
+<p>Chi tiết từng điểm: <a href="02-knowledge-gap-analysis.html">02</a> → <a href="03-learning-sequence-review.html">03</a> → <a href="04-practical-exercise-assessment.html">04</a> → <a href="05-interview-readiness-assessment.html">05</a> → <a href="06-recommended-learning-roadmap.html">06</a> → <a href="07-final-recommendations.html">07</a>.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Báo cáo đánh giá lộ trình Automation Testing (Selenium Java)</span></a><a class="next" href="02-knowledge-gap-analysis.html"><small>Bài tiếp theo →</small><span>02 · Phân tích khoảng trống kiến thức</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/01-current-roadmap-audit.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

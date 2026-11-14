@@ -28,10 +28,7 @@
     <article id="content" class="md">
 <h1 id="maven-wrapper-mvnw-mvnwcmd-">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>) ⭐</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 10 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="02-pom-xml.html"><code>pom.xml</code> và Dependencies</a> · ➡️ <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a></p>
-<p>Chapter 10 · <a href="README.html">README chương</a> · Tiếp: <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper trong team và Git</a> · Phỏng vấn: <a href="../interview/maven-interview.html">maven-interview</a>
-Mọi thông tin "trong dự án" đã được đối chiếu với file thật và đã chạy lệnh thật.</p>
+<p>Mọi thông tin "trong dự án" đã được đối chiếu với file thật và đã chạy lệnh thật.</p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
@@ -515,35 +512,35 @@ Mọi thông tin "trong dự án" đã được đối chiếu với file thật
 <p><strong>Câu 1.</strong> Wrapper có thay thế việc cài JDK không?</p>
 <ul>
 <li>A. Có</li>
-<li>B. Không, Maven vẫn cần JDK</li>
-<li>C. Chỉ trên Windows</li>
+<li>B. Chỉ trên Windows</li>
+<li>C. Không, Maven vẫn cần JDK</li>
 <li>D. Chỉ khi có <code>maven-wrapper.jar</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Wrapper chỉ thay phần cài Maven.</p>
+<p><strong>Đáp án: C.</strong> Wrapper chỉ thay phần cài Maven.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>mvnw.cmd</code> dùng để làm gì?</p>
 <ul>
-<li>A. Chạy Wrapper trên Windows</li>
-<li>B. Chạy trên Linux</li>
+<li>A. Chạy trên Linux</li>
+<li>B. Chạy Wrapper trên Windows</li>
 <li>C. Tạo JDK</li>
 <li>D. Đổi <code>pom.xml</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> <code>mvnw</code> cho Linux/macOS/Git Bash; <code>mvnw.cmd</code> cho Windows.</p>
+<p><strong>Đáp án: B.</strong> <code>mvnw</code> cho Linux/macOS/Git Bash; <code>mvnw.cmd</code> cho Windows.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>distributionType=only-script</code> nghĩa là?</p>
 <ul>
-<li>A. Dùng script để tải, không cần <code>maven-wrapper.jar</code></li>
-<li>B. Bắt buộc có jar</li>
-<li>C. Chỉ chạy offline</li>
-<li>D. Không tải Maven</li>
+<li>A. Bắt buộc có jar</li>
+<li>B. Chỉ chạy offline</li>
+<li>C. Không tải Maven</li>
+<li>D. Dùng script để tải, không cần <code>maven-wrapper.jar</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Script tự tải bằng PowerShell/curl/wget.</p>
+<p><strong>Đáp án: D.</strong> Script tự tải bằng PowerShell/curl/wget.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is Maven Wrapper and what problem does it solve?</strong></p>
@@ -577,7 +574,7 @@ Mọi thông tin "trong dự án" đã được đối chiếu với file thật
 <li>Wrapper ≠ JDK</li>
 <li><code>mvn</code> (cài sẵn) ≠ <code>mvnw</code> (qua Wrapper)</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../08-practical-project/labs/04-maven-and-mvnw-practice.html">Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -599,7 +596,7 @@ Mọi thông tin "trong dự án" đã được đối chiếu với file thật
 <span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">SeleniumLab</span><span class="p">;</span> <span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">-version</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-pom-xml.html"><small>← Bài trước</small><span>pom.xml và Dependencies</span></a><a class="next" href="04-maven-wrapper-in-team-and-git.html"><small>Bài tiếp theo →</small><span>Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-pom-xml.html"><small>← Bài trước</small><span>pom.xml và Dependencies</span></a><a class="next" href="../08-practical-project/labs/04-maven-and-mvnw-practice.html"><small>Bài tiếp theo →</small><span>Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/03-maven-wrapper.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

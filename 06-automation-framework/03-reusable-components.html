@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="reusable-components">Reusable Components</h1>
 <blockquote>
-<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="02-automation-framework-architecture.html">Kiến trúc Automation Framework</a> · ➡️ <a href="04-configuration-management.html">Configuration Management</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="02-automation-framework-architecture.html">Trước: Kiến trúc</a> · <a href="04-configuration-management.html">Sau: Configuration</a> · <a href="../03-selenium-fundamentals/06-element-interactions.html">selenium/04</a>
 Mọi code dưới đây là <strong>ví dụ tham khảo</strong> để bạn tự viết trong thư mục thực hành (không thêm vào <code>Selenium1</code>). Đã dùng API Selenium 4.52 / TestNG 7.10.2 / Java 21.</p>
 </blockquote>
@@ -337,25 +335,25 @@ Mọi code dưới đây là <strong>ví dụ tham khảo</strong> để bạn t
 </details>
 <p><strong>Câu 2.</strong> Vì sao Listener chụp ảnh chạy được trước <code>quit()</code>?</p>
 <ul>
-<li>A. Do <code>onTestFailure</code> chạy trước <code>@AfterMethod</code></li>
-<li>B. Do Maven</li>
-<li>C. Do JDK</li>
-<li>D. Không đúng</li>
+<li>A. Do Maven</li>
+<li>B. Do JDK</li>
+<li>C. Không đúng</li>
+<li>D. Do <code>onTestFailure</code> chạy trước <code>@AfterMethod</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Driver còn sống.</p>
+<p><strong>Đáp án: D.</strong> Driver còn sống.</p>
 </details>
 <p><strong>Câu 3.</strong> Utility giữ <code>static WebDriver</code> có vấn đề gì?</p>
 <ul>
-<li>A. Không</li>
-<li>B. Không an toàn khi chạy song song</li>
+<li>A. Không an toàn khi chạy song song</li>
+<li>B. Không</li>
 <li>C. Chậm</li>
 <li>D. Lỗi cú pháp</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Truyền <code>driver</code> làm tham số.</p>
+<p><strong>Đáp án: A.</strong> Truyền <code>driver</code> làm tham số.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What reusable components would you add first?</strong></p>

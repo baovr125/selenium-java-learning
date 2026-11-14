@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="git-gitignore-và-quản-lý-dự-án-maven--selenium">Git: <code>.gitignore</code> và quản lý dự án Maven + Selenium</h1>
 <blockquote>
-<p>🧭 Phase 7 · Git and Team Collaboration · Chapter 23
-⬅️ <a href="03-pull-request-and-conflicts.html">Git: Pull Request và Giải quyết Conflict</a> · ➡️ <a href="../08-practical-project/01-requirements-and-test-design.html">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</a></p>
 <p>Phase 7 · Chapter 23 (tiếp) · Mức ưu tiên: <strong>Essential</strong>
 Liên quan: <a href="../02-maven-and-project/04-maven-wrapper-in-team-and-git.html">Maven Wrapper và Git</a> (bản đầy đủ về Wrapper) · <a href="../02-maven-and-project/08-working-in-team.html">Working in Team</a></p>
 </blockquote>
@@ -247,36 +245,36 @@ i/lf    w/crlf  attr/text eol=crlf    	mvnw.cmd</code></pre></div>
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> <code>target/</code> nên?</p>
 <ul>
-<li>A. Commit</li>
-<li>B. Ignore</li>
+<li>A. Ignore</li>
+<li>B. Commit</li>
 <li>C. Chỉ commit trên CI</li>
 <li>D. Đổi tên</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Là file sinh ra khi build.</p>
+<p><strong>Đáp án: A.</strong> Là file sinh ra khi build.</p>
 </details>
 <p><strong>Câu 2.</strong> Mode <code>100644</code> của <code>mvnw</code> gây gì trên Linux?</p>
 <ul>
 <li>A. Không gì</li>
-<li>B. <code>Permission denied: ./mvnw</code></li>
-<li>C. Lỗi Java</li>
-<li>D. Chậm</li>
+<li>B. Lỗi Java</li>
+<li>C. Chậm</li>
+<li>D. <code>Permission denied: ./mvnw</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Cần bit thực thi <code>100755</code>.</p>
+<p><strong>Đáp án: D.</strong> Cần bit thực thi <code>100755</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Đã commit nhầm <code>target/</code>, gỡ khỏi Git nhưng giữ file?</p>
 <ul>
-<li>A. <code>git rm -r --cached target</code></li>
-<li>B. <code>rm -rf target</code></li>
-<li>C. <code>git reset --hard</code></li>
+<li>A. <code>rm -rf target</code></li>
+<li>B. <code>git reset --hard</code></li>
+<li>C. <code>git rm -r --cached target</code></li>
 <li>D. Không thể</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Rồi thêm vào <code>.gitignore</code>.</p>
+<p><strong>Đáp án: C.</strong> Rồi thêm vào <code>.gitignore</code>.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What should and should not be committed in a Selenium Maven project?</strong></p>
@@ -310,7 +308,7 @@ i/lf    w/crlf  attr/text eol=crlf    	mvnw.cmd</code></pre></div>
 <li><code>mvnw</code> (LF) ≠ <code>mvnw.cmd</code> (CRLF)</li>
 <li>Ignore không gỡ file đã theo dõi</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../08-practical-project/01-requirements-and-test-design.html">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../08-practical-project/README.html">Phase 8 — Real-world Automation Project (Chapter 24)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>

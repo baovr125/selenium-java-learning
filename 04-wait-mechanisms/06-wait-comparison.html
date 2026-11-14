@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="so-sánh-các-cơ-chế-chờ-và-threadsleep">So sánh các cơ chế chờ (và Thread.sleep)</h1>
-<blockquote>
-<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="05-fluent-wait.html">Fluent Wait và Custom Wait</a> · ➡️ <a href="07-real-world-scenarios.html">Wait: 15 tình huống thực tế</a></p>
-<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="05-fluent-wait.html">Fluent Wait</a> · Tiếp: <a href="07-real-world-scenarios.html">Tình huống thực tế</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -196,12 +191,12 @@
 <ul>
 <li>A. <code>Thread.sleep</code></li>
 <li>B. Implicit</li>
-<li>C. Explicit</li>
-<li>D. Không dùng</li>
+<li>C. Không dùng</li>
+<li>D. Explicit</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: C.</strong> Theo điều kiện, dự đoán được.</p>
+<p><strong>Đáp án: D.</strong> Theo điều kiện, dự đoán được.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>Thread.sleep</code> chấp nhận được khi?</p>
 <ul>
@@ -294,7 +289,7 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>

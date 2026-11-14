@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · Lộ trình cấp tốc 2 tuần (đã có Testing / API / SQL, chỉ cần Selenium) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/08-two-week-fast-track" data-root="../" data-lesson="0" data-title="08 · Lộ trình cấp tốc 2 tuần (đã có Testing / API / SQL, chỉ cần Selenium)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="08--lộ-trình-cấp-tốc-2-tuần-đã-có-testing--api--sql-chỉ-cần-selenium">08 · Lộ trình cấp tốc 2 tuần (đã có Testing / API / SQL, chỉ cần Selenium)</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Bổ sung cho <a href="06-recommended-learning-roadmap.html">06</a> (lộ trình 31 tuần cho người mới hoàn toàn — <strong>không áp dụng cho bạn</strong>).</p>
+</blockquote>
+<h2 id="1-đánh-giá-lại-cho-đối-tượng-của-bạn">1. Đánh giá lại cho đối tượng của bạn</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhận định trước (người mới hoàn toàn)</th>
+<th>Với bạn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thiếu Software Testing, API, SQL (<strong>Critical/High</strong>)</td>
+<td><strong>Không còn là vấn đề</strong> — bạn đã có</td>
+</tr>
+<tr>
+<td>Phase 8 Capstone dài, cần AUT mới</td>
+<td><strong>Bỏ</strong>; thay bằng mini-project 2 ngày (Ngày 12–13)</td>
+</tr>
+<tr>
+<td>Java 14 bài/6.073 dòng, Maven 10 bài</td>
+<td><strong>Quá dài cho 2 tuần</strong> → chỉ đọc phần cần để đọc/viết script</td>
+</tr>
+<tr>
+<td>Quiz lệch đáp án (135/180 = B), Interview Corner cuối bài</td>
+<td><strong>Bỏ qua</strong> — dùng bộ phỏng vấn theo chủ đề</td>
+</tr>
+<tr>
+<td>Lõi Selenium (11 bài) + Wait (8 bài) + POM + Maven Wrapper</td>
+<td><strong>Vẫn là phần đáng học nhất, giữ nguyên chất lượng</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Kết luận: nội dung hiện có <strong>đủ tốt</strong> cho bạn, nhưng phải <strong>đọc có chọn lọc</strong>. Đọc tuần tự toàn bộ ~23.800 dòng là bất khả thi trong 2 tuần.</p>
+<p><strong>Kỳ vọng thực tế (nói thẳng):</strong> 2 tuần đủ để <em>viết, debug và bảo trì test Selenium Java cơ bản trong một framework có sẵn</em> và trả lời tốt phần Selenium/Wait/Maven/POM của phỏng vấn. <strong>Chưa</strong> đủ để tự thiết kế framework từ đầu, chạy song song/Grid/CI, hay xử lý ca flaky khó mà không cần ai hỏi. Phần đó sẽ học tiếp khi đi làm.</p>
+<h2 id="2-giả-định-hãy-tự-kiểm-tra-ở-ngày-0">2. Giả định (hãy tự kiểm tra ở Ngày 0)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Giả định</th>
+<th>Nếu sai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Thời gian:</strong> ~2,5–3 giờ/ngày trong tuần, ~4–5 giờ/ngày cuối tuần ≈ <strong>38–40 giờ</strong></td>
+<td>Chỉ có ~1,5 giờ/ngày (≈ 21 giờ) → chỉ làm các mục ★</td>
+</tr>
+<tr>
+<td><strong>Java:</strong> viết được class, method, <code>List</code>, <code>try/catch</code></td>
+<td>Làm bài kiểm tra 20 phút bên dưới; nếu không qua → xem §5</td>
+</tr>
+<tr>
+<td>Bạn đã làm 10 Exercise của <code>Selenium1</code> (10/10 pass theo <code>00-project-analysis.md</code>)</td>
+<td>Dùng chúng làm nền để <em>tự viết lại</em>, không đọc lại từ đầu</td>
+</tr>
+<tr>
+<td>Công việc sắp tới dùng <strong>Java + Selenium + TestNG + Maven</strong></td>
+<td>Nếu JD dùng JUnit/Python/Playwright, báo tôi để điều chỉnh</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Kiểm tra Java Ngày 0 (20 phút, không tra cứu):</strong> viết class <code>Account</code> có constructor + getter; thêm 3 đối tượng vào <code>List</code>; duyệt in ra; bắt <code>NumberFormatException</code> khi <code>Integer.parseInt("abc")</code>; giải thích <code>WebDriver driver = new ChromeDriver()</code>. Làm được → đi tiếp.</p>
+<h2 id="3-cách-đọc-mỗi-bài-tiết-kiệm-50-thời-gian">3. Cách đọc mỗi bài (tiết kiệm ~50% thời gian)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Đọc</th>
+<th>Bỏ qua</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🎯 Objectives, <strong>Syntax</strong>, <strong>Code Examples</strong>, ⚠️ Lỗi thường gặp, mục 🧩 (bám <code>Selenium1</code>)</td>
+<td>Knowledge Check (đáp án lệch), Interview Corner cuối bài, Lesson Summary, mục so sánh W3Schools</td>
+</tr>
+<tr>
+<td><strong>Exercise 2 và 3</strong> (Intermediate, Practical); mở lời giải <strong>sau khi</strong> chạy xong</td>
+<td>Exercise 1 nếu đã quen</td>
+</tr>
+<tr>
+<td>Mọi bài tập Wait</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p>Quy tắc: <strong>gõ code, chạy trên máy, commit lên Git mỗi buổi.</strong> Đọc mà không chạy = coi như chưa học.</p>
+<h2 id="4-kế-hoạch-14-ngày">4. Kế hoạch 14 ngày</h2>
+<p>★ = bắt buộc (lộ trình tối thiểu ~21 giờ). Không ★ = làm nếu còn thời gian.
+Đường dẫn bài: thư mục <code>docs/selenium-learning/</code>.</p>
+<h3 id="tuần-1--selenium-cốt-lõi">Tuần 1 — Selenium cốt lõi</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Giờ</th>
+<th>Nội dung</th>
+<th>Sản phẩm cuối ngày</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0</strong> (tối trước)</td>
+<td>0,5</td>
+<td>Kiểm tra Java (§2); đọc <a href="../01-java-fundamentals/00-environment-setup.html">00-environment-setup</a></td>
+<td>JDK ≥ 21 + Chrome sẵn sàng</td>
+</tr>
+<tr>
+<td><strong>1</strong></td>
+<td>3</td>
+<td>★ <a href="../02-maven-and-project/03-maven-wrapper.html"><code>mvnw</code> &amp; Maven Wrapper</a> (đọc nhanh), <a href="../02-maven-and-project/07-build-and-test-execution.html">07 build &amp; test</a> (chỉ lệnh <code>-Dtest</code>, bẫy <code>Tests run: 0</code>); ★ chạy <code>.\mvnw.cmd clean test</code> trên <code>Selenium1</code>; ★ đọc kỹ <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest</a>, <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a>; ★ <a href="../01-java-fundamentals/13-java-selenium-cheatsheet.html">Java cheatsheet</a>; <a href="../03-selenium-fundamentals/README.html">Selenium 01–02</a> (kiến trúc, Selenium Manager)</td>
+<td>Repo GitHub riêng + <a href="../08-practical-project/labs/01-first-selenium-test.html">Lab 01</a> xanh, đã push</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>3</td>
+<td>★ <a href="../03-selenium-fundamentals/03-locators.html">Locators</a> (CSS/XPath, axes, độ ổn định); ★ <a href="../03-selenium-fundamentals/04-webelement.html">WebElement</a>; ★ <a href="../08-practical-project/labs/02-locator-practice.html">Lab 02</a></td>
+<td>Viết 15 locator ổn định cho 3 trang; ≥ 13/15 đúng</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>3</td>
+<td>★ <a href="../03-selenium-fundamentals/05-browser-navigation.html">Navigation</a>, ★ <a href="../03-selenium-fundamentals/06-element-interactions.html">Element Interactions + Dropdown</a>; tự viết lại Exercise 1–4 (không nhìn)</td>
+<td>4 test xanh 3/3</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>3</td>
+<td>★ <a href="../03-selenium-fundamentals/07-browser-interactions.html">Browser Interactions: Alert/Frame/Window</a>; ★ <a href="../03-selenium-fundamentals/08-mouse-and-keyboard-actions.html">Actions</a>; <a href="../03-selenium-fundamentals/09-javascript-executor.html">JS Executor</a> (đọc "khi nào dùng/rủi ro"); ★ <a href="../08-practical-project/labs/05-form-automation.html">Lab 05</a></td>
+<td>Test Alert + Frame + Window xanh</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>3</td>
+<td>★ <a href="../03-selenium-fundamentals/10-selenium-exceptions.html">Selenium Exceptions</a> (Stale, NoSuchElement, ClickIntercepted, NotInteractable); ★ <a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html">Debugging</a>: screenshot khi fail, headless/<code>ChromeOptions</code></td>
+<td>Test tự chụp ảnh khi fail; chạy headless được</td>
+</tr>
+<tr>
+<td><strong>6</strong> (cuối tuần)</td>
+<td>4</td>
+<td>Tự viết lại Exercise 5–10 không nhìn đáp án; Java <a href="../01-java-fundamentals/11-lambda-and-generics.html">Lambda &amp; Generics</a> (chỉ lambda + <code>Function</code>, cần cho Wait)</td>
+<td>10 Exercise tự viết lại chạy xanh</td>
+</tr>
+<tr>
+<td><strong>7</strong> (cuối tuần)</td>
+<td>3</td>
+<td><strong>Mock 1 (30 phút, nói tiếng Anh):</strong> <a href="../interview/selenium-interview.html">selenium-interview</a> 10 câu (Q1–Q10 của mỗi nhóm bạn yếu); sửa chỗ yếu</td>
+<td>Danh sách 5 điểm yếu</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="tuần-2--wait-testng-pom-làm-việc-nhóm">Tuần 2 — Wait, TestNG, POM, làm việc nhóm</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Ngày</th>
+<th>Giờ</th>
+<th>Nội dung</th>
+<th>Sản phẩm cuối ngày</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>8</strong></td>
+<td>3</td>
+<td>★ <strong>Wait</strong> <a href="../04-wait-mechanisms/01-wait-introduction.html">01</a>, <a href="../04-wait-mechanisms/03-explicit-wait.html">03 Explicit</a>, <a href="../04-wait-mechanisms/04-expected-conditions.html">04 ExpectedConditions</a>; <a href="../04-wait-mechanisms/02-implicit-wait.html">02 Implicit</a> (đọc kết luận + số đo)</td>
+<td>Hiểu <code>until()</code>, timeout, polling, ignored exceptions</td>
+</tr>
+<tr>
+<td><strong>9</strong></td>
+<td>3</td>
+<td>★ Wait <a href="../04-wait-mechanisms/05-fluent-wait.html">05 Fluent/Custom</a>, <a href="../04-wait-mechanisms/06-wait-comparison.html">06 So sánh</a>, <a href="../04-wait-mechanisms/07-real-world-scenarios.html">07 15 tình huống</a>; ★ <a href="../08-practical-project/labs/03-wait-practice.html">Lab 03</a> (4 thí nghiệm bắt buộc)</td>
+<td>Giải thích được Exercise 7 và Exercise 10</td>
+</tr>
+<tr>
+<td><strong>10</strong></td>
+<td>3</td>
+<td>★ <strong>Tự tạo 5 ca flaky</strong> (sleep cứng, stale, spinner che nút, thông báo cũ, tab mới) và sửa từng ca; ★ ôn <a href="../interview/wait-interview.html">wait-interview</a> Q1–Q15 (nói thành tiếng)</td>
+<td>5 ca "triệu chứng → nguyên nhân → sửa → chạy 5/5"</td>
+</tr>
+<tr>
+<td><strong>11</strong></td>
+<td>3</td>
+<td>★ <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG 01</a> (annotations, <code>testng.xml</code>, Groups, DataProvider, Parameters, Parallel chỉ mức khái niệm); ★ <a href="../05-testing-framework/03-assertions-and-verification.html">Assertions</a> (hard/soft); ★ data-driven login (DataProvider) + <code>smoke</code> group chạy bằng <code>mvnw</code></td>
+<td>Suite chạy theo group; 1 test dùng DataProvider</td>
+</tr>
+<tr>
+<td><strong>12</strong></td>
+<td>3</td>
+<td>★ <a href="../06-automation-framework/01-page-object-model.html">POM</a>, <a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a> (<code>BasePage</code>, <code>DriverFactory</code>); <a href="../06-automation-framework/04-configuration-management.html">Configuration</a></td>
+<td><code>LoginPage</code>, <code>SecureAreaPage</code>, <code>BasePage</code> chạy xanh</td>
+</tr>
+<tr>
+<td><strong>13</strong></td>
+<td>3</td>
+<td>★ <a href="../08-practical-project/labs/06-page-object-model-practice.html">Lab 06</a>; <strong>Mini-project:</strong> refactor Exercise 1, 4, 10 sang POM + <code>DriverFactory</code> + <code>config.properties</code> + screenshot khi fail; <strong>không</strong> chép code Lab 08</td>
+<td>≥ 6 test, không còn <code>By</code> trong test, <code>-Dheadless=true</code> chạy được</td>
+</tr>
+<tr>
+<td><strong>14</strong></td>
+<td>3</td>
+<td>★ Git làm việc nhóm: <a href="../07-git-and-team-workflow/01-git-fundamentals.html">01</a>, <a href="../07-git-and-team-workflow/03-pull-request-and-conflicts.html">03 PR &amp; conflict</a>, <a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">04 <code>.gitignore</code>/<code>mvnw</code></a> — mở 1 PR thật, tạo &amp; giải quyết 1 conflict <code>pom.xml</code>; <strong>Mock 2 (45 phút):</strong> <a href="../interview/scenario-based-interview.html">scenario-based</a> S1–S7 + <a href="../interview/maven-interview.html">maven-interview</a> Q8–Q10 + tự giới thiệu project 3 phút</td>
+<td>Repo GitHub có PR đã merge; README chạy được bằng <code>mvnw</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Tổng: ~<strong>41 giờ</strong> (tối thiểu các mục ★: ~<strong>24–26 giờ</strong>).</p>
+<h2 id="5-nếu-java-yếu-không-qua-bài-kiểm-tra-ngày-0">5. Nếu Java yếu (không qua bài kiểm tra Ngày 0)</h2>
+<p>Cắt kế hoạch để nhường 6–8 giờ: dùng <a href="../01-java-fundamentals/13-java-selenium-cheatsheet.html">cheatsheet</a> + đọc nhanh <a href="../01-java-fundamentals/07-classes-and-objects.html">07 Classes</a>, <a href="../01-java-fundamentals/08-oop-concepts.html">08 OOP</a> (đến Interface/Inheritance), <a href="../01-java-fundamentals/09-collections.html">09 Collections</a> (<code>List</code>/<code>Map</code>), <a href="../01-java-fundamentals/10-exception-handling.html">10 Exceptions</a>. Hy sinh: Ngày 4 bỏ JS Executor; Ngày 12–13 chỉ làm POM cho <strong>Login</strong> (không DriverFactory/Config). Nói thẳng: khi đó Java sẽ là điểm yếu khi đi làm; hãy bù song song bằng 30 phút/ngày.</p>
+<h2 id="6-tiêu-chí-sẵn-sàng-làm-việc-sau-14-ngày">6. Tiêu chí "sẵn sàng làm việc" sau 14 ngày</h2>
+<p>Tự chứng minh bằng sản phẩm, không bằng "đã đọc":</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tiêu chí</th>
+<th>Cách kiểm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Clone repo lạ → chạy <code>mvnw clean test</code> → đọc được <code>Tests run</code>/<code>Skipped</code>, biết <code>Tests run: 0</code> là cờ đỏ</td>
+<td>Thử trên 1 repo mẫu</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Viết locator CSS/XPath ổn định cho form, bảng, menu</td>
+<td>Lab 02 ≥ 13/15</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Xử lý Alert/Frame/Window/Actions/Dropdown</td>
+<td>Lab 05 xanh</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Chọn đúng Wait (visibility/clickable/<code>textToBe</code>/stale/custom) cho 5 ca flaky tự tạo</td>
+<td>Ngày 10</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Không dùng <code>Thread.sleep</code> / Implicit Wait trong code mới; giải thích vì sao</td>
+<td>Review code của chính bạn</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Đọc stacktrace Selenium, phân biệt 4 exception chính, sửa đúng hướng</td>
+<td>Ngày 5</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Viết test TestNG có group + DataProvider; chạy theo group qua <code>mvnw</code></td>
+<td>Ngày 11</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Viết/sửa Page Object, thêm test mới vào framework có sẵn trong ≤ 1 giờ</td>
+<td>Ngày 13</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Làm việc Git nhóm: branch, PR, giải quyết conflict, commit <code>mvnw</code> đúng mode</td>
+<td>Ngày 14</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Trả lời ≥ 70% Selenium/Wait/Maven/POM trong 2 mock bằng tiếng Anh</td>
+<td>Ngày 7, 14</td>
+</tr>
+</tbody>
+</table></div>
+<p>Đạt ≥ 8/10 → ứng tuyển/nhận việc hợp lý ở vai trò Fresher/Junior <strong>có người hướng dẫn</strong>. Dưới 8 → kéo dài thêm vài ngày ở mục chưa đạt, đừng thêm chủ đề mới.</p>
+<h2 id="7-bỏ-hoàn-toàn-trong-2-tuần-học-khi-đi-làm">7. Bỏ hoàn toàn trong 2 tuần (học khi đi làm)</h2>
+<p>Java Threads/RegEx/Stream/File I/O sâu · Maven Lifecycle/Dependency Management/Failsafe/Profile · Git rebase/cherry-pick · JUnit · Extent/Allure · Selenium Grid/Docker/CDP/Shadow DOM · Parallel thật sự (chỉ cần hiểu <code>ThreadLocal&lt;WebDriver&gt;</code> ở mức câu chuyện phỏng vấn) · GitHub Actions · bộ quiz/Interview Corner cuối bài.</p>
+<h2 id="8-rủi-ro-lớn-nhất">8. Rủi ro lớn nhất</h2>
+<ol>
+<li><strong>Đọc nhiều, gõ ít</strong> → hết 2 tuần vẫn không tự viết được script. Giữ tỷ lệ ≥ 60% thời gian là gõ/chạy.</li>
+<li><strong>Sa vào Java/Maven</strong> → tuần 2 không đủ thời gian cho Wait &amp; POM. Ngày 8–10 (Wait) là phần <strong>không được cắt</strong>.</li>
+<li><strong>Chỉ luyện trên site demo công khai</strong> → khi gặp ứng dụng thật sẽ lạ; nếu còn thời gian, tự viết 2–3 test trên một site có form/giỏ hàng khác ở Ngày 13.</li>
+<li><strong>Ước lượng thời gian của riêng bạn có thể lệch</strong> — hãy đo giờ thực tế ở Ngày 1–2; nếu chậm hơn 30%, chuyển mục không ★ sang "học sau".</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="07-final-recommendations.html"><small>← Bài trước</small><span>07 · Đề xuất tổng hợp và kế hoạch triển khai</span></a><a class="next" href="09-foundation-plan-selenium-java.html"><small>Bài tiếp theo →</small><span>09 · Kế hoạch học căn bản Selenium + Java (đã có nền OOP, cần ôn lại; chuẩn bị cho Playwright)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/08-two-week-fast-track.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

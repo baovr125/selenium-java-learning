@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="test-setup-và-teardown">Test Setup và Teardown</h1>
 <blockquote>
-<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="03-assertions-and-verification.html">Assertions và Verification</a> · ➡️ <a href="05-test-data-and-configuration.html">Test Data và Configuration</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-assertions-and-verification.html">Trước: Assertions</a> · <a href="05-test-data-and-configuration.html">Sau: Test Data &amp; Config</a> · <a href="../06-automation-framework/03-reusable-components.html">Framework: DriverFactory</a>
 Nguồn: <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a></p>
 </blockquote>
@@ -355,14 +353,14 @@ Nguồn: <a href="../../../../src/test/java/base/BaseTest.java" class="ext" titl
 </details>
 <p><strong>Câu 2.</strong> <code>protected WebDriver driver</code> cho phép?</p>
 <ul>
-<li>A. Class con khác package dùng</li>
-<li>B. Chỉ cùng class</li>
-<li>C. Không ai</li>
-<li>D. Mọi nơi</li>
+<li>A. Chỉ cùng class</li>
+<li>B. Không ai</li>
+<li>C. Mọi nơi</li>
+<li>D. Class con khác package dùng</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> <code>BaseTest</code> ở <code>base</code>, test ở <code>tests</code>.</p>
+<p><strong>Đáp án: D.</strong> <code>BaseTest</code> ở <code>base</code>, test ở <code>tests</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Vì sao cả bộ 10 test mất ~91 s?</p>
 <ul>
@@ -420,7 +418,7 @@ Nguồn: <a href="../../../../src/test/java/base/BaseTest.java" class="ext" titl
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeClass</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setupClass</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
 <span class="nd">@AfterClass</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDownClass</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">goHome</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">goHome</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></code></pre></div>
 <p>Đánh đổi: nhanh hơn (~mở Chrome 1 lần) nhưng trạng thái (cookie, trang) có thể rò sang test sau → phải reset thủ công.</p>
 </details>
 <details>

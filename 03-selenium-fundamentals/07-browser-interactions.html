@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="browser-interactions-alert-frameiframe-windowtab">Browser Interactions: Alert, Frame/iFrame, Window/Tab</h1>
-<blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 18 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="06-element-interactions.html">Web Element Interactions</a> · ➡️ <a href="08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a></p>
-<p>Chapter 18 · <a href="README.html">README chương</a> · Trước: <a href="06-element-interactions.html">Element Interactions</a> · Tiếp: <a href="08-mouse-and-keyboard-actions.html">Mouse &amp; Keyboard</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -89,14 +84,14 @@
 </ul>
 <h2 id="frame--iframe">Frame / iFrame</h2>
 <p><code>&lt;iframe&gt;</code> chứa một <strong>tài liệu HTML riêng</strong>. Selenium chỉ "nhìn thấy" phần tử của frame <strong>hiện tại</strong> ⇒ muốn thao tác trong iframe phải <strong>chuyển ngữ cảnh</strong>.</p>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/iframe&quot;</span><span class="p">);</span>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/iframe&quot;</span><span class="p">);</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span><span class="w">  </span><span class="c1">// chờ + vào</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">));</span>
 <span class="n">body</span><span class="p">.</span><span class="na">click</span><span class="p">();</span><span class="w">                                                        </span><span class="c1">// focus vào editor</span>
 <span class="n">body</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">chord</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">CONTROL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Noi dung trong iframe&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// chọn hết rồi gõ đè</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">                     </span><span class="c1">// ra khỏi mọi iframe, về trang chính</span></code></pre></div>
 <blockquote>
-<p>✅ Đã kiểm chứng thật: với TinyMCE của the-internet, <code>clear()</code> + <code>sendKeys()</code> <strong>không</strong> ghi nhận chữ (ô vẫn rỗng); phải <code>click()</code> để focus rồi <code>Ctrl+A</code> và gõ. Editor WYSIWYG (<code>contenteditable</code>) cư xử khác <code>&lt;input&gt;</code>.</p>
+<p>✅ Đã kiểm chứng thật: với TinyMCE của site demo, <code>clear()</code> + <code>sendKeys()</code> <strong>không</strong> ghi nhận chữ (ô vẫn rỗng); phải <code>click()</code> để focus rồi <code>Ctrl+A</code> và gõ. Editor WYSIWYG (<code>contenteditable</code>) cư xử khác <code>&lt;input&gt;</code>.</p>
 </blockquote>
 <div class="table-wrap"><table>
 <thead>
@@ -297,13 +292,13 @@
 <p><strong>Câu 3.</strong> <code>getWindowHandles()</code> trả về kiểu?</p>
 <ul>
 <li>A. <code>List&lt;String&gt;</code></li>
-<li>B. <code>Set&lt;String&gt;</code></li>
-<li>C. <code>String[]</code></li>
-<li>D. <code>Map</code></li>
+<li>B. <code>String[]</code></li>
+<li>C. <code>Map</code></li>
+<li>D. <code>Set&lt;String&gt;</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>Set&lt;String&gt;</code>: không đảm bảo thứ tự.</p>
+<p><strong>Đáp án: D.</strong> <code>Set&lt;String&gt;</code>: không đảm bảo thứ tự.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you handle multiple windows?</strong></p>
@@ -345,7 +340,7 @@
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/javascript_alerts&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/javascript_alerts&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsAlert()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
 <span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span>
@@ -354,7 +349,7 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/iframe&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/iframe&quot;</span><span class="p">);</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">));</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">body</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Your content goes here.&quot;</span><span class="p">);</span>
@@ -366,7 +361,7 @@
 <details>
 <summary>Lời giải Exercise 3</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/windows&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/windows&quot;</span><span class="p">);</span>
 <span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
@@ -378,7 +373,7 @@
 <span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">main</span><span class="p">);</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-element-interactions.html"><small>← Bài trước</small><span>Web Element Interactions</span></a><a class="next" href="08-mouse-and-keyboard-actions.html"><small>Bài tiếp theo →</small><span>Keyboard và Mouse Actions</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../08-practical-project/labs/02-locator-practice.html"><small>← Bài trước</small><span>Lab 02: Locator Practice (Bài 5)</span></a><a class="next" href="08-mouse-and-keyboard-actions.html"><small>Bài tiếp theo →</small><span>Keyboard và Mouse Actions</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/03-selenium-fundamentals/07-browser-interactions.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

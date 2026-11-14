@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="quy-trình-làm-việc-với-maven-trong-team">Quy trình làm việc với Maven trong team</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 12 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="07-build-and-test-execution.html">Build và chạy Automation Test bằng Maven</a> · ➡️ <a href="09-maven-troubleshooting.html">Troubleshooting</a></p>
 <p>Quy trình 9 bước từ clone đến khi đồng đội pull về chạy lại. Mỗi bước có <strong>lệnh</strong>, <strong>giải thích</strong>, <strong>kết quả mong đợi</strong>.
 Liên quan: <a href="README.html">Mục lục</a> · <a href="03-maven-wrapper.html">Maven Wrapper</a> · <a href="09-maven-troubleshooting.html">Troubleshooting</a> · <a href="../interview/git-interview.html">Git phỏng vấn</a></p>
 <p>ℹ️ Thư mục <code>Selenium1</code> hiện <strong>chưa phải Git repository</strong>. Các lệnh Git dưới đây là quy trình chuẩn bạn sẽ dùng khi dự án nằm trên GitHub/GitLab; hãy thực hành trên bản sao hoặc repo thử nghiệm.</p>
@@ -239,25 +237,25 @@ Java version: 25.0.1 ...</code></pre></div>
 </details>
 <p><strong>Câu 2.</strong> Khi đổi <code>pom.xml</code>, cần commit gì?</p>
 <ul>
-<li>A. <code>pom.xml</code> (và lý do trong PR)</li>
-<li>B. <code>target/</code></li>
+<li>A. <code>target/</code></li>
+<li>B. <code>pom.xml</code> (và lý do trong PR)</li>
 <li>C. <code>.mvn/repository/</code></li>
 <li>D. Mọi jar</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Chỉ cấu hình/mã nguồn.</p>
+<p><strong>Đáp án: B.</strong> Chỉ cấu hình/mã nguồn.</p>
 </details>
 <p><strong>Câu 3.</strong> Ai chịu trách nhiệm tải thư viện mới khi <code>pom.xml</code> đổi?</p>
 <ul>
 <li>A. Người đẩy code</li>
-<li>B. Mỗi máy tự tải khi chạy Maven</li>
-<li>C. CI duy nhất</li>
-<li>D. Git</li>
+<li>B. CI duy nhất</li>
+<li>C. Git</li>
+<li>D. Mỗi máy tự tải khi chạy Maven</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Git chỉ chia sẻ công thức; Maven tải thư viện.</p>
+<p><strong>Đáp án: D.</strong> Git chỉ chia sẻ công thức; Maven tải thư viện.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Describe your workflow when you join a Maven Selenium project.</strong></p>

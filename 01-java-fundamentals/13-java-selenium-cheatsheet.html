@@ -93,7 +93,7 @@ Liên quan: <a href="../03-selenium-fundamentals/01-selenium-introduction.html">
 </tbody>
 </table></div>
 <p>🧩 <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest.java</a>:</p>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">LOGIN_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// hằng số</span>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">LOGIN_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// hằng số</span>
 <span class="n">String</span><span class="w"> </span><span class="n">actualMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">successMessageElement</span><span class="p">.</span><span class="na">getText</span><span class="p">();</span><span class="w">                              </span><span class="c1">// biến cục bộ</span></code></pre></div>
 <ul>
 <li><code>final</code>: gán một lần, không đổi. <code>static final</code> + <code>UPPER_SNAKE_CASE</code> = hằng số.</li>
@@ -448,7 +448,7 @@ Liên quan: <a href="../03-selenium-fundamentals/01-selenium-introduction.html">
 </details>
 <p>➡️ Tiếp: <a href="00-environment-setup.html">Cài đặt môi trường</a></p>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="12-file-handling.html"><small>← Bài trước</small><span>Java: File Handling, Properties và Configuration</span></a><a class="next" href="../02-maven-and-project/README.html"><small>Bài tiếp theo →</small><span>Phase 2 — Maven and Project Management (Chapter 09–12)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 1 — Java Fundamentals (Chapter 01–08)</span></a><a class="next" href="01-getting-started.html"><small>Bài tiếp theo →</small><span>Java: Getting Started (Introduction, Syntax, Output, Comments)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/13-java-selenium-cheatsheet.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

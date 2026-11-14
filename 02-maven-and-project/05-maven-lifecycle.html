@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="commands-và-build-lifecycle">Commands và Build Lifecycle</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 11 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="04-maven-wrapper-in-team-and-git.html">Maven Wrapper: làm việc nhóm, Git và lỗi thường gặp</a> · ➡️ <a href="06-dependency-management.html">Dependency Management</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-maven-wrapper.html">Trước: Maven Wrapper</a> · <a href="06-dependency-management.html">Sau: Dependency Management</a> · <a href="07-build-and-test-execution.html">Chạy test</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -481,25 +479,25 @@ BUILD SUCCESS</code></pre></div>
 </details>
 <p><strong>Câu 2.</strong> <code>clean</code> thuộc lifecycle nào?</p>
 <ul>
-<li>A. default</li>
-<li>B. clean</li>
+<li>A. clean</li>
+<li>B. default</li>
 <li>C. site</li>
 <li>D. build</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Lifecycle <code>clean</code> riêng; thường ghép <code>clean test</code>.</p>
+<p><strong>Đáp án: A.</strong> Lifecycle <code>clean</code> riêng; thường ghép <code>clean test</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>-DskipTests</code> khác <code>-Dmaven.test.skip=true</code> thế nào?</p>
 <ul>
 <li>A. Giống nhau</li>
-<li>B. Cái sau còn bỏ biên dịch test</li>
-<li>C. Cái trước xoá test</li>
-<li>D. Không khác</li>
+<li>B. Cái trước xoá test</li>
+<li>C. Không khác</li>
+<li>D. Cái sau còn bỏ biên dịch test</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>skipTests</code> vẫn biên dịch test.</p>
+<p><strong>Đáp án: D.</strong> <code>skipTests</code> vẫn biên dịch test.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the Maven build lifecycle?</strong></p>

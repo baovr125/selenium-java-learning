@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Reading — Interview (đọc code, tìm lỗi, nói output) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/code-reading-interview" data-root="../" data-lesson="0" data-title="Code Reading — Interview (đọc code, tìm lỗi, nói output)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="code-reading--interview-đọc-code-tìm-lỗi-nói-output">Code Reading — Interview (đọc code, tìm lỗi, nói output)</h1>
+<blockquote>
+<p>Dạng câu hỏi "Look at this code — what happens / what is wrong?" rất phổ biến ở vòng kỹ thuật. <strong>Không cần chạy máy</strong>: đọc đoạn code, trả lời thành tiếng bằng tiếng Anh, rồi đối chiếu. Quay lại: <a href="README.html">Interview README</a>
+Cấu trúc: Code → Câu hỏi → Đáp án (EN) → Giải thích (VI). CR1–CR4 là Java, CR5–CR14 là Selenium/TestNG.</p>
+</blockquote>
+<h3 id="cr1-what-does-this-print">CR1. What does this print?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;qa&quot;</span><span class="p">;</span>
+<span class="n">String</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;qa&quot;</span><span class="p">;</span>
+<span class="n">String</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&quot;qa&quot;</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">c</span><span class="p">));</span></code></pre></div>
+<p><strong>Answer:</strong> <code>true</code>, <code>false</code>, <code>true</code>. <code>a</code> and <code>b</code> are the same literal from the string pool, so <code>==</code> is true. <code>c</code> is a new object, so <code>==</code> is false, but the content is equal.
+<strong>Giải thích:</strong> <code>==</code> so tham chiếu, <code>equals</code> so nội dung. Xem <a href="java-interview.html">Java Q12</a>.</p>
+<hr />
+<h3 id="cr2-what-does-this-print">CR2. What does this print?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Integer</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">127</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">127</span><span class="p">;</span>
+<span class="n">Integer</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">q</span><span class="p">));</span></code></pre></div>
+<p><strong>Answer:</strong> <code>true</code>, <code>false</code>, <code>true</code>. <code>Integer</code> values from -128 to 127 come from a cache, so <code>==</code> is true; 128 creates different objects, so <code>==</code> is false. Use <code>equals()</code>.
+<strong>Giải thích:</strong> Bẫy autoboxing. Xem <a href="java-interview.html">Java Q21</a>.</p>
+<hr />
+<h3 id="cr3-what-is-wrong-here">CR3. What is wrong here?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">));</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">names</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">))</span><span class="w"> </span><span class="n">names</span><span class="p">.</span><span class="na">remove</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="p">}</span></code></pre></div>
+<p><strong>Answer:</strong> It throws <code>ConcurrentModificationException</code> because the list is modified while the for-each iterator is running. Fix: use an <code>Iterator</code> and <code>it.remove()</code>, or <code>names.removeIf(n -&gt; n.equals("a"))</code>.
+<strong>Giải thích:</strong> Có trường hợp đặc biệt (xoá phần tử kế cuối) lại <em>không</em> ném lỗi — đừng dựa vào đó. Cũng chú ý <code>List.of(...)</code> bất biến nên phải bọc <code>new ArrayList&lt;&gt;(...)</code>.</p>
+<hr />
+<h3 id="cr4-what-does-this-print">CR4. What does this print?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">f</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;cleanup&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">f</span><span class="p">());</span></code></pre></div>
+<p><strong>Answer:</strong> <code>cleanup</code> then <code>1</code>. The <code>finally</code> block runs before the method returns. If <code>finally</code> contained <code>return 2</code>, the method would return <code>2</code>, which is why returning from <code>finally</code> is bad practice.
+<strong>Giải thích:</strong> Xem <a href="java-interview.html">Java Q16, Q26</a>.</p>
+<hr />
+<h3 id="cr5-the-test-fails-intermittently-why-and-how-do-you-fix-it">CR5. The test fails intermittently. Why, and how do you fix it?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hello World!&quot;</span><span class="p">);</span></code></pre></div>
+<p><strong>Answer:</strong> The code reads the result immediately after the click, but the page loads it asynchronously. If the element is not in the DOM yet we get <code>NoSuchElementException</code>; if it exists but is hidden, <code>getText()</code> returns an empty string. Fix: wait for the specific condition, <code>wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("finish")))</code>, then read the text.
+<strong>Giải thích:</strong> Nguyên nhân flaky số 1: thiếu đồng bộ. Ca <code>/dynamic_loading/1</code> (ẩn sẵn) và <code>/2</code> (thêm vào DOM sau) cho hai triệu chứng khác nhau — xem <a href="../08-practical-project/labs/03-wait-practice.html">Lab 03</a>.</p>
+<hr />
+<h3 id="cr6-what-exception-occurs-and-why">CR6. What exception occurs, and why?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#table1 tbody tr&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">refresh</span><span class="p">();</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">rows</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="na">getText</span><span class="p">());</span></code></pre></div>
+<p><strong>Answer:</strong> <code>StaleElementReferenceException</code>. The <code>WebElement</code> handles refer to elements of the old page; after the refresh the DOM was rebuilt, so the references are invalid. Fix: find the elements again after the refresh, or store the <code>By</code> locator instead of the element, and wait for the page state you need.
+<strong>Giải thích:</strong> Stale = handle cũ trỏ vào DOM đã bị thay. Xem <a href="../03-selenium-fundamentals/10-selenium-exceptions.html">Selenium Exceptions</a>.</p>
+<hr />
+<h3 id="cr7-the-hover-does-nothing-why">CR7. The hover does nothing. Why?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Actions</span><span class="w"> </span><span class="n">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Actions</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span>
+<span class="n">actions</span><span class="p">.</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">figure</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">figure</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;h5&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span></code></pre></div>
+<p><strong>Answer:</strong> The action is only built, never executed: <code>.perform()</code> is missing. Also the caption becomes visible only after the hover, so I need <code>actions.moveToElement(figure).perform();</code> followed by a wait for the caption to be visible.
+<strong>Giải thích:</strong> Quên <code>.perform()</code> là lỗi kinh điển; ca này khớp Exercise 5.</p>
+<hr />
+<h3 id="cr8-how-long-does-this-take-and-what-is-the-problem">CR8. How long does this take, and what is the problem?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">implicitlyWait</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;does-not-exist&quot;</span><span class="p">));</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">items</span><span class="p">.</span><span class="na">size</span><span class="p">());</span></code></pre></div>
+<p><strong>Answer:</strong> It returns an empty list only after waiting the full 10 seconds, because the implicit wait applies to every find call. Mixing implicit and explicit waits makes total waiting time unpredictable, so I use only explicit waits.
+<strong>Giải thích:</strong> Đã đo thật trong tài liệu: 17 ms (không implicit) so với 3050 ms (implicit 3 s) — <a href="../04-wait-mechanisms/02-implicit-wait.html">Implicit Wait</a>.</p>
+<hr />
+<h3 id="cr9-tests-fail-randomly-when-run-in-parallel-why">CR9. Tests fail randomly when run in parallel. Why?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@BeforeMethod</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@AfterMethod</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p><strong>Answer:</strong> <code>driver</code> is <code>static</code>, shared by all threads. One thread overwrites or quits the driver another thread is using. Fix: give each thread its own driver with <code>ThreadLocal&lt;WebDriver&gt;</code> and call <code>remove()</code> after the test, and make sure tests are independent.
+<strong>Giải thích:</strong> Xem <a href="java-interview.html">Java Q30</a>, <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG parallel</a>.</p>
+<hr />
+<h3 id="cr10-the-build-says-build-success-but-nothing-ran-why">CR10. The build says <code>BUILD SUCCESS</code> but nothing ran. Why?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.junit.Test</span><span class="p">;</span><span class="w">          </span><span class="c1">// &lt;- note the import</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shouldLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p><strong>Answer:</strong> The project uses TestNG, but the annotation comes from JUnit, so TestNG does not recognize the method as a test. Maven can finish with <code>Tests run: 0</code> and still report <code>BUILD SUCCESS</code>. Fix: <code>import org.testng.annotations.Test;</code> and always read the <code>Tests run</code> line. (If JUnit is not on the classpath it may instead fail to compile.)
+<strong>Giải thích:</strong> Bẫy đã tái hiện trong dự án: <code>-Dtest=NoSuchTest</code> ⇒ <code>Tests run: 0</code> nhưng thành công — <a href="maven-interview.html">Maven interview Q17</a>.</p>
+<hr />
+<h3 id="cr11-this-page-object-crashes-on-creation-why">CR11. This Page Object crashes on creation. Why?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">LoginPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p><strong>Answer:</strong> Field initializers run before the constructor body, so <code>driver</code> is still <code>null</code> and <code>NullPointerException</code> occurs. Even if it worked, storing a <code>WebElement</code> at construction risks stale or missing elements. Fix: store the locator, <code>private final By username = By.id("username");</code>, and look the element up inside the page methods.
+<strong>Giải thích:</strong> Đúng quy tắc POM: lưu <code>By</code>, không lưu <code>WebElement</code> — <a href="../06-automation-framework/01-page-object-model.html">POM</a>.</p>
+<hr />
+<h3 id="cr12-what-exception-does-this-throw">CR12. What exception does this throw?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Select</span><span class="w"> </span><span class="n">select</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;custom-dropdown&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// a &lt;div&gt;</span>
+<span class="n">select</span><span class="p">.</span><span class="na">selectByVisibleText</span><span class="p">(</span><span class="s">&quot;Option 2&quot;</span><span class="p">);</span></code></pre></div>
+<p><strong>Answer:</strong> <code>UnexpectedTagNameException</code> — the <code>Select</code> class only works with a real <code>&lt;select&gt;</code> element. For a custom dropdown built from <code>div</code>/<code>ul</code>, click it to open and then click the desired option element.
+<strong>Giải thích:</strong> Dropdown "giả" rất phổ biến trên web thật.</p>
+<hr />
+<h3 id="cr13-why-is-this-a-bad-practice">CR13. Why is this a bad practice?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">button</span><span class="p">.</span><span class="na">click</span><span class="p">();</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">isDisplayed</span><span class="p">());</span></code></pre></div>
+<p><strong>Answer:</strong> A fixed sleep always costs the full 5 seconds when the page is faster and is still not enough when it is slower, so the test is both slow and flaky. Replace it with an explicit wait for the condition, such as <code>wait.until(ExpectedConditions.visibilityOf(result))</code>. <code>catch</code> with only <code>printStackTrace()</code> also hides the interruption.
+<strong>Giải thích:</strong> Xem <a href="../04-wait-mechanisms/06-wait-comparison.html">Wait: so sánh và <code>Thread.sleep</code></a>.</p>
+<hr />
+<h3 id="cr14-the-failure-message-looks-backwards-why">CR14. The failure message looks backwards. Why?</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">;</span>
+<span class="n">String</span><span class="w"> </span><span class="n">actual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">actual</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wrong message&quot;</span><span class="p">);</span></code></pre></div>
+<p><strong>Answer:</strong> TestNG's signature is <code>assertEquals(actual, expected, message)</code>, the reverse of JUnit's <code>(expected, actual)</code>. With the arguments swapped, the report prints the expected value as "actual" and misleads whoever reads it. The test still passes or fails correctly, but the message is confusing.
+<strong>Giải thích:</strong> Lỗi nhỏ nhưng người review hay bắt; chú ý khi chuyển giữa JUnit và TestNG.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="automation-concepts-interview.html"><small>← Bài trước</small><span>Automation Concepts — Interview (lý thuyết tự động hoá)</span></a><a class="next" href="behavioral-and-english-interview.html"><small>Bài tiếp theo →</small><span>Behavioral &amp; English — Interview (giới thiệu, hành vi, tiếng Anh)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/code-reading-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

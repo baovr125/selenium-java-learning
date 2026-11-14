@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-oop-concepts-encapsulation-inheritance-polymorphism-abstraction-interface-packages">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 05
-⬅️ <a href="07-classes-and-objects.html">Java: Classes và Objects (attributes, methods, constructors, <code>this</code>, modifiers, static)</a> · ➡️ <a href="09-collections.html">Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</a></p>
 <p>Chapter 05 (tiếp) · Mức ưu tiên: <strong>Essential</strong></p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -250,12 +248,12 @@ tearDown: quit ChromeDriver</code></pre></div>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;chrome&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;firefox&quot;</span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="n">Browser</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BrowserFactory</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w">     </span><span class="c1">// kiểu Browser, đối tượng cụ thể</span>
-<span class="w">            </span><span class="n">b</span><span class="p">.</span><span class="na">open</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">b</span><span class="p">.</span><span class="na">open</span><span class="p">(</span><span class="s">&quot;https://example.com&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Chrome mở https://the-internet.herokuapp.com
-Firefox mở https://the-internet.herokuapp.com</code></pre></div>
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Chrome mở https://example.com
+Firefox mở https://example.com</code></pre></div>
 <p>Code dùng <code>Browser b</code> không cần biết là Chrome hay Firefox — chính là cách <code>WebDriver</code> và <code>DriverFactory</code> hoạt động.</p>
 <h3 id="ví-dụ-4--abstract-class-mô-phỏng-basepage">Ví dụ 4 — Abstract class (mô phỏng BasePage)</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BasePage</span><span class="w"> </span><span class="p">{</span>
@@ -464,36 +462,36 @@ tearDown</code></pre></div>
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Một class Java có thể <code>extends</code> bao nhiêu class?</p>
 <ul>
-<li>A. Một</li>
-<li>B. Hai</li>
-<li>C. Không giới hạn</li>
-<li>D. Không thể</li>
+<li>A. Hai</li>
+<li>B. Không giới hạn</li>
+<li>C. Không thể</li>
+<li>D. Một</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Đơn kế thừa class; nhưng <code>implements</code> được nhiều interface.</p>
+<p><strong>Đáp án: D.</strong> Đơn kế thừa class; nhưng <code>implements</code> được nhiều interface.</p>
 </details>
 <p><strong>Câu 2.</strong> Vì sao nên viết <code>WebDriver driver = new ChromeDriver()</code>?</p>
 <ul>
-<li>A. Nhanh hơn</li>
-<li>B. Đa hình: đổi sang Firefox chỉ sửa một dòng</li>
+<li>A. Đa hình: đổi sang Firefox chỉ sửa một dòng</li>
+<li>B. Nhanh hơn</li>
 <li>C. Bắt buộc bởi Maven</li>
 <li>D. Để dùng JavaScript</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Biến kiểu interface, đối tượng cụ thể.</p>
+<p><strong>Đáp án: A.</strong> Biến kiểu interface, đối tượng cụ thể.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>abstract class</code> khác <code>interface</code> ở điểm nào?</p>
 <ul>
-<li>A. Abstract class có thể có field, constructor và hiện thực một phần</li>
-<li>B. Interface có constructor</li>
-<li>C. Không khác</li>
+<li>A. Interface có constructor</li>
+<li>B. Không khác</li>
+<li>C. Abstract class có thể có field, constructor và hiện thực một phần</li>
 <li>D. Abstract class không kế thừa được</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Interface là hợp đồng (không constructor); abstract class có thể có trạng thái.</p>
+<p><strong>Đáp án: C.</strong> Interface là hợp đồng (không constructor); abstract class có thể có trạng thái.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Explain polymorphism with a Selenium example.</strong></p>

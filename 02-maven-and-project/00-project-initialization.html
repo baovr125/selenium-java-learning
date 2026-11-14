@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="khởi-tạo-dự-án-selenium-java--maven--testng">Khởi tạo dự án Selenium Java + Maven + TestNG</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 09 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="../01-java-fundamentals/12-file-handling.html">Java: File Handling, Properties và Configuration</a> · ➡️ <a href="01-maven-fundamentals.html">Maven Fundamentals</a></p>
 <p>Hướng dẫn dựng <strong>một dự án mới từ đầu</strong> (khuyến nghị đặt ở thư mục riêng, ví dụ <code>B:\Fresher\SeleniumLab</code>) để thực hành, <strong>không</strong> làm trên dự án gốc <code>Selenium1</code>.
 Liên quan: <a href="../01-java-fundamentals/00-environment-setup.html">Trước: Môi trường</a> · <a href="02-pom-xml.html">Maven POM</a> · <a href="../08-practical-project/labs/01-first-selenium-test.html">practice/01</a></p>
 <p>Dự án <code>Selenium1</code> chính là kết quả của quy trình này — hãy đối chiếu từng bước với nó.</p>
@@ -156,6 +154,9 @@ Liên quan: <a href="../01-java-fundamentals/00-environment-setup.html">Trước
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.time.Duration</span><span class="p">;</span>
 
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Địa chỉ gốc của site demo công khai bạn dùng để luyện tập (tài liệu không ghi địa chỉ cụ thể; xem README, mục &quot;Quy ước BASE_URL&quot;)</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">;</span>
+
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
 
@@ -186,7 +187,7 @@ Liên quan: <a href="../01-java-fundamentals/00-environment-setup.html">Trước
 
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shouldOpenHomePage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;The Internet&quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
@@ -273,7 +274,7 @@ test-output/
 <p>💡 <strong>Hint:</strong> Đối chiếu với <code>pom.xml</code> của <code>Selenium1</code>.</p>
 </blockquote>
 <h3 id="exercise-3-practical-application">Exercise 3 (Practical Application)</h3>
-<p><strong>Yêu cầu:</strong> Viết <code>HomePageTest</code> mở <code>https://the-internet.herokuapp.com/</code> và assert <code>title == "The Internet"</code>, rồi chạy bằng <code>mvnw</code>.</p>
+<p><strong>Yêu cầu:</strong> Viết <code>HomePageTest</code> mở trang chủ của site demo và assert <code>title == "The Internet"</code>, rồi chạy bằng <code>mvnw</code>.</p>
 <p><strong>Input:</strong> BaseTest + HomePageTest</p>
 <p><strong>Expected Output:</strong> <code>Tests run: 1, Failures: 0</code> + <code>BUILD SUCCESS</code></p>
 <blockquote>
@@ -283,35 +284,35 @@ test-output/
 <p><strong>Câu 1.</strong> Mã kiểm thử Maven đặt ở thư mục nào?</p>
 <ul>
 <li>A. <code>src/main/java</code></li>
-<li>B. <code>src/test/java</code></li>
-<li>C. <code>target</code></li>
-<li>D. <code>resources</code></li>
+<li>B. <code>target</code></li>
+<li>C. <code>resources</code></li>
+<li>D. <code>src/test/java</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Code test: <code>src/test/java</code>; code sản phẩm: <code>src/main/java</code>.</p>
+<p><strong>Đáp án: D.</strong> Code test: <code>src/test/java</code>; code sản phẩm: <code>src/main/java</code>.</p>
 </details>
 <p><strong>Câu 2.</strong> Vì sao <code>.\mvnw.cmd compile</code> ở dự án <code>Selenium1</code> báo <code>Nothing to compile</code>?</p>
 <ul>
 <li>A. Lỗi cấu hình</li>
-<li>B. Không có <code>src/main</code> (mọi code ở <code>src/test</code>)</li>
-<li>C. Thiếu JDK</li>
+<li>B. Thiếu JDK</li>
+<li>C. Không có <code>src/main</code> (mọi code ở <code>src/test</code>)</li>
 <li>D. Do TestNG</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>compile</code> chỉ biên dịch <code>src/main</code>; dùng <code>test-compile</code>/<code>test</code>.</p>
+<p><strong>Đáp án: C.</strong> <code>compile</code> chỉ biên dịch <code>src/main</code>; dùng <code>test-compile</code>/<code>test</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Class test phải đặt tên thế nào để Surefire tự quét (khi không dùng suite XML)?</p>
 <ul>
-<li>A. <code>*Test</code>/<code>Test*</code>/<code>*Tests</code></li>
-<li>B. Bất kỳ</li>
+<li>A. Bất kỳ</li>
+<li>B. <code>*Test</code>/<code>Test*</code>/<code>*Tests</code></li>
 <li>C. Phải kết thúc <code>Main</code></li>
 <li>D. <code>*Page</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Mẫu mặc định: <code>**/Test*.java</code>, <code>**/*Test.java</code>, <code>**/*Tests.java</code>, <code>**/*TestCase.java</code>.</p>
+<p><strong>Đáp án: B.</strong> Mẫu mặc định: <code>**/Test*.java</code>, <code>**/*Test.java</code>, <code>**/*Tests.java</code>, <code>**/*TestCase.java</code>.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Explain the standard Maven directory layout.</strong></p>
@@ -367,14 +368,14 @@ test-output/
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">HomePageTest</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseTest</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">shouldOpenHomePage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;The Internet&quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 2 — Maven and Project Management (Chapter 09–12)</span></a><a class="next" href="01-maven-fundamentals.html"><small>Bài tiếp theo →</small><span>Maven Fundamentals</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../01-java-fundamentals/00-environment-setup.html"><small>← Bài trước</small><span>Cài đặt môi trường</span></a><a class="next" href="01-maven-fundamentals.html"><small>Bài tiếp theo →</small><span>Maven Fundamentals</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/02-maven-and-project/00-project-initialization.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

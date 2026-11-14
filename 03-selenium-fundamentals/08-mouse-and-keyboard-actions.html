@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="keyboard-và-mouse-actions">Keyboard và Mouse Actions</h1>
 <blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 18 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="07-browser-interactions.html">Browser Interactions: Alert, Frame/iFrame, Window/Tab</a> · ➡️ <a href="09-javascript-executor.html">JavaScript Executor</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="07-browser-interactions.html">Trước: Dropdown/Alert/Frame/Window</a> · <a href="09-javascript-executor.html">Sau: JavaScript Executor</a>
 🧩 Trong dự án: <a href="../../../../src/test/java/tests/Exercise05_HoverTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise05_HoverTest</a> (hover), <a href="../../../../src/test/java/tests/Exercise09_DragAndDropTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise09_DragAndDropTest</a> (kéo thả).</p>
 </blockquote>
@@ -114,7 +112,7 @@
 <span class="w">       </span><span class="p">.</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">columnB</span><span class="p">)</span>
 <span class="w">       </span><span class="p">.</span><span class="na">release</span><span class="p">()</span>
 <span class="w">       </span><span class="p">.</span><span class="na">perform</span><span class="p">();</span></code></pre></div>
-<p>⚠️ <strong>Độ tin cậy:</strong> trang the-internet dùng HTML5 Drag &amp; Drop. Trên một số tổ hợp Chrome/Selenium, <code>dragAndDrop</code> có thể không kích hoạt sự kiện HTML5 ⇒ không đổi chỗ. Dự án chạy 10/10 pass trên môi trường hiện tại, nhưng đây là loại thao tác <strong>dễ flaky</strong>. Phương án dự phòng:</p>
+<p>⚠️ <strong>Độ tin cậy:</strong> trang của site demo dùng HTML5 Drag &amp; Drop. Trên một số tổ hợp Chrome/Selenium, <code>dragAndDrop</code> có thể không kích hoạt sự kiện HTML5 ⇒ không đổi chỗ. Dự án chạy 10/10 pass trên môi trường hiện tại, nhưng đây là loại thao tác <strong>dễ flaky</strong>. Phương án dự phòng:</p>
 <ol>
 <li><code>clickAndHold → moveToElement → release</code> (có thể cần thêm <code>moveByOffset</code> nhỏ);</li>
 <li>Mô phỏng sự kiện <code>dragstart/dragover/drop</code> bằng JavaScript (<a href="09-javascript-executor.html">08</a>);</li>
@@ -304,13 +302,13 @@
 <p><strong>Câu 1.</strong> Quên <code>.perform()</code> thì?</p>
 <ul>
 <li>A. Lỗi biên dịch</li>
-<li>B. Không có gì xảy ra</li>
-<li>C. Hover vẫn chạy</li>
+<li>B. Hover vẫn chạy</li>
+<li>C. Không có gì xảy ra</li>
 <li>D. Ném exception</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>Actions</code> chỉ ghi lại hành động; <code>perform()</code> mới chạy.</p>
+<p><strong>Đáp án: C.</strong> <code>Actions</code> chỉ ghi lại hành động; <code>perform()</code> mới chạy.</p>
 </details>
 <p><strong>Câu 2.</strong> Sau hover cần làm gì trước khi đọc nội dung hiện ra?</p>
 <ul>
@@ -374,7 +372,7 @@
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/hovers&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/hovers&quot;</span><span class="p">);</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;figure&quot;</span><span class="p">)).</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 <span class="k">new</span><span class="w"> </span><span class="n">Actions</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">first</span><span class="p">).</span><span class="na">perform</span><span class="p">();</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">first</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.figcaption h5&quot;</span><span class="p">));</span>
@@ -384,14 +382,14 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/key_presses&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/key_presses&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;target&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">);</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;result&quot;</span><span class="p">)).</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;You entered: A&quot;</span><span class="p">);</span></code></pre></div>
 </details>
 <details>
 <summary>Lời giải Exercise 3</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/drag_and_drop&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/drag_and_drop&quot;</span><span class="p">);</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;column-a&quot;</span><span class="p">));</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;column-b&quot;</span><span class="p">));</span>
 <span class="k">new</span><span class="w"> </span><span class="n">Actions</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">dragAndDrop</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">).</span><span class="na">perform</span><span class="p">();</span>

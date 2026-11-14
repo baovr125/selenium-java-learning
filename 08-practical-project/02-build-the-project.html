@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="project-step-48-xây-dựng-selenium-project-maven-pom-test-scripts-và-wait">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</h1>
 <blockquote>
-<p>🧭 Phase 8 · Real-world Automation Project · Chapter 24
-⬅️ <a href="01-requirements-and-test-design.html">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</a> · ➡️ <a href="03-run-debug-report-and-git.html">Project Step 9–12: Thực thi Suite, Debug, Báo cáo và Git</a></p>
 <p>Phase 8 · Chapter 24 (tiếp) · Mức ưu tiên: <strong>Essential</strong>
 Làm trong thư mục <strong>riêng</strong> (ví dụ <code>B:\Fresher\SeleniumFramework</code>), không làm trên <code>Selenium1</code>.</p>
 </blockquote>
@@ -144,7 +142,7 @@ Làm trong thư mục <strong>riêng</strong> (ví dụ <code>B:\Fresher\Seleniu
 </table></div>
 <h3 id="mẫu-cấu-hình-tối-thiểu-cho-m2">Mẫu cấu hình tối thiểu cho M2</h3>
 <p><code>src/test/resources/config.properties</code>:</p>
-<div class="code" data-lang="properties"><div class="code-head"><span class="lang">properties</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="na">base.url</span><span class="o">=</span><span class="s">https://the-internet.herokuapp.com</span>
+<div class="code" data-lang="properties"><div class="code-head"><span class="lang">properties</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="na">base.url</span><span class="o">=</span><span class="s">https://example.com</span>
 <span class="na">browser</span><span class="o">=</span><span class="s">chrome</span>
 <span class="na">headless</span><span class="o">=</span><span class="s">false</span>
 <span class="na">timeout.seconds</span><span class="o">=</span><span class="s">15</span></code></pre></div>
@@ -270,35 +268,35 @@ Làm trong thư mục <strong>riêng</strong> (ví dụ <code>B:\Fresher\Seleniu
 <p><strong>Câu 1.</strong> Mỗi mốc kết thúc bằng?</p>
 <ul>
 <li>A. Không gì</li>
-<li>B. <code>clean test</code> xanh + commit</li>
-<li>C. Xoá <code>target</code></li>
+<li>B. Xoá <code>target</code></li>
+<li>C. <code>clean test</code> xanh + commit</li>
 <li>D. Đổi JDK</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Lỗi ở phạm vi nhỏ.</p>
+<p><strong>Đáp án: C.</strong> Lỗi ở phạm vi nhỏ.</p>
 </details>
 <p><strong>Câu 2.</strong> Code Selenium trong <code>src/main</code> với scope <code>test</code> gây?</p>
 <ul>
-<li>A. Không gì</li>
-<li>B. Lỗi <code>package org.openqa.selenium does not exist</code></li>
+<li>A. Lỗi <code>package org.openqa.selenium does not exist</code></li>
+<li>B. Không gì</li>
 <li>C. Nhanh hơn</li>
 <li>D. Cảnh báo</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Đặt trong <code>src/test/java</code>.</p>
+<p><strong>Đáp án: A.</strong> Đặt trong <code>src/test/java</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Wait nào không dùng trong framework?</p>
 <ul>
 <li>A. Explicit</li>
-<li>B. Fluent</li>
-<li>C. <code>Thread.sleep</code>/Implicit</li>
+<li>B. <code>Thread.sleep</code>/Implicit</li>
+<li>C. Fluent</li>
 <li>D. Custom</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: C.</strong> Quy ước của dự án.</p>
+<p><strong>Đáp án: B.</strong> Quy ước của dự án.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you structure a small automation project?</strong></p>

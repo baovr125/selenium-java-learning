@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="fluent-wait-và-custom-wait">Fluent Wait và Custom Wait</h1>
-<blockquote>
-<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a> · ➡️ <a href="06-wait-comparison.html">So sánh các cơ chế chờ (và Thread.sleep)</a></p>
-<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="04-expected-conditions.html">ExpectedConditions</a> · Tiếp: <a href="06-wait-comparison.html">So sánh các Wait</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -125,14 +120,14 @@
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> <code>WebDriverWait</code> so với <code>FluentWait</code>?</p>
 <ul>
-<li>A. Không liên quan</li>
-<li>B. <code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code> với mặc định sẵn</li>
+<li>A. <code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code> với mặc định sẵn</li>
+<li>B. Không liên quan</li>
 <li>C. <code>FluentWait</code> chỉ cho alert</li>
 <li>D. Giống hệt <code>Thread.sleep</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Có thể thêm <code>ignoring</code>/<code>pollingEvery</code> cho <code>WebDriverWait</code>.</p>
+<p><strong>Đáp án: A.</strong> Có thể thêm <code>ignoring</code>/<code>pollingEvery</code> cho <code>WebDriverWait</code>.</p>
 </details>
 <p><strong>Câu 2.</strong> Điều kiện chờ trả <code>false</code>/<code>null</code> nghĩa là?</p>
 <ul>
@@ -148,13 +143,13 @@
 <p><strong>Câu 3.</strong> Biến dùng trong lambda của điều kiện phải?</p>
 <ul>
 <li>A. <code>static</code></li>
-<li>B. final/effectively final</li>
-<li>C. <code>public</code></li>
-<li>D. Không giới hạn</li>
+<li>B. <code>public</code></li>
+<li>C. Không giới hạn</li>
+<li>D. final/effectively final</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Quy tắc lambda của Java.</p>
+<p><strong>Đáp án: D.</strong> Quy tắc lambda của Java.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you write a custom wait?</strong></p>

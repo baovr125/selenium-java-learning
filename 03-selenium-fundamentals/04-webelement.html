@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="selenium-webelement-api">Selenium: WebElement API</h1>
-<blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 16 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="03-locators.html">Selenium: Locators (cách tìm phần tử)</a> · ➡️ <a href="05-browser-navigation.html">Browser Navigation</a></p>
-<p>Chapter 16 · Liên quan: <a href="README.html">README chương</a> · <a href="03-locators.html">Locators</a> · <a href="06-element-interactions.html">Element Interactions</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -294,25 +289,25 @@
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> <code>findElement</code> khi không thấy?</p>
 <ul>
-<li>A. Trả <code>null</code></li>
-<li>B. Ném <code>NoSuchElementException</code></li>
+<li>A. Ném <code>NoSuchElementException</code></li>
+<li>B. Trả <code>null</code></li>
 <li>C. Trả list rỗng</li>
 <li>D. Trả <code>false</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>findElements</code> mới trả list rỗng.</p>
+<p><strong>Đáp án: A.</strong> <code>findElements</code> mới trả list rỗng.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>getAttribute("value")</code> dùng để?</p>
 <ul>
-<li>A. Lấy text hiển thị</li>
-<li>B. Lấy giá trị hiện tại của input</li>
+<li>A. Lấy giá trị hiện tại của input</li>
+<li>B. Lấy text hiển thị</li>
 <li>C. Lấy tag</li>
 <li>D. Xoá nội dung</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Dùng cho <code>&lt;input&gt;</code>.</p>
+<p><strong>Đáp án: A.</strong> Dùng cho <code>&lt;input&gt;</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Nguyên nhân <code>StaleElementReferenceException</code>?</p>
 <ul>
@@ -369,14 +364,14 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_controls&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_controls&quot;</span><span class="p">);</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example input&quot;</span><span class="p">));</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="na">isEnabled</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Ban đầu input phải bị khoá&quot;</span><span class="p">);</span></code></pre></div>
 </details>
 <details>
 <summary>Lời giải Exercise 3</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Chưa có flash trước khi đăng nhập&quot;</span><span class="p">);</span></code></pre></div>
 </details>
     </article>

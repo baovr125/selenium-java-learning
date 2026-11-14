@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="pomxml-và-dependencies"><code>pom.xml</code> và Dependencies</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 09 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="01-maven-fundamentals.html">Maven Fundamentals</a> · ➡️ <a href="03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a></p>
 <p>Liên quan: <a href="01-maven-fundamentals.html">Trước: Fundamentals</a> · <a href="03-maven-wrapper.html">Sau: Maven Wrapper</a> · <a href="06-dependency-management.html">Dependency Management</a>
 Nguồn thật: <a href="../../../../pom.xml" class="ext" title="File của dự án (chỉ mở được khi xem local)">pom.xml</a> (62 dòng)</p>
 </blockquote>
@@ -433,25 +431,25 @@ Nguồn thật: <a href="../../../../pom.xml" class="ext" title="File của dự
 </details>
 <p><strong>Câu 2.</strong> <code>${selenium.version}</code> được thay ở đâu?</p>
 <ul>
-<li>A. Ở <code>&lt;properties&gt;</code> khi Maven đọc POM</li>
-<li>B. Ở runtime Java</li>
-<li>C. Ở IDE</li>
-<li>D. Ở Git</li>
+<li>A. Ở runtime Java</li>
+<li>B. Ở IDE</li>
+<li>C. Ở Git</li>
+<li>D. Ở <code>&lt;properties&gt;</code> khi Maven đọc POM</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Maven nội suy biến.</p>
+<p><strong>Đáp án: D.</strong> Maven nội suy biến.</p>
 </details>
 <p><strong>Câu 3.</strong> Plugin nào chạy test trong phase <code>test</code>?</p>
 <ul>
-<li>A. maven-compiler-plugin</li>
-<li>B. maven-surefire-plugin</li>
+<li>A. maven-surefire-plugin</li>
+<li>B. maven-compiler-plugin</li>
 <li>C. maven-jar-plugin</li>
 <li>D. maven-clean-plugin</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Surefire.</p>
+<p><strong>Đáp án: A.</strong> Surefire.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the purpose of pom.xml?</strong></p>
@@ -485,7 +483,7 @@ Nguồn thật: <a href="../../../../pom.xml" class="ext" title="File của dự
 <li><code>release</code> ≠ <code>source/target</code></li>
 <li>Plugin không khai báo vẫn được dùng ngầm (resources, jar...)</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-maven-wrapper.html">Maven Wrapper (<code>mvnw</code>, <code>mvnw.cmd</code>)</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-maven-wrapper.html">Maven Wrapper (mvnw, mvnw.cmd)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>

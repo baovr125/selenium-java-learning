@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="explicit-wait-và-webdriverwait">Explicit Wait và WebDriverWait</h1>
-<blockquote>
-<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="02-implicit-wait.html">Implicit Wait</a> · ➡️ <a href="04-expected-conditions.html">ExpectedConditions (và Presence vs Visibility vs Clickability)</a></p>
-<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="02-implicit-wait.html">Implicit Wait</a> · Tiếp: <a href="04-expected-conditions.html">ExpectedConditions</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -209,25 +204,25 @@ loop:
 </details>
 <p><strong>Câu 2.</strong> <code>WebDriverWait</code> mặc định bỏ qua exception nào?</p>
 <ul>
-<li>A. <code>NotFoundException</code> (gồm <code>NoSuchElementException</code>)</li>
-<li>B. Mọi exception</li>
-<li>C. <code>TimeoutException</code></li>
-<li>D. Không</li>
+<li>A. Mọi exception</li>
+<li>B. <code>TimeoutException</code></li>
+<li>C. Không</li>
+<li>D. <code>NotFoundException</code> (gồm <code>NoSuchElementException</code>)</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Exception khác (vd <code>StaleElementReferenceException</code>) cần <code>ignoring(...)</code>.</p>
+<p><strong>Đáp án: D.</strong> Exception khác (vd <code>StaleElementReferenceException</code>) cần <code>ignoring(...)</code>.</p>
 </details>
 <p><strong>Câu 3.</strong> Timeout 15 s: test luôn chờ 15 s?</p>
 <ul>
-<li>A. Có</li>
-<li>B. Không, chỉ khi điều kiện không bao giờ đúng</li>
+<li>A. Không, chỉ khi điều kiện không bao giờ đúng</li>
+<li>B. Có</li>
 <li>C. Tuỳ OS</li>
 <li>D. Chỉ trên CI</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>until</code> trả ngay khi điều kiện đúng.</p>
+<p><strong>Đáp án: A.</strong> <code>until</code> trả ngay khi điều kiện đúng.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the default polling interval and which exceptions are ignored?</strong></p>
@@ -270,7 +265,7 @@ loop:
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
 <span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait10</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
@@ -280,7 +275,7 @@ loop:
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="n">WebDriverWait</span><span class="w"> </span><span class="n">shortWait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 <span class="n">shortWait</span><span class="p">.</span><span class="na">withMessage</span><span class="p">(</span><span class="s">&quot;Không thấy phần tử demo&quot;</span><span class="p">);</span>
 <span class="k">try</span><span class="w"> </span><span class="p">{</span>
@@ -293,7 +288,7 @@ loop:
 <details>
 <summary>Lời giải Exercise 3</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>

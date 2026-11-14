@@ -28,10 +28,8 @@
     <article id="content" class="md">
 <h1 id="project-step-13-phân-tích-requirement-test-scenarios-và-test-cases">Project Step 1–3: Phân tích Requirement, Test Scenarios và Test Cases</h1>
 <blockquote>
-<p>🧭 Phase 8 · Real-world Automation Project · Chapter 24
-⬅️ <a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">Git: <code>.gitignore</code> và quản lý dự án Maven + Selenium</a> · ➡️ <a href="02-build-the-project.html">Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</a></p>
 <p>Phase 8 · Chapter 24 · Mức ưu tiên: <strong>Essential</strong>
-Ứng dụng được kiểm thử: <code>https://the-internet.herokuapp.com</code> (trang luyện tập công khai — dùng làm "hệ thống cần kiểm thử")</p>
+Ứng dụng được kiểm thử: trang chủ của site demo (trang luyện tập công khai — dùng làm "hệ thống cần kiểm thử")</p>
 </blockquote>
 <div class="table-wrap"><table>
 <thead>
@@ -474,7 +472,7 @@
 </blockquote>
 <h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
 <p><strong>Yêu cầu:</strong> Viết một Test Case đầy đủ cho <code>Sai mật khẩu</code> (ID, ưu tiên, precondition, bước, dữ liệu, kết quả mong đợi).</p>
-<p><strong>Input:</strong> R2</p>
+<p><strong>Input:</strong> R1 (phần "sai thông tin bị từ chối")</p>
 <p><strong>Expected Output:</strong> 1 test case</p>
 <blockquote>
 <p>💡 <strong>Hint:</strong> Kết quả mong đợi phải assert được.</p>
@@ -500,25 +498,25 @@
 </details>
 <p><strong>Câu 2.</strong> Không nên tự động hoá?</p>
 <ul>
-<li>A. Smoke login</li>
-<li>B. Kiểm tra chủ quan "đẹp/dễ dùng"</li>
+<li>A. Kiểm tra chủ quan "đẹp/dễ dùng"</li>
+<li>B. Smoke login</li>
 <li>C. Regression lặp lại</li>
 <li>D. Case âm</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Kiểm thử thủ công.</p>
+<p><strong>Đáp án: A.</strong> Kiểm thử thủ công.</p>
 </details>
 <p><strong>Câu 3.</strong> Kết quả mong đợi tốt là?</p>
 <ul>
 <li>A. "Hiển thị đúng"</li>
-<li>B. Thông báo/URL/trạng thái cụ thể</li>
-<li>C. "Không lỗi"</li>
-<li>D. "OK"</li>
+<li>B. "Không lỗi"</li>
+<li>C. "OK"</li>
+<li>D. Thông báo/URL/trạng thái cụ thể</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Viết được assertion.</p>
+<p><strong>Đáp án: D.</strong> Viết được assertion.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you decide what to automate?</strong></p>
@@ -559,7 +557,7 @@
 </blockquote>
 <details>
 <summary>Lời giải Exercise 1</summary>
-<p>R1 Đăng nhập hợp lệ vào khu vực bảo mật. R2 Đăng nhập sai bị từ chối kèm thông báo. R3 Remove/Add checkbox có thông báo tương ứng.</p>
+<p>Ví dụ (đánh số riêng cho bài này, không trùng bảng 3.1): (a) Người dùng đăng nhập hợp lệ vào khu vực bảo mật. (b) Đăng nhập sai thông tin bị từ chối kèm thông báo. (c) Remove/Enable trên <code>/dynamic_controls</code> hiển thị thông báo tương ứng.</p>
 </details>
 <details>
 <summary>Lời giải Exercise 2</summary>
@@ -567,7 +565,7 @@
 </details>
 <details>
 <summary>Lời giải Exercise 3</summary>
-<p>R1 → <code>Exercise01_LoginTest</code>; R3 → <code>Exercise10_DynamicControlsTest</code>; <strong>R2 chưa có test</strong> → cần bổ sung (Lab 05).</p>
+<p>R1 → <code>Exercise01_LoginTest</code> (mới có ca thành công, <strong>thiếu ca đăng nhập sai</strong>); R2 → <code>Exercise02_CheckboxesTest</code>; R3 → <code>Exercise03_WebTablesTest</code>. <strong>Khoảng trống:</strong> chưa có test đăng nhập sai (R1) → cần bổ sung (Lab 05).</p>
 </details>
     </article>
     <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 8 — Real-world Automation Project (Chapter 24)</span></a><a class="next" href="02-build-the-project.html"><small>Bài tiếp theo →</small><span>Project Step 4–8: Xây dựng Selenium Project, Maven, POM, Test Scripts và Wait</span></a></nav>

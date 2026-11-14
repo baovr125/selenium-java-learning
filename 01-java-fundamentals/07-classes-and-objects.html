@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-classes-và-objects-attributes-methods-constructors-this-modifiers-static">Java: Classes và Objects (attributes, methods, constructors, <code>this</code>, modifiers, static)</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 05
-⬅️ <a href="06-methods.html">Java: Methods (tham số, giá trị trả về, overloading, scope, recursion)</a> · ➡️ <a href="08-oop-concepts.html">Java: OOP Concepts (Encapsulation, Inheritance, Polymorphism, Abstraction, Interface, Packages)</a></p>
 <p>Chapter 05 · Mức ưu tiên: <strong>Essential</strong></p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -309,7 +307,7 @@ tổng click = 3</code></pre></div>
 <span class="w">    </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">FakeDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// constructor nhận driver</span>
 
 <span class="w">    </span><span class="n">LoginPage</span><span class="w"> </span><span class="nf">open</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://example.com/login&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -326,7 +324,7 @@ tổng click = 3</code></pre></div>
 <span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">LoginPage</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">open</span><span class="p">().</span><span class="na">loginAs</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
-<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">get https://the-internet.herokuapp.com/login
+<div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">get https://example.com/login
 type #username = tomsmith
 type #password = SuperSecretPassword!
 click button[type=&#39;submit&#39;]</code></pre></div>
@@ -453,24 +451,24 @@ TC_CHK_01 [Medium]</code></pre></div>
 <p><strong>Câu 1.</strong> Constructor có đặc điểm nào?</p>
 <ul>
 <li>A. Có kiểu trả về <code>void</code></li>
-<li>B. Trùng tên class, không có kiểu trả về</li>
-<li>C. Phải là <code>static</code></li>
-<li>D. Chỉ chạy một lần trong cả chương trình</li>
+<li>B. Phải là <code>static</code></li>
+<li>C. Chỉ chạy một lần trong cả chương trình</li>
+<li>D. Trùng tên class, không có kiểu trả về</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Constructor trùng tên class và không có kiểu trả về.</p>
+<p><strong>Đáp án: D.</strong> Constructor trùng tên class và không có kiểu trả về.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>protected</code> cho phép truy cập từ đâu?</p>
 <ul>
-<li>A. Chỉ cùng class</li>
-<li>B. Cùng package và class con</li>
+<li>A. Cùng package và class con</li>
+<li>B. Chỉ cùng class</li>
 <li>C. Mọi nơi</li>
 <li>D. Chỉ class con cùng package</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>protected</code> = cùng package + class con (kể cả khác package).</p>
+<p><strong>Đáp án: A.</strong> <code>protected</code> = cùng package + class con (kể cả khác package).</p>
 </details>
 <p><strong>Câu 3.</strong> Vì sao <code>main</code> (static) phải <code>new</code> object mới gọi được <code>setup()</code>?</p>
 <ul>

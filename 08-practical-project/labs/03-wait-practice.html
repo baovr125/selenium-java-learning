@@ -35,7 +35,7 @@
 <h2 id="bài-8-explicit-wait">Bài 8. Explicit Wait</h2>
 <p><strong>Mục tiêu:</strong> Dùng <code>WebDriverWait</code> + <code>ExpectedConditions</code>; thấy tận mắt lỗi khi <strong>không</strong> chờ; so sánh với <code>Thread.sleep</code>.</p>
 <p><strong>Kiến thức cần dùng:</strong> <code>visibilityOfElementLocated</code>, <code>elementToBeClickable</code>, <code>invisibilityOfElementLocated</code>, <code>textToBe</code>, <code>numberOfElementsToBe</code>.</p>
-<p><strong>Yêu cầu:</strong> trên <code>https://the-internet.herokuapp.com/dynamic_loading/1</code> (phần tử có sẵn nhưng <strong>ẩn</strong> cho đến khi bấm Start) và <code>/dynamic_loading/2</code> (phần tử được <strong>thêm vào DOM</strong> sau khi bấm Start):</p>
+<p><strong>Yêu cầu:</strong> trên trang <code>/dynamic_loading/1</code> của site demo (phần tử có sẵn nhưng <strong>ẩn</strong> cho đến khi bấm Start) và <code>/dynamic_loading/2</code> (phần tử được <strong>thêm vào DOM</strong> sau khi bấm Start):</p>
 <ol>
 <li>Test <strong>không chờ</strong> → quan sát lỗi, ghi lại exception.</li>
 <li>Test <strong>chờ đúng</strong> bằng Explicit Wait.</li>
@@ -60,7 +60,7 @@
 <span class="w">    </span><span class="c1">// 1) Phần tử có trong DOM nhưng ẩn → presence ĐÚNG, visibility CHƯA</span>
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example1_hiddenElement_presenceVsVisibility</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/1&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/1&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">WebElement</span><span class="w"> </span><span class="n">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">);</span><span class="w">               </span><span class="c1">// tìm được ngay (presence)</span>
 <span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">isDisplayed</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Lúc đầu phần tử còn ẩn&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phần tử ẩn thì getText() rỗng&quot;</span><span class="p">);</span>
@@ -73,7 +73,7 @@
 <span class="w">    </span><span class="c1">// 2) Phần tử chưa tồn tại trong DOM → phải chờ presence/visibility</span>
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example2_elementAddedLater</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
 
 <span class="w">        </span><span class="c1">// KHÔNG chờ → thường ném NoSuchElementException ngay:</span>
@@ -86,7 +86,7 @@
 <span class="w">    </span><span class="c1">// 3) Chứng minh: tìm ngay sau click KHÔNG chờ sẽ lỗi</span>
 <span class="w">    </span><span class="nd">@Test</span><span class="p">(</span><span class="n">expectedExceptions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example3_noWait_failsFast</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">);</span><span class="w">          </span><span class="c1">// quá sớm → NoSuchElementException</span>
 <span class="w">    </span><span class="p">}</span>
@@ -94,7 +94,7 @@
 <span class="w">    </span><span class="c1">// 4) Chờ biến mất: loading bar</span>
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example4_waitLoadingDisappears</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
 <span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;loading&quot;</span><span class="p">)));</span>
 <span class="w">        </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">FINISH</span><span class="p">).</span><span class="na">isDisplayed</span><span class="p">());</span>
@@ -103,7 +103,7 @@
 <span class="w">    </span><span class="c1">// 5) Đo thời gian: wait chỉ chờ đúng lượng cần thiết</span>
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">example5_measureWait</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">START</span><span class="p">).</span><span class="na">click</span><span class="p">();</span>
 <span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
 <span class="w">        </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">FINISH</span><span class="p">));</span>
@@ -165,7 +165,7 @@
 <h3 id="code-tham-khảo_1">Code tham khảo</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span>
 <span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">dynamicControls</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_controls&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_controls&quot;</span><span class="p">);</span>
 <span class="w">    </span><span class="n">By</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// Remove</span>
@@ -230,7 +230,7 @@
 <p>✅ Cả hai bài đã được chạy thật (Selenium 4.52.0, Chrome, JDK 25 với <code>--release 21</code>): 5 test của Bài 8 và 1 test của Bài 9 đều pass; các thông báo <code>It's gone!</code>, <code>It's back!</code>, <code>It's enabled!</code>, <code>It's disabled!</code> khớp trang thực tế tại thời điểm viết. Nếu trang đổi, hãy chạy thử và đối chiếu.</p>
 </blockquote>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="02-locator-practice.html"><small>← Bài trước</small><span>Lab 02: Locator Practice (Bài 5)</span></a><a class="next" href="04-maven-and-mvnw-practice.html"><small>Bài tiếp theo →</small><span>Lab 04: Maven và Maven Wrapper (Bài 3 + Bài 4)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../../04-wait-mechanisms/08-wait-best-practices.html"><small>← Bài trước</small><span>Wait Best Practices</span></a><a class="next" href="../../05-testing-framework/README.html"><small>Bài tiếp theo →</small><span>Phase 5 — Testing Framework (Chapter 20)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/08-practical-project/labs/03-wait-practice.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

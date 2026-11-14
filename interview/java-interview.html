@@ -28,8 +28,10 @@
     <article id="content" class="md">
 <h1 id="java-for-automation--interview">Java for Automation — Interview</h1>
 <blockquote>
-<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a></p>
+<p>Song ngữ Anh–Việt. Cấu trúc mỗi câu: Câu hỏi → Dịch → Câu trả lời mẫu → Giải thích → Ví dụ thực tế → Câu hỏi đào sâu. Quay lại: <a href="README.html">Interview README</a>
+<strong>31 câu:</strong> Phần A (Q1–Q10) — Java trong ngữ cảnh Selenium/framework · Phần B (Q11–Q31) — Java bản chất + 3 câu viết code. Ôn thêm: <a href="code-reading-interview.html">code-reading-interview</a> (đọc code, tìm lỗi).</p>
 </blockquote>
+<h2 id="phần-a-java-trong-selenium-q1q10">Phần A. Java trong Selenium (Q1–Q10)</h2>
 <h3 id="q1-why-do-we-declare-webdriver-driver--new-chromedriver-and-not-chromedriver-driver--">Q1. Why do we declare <code>WebDriver driver = new ChromeDriver()</code> and not <code>ChromeDriver driver = ...</code>?</h3>
 <p><strong>Dịch:</strong> Vì sao khai báo kiểu <code>WebDriver</code>?</p>
 <p><strong>Sample answer:</strong> <code>WebDriver</code> is an interface, so this uses polymorphism: my code depends on the interface and I can switch to <code>FirefoxDriver</code> by changing one line. It also keeps the code independent of browser-specific methods.</p>
@@ -99,8 +101,192 @@
 <p><strong>Giải thích:</strong> Constructor không có kiểu trả về. Dùng <code>super(driver)</code> để truyền lên <code>BasePage</code>.</p>
 <p><strong>Ví dụ:</strong> <code>public LoginPage(WebDriver driver) { super(driver); }</code>.</p>
 <p><strong>Đào sâu:</strong> <em>What if the parent has no default constructor?</em> → class con phải gọi <code>super(...)</code> tường minh.</p>
+<hr />
+<h2 id="phần-b-java-bản-chất-q11q31">Phần B. Java bản chất (Q11–Q31)</h2>
+<blockquote>
+<p>Các câu thường bị hỏi trực tiếp ở vòng phỏng vấn Junior, ngoài việc "dùng thế nào trong Selenium". Học thuộc <em>ý chính</em>, không học thuộc câu chữ. Q27–Q29 là câu <strong>viết code tại chỗ</strong>.</p>
+</blockquote>
+<h3 id="q11-what-is-the-difference-between-jdk-jre-and-jvm">Q11. What is the difference between JDK, JRE and JVM?</h3>
+<p><strong>Dịch:</strong> JDK, JRE, JVM khác nhau thế nào?</p>
+<p><strong>Sample answer:</strong> The JVM is the virtual machine that runs Java bytecode, which makes Java platform independent. The JRE is the JVM plus the standard libraries needed to run a program. The JDK is the JRE plus development tools such as the compiler <code>javac</code>. To compile and run my tests I need a JDK.</p>
+<p><strong>Giải thích:</strong> JDK ⊃ JRE ⊃ JVM. Máy dev cần JDK; môi trường chỉ chạy mới cần runtime.</p>
+<p><strong>Ví dụ:</strong> <code>pom.xml</code> đặt <code>maven.compiler.release=21</code> ⇒ cần JDK 21 trở lên để build.</p>
+<p><strong>Đào sâu:</strong> <em>What is bytecode and who creates it?</em> → <code>javac</code> biên dịch <code>.java</code> thành <code>.class</code> (bytecode) cho JVM chạy.</p>
+<hr />
+<h3 id="q12-what-is-the-difference-between--and-equals">Q12. What is the difference between <code>==</code> and <code>equals()</code>?</h3>
+<p><strong>Dịch:</strong> <code>==</code> khác <code>equals()</code>?</p>
+<p><strong>Sample answer:</strong> For primitives <code>==</code> compares values. For objects <code>==</code> compares references, meaning whether both variables point to the same object. <code>equals()</code> compares logical content when a class overrides it, as <code>String</code> does. The default <code>Object.equals()</code> behaves like <code>==</code>. So I compare strings with <code>equals()</code>, and <code>new String("a") == "a"</code> is false while <code>new String("a").equals("a")</code> is true.</p>
+<p><strong>Giải thích:</strong> Lỗi kinh điển của người mới: dùng <code>==</code> cho chuỗi. Chuỗi literal giống nhau có thể trùng tham chiếu do String pool nên đôi khi <code>==</code> "đúng ngẫu nhiên".</p>
+<p><strong>Ví dụ:</strong> <code>actualMessage.contains(...)</code>/<code>equals(...)</code> trong <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01</a>; <code>Assert.assertEquals(other, reference)</code> dùng <code>equals</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Which method does <code>Assert.assertEquals</code> use for objects?</em> → <code>equals()</code>.</p>
+<hr />
+<h3 id="q13-why-is-string-immutable-what-are-stringbuilder-and-stringbuffer">Q13. Why is <code>String</code> immutable? What are <code>StringBuilder</code> and <code>StringBuffer</code>?</h3>
+<p><strong>Dịch:</strong> Vì sao <code>String</code> bất biến? <code>StringBuilder</code>, <code>StringBuffer</code> là gì?</p>
+<p><strong>Sample answer:</strong> Once created, a <code>String</code> cannot change; every "modification" returns a new object. Immutability allows the string pool to share instances, makes strings thread-safe, lets the hash code be cached, and makes them safe as <code>HashMap</code> keys. When I build text in a loop I use <code>StringBuilder</code>, which is mutable and fast but not thread-safe. <code>StringBuffer</code> is the synchronized older version, rarely needed.</p>
+<p><strong>Giải thích:</strong> Hệ quả hay gặp: <code>s.trim();</code> một mình <strong>không làm gì</strong> — phải gán <code>s = s.trim();</code>.</p>
+<p><strong>Ví dụ:</strong> <code>getText().trim()</code> trả chuỗi mới; code chỉ gọi <code>element.getText().trim();</code> mà không dùng kết quả là lỗi.</p>
+<p><strong>Đào sâu:</strong> <em>What is the String pool and <code>intern()</code>?</em> → vùng nhớ chia sẻ các literal; <code>intern()</code> trả về bản trong pool.</p>
+<hr />
+<h3 id="q14-what-is-the-difference-between-overloading-and-overriding">Q14. What is the difference between overloading and overriding?</h3>
+<p><strong>Dịch:</strong> Overloading khác overriding?</p>
+<p><strong>Sample answer:</strong> Overloading means several methods with the same name but different parameter lists in the same class; it is resolved at compile time, and changing only the return type is not enough. Overriding means a subclass provides its own implementation of a parent method with the same signature; it is resolved at runtime, which is how polymorphism works. I use <code>@Override</code> so the compiler checks it.</p>
+<p><strong>Giải thích:</strong> Overload = <em>nhiều dạng gọi</em>; override = <em>thay hành vi của lớp cha</em>.</p>
+<p><strong>Ví dụ:</strong> <code>BasePage.click(By)</code> và <code>click(WebElement)</code> là overloading; ghi đè <code>toString()</code> là overriding.</p>
+<p><strong>Đào sâu:</strong> <em>Can you override a <code>static</code> or <code>private</code> method?</em> → xem Q24.</p>
+<hr />
+<h3 id="q15-explain-the-four-oop-pillars-with-examples-from-an-automation-framework">Q15. Explain the four OOP pillars with examples from an automation framework.</h3>
+<p><strong>Dịch:</strong> Bốn trụ cột OOP, ví dụ trong framework automation.</p>
+<p><strong>Sample answer:</strong> Encapsulation: a page class keeps its locators <code>private</code> and exposes actions like <code>loginAs(user, pass)</code>. Inheritance: all test classes extend <code>BaseTest</code> to reuse driver setup and teardown. Polymorphism: I declare <code>WebDriver driver</code> and assign <code>ChromeDriver</code> or <code>FirefoxDriver</code>, so tests do not change when the browser changes. Abstraction: tests call <code>loginPage.loginAs(...)</code> without knowing which locators or waits are used.</p>
+<p><strong>Giải thích:</strong> Luôn đưa ví dụ cụ thể từ project, không chỉ định nghĩa.</p>
+<p><strong>Ví dụ:</strong> <code>Exercise01_LoginTest extends BaseTest</code>; <code>protected WebDriver driver</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Composition vs inheritance for a header component?</em> → ưu tiên composition (Page <em>có</em> Header).</p>
+<hr />
+<h3 id="q16-what-is-the-difference-between-final-finally-and-finalize">Q16. What is the difference between <code>final</code>, <code>finally</code> and <code>finalize</code>?</h3>
+<p><strong>Dịch:</strong> <code>final</code>, <code>finally</code>, <code>finalize</code> khác nhau?</p>
+<p><strong>Sample answer:</strong> <code>final</code> makes a variable a constant, a method non-overridable, or a class non-extendable. <code>finally</code> is a block after <code>try/catch</code> that runs whether or not an exception occurs, used for cleanup. <code>finalize()</code> was a hook called by the garbage collector; it is deprecated and should not be used.</p>
+<p><strong>Giải thích:</strong> Ba từ giống nhau nhưng khác hoàn toàn. <code>finally</code> không chạy khi JVM bị dừng đột ngột (<code>System.exit</code>, crash).</p>
+<p><strong>Ví dụ:</strong> <code>try { test.testLogin(); } finally { test.tearDown(); }</code> trong <code>main()</code> các Exercise; hằng số <code>private static final String LOGIN_URL</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Does <code>finally</code> run if <code>try</code> has <code>return</code>?</em> → Có, <code>finally</code> chạy trước khi method trả về.</p>
+<hr />
+<h3 id="q17-checked-vs-unchecked-exceptions-what-are-throw-and-throws">Q17. Checked vs unchecked exceptions? What are <code>throw</code> and <code>throws</code>?</h3>
+<p><strong>Dịch:</strong> Checked/unchecked exception; <code>throw</code> và <code>throws</code>.</p>
+<p><strong>Sample answer:</strong> Checked exceptions extend <code>Exception</code> but not <code>RuntimeException</code>; the compiler forces me to catch them or declare them with <code>throws</code>, for example <code>IOException</code>. Unchecked exceptions extend <code>RuntimeException</code> or <code>Error</code>; the compiler does not force handling, for example <code>NullPointerException</code>. <code>throw</code> actually raises an exception object; <code>throws</code> declares what a method may raise. Selenium exceptions are unchecked.</p>
+<p><strong>Giải thích:</strong> Vì Selenium exception là unchecked nên không bị buộc <code>try/catch</code> — dễ quên xử lý.</p>
+<p><strong>Ví dụ:</strong> <code>Config</code> ném <code>IllegalStateException</code> khi thiếu <code>config.properties</code> (Lab 08); <code>TimeoutException</code> của Wait.</p>
+<p><strong>Đào sâu:</strong> <em>When do you write a custom exception?</em> → khi cần nhóm lỗi nghiệp vụ, kế thừa <code>RuntimeException</code>, kèm thông điệp rõ.</p>
+<hr />
+<h3 id="q18-what-is-the-difference-between-arraylist-and-linkedlist">Q18. What is the difference between <code>ArrayList</code> and <code>LinkedList</code>?</h3>
+<p><strong>Dịch:</strong> <code>ArrayList</code> khác <code>LinkedList</code>?</p>
+<p><strong>Sample answer:</strong> <code>ArrayList</code> is backed by a resizable array: random access by index is fast, adding at the end is amortized constant time, and inserting or removing in the middle is slow. <code>LinkedList</code> is a doubly linked list: inserting or removing at a known position is cheap but access by index is slow. In practice I use <code>ArrayList</code> by default.</p>
+<p><strong>Giải thích:</strong> Test automation hầu như chỉ duyệt và truy cập theo chỉ số ⇒ <code>ArrayList</code>.</p>
+<p><strong>Ví dụ:</strong> <code>List&lt;WebElement&gt; rows = driver.findElements(...)</code>; <code>rows.get(1)</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What does <code>List.of(...)</code> return?</em> → danh sách <strong>bất biến</strong>; thêm phần tử sẽ ném <code>UnsupportedOperationException</code>.</p>
+<hr />
+<h3 id="q19-how-does-hashmap-work-why-do-equals-and-hashcode-matter">Q19. How does <code>HashMap</code> work? Why do <code>equals()</code> and <code>hashCode()</code> matter?</h3>
+<p><strong>Dịch:</strong> <code>HashMap</code> hoạt động thế nào? Vì sao cần <code>equals</code>/<code>hashCode</code>?</p>
+<p><strong>Sample answer:</strong> A <code>HashMap</code> stores entries in buckets. It computes <code>key.hashCode()</code> to choose a bucket, then uses <code>equals()</code> to find the exact key inside the bucket. The contract is: equal objects must have equal hash codes. If I override <code>equals()</code> without <code>hashCode()</code>, objects that are equal may land in different buckets and lookups or <code>HashSet</code> duplicates break. It allows one <code>null</code> key and is not thread-safe.</p>
+<p><strong>Giải thích:</strong> Collision được xử lý trong cùng bucket (danh sách liên kết, chuyển sang cây khi dài — chi tiết triển khai). Không dùng key có thể thay đổi.</p>
+<p><strong>Ví dụ:</strong> <code>Map&lt;String,String&gt;</code> cho dữ liệu test (user → password); dùng chuỗi làm key vì <code>String</code> đã cài đúng <code>equals/hashCode</code>.</p>
+<p><strong>Đào sâu:</strong> <em>What happens if two keys have the same hash code?</em> → vẫn lưu được, phân biệt bằng <code>equals()</code>.</p>
+<hr />
+<h3 id="q20-compare-hashsetlinkedhashsettreeset-and-hashmaplinkedhashmaptreemap">Q20. Compare <code>HashSet</code>/<code>LinkedHashSet</code>/<code>TreeSet</code> and <code>HashMap</code>/<code>LinkedHashMap</code>/<code>TreeMap</code>.</h3>
+<p><strong>Dịch:</strong> So sánh các loại Set và Map.</p>
+<p><strong>Sample answer:</strong> The <code>Hash*</code> classes have no guaranteed order and offer average constant-time operations. The <code>LinkedHash*</code> classes keep insertion order. The <code>Tree*</code> classes keep elements sorted, cost O(log n), and need <code>Comparable</code> elements or a <code>Comparator</code>. <code>Hashtable</code> is a legacy synchronized map that rejects nulls; <code>ConcurrentHashMap</code> is the modern thread-safe map.</p>
+<p><strong>Giải thích:</strong> Chọn theo nhu cầu thứ tự/sắp xếp/an toàn luồng.</p>
+<p><strong>Ví dụ:</strong> <code>driver.getWindowHandles()</code> trả <code>Set&lt;String&gt;</code>; khử trùng lặp giữ thứ tự → <code>LinkedHashSet</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Which one for test data that must keep the file order?</em> → <code>LinkedHashMap</code>/<code>List</code>.</p>
+<hr />
+<h3 id="q21-what-are-wrapper-classes-and-autoboxing-what-is-the-integer-cache-pitfall">Q21. What are wrapper classes and autoboxing? What is the <code>Integer</code> cache pitfall?</h3>
+<p><strong>Dịch:</strong> Wrapper class, autoboxing; bẫy cache của <code>Integer</code>?</p>
+<p><strong>Sample answer:</strong> Wrapper classes such as <code>Integer</code> and <code>Boolean</code> are objects representing primitives; collections and generics need them. Autoboxing converts <code>int</code> to <code>Integer</code> automatically, and unboxing the other way; unboxing a <code>null</code> throws <code>NullPointerException</code>. <code>Integer</code> values from -128 to 127 are cached, so <code>==</code> can be true for small values but false for larger ones, therefore I use <code>equals()</code>.</p>
+<p><strong>Giải thích:</strong> <code>Integer a = 127, b = 127; a == b</code> → true; với <code>128</code> → false.</p>
+<p><strong>Ví dụ:</strong> <code>List&lt;Integer&gt;</code>; <code>executeScript("return window.scrollY")</code> trả về <code>Number</code> (thường <code>Long</code>) chứ không phải <code>int</code> (Exercise 7).</p>
+<p><strong>Đào sâu:</strong> <em>Default value of <code>int</code> vs <code>Integer</code> fields?</em> → <code>0</code> vs <code>null</code>.</p>
+<hr />
+<h3 id="q22-is-java-pass-by-value-or-pass-by-reference">Q22. Is Java pass-by-value or pass-by-reference?</h3>
+<p><strong>Dịch:</strong> Java truyền tham trị hay tham chiếu?</p>
+<p><strong>Sample answer:</strong> Always pass-by-value. For objects the value that is copied is the reference, so a method can change the state of the object the caller passed, but it cannot make the caller's variable point to a different object.</p>
+<p><strong>Giải thích:</strong> Vì vậy hàm <code>swap(a, b)</code> cho hai đối tượng không hoán đổi được biến của người gọi.</p>
+<p><strong>Ví dụ:</strong> Truyền <code>driver</code> vào constructor <code>LoginPage(driver)</code> ⇒ Page và test <strong>dùng chung</strong> một trình duyệt.</p>
+<p><strong>Đào sâu:</strong> <em>What happens if you pass <code>null</code>?</em> → tham chiếu <code>null</code> được sao chép; truy cập thành viên ⇒ <code>NullPointerException</code>.</p>
+<hr />
+<h3 id="q23-what-do-this-and-super-do-what-is-constructor-chaining">Q23. What do <code>this</code> and <code>super</code> do? What is constructor chaining?</h3>
+<p><strong>Dịch:</strong> <code>this</code>, <code>super</code>; constructor chaining.</p>
+<p><strong>Sample answer:</strong> <code>this</code> refers to the current object, and <code>this(...)</code> calls another constructor of the same class. <code>super(...)</code> calls a parent constructor and must be the first statement in the constructor. If the parent has no no-argument constructor, the child must call <code>super(args)</code> explicitly. A default constructor is generated only when a class declares no constructors.</p>
+<p><strong>Giải thích:</strong> Lỗi hay gặp khi viết Page: <code>BasePage</code> có constructor nhận <code>driver</code> mà lớp con quên <code>super(driver)</code> ⇒ lỗi biên dịch.</p>
+<p><strong>Ví dụ:</strong> <code>public LoginPage(WebDriver driver) { super(driver); }</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Can a constructor be <code>static</code> or <code>final</code>?</em> → Không.</p>
+<hr />
+<h3 id="q24-can-you-override-static-private-or-final-methods">Q24. Can you override <code>static</code>, <code>private</code> or <code>final</code> methods?</h3>
+<p><strong>Dịch:</strong> Có ghi đè được method <code>static</code>, <code>private</code>, <code>final</code> không?</p>
+<p><strong>Sample answer:</strong> No. <code>final</code> methods cannot be overridden. <code>private</code> methods are not inherited, so a subclass method with the same name is a new, unrelated method. A <code>static</code> method belongs to the class, so redeclaring it in a subclass hides the parent method instead of overriding it, and the call is resolved by the reference type. A static method also cannot use <code>this</code> or instance fields.</p>
+<p><strong>Giải thích:</strong> Ghi đè cần dispatch lúc chạy theo đối tượng; <code>static</code> gắn với lớp nên không có.</p>
+<p><strong>Ví dụ:</strong> <code>DriverFactory.create(...)</code> là <code>static</code> (factory method); <code>main</code> là <code>static</code> để JVM gọi mà không cần tạo đối tượng.</p>
+<p><strong>Đào sâu:</strong> <em>Why must a <code>static</code> method not use instance fields?</em> → Không có đối tượng cụ thể để đọc.</p>
+<hr />
+<h3 id="q25-interface-features-since-java-8-and-what-is-a-functional-interface">Q25. Interface features since Java 8, and what is a functional interface?</h3>
+<p><strong>Dịch:</strong> Interface từ Java 8; functional interface là gì?</p>
+<p><strong>Sample answer:</strong> Since Java 8 interfaces can have <code>default</code> and <code>static</code> methods; private methods were added in Java 9. An abstract class can have constructors and instance state, and a class can extend only one class but implement many interfaces. A functional interface has exactly one abstract method and can be implemented with a lambda; <code>@FunctionalInterface</code> documents that.</p>
+<p><strong>Giải thích:</strong> Đây là lý do <code>wait.until(d -&gt; ...)</code> viết được bằng lambda.</p>
+<p><strong>Ví dụ:</strong> Trong Selenium 4, <code>ExpectedCondition&lt;T&gt;</code> kế thừa <code>Function&lt;WebDriver, T&gt;</code>; <code>until(...)</code> nhận một hàm như vậy.</p>
+<p><strong>Đào sâu:</strong> <em>Give a built-in functional interface.</em> → <code>Function</code>, <code>Predicate</code>, <code>Supplier</code>, <code>Consumer</code>, <code>Runnable</code>.</p>
+<hr />
+<h3 id="q26-how-does-try-with-resources-work-and-what-if-finally-contains-return">Q26. How does <code>try-with-resources</code> work, and what if <code>finally</code> contains <code>return</code>?</h3>
+<p><strong>Dịch:</strong> <code>try-with-resources</code> hoạt động thế nào; <code>return</code> trong <code>finally</code>?</p>
+<p><strong>Sample answer:</strong> Any object implementing <code>AutoCloseable</code> declared in the <code>try (...)</code> header is closed automatically in reverse order, even when an exception occurs; exceptions during closing are attached as suppressed exceptions. <code>finally</code> runs even when <code>try</code> returns. A <code>return</code> inside <code>finally</code> overrides the earlier return or swallows an exception, so I avoid it.</p>
+<p><strong>Giải thích:</strong> Dùng cho file/stream; cùng tinh thần với việc luôn <code>quit()</code> driver trong <code>finally</code>/<code>@AfterMethod</code>.</p>
+<p><strong>Ví dụ:</strong> Đọc <code>config.properties</code> bằng <code>try (InputStream in = ...)</code> (Lab 08).</p>
+<p><strong>Đào sâu:</strong> <em>In what order are multiple resources closed?</em> → ngược thứ tự khai báo.</p>
+<hr />
+<h3 id="q27-coding-reverse-a-string-and-check-whether-it-is-a-palindrome">Q27. Coding: reverse a string and check whether it is a palindrome.</h3>
+<p><strong>Dịch:</strong> Viết code đảo chuỗi và kiểm tra palindrome.</p>
+<p><strong>Sample answer:</strong></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">reverse</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">(</span><span class="n">s</span><span class="p">).</span><span class="na">reverse</span><span class="p">().</span><span class="na">toString</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isPalindrome</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">clean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">toLowerCase</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clean</span><span class="p">.</span><span class="na">length</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clean</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">clean</span><span class="p">.</span><span class="na">charAt</span><span class="p">(</span><span class="n">j</span><span class="o">--</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span></code></pre></div>
+<p>I would also mention edge cases: <code>null</code>, empty string, and spaces or punctuation if the requirement says to ignore them.</p>
+<p><strong>Giải thích:</strong> Nói ra <em>độ phức tạp</em> (O(n)) và các trường hợp biên — interviewer chấm phần này nhiều hơn cú pháp.</p>
+<p><strong>Ví dụ:</strong> Cùng kỹ thuật dùng để chuẩn hoá <code>getText()</code> trước khi so sánh.</p>
+<p><strong>Đào sâu:</strong> <em>Do it without <code>StringBuilder</code>.</em> → vòng lặp hai con trỏ như trên.</p>
+<hr />
+<h3 id="q28-coding-count-the-frequency-of-each-character-and-find-duplicates-in-a-list">Q28. Coding: count the frequency of each character, and find duplicates in a list.</h3>
+<p><strong>Dịch:</strong> Đếm tần suất ký tự; tìm phần tử trùng trong list.</p>
+<p><strong>Sample answer:</strong></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Map</span><span class="o">&lt;</span><span class="n">Character</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">freq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedHashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">word</span><span class="p">.</span><span class="na">toCharArray</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">freq</span><span class="p">.</span><span class="na">merge</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="p">::</span><span class="n">sum</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">seen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">duplicates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedHashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">seen</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">s</span><span class="p">))</span><span class="w"> </span><span class="n">duplicates</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="w">   </span><span class="c1">// add() returns false if already present</span>
+<span class="p">}</span></code></pre></div>
+<p><strong>Giải thích:</strong> <code>merge</code> gộp "nếu chưa có thì 1, nếu có thì cộng thêm"; <code>Set.add</code> trả <code>false</code> khi đã tồn tại.</p>
+<p><strong>Ví dụ:</strong> Đếm số hàng theo trạng thái PASS/FAIL/SKIP (bài tập <code>04-control-flow</code>).</p>
+<p><strong>Đào sâu:</strong> <em>Time complexity?</em> → O(n) trung bình.</p>
+<hr />
+<h3 id="q29-coding-find-the-second-largest-number-in-an-array-without-sorting">Q29. Coding: find the second largest number in an array without sorting.</h3>
+<p><strong>Dịch:</strong> Tìm số lớn thứ hai trong mảng, không sắp xếp.</p>
+<p><strong>Sample answer:</strong></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kt">int</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">MIN_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">MIN_VALUE</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">max</span><span class="p">;</span><span class="w"> </span><span class="n">max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>One pass, O(n) time and O(1) space. Edge cases: fewer than two distinct values (then <code>second</code> stays <code>Integer.MIN_VALUE</code>), so I would check and report that.</p>
+<p><strong>Giải thích:</strong> Điều kiện <code>n != max</code> để bỏ qua giá trị trùng với số lớn nhất.</p>
+<p><strong>Ví dụ:</strong> Kỹ thuật theo dõi "tốt nhất đến hiện tại" dùng khi so thời gian tải trang.</p>
+<p><strong>Đào sâu:</strong> <em>What if duplicates should count as separate values?</em> → bỏ điều kiện <code>n != max</code>.</p>
+<hr />
+<h3 id="q30-what-is-threadlocal-and-why-is-it-used-with-webdriver-in-parallel-tests">Q30. What is <code>ThreadLocal</code> and why is it used with <code>WebDriver</code> in parallel tests?</h3>
+<p><strong>Dịch:</strong> <code>ThreadLocal</code> là gì; vì sao dùng với <code>WebDriver</code> khi chạy song song?</p>
+<p><strong>Sample answer:</strong> <code>ThreadLocal&lt;T&gt;</code> gives each thread its own independent copy of a value. <code>WebDriver</code> is not thread-safe, and a shared <code>static</code> driver would let parallel tests interfere with each other's browser. With <code>ThreadLocal&lt;WebDriver&gt;</code> each thread sets and reads its own driver; I call <code>remove()</code> at the end of the test to avoid leaks when threads are reused.</p>
+<p><strong>Giải thích:</strong> Trong dự án <code>driver</code> là field instance, đúng khi chạy tuần tự; song song cần cấu trúc riêng.</p>
+<p><strong>Ví dụ:</strong> <code>BaseTest</code> của Lab 08 dùng <code>ThreadLocal&lt;WebDriver&gt;</code>, <code>DRIVER.set(...)</code> ở <code>@BeforeMethod</code>, <code>DRIVER.remove()</code> ở <code>@AfterMethod</code>.</p>
+<p><strong>Đào sâu:</strong> <em>Why <code>remove()</code>?</em> → thread trong pool được tái sử dụng; không xoá thì giữ tham chiếu và có thể dùng nhầm driver cũ.</p>
+<hr />
+<h3 id="q31-what-is-the-stream-api-give-a-selenium-example">Q31. What is the Stream API? Give a Selenium example.</h3>
+<p><strong>Dịch:</strong> Stream API là gì? Ví dụ với Selenium.</p>
+<p><strong>Sample answer:</strong> A stream is a pipeline over a collection: a source, intermediate operations such as <code>filter</code> and <code>map</code>, and a terminal operation such as <code>collect</code> or <code>count</code>. It is lazy and does not modify the source. For example, I can collect the visible text of all links:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;li a&quot;</span><span class="p">)).</span><span class="na">stream</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">WebElement</span><span class="p">::</span><span class="n">getText</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">t</span><span class="p">.</span><span class="na">isBlank</span><span class="p">())</span>
+<span class="w">        </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span></code></pre></div>
+<p>For a Junior role a plain <code>for</code> loop is acceptable; I use streams when they make the code clearer.</p>
+<p><strong>Giải thích:</strong> Cẩn thận: nếu DOM đổi giữa chừng thì các <code>WebElement</code> trong stream có thể bị <code>StaleElementReferenceException</code>.</p>
+<p><strong>Ví dụ:</strong> Lấy danh sách tiêu đề cột bảng (<code>#table1 th</code>) rồi so sánh với danh sách kỳ vọng.</p>
+<p><strong>Đào sâu:</strong> <em><code>map</code> vs <code>filter</code>?</em> → <code>map</code> biến đổi từng phần tử; <code>filter</code> giữ phần tử thoả điều kiện.</p>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="git-interview.html"><small>← Bài trước</small><span>Git và Team Workflow — Interview</span></a><a class="next" href="maven-interview.html"><small>Bài tiếp theo →</small><span>Maven và Maven Wrapper — Interview</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Interview Preparation — Junior Automation Test Engineer</span></a><a class="next" href="maven-interview.html"><small>Bài tiếp theo →</small><span>Maven và Maven Wrapper — Interview</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/java-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · Lộ trình học đề xuất (tinh gọn, thiên về thực hành) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/06-recommended-learning-roadmap" data-root="../" data-lesson="0" data-title="06 · Lộ trình học đề xuất (tinh gọn, thiên về thực hành)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="06--lộ-trình-học-đề-xuất-tinh-gọn-thiên-về-thực-hành">06 · Lộ trình học đề xuất (tinh gọn, thiên về thực hành)</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Trước: <a href="05-interview-readiness-assessment.html">05 Phỏng vấn</a> · Tiếp: <a href="07-final-recommendations.html">07 Đề xuất cuối</a></p>
+</blockquote>
+<h2 id="1-giả-định--nguyên-tắc">1. Giả định &amp; nguyên tắc</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục</th>
+<th>Giá trị</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Người học</td>
+<td>Mới/gần mới, <strong>bán thời gian ~10–12 giờ/tuần</strong> (≈ 1,5 giờ/ngày + 1 buổi cuối tuần), có thời gian thực hành &amp; ôn tập</td>
+</tr>
+<tr>
+<td>Mục tiêu</td>
+<td>Mức 3 "Ứng tuyển Junior Automation Tester" (<a href="05-interview-readiness-assessment.html">05 §3.2</a>); điểm dừng sớm: mức 2 "Fresher" sau Phase 6</td>
+</tr>
+<tr>
+<td>Hệ số an toàn</td>
+<td>Đã cộng thời gian làm lại/ôn; không ước lượng theo "1–2 giờ/bài" của lộ trình cũ (<a href="01-current-roadmap-audit.html">01 §5.1</a>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nguyên tắc thiết kế:</p>
+<ol>
+<li><strong>Thực hành đi cùng bài</strong>: mỗi Phase kết thúc bằng Lab/Exit Criteria <em>đo được</em>, không phải "đã đọc".</li>
+<li><strong>Chạm trình duyệt sớm</strong> (~giờ thứ 43 thay vì ~giờ 60–75 của lộ trình cũ, ước lượng).</li>
+<li><strong>Git từ ngày 1</strong>: mọi bài làm đều commit/push lên GitHub thật.</li>
+<li><strong>Wait là xương sống</strong>: dành 3 tuần + Lab chẩn đoán flaky; thêm chuẩn bị phỏng vấn Wait ở mọi Phase sau.</li>
+<li><strong>Testing Fundamentals chạy song song</strong> (Track T, ~14 giờ rải đều).</li>
+<li><strong>Phỏng vấn xuyên suốt</strong>: mock 20 phút cuối mỗi Phase (<a href="05-interview-readiness-assessment.html">05 §5</a>).</li>
+<li><strong>Cắt những gì Junior chưa cần</strong> (xem §4) để khỏi lan man.</li>
+</ol>
+<h2 id="2-tổng-quan">2. Tổng quan</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Nội dung</th>
+<th>Tuần</th>
+<th>Giờ</th>
+<th>Priority</th>
+<th>Mốc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Môi trường + Git Lite</td>
+<td>W1</td>
+<td>10</td>
+<td>Essential</td>
+<td>Repo GitHub đầu tiên</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Java Core A (01–08) + Track T1–T2</td>
+<td>W2–4</td>
+<td>33</td>
+<td>Essential</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Maven Lite + TestNG Core + Selenium Basics (+Java 09–10, T3–T4)</td>
+<td>W5–9</td>
+<td>55</td>
+<td>Essential</td>
+<td><strong>Lần đầu mở trình duyệt: W5</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Selenium Interactions + Exceptions + Debugging (+T5–T6)</td>
+<td>W10–11</td>
+<td>22</td>
+<td>Essential</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Wait &amp; Synchronization</strong> (+ Lambda/Generics)</td>
+<td>W12–14</td>
+<td>33</td>
+<td><strong>Essential — ưu tiên cao</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>TestNG Advanced + Maven Deep</td>
+<td>W15–17</td>
+<td>33</td>
+<td>Essential/Important</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>POM &amp; Framework Design (+File/Config, Logging)</td>
+<td>W18–20</td>
+<td>33</td>
+<td>Essential</td>
+<td><strong>Mức 2 – Fresher</strong> (xem Exit)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Git Team Workflow + CI cơ bản</td>
+<td>W21–22</td>
+<td>20</td>
+<td>Essential/Important</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Bổ trợ: HTTP/API/Postman/REST Assured + SQL</td>
+<td>W23–25</td>
+<td>30</td>
+<td>Important</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Capstone</strong> (mô phỏng dự án thật)</td>
+<td>W26–29</td>
+<td>44</td>
+<td>Essential</td>
+<td><strong>Mức 3 – Junior</strong></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Interview Sprint + Exit Exam</td>
+<td>W30–31</td>
+<td>20</td>
+<td>Essential</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Tổng</strong></td>
+<td><strong>≈ 31 tuần (~7 tháng)</strong></td>
+<td><strong>≈ 333</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Biến thể: đã có Java nền → bỏ Phase 1 (−3 tuần) còn <strong>~28 tuần</strong>; học toàn thời gian (~25 giờ/tuần) → <strong>~13–14 tuần</strong>; 6 giờ/tuần → ~55 tuần. Nếu phải rút gọn tối đa, giữ nguyên Phase 2–4, 6, 9 và rút Phase 8 xuống HTTP+Postman+SQL SELECT (~14 giờ).</p>
+<hr />
+<h2 id="3-chi-tiết-từng-phase">3. Chi tiết từng Phase</h2>
+<h3 id="phase-0--khởi-động--git-lite-w1--10-giờ--essential">Phase 0 — Khởi động &amp; Git Lite (W1 · ~10 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Máy chạy được Java + Chrome; có repo GitHub; commit/push thành thạo cho mọi bài sau</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td><a href="../01-java-fundamentals/00-environment-setup.html">Environment Setup</a>; Git Lite: <code>init/add/commit/status/log/push</code>, branch cơ bản, <code>.gitignore</code> (rút từ <a href="../07-git-and-team-workflow/01-git-fundamentals.html">Git 01</a>, <a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">Git 04</a>)</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Không</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td>Tạo repo GitHub <code>automation-learning</code>; commit tài liệu ghi chú; chạy <code>.\mvnw.cmd -version</code> trên một bản sao <code>Selenium1</code></td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>Không (làm quen thuật ngữ)</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ <code>java -version</code> ≥ 21, Chrome cài; ✔ ≥ 5 commit có message rõ trên GitHub; ✔ giải thích <code>working tree / staging / commit</code> bằng lời</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-1--java-core-a--testing-fundamentals-t1t2-w24--33-giờ--essential">Phase 1 — Java Core A + Testing Fundamentals T1–T2 (W2–4 · ~33 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Đọc/viết chương trình Java có biến, điều kiện, vòng lặp, mảng, method, class/OOP; hiểu nền tảng kiểm thử</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td>Java <a href="../01-java-fundamentals/README.html">01–08</a> (đã cắt phần Optional: recursion, <code>float/byte/short</code>, inner class); <strong>T1</strong> Nguyên tắc kiểm thử + SDLC/STLC + Test Levels/Types; <strong>T2</strong> Scenario/Test Case/Test Plan/RTM (chuyển từ <a href="../08-practical-project/01-requirements-and-test-design.html">Phase 8/01</a>)</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 0</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><strong>15 kata Java</strong> (chuỗi, mảng, method, class); <strong>Mini-project A:</strong> <code>TestCase</code>/<code>TestResult</code> + in tóm tắt PASS/FAIL; đọc <a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.java</a> và giải thích từng dòng; viết 10 test case cho trang Login</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>J1–J7, ST1–ST6 (<a href="05-interview-readiness-assessment.html">05 §4</a>)</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ 15 kata chạy đúng (commit); ✔ mini-project A chạy; ✔ giải thích <code>BaseTest</code> không cần tra từ khoá; ✔ trả lời ≥ 60% J1–J7 + ST1–ST6 bằng lời</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-2--maven-lite--testng-core--selenium-basics-w59--55-giờ--essential">Phase 2 — Maven Lite + TestNG Core + Selenium Basics (W5–9 · ~55 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Tự dựng dự án Maven, chạy test Selenium bằng <code>mvnw</code>; tìm phần tử ổn định; làm lại Exercise 1–5 không nhìn đáp án</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td><strong>Selenium Smoke (1–2 giờ, tuần đầu W5)</strong> → <a href="../03-selenium-fundamentals/README.html">Selenium 01–06</a> (Intro, WebDriver, Locators, WebElement, Navigation, Interactions + Dropdown); <strong>Maven Lite</strong>: <a href="../02-maven-and-project/00-project-initialization.html">Project Init</a>, <a href="../02-maven-and-project/01-maven-fundamentals.html">Fundamentals</a>, <a href="../02-maven-and-project/02-pom-xml.html"><code>pom.xml</code></a>, <a href="../02-maven-and-project/03-maven-wrapper.html">Maven Wrapper</a> ⭐; <strong>TestNG Core</strong> (annotations, <code>Assert</code>, <code>testng.xml</code>, chạy bằng <code>mvnw</code>) tách từ <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG 01</a>; Java <a href="../01-java-fundamentals/09-collections.html">09 Collections</a>, <a href="../01-java-fundamentals/10-exception-handling.html">10 Exceptions</a>; <strong>T3</strong> EP + BVA, <strong>T4</strong> Decision Table + State Transition</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 1 (Java 01–08)</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><a href="../08-practical-project/labs/01-first-selenium-test.html">Lab 01</a> (dự án mới + <code>HomePageTest</code>), <a href="../08-practical-project/labs/02-locator-practice.html">Lab 02</a>, <a href="../08-practical-project/labs/04-maven-and-mvnw-practice.html">Lab 04</a>; <strong>12 "kata" Selenium</strong> trên 3 site (site demo + 1 site có form/giỏ hàng + 1 site có bảng); làm lại Exercise 1–5; <strong>Mini-project B:</strong> đọc CSV test case → in</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>J8–J15, S1–S11, M1–M5, ST7–ST10</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ Dự án mới <code>mvnw clean test</code> xanh <strong>3 lần liên tiếp</strong> và push lên GitHub; ✔ viết CSS/XPath cho 8 phần tử khó ≥ 7/8 ổn định; ✔ Exercise 1–5 tự viết lại không nhìn; ✔ thiết kế 20 test case bằng BVA/EP cho 2 chức năng; ✔ giải thích Wrapper + file nào commit</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-3--selenium-interactions-exceptions--debugging-w1011--22-giờ--essential">Phase 3 — Selenium Interactions, Exceptions &amp; Debugging (W10–11 · ~22 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Xử lý Alert/Frame/Window, Actions, JS Executor; đọc stacktrace; sửa lỗi Selenium phổ biến</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td><a href="../03-selenium-fundamentals/README.html">Selenium 07–11</a> (Exceptions đọc trước các bài còn lại nếu cần); screenshot, headless/<code>ChromeOptions</code>, cookie, upload; <strong>T5</strong> Defect lifecycle + Severity/Priority + Bug report; <strong>T6</strong> Smoke/Sanity/Regression + Agile/Scrum</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><a href="../08-practical-project/labs/05-form-automation.html">Lab 05</a> (Login, Dropdown, Alert, Frame, Window); <strong>"Locator Refactor"</strong> (10 locator giòn → ổn định); viết <strong>3 bug report</strong> cho lỗi cho sẵn</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>S12–S20, ST11–ST14</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ Lab 05 xanh 3/3; ✔ phân biệt đúng <code>NoSuchElement/Stale/NotInteractable/ClickIntercepted</code> trên 6 stacktrace cho sẵn; ✔ 3 bug report đạt checklist; ✔ phân biệt smoke/sanity/regression</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-4--wait--synchronization-w1214--33-giờ--essential--ưu-tiên-cao">Phase 4 — Wait &amp; Synchronization (W12–14 · ~33 giờ · <strong>Essential — ưu tiên cao</strong>)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Chọn <strong>đúng</strong> loại Wait cho tình huống thật; chẩn đoán và sửa test flaky có hệ thống</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td>Java <a href="../01-java-fundamentals/11-lambda-and-generics.html">11a Lambda &amp; Generics cơ bản</a>; <a href="../04-wait-mechanisms/README.html">Wait 01–08</a>: <em>Core</em> (Intro, Explicit, ExpectedConditions, So sánh, 15 tình huống) → <em>Advanced</em> (Implicit, Fluent/Custom, Best Practices); <strong>bổ sung:</strong> page-ready (<code>document.readyState</code>) và chờ AJAX theo điều kiện UI</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 3, TestNG Core, lambda cơ bản</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><a href="../08-practical-project/labs/03-wait-practice.html">Lab 03</a>; <strong>"Flaky Clinic" — 6 test cho sẵn lỗi</strong> (sleep cứng, stale, overlay/spinner, thông báo cũ, iframe chậm, tab mới); đo thời gian Implicit vs Explicit; viết 2 custom wait</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>W1–W15 + SC1, SC2, SC9</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ Flaky Clinic: mỗi ca ghi <em>triệu chứng → nguyên nhân → sửa → chạy 5/5 xanh</em>; ✔ không còn <code>Thread.sleep</code> hay Implicit Wait; ✔ trả lời ≥ 80% W1–W15 <strong>không nhìn đáp án</strong>; ✔ giải thích Exercise 7 (custom wait) và Exercise 10 (<code>textToBe</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-5--testng-advanced--maven-deep-w1517--33-giờ--essentialimportant">Phase 5 — TestNG Advanced + Maven Deep (W15–17 · ~33 giờ · Essential/Important)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Test dữ liệu đa bộ, nhóm smoke/regression, chạy song song cơ bản; hiểu build/dependency đủ để debug</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td>TestNG: DataProvider, Parameters, Groups, soft assert, Parallel + <code>ThreadLocal</code>, Listener/Retry (khái niệm) — <a href="../05-testing-framework/README.html">05-testing-framework 03–06</a>; <strong>Maven Deep</strong> (gộp 3 bài): Lifecycle + Surefire, Dependency Management/Conflict, Troubleshooting — nguồn <a href="../02-maven-and-project/README.html">02-maven 04–09</a> (bỏ Failsafe/Profile); JUnit chỉ đọc 1 giờ</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 4</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><a href="../08-practical-project/labs/07-run-tests-with-maven.html">Lab 07</a>; data-driven login (DataProvider từ CSV); <code>smoke.xml</code> + <code>-Dgroups</code>; <strong>"Broken Build"</strong>: 5 lỗi Maven cho sẵn (dependency conflict, <code>-Dtest</code> gõ sai → <code>Tests run: 0</code>, sai JDK, mất <code>mvnw</code> mode, XML sai)</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>T1–T6, M6–M10, SC5, SC6</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ 3 cách chạy suite khác nhau cho 3 kết quả khác nhau; ✔ sửa được 5/5 "Broken Build"; ✔ giải thích vì sao <code>BUILD SUCCESS</code> vẫn có thể <code>Tests run: 0</code>; ✔ chạy song song 2 luồng không giẫm driver</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-6--pom--framework-design-w1820--33-giờ--essential">Phase 6 — POM &amp; Framework Design (W18–20 · ~33 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Tự dựng framework nhỏ sạch: POM, BasePage, DriverFactory, Config, screenshot, logging</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td><a href="../06-automation-framework/README.html">POM 01–05</a> (PageFactory → Optional); Java <a href="../01-java-fundamentals/12-file-handling.html">12 File/Properties</a>; SLF4J/Log4j2 cơ bản; Surefire + screenshot khi fail (Extent/Allure Optional)</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 5, Java OOP</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><a href="../08-practical-project/labs/06-page-object-model-practice.html">Lab 06</a>; <strong>refactor 10 Exercise gốc → POM + DriverFactory + Config</strong> (<em>không cho code sẵn</em>: chỉ spec + tiêu chí); thí nghiệm bảo trì: đổi 1 locator → chỉ sửa 1 file</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>T7–T10, SC3, SC4, SC10</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ <code>Tests run ≥ 15</code>, mọi <code>By</code> chỉ nằm trong Page; ✔ <code>-Dheadless=true</code> hoạt động; ✔ screenshot tự sinh khi fail; ✔ README đủ để người lạ chạy chỉ với JDK; ✔ giải thích framework bằng tiếng Anh trong 3 phút. <strong>→ Đạt mức 2 (Fresher): có thể bắt đầu nộp CV Fresher song song học tiếp.</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-7--git-team-workflow--ci-cơ-bản-w2122--20-giờ--essentialimportant">Phase 7 — Git Team Workflow + CI cơ bản (W21–22 · ~20 giờ · Essential/Important)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Làm việc với repo chung: nhánh, PR, conflict, review; chạy test trên CI</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td><a href="../07-git-and-team-workflow/README.html">Git 02–03</a> (branch/merge, rebase cơ bản, conflict, PR, review); quy ước commit/branch; <strong>GitHub Actions</strong> chạy <code>./mvnw -B clean test</code> (+ upload report) — <strong>thực chạy, không chỉ đọc</strong>; rebase nâng cao → Optional</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 6</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><strong>≥ 3 PR thật</strong> vào repo của chính mình (nhờ người/AI review, sửa theo góp ý); <strong>tạo conflict thật ở <code>pom.xml</code> và giải quyết</strong>; workflow CI xanh trên repo</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>Git Q1–Q10, SC5, SC6</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ 3 PR đã merge, có review comment; ✔ conflict <code>pom.xml</code> giải quyết đúng và <code>mvnw test</code> xanh; ✔ badge CI xanh; ✔ giải thích <code>fetch</code> vs <code>pull</code>, <code>merge</code> vs <code>rebase</code>, vì sao commit <code>mvnw</code> mode <code>100755</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-8--bổ-trợ-httpapipostmanrest-assured--sql-w2325--30-giờ--important">Phase 8 — Bổ trợ: HTTP/API/Postman/REST Assured + SQL (W23–25 · ~30 giờ · Important)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Hiểu HTTP/REST, kiểm thử API cơ bản bằng Postman và Java; truy vấn SQL đủ để kiểm chứng dữ liệu</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td><strong>Bài mới:</strong> HTTP (methods, status, headers, JSON); REST; Postman (collection, biến, assertion); REST Assured cơ bản (GET/POST + <code>assertThat</code>); SQL: <code>SELECT/WHERE/ORDER/JOIN/GROUP BY</code>; kiểm tra dữ liệu sau thao tác UI (ý tưởng; JDBC Optional)</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 6 (Maven, TestNG, JSON cơ bản)</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td>Collection Postman cho 1 API công khai (≥ 8 request, có assertion); 3 test REST Assured trong repo; 15 truy vấn SQL trên DB mẫu</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>Thêm 8–10 câu HTTP/API/SQL (bổ sung ngân hàng câu hỏi)</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ phân biệt 200/201/204/400/401/403/404/500; ✔ viết test REST Assured xanh; ✔ giải 15 truy vấn SQL ≥ 12 đúng; ✔ giải thích khi nào dùng API thay UI (ví dụ đăng nhập nhanh)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-9--capstone-w2629--44-giờ--essential">Phase 9 — Capstone (W26–29 · ~44 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Hoàn thành một dự án Automation có nghiệp vụ, đủ 11 bước thực tế, đưa được vào CV</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td>Tổng hợp; đặc tả chi tiết ở <a href="04-practical-exercise-assessment.html">04 §6.2</a> (requirement mơ hồ → test case EP/BVA/Decision Table → chọn automation → framework → CI → bug report → PR → thay đổi UI giữa chừng → trình bày)</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 6–8</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td>≥ 25 test case, 12–15 test tự động, ≥ 3 bug report, ≥ 4 PR, CI xanh, README + video 5 phút bằng tiếng Anh</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>SC7–SC10; giải thích project 3 phút/10 phút</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ Rubric Capstone ≥ 70% (<a href="04-practical-exercise-assessment.html">04 §6.2</a>); ✔ <code>mvnw clean test</code> 3/3 xanh trên CI; ✔ xử lý được thay đổi UI giữa chừng bằng sửa <strong>một</strong> Page. <strong>→ Đạt mức 3 (Junior) nếu đạt thêm Exit Exam ở Phase 10.</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="phase-10--interview-sprint--exit-exam-w3031--20-giờ--essential">Phase 10 — Interview Sprint + Exit Exam (W30–31 · ~20 giờ · Essential)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mục tiêu</strong></td>
+<td>Chuyển kiến thức thành phản xạ trả lời; vá lỗ hổng cuối</td>
+</tr>
+<tr>
+<td><strong>Kiến thức</strong></td>
+<td>Ôn bộ 95 câu (<a href="05-interview-readiness-assessment.html">05 §4</a>); luyện tự giới thiệu + giải thích project; tìm hiểu 5–10 JD thật để đối chiếu</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Phase 9</td>
+</tr>
+<tr>
+<td><strong>Thực hành</strong></td>
+<td><strong>3 mock đầy đủ 90 phút</strong> (ghi âm, tiếng Anh) + <strong>Exit Exam 3 giờ</strong> (<a href="05-interview-readiness-assessment.html">05 §2.3</a>); sửa 3 câu yếu nhất</td>
+</tr>
+<tr>
+<td><strong>Interview</strong></td>
+<td>Toàn bộ</td>
+</tr>
+<tr>
+<td><strong>Exit Criteria</strong></td>
+<td>✔ Exit Exam ≥ 70%; ✔ 2 mock liên tiếp ≥ 70% điểm (thang 0/1/2 mỗi câu; ngân hàng đầy đủ 95 câu = 190 điểm → ≥ 133 điểm, mock rút gọn thì tính theo tỷ lệ); ✔ không nhóm nào &lt; 3 trong bảng năng lực mức Junior</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="4-ánh-xạ-nội-dung-hiện-có--lộ-trình-mới">4. Ánh xạ nội dung hiện có → lộ trình mới</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nội dung hiện có</th>
+<th>Xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java 00</td>
+<td>Phase 0</td>
+</tr>
+<tr>
+<td>Java 01–08</td>
+<td>Phase 1 (cắt phần Optional)</td>
+</tr>
+<tr>
+<td>Java 09–10</td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td>Java 11</td>
+<td>Chia: 11a (Lambda/Generics) → Phase 4; 11b (Annotations/RegEx/Threads) → <strong>Optional</strong></td>
+</tr>
+<tr>
+<td>Java 12</td>
+<td>Phase 6</td>
+</tr>
+<tr>
+<td>Java 13 Cheatsheet</td>
+<td>Tra cứu mọi Phase</td>
+</tr>
+<tr>
+<td>Maven 00–03</td>
+<td>Phase 2 (Maven Lite)</td>
+</tr>
+<tr>
+<td>Maven 04–09</td>
+<td>Phase 5 (Maven Deep, nén 3 bài); Failsafe/Profile → <strong>Advanced</strong></td>
+</tr>
+<tr>
+<td>Selenium 01–06</td>
+<td>Phase 2</td>
+</tr>
+<tr>
+<td>Selenium 07–11</td>
+<td>Phase 3</td>
+</tr>
+<tr>
+<td>Wait 01–08</td>
+<td>Phase 4</td>
+</tr>
+<tr>
+<td>TestNG 01</td>
+<td>Chia Core (Phase 2) / Advanced (Phase 5)</td>
+</tr>
+<tr>
+<td>TestNG 02 (JUnit)</td>
+<td><strong>Optional</strong></td>
+</tr>
+<tr>
+<td>TestNG 03–06</td>
+<td>Phase 5 (Reports gộp vào Phase 6)</td>
+</tr>
+<tr>
+<td>POM 01–05</td>
+<td>Phase 6 (PageFactory → Optional)</td>
+</tr>
+<tr>
+<td>Git 01 + 04</td>
+<td>Phase 0 (Git Lite) / Phase 7</td>
+</tr>
+<tr>
+<td>Git 02–03</td>
+<td>Phase 7 (rebase nâng cao → Optional)</td>
+</tr>
+<tr>
+<td>Phase 8/01 (Requirements &amp; Test Design)</td>
+<td>Chuyển thành T2 (Phase 1), mở rộng bằng T3–T5</td>
+</tr>
+<tr>
+<td>Phase 8/02–03</td>
+<td>Hợp vào Capstone</td>
+</tr>
+<tr>
+<td>Labs 01/02/04 · 05 · 03 · 07 · 06/08-lite</td>
+<td>Phase 2 · 3 · 4 · 5 · 6</td>
+</tr>
+<tr>
+<td>Interview (7 bộ)</td>
+<td>Giữ; rải theo Phase; thêm Testing, Java bản chất, API/SQL</td>
+</tr>
+<tr>
+<td><strong>Mới</strong></td>
+<td>Track T (T1–T6), Phase 8 (API/SQL), CI thực chạy, Flaky Clinic, Broken Build, kata, mini-project, Capstone, Exit Exam</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-backlog-optional--advanced-sau-khi-có-việc">5. Backlog Optional / Advanced (sau khi có việc)</h2>
+<p>Java: Threads, RegEx, Stream, custom annotation · Maven: Failsafe, Profiles, Enforcer, BOM · Selenium: CDP, Shadow DOM sâu, Grid, Docker · Framework: Extent/Allure, Cucumber/BDD, PageFactory · API: JDBC, contract test · Git: cherry-pick, tags, hooks, rebase tương tác · Performance/Security cơ bản.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="05-interview-readiness-assessment.html"><small>← Bài trước</small><span>05 · Đánh giá khả năng sẵn sàng phỏng vấn Fresher/Junior</span></a><a class="next" href="07-final-recommendations.html"><small>Bài tiếp theo →</small><span>07 · Đề xuất tổng hợp và kế hoạch triển khai</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/06-recommended-learning-roadmap.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

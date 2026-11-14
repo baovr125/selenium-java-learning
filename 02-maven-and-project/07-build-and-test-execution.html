@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="build-và-chạy-automation-test-bằng-maven">Build và chạy Automation Test bằng Maven</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 11 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="06-dependency-management.html">Dependency Management</a> · ➡️ <a href="08-working-in-team.html">Quy trình làm việc với Maven trong team</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="06-dependency-management.html">Trước: Dependency</a> · <a href="08-working-in-team.html">Sau: Maven trong team</a> · <a href="../05-testing-framework/01-testng-fundamentals.html">TestNG</a> · <a href="../05-testing-framework/06-test-execution-and-reports.html">Báo cáo</a></p>
 <p>⚠️ Nguyên tắc: <strong>không giả định</strong> mọi dự án giống nhau. Phần dưới đây dựa trên <code>pom.xml</code> thật của <code>Selenium1</code>: Surefire 3.5.2, TestNG provider tự phát hiện, <code>suiteXmlFile = testng.xml</code>, <strong>không có Failsafe</strong>.</p>
 </blockquote>
@@ -243,7 +241,7 @@
 <span class="w">  </span><span class="nt">&lt;/profile&gt;</span>
 <span class="nt">&lt;/profiles&gt;</span></code></pre></div>
 <div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="n">-Pstaging</span></code></pre></div>
-<p>Với <code>Selenium1</code> có một môi trường duy nhất (<code>the-internet.herokuapp.com</code>).</p>
+<p>Với <code>Selenium1</code> có một môi trường duy nhất (site demo công khai).</p>
 <h2 id="7-đọc-kết-quả-trong-target">7. Đọc kết quả trong <code>target/</code></h2>
 <div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">target/
 ├── classes/                  ← kết quả compile src/main (rỗng ở dự án này)
@@ -430,35 +428,35 @@
 <p><strong>Câu 1.</strong> Có <code>-Dtest=...</code> thì <code>suiteXmlFiles</code> trong POM?</p>
 <ul>
 <li>A. Vẫn dùng</li>
-<li>B. Bị bỏ qua</li>
-<li>C. Gây lỗi</li>
-<li>D. Chạy hai lần</li>
+<li>B. Gây lỗi</li>
+<li>C. Chạy hai lần</li>
+<li>D. Bị bỏ qua</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Đã kiểm chứng trên dự án.</p>
+<p><strong>Đáp án: D.</strong> Đã kiểm chứng trên dự án.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>Tests run: 0</code> và <code>BUILD SUCCESS</code> nghĩa là?</p>
 <ul>
 <li>A. Mọi test pass</li>
-<li>B. Không test nào được chạy (build vẫn thành công)</li>
-<li>C. Test lỗi</li>
+<li>B. Test lỗi</li>
+<li>C. Không test nào được chạy (build vẫn thành công)</li>
 <li>D. Maven hỏng</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Bẫy phổ biến khi sai tên.</p>
+<p><strong>Đáp án: C.</strong> Bẫy phổ biến khi sai tên.</p>
 </details>
 <p><strong>Câu 3.</strong> Báo cáo HTML của Surefire nằm ở?</p>
 <ul>
 <li>A. <code>test-output/</code></li>
-<li>B. <code>target/surefire-reports/</code></li>
-<li>C. <code>src/</code></li>
+<li>B. <code>src/</code></li>
+<li>C. <code>target/surefire-reports/</code></li>
 <li>D. <code>.mvn/</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>test-output/</code> là khi chạy bằng code TestNG/IDE.</p>
+<p><strong>Đáp án: C.</strong> <code>test-output/</code> là khi chạy bằng code TestNG/IDE.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you run a specific test with Maven?</strong></p>

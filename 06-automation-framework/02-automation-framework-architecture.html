@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="kiến-trúc-automation-framework">Kiến trúc Automation Framework</h1>
 <blockquote>
-<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="01-page-object-model.html">Page Object Model (POM)</a> · ➡️ <a href="03-reusable-components.html">Reusable Components</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="01-page-object-model.html">Trước: POM</a> · <a href="03-reusable-components.html">Sau: Reusable Components</a> · <a href="../05-testing-framework/04-test-setup-and-teardown.html">Setup/Teardown</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -323,35 +321,35 @@ src/test/resources/
 <p><strong>Câu 1.</strong> Quy tắc phụ thuộc giữa các tầng?</p>
 <ul>
 <li>A. Tầng dưới gọi tầng trên</li>
-<li>B. Tầng trên gọi tầng dưới, không ngược lại</li>
-<li>C. Tuỳ ý</li>
+<li>B. Tuỳ ý</li>
+<li>C. Tầng trên gọi tầng dưới, không ngược lại</li>
 <li>D. Vòng tròn</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Page không biết Test.</p>
+<p><strong>Đáp án: C.</strong> Page không biết Test.</p>
 </details>
 <p><strong>Câu 2.</strong> YAGNI nghĩa là?</p>
 <ul>
-<li>A. Luôn thêm tính năng</li>
-<li>B. Chỉ thêm khi có nhu cầu thật</li>
+<li>A. Chỉ thêm khi có nhu cầu thật</li>
+<li>B. Luôn thêm tính năng</li>
 <li>C. Không bao giờ thêm</li>
 <li>D. Một công cụ</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Tránh over-engineering.</p>
+<p><strong>Đáp án: A.</strong> Tránh over-engineering.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>Selenium1</code> đang ở mức framework nào?</p>
 <ul>
-<li>A. Cấp 0: BaseTest + test</li>
-<li>B. Cấp 4 đầy đủ</li>
-<li>C. Không có</li>
-<li>D. Cấp 2</li>
+<li>A. Cấp 4 đầy đủ</li>
+<li>B. Không có</li>
+<li>C. Cấp 2</li>
+<li>D. Cấp 0: BaseTest + test</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Cấp 0 hợp lý cho học tập.</p>
+<p><strong>Đáp án: D.</strong> Cấp 0 hợp lý cho học tập.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Describe the architecture of an automation framework.</strong></p>
@@ -405,7 +403,7 @@ src/test/resources/
 </ol>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-page-object-model.html"><small>← Bài trước</small><span>Page Object Model (POM)</span></a><a class="next" href="03-reusable-components.html"><small>Bài tiếp theo →</small><span>Reusable Components</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../01-java-fundamentals/12-file-handling.html"><small>← Bài trước</small><span>Java: File Handling, Properties và Configuration</span></a><a class="next" href="03-reusable-components.html"><small>Bài tiếp theo →</small><span>Reusable Components</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/06-automation-framework/02-automation-framework-architecture.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

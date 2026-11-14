@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · Kế hoạch đồng bộ bản HTML (dành cho phiên làm việc sau) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/11-html-sync-plan" data-root="../" data-lesson="0" data-title="11 · Kế hoạch đồng bộ bản HTML (dành cho phiên làm việc sau)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="11--kế-hoạch-đồng-bộ-bản-html-dành-cho-phiên-làm-việc-sau">11 · Kế hoạch đồng bộ bản HTML (dành cho phiên làm việc sau)</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Ngữ cảnh thay đổi: <a href="10-changes-applied.html">10-changes-applied.md</a>
+<strong>Trạng thái (15/11/2026): ĐÃ THỰC HIỆN Bước 0–5; Bước 6 (xuất bản online) CHƯA làm</strong> — xem Nhật ký ở §6. Dữ liệu là tài liệu tự học của người dùng (không phải nội bộ) nên <strong>giữ</strong> <code>evaluation/</code> trên bản web.</p>
+</blockquote>
+<h2 id="1-hiện-trạng-đã-biết-đã-kiểm-tra-cuối-phiên-trước">1. Hiện trạng đã biết (đã kiểm tra cuối phiên trước)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Điều</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bản HTML nằm ở</td>
+<td><code>docs/selenium-learning/site/</code> — <strong>sinh tự động</strong> từ Markdown bằng <code>tools/build_site.py</code> (không sửa tay)</td>
+</tr>
+<tr>
+<td>Đã chạy <code>build_site.py</code> sau khi sửa Markdown?</td>
+<td><strong>Có</strong>, một lần. Các trang đã sinh (nav.js, search-index.js, 5 trang phỏng vấn mới, <code>evaluation/*.html</code> đều có mặt)</td>
+</tr>
+<tr>
+<td>Vì sao vẫn cần làm tiếp?</td>
+<td>Lần chạy đó <strong>kết thúc bằng lỗi</strong> <code>UnicodeEncodeError</code> ở dòng <code>print</code> cuối (console Windows cp1252) nên <strong>exit code ≠ 0</strong> và chưa kiểm chứng kết quả trong trình duyệt. Sau lần chạy đó <strong>chưa có thay đổi Markdown nào khác</strong>, nhưng nếu phiên sau sửa thêm thì phải chạy lại</td>
+</tr>
+<tr>
+<td>Trang mồ côi (HTML không còn Markdown)?</td>
+<td><strong>Không có</strong> (đã kiểm tra)</td>
+</tr>
+<tr>
+<td>Markdown chưa có HTML?</td>
+<td>Chỉ <code>README.md</code> ở gốc (bình thường: trang chủ là <code>site/index.html</code>)</td>
+</tr>
+<tr>
+<td>Tổng Markdown được sinh</td>
+<td>110 file (không tính <code>site/</code>, <code>tools/</code>)</td>
+</tr>
+<tr>
+<td>Quiz tương tác</td>
+<td><code>tools/assets/app.js</code> (dòng ~207–219) đọc đáp án đúng bằng regex <code>Đáp án:\s*([A-D])</code> từ khối <code>&lt;details markdown="1"&gt;</code> ⇒ <strong>kỳ vọng tương thích</strong> với việc đã xáo đáp án, nhưng <strong>chưa kiểm chứng trên trình duyệt</strong></td>
+</tr>
+<tr>
+<td><code>evaluation/</code></td>
+<td>Hiện <strong>được đưa vào site</strong> (tự động). Cần quyết định giữ hay loại (xem §3, bước 5)</td>
+</tr>
+<tr>
+<td>Xuất bản online</td>
+<td><code>tools/publish.ps1</code> build → đồng bộ sang repo GitHub Pages riêng <code>B:\Fresher\selenium-java-learning</code> → commit → <strong>push</strong>. Đây là hành động hướng ra ngoài, <strong>phải hỏi người dùng trước khi chạy</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-mục-tiêu">2. Mục tiêu</h2>
+<ol>
+<li>Bản HTML phản ánh <strong>100%</strong> Markdown hiện tại, chạy build <strong>thoát mã 0</strong>, không lỗi bảng mã.</li>
+<li>Các tính năng tương tác (điều hướng, tìm kiếm, tiến độ, <strong>quiz</strong>, copy code, sáng/tối) hoạt động với nội dung mới.</li>
+<li>Quyết định rõ về <code>evaluation/</code> trên bản web.</li>
+<li>(Tuỳ chọn, cần người dùng đồng ý) đẩy bản online.</li>
+</ol>
+<h2 id="3-các-bước-thực-hiện">3. Các bước thực hiện</h2>
+<h3 id="bước-0--chuẩn-bị-5-phút">Bước 0 — Chuẩn bị (5 phút)</h3>
+<ul>
+<li>Đọc nhanh <a href="10-changes-applied.html">10-changes-applied.md</a> và mục 1 của file này.</li>
+<li>Sao lưu <code>site/</code> hiện tại ra thư mục tạm (nếu muốn so sánh): <code>cp -r docs/selenium-learning/site &lt;scratchpad&gt;/site-before</code>.</li>
+<li>Kiểm tra phụ thuộc: <code>python -c "import markdown, pygments"</code> (đã có ở phiên trước).</li>
+</ul>
+<h3 id="bước-1--sửa-lỗi-bảng-mã-của-script-build-10-phút">Bước 1 — Sửa lỗi bảng mã của script build (10 phút)</h3>
+<p>Nguyên nhân: <code>print(f"Đã sinh …")</code> ở cuối <code>main()</code> trong <code>tools/build_site.py</code> (khoảng dòng 334) ghi tiếng Việt ra console cp1252. Cách làm, chọn <strong>một</strong>:</p>
+<ul>
+<li><strong>Ưu tiên (ít rủi ro):</strong> luôn chạy với <code>PYTHONIOENCODING=utf-8</code> — đã có trong <code>tools/publish.ps1</code>; chỉ cần ghi rõ vào <code>tools/README.md</code> lệnh đúng:
+  <code>PowerShell: $env:PYTHONIOENCODING="utf-8"; python docs\selenium-learning\tools\build_site.py</code></li>
+<li><strong>Hoặc</strong> thêm ở đầu <code>build_site.py</code>: <code>sys.stdout.reconfigure(encoding="utf-8")</code> (an toàn với Python 3.7+).</li>
+</ul>
+<p>Kiểm chứng: chạy lại và xác nhận <strong>exit code 0</strong> (<code>echo $?</code> hoặc <code>$LASTEXITCODE</code>).</p>
+<h3 id="bước-2--build-lại-và-đối-chiếu-số-lượng-10-phút">Bước 2 — Build lại và đối chiếu số lượng (10 phút)</h3>
+<div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nb">cd </span><span class="n">B</span><span class="p">:\</span><span class="n">Fresher</span><span class="p">\</span><span class="n">Selenium1</span>
+<span class="nv">$env:PYTHONIOENCODING</span> <span class="p">=</span> <span class="s2">&quot;utf-8&quot;</span>
+<span class="n">python</span> <span class="n">docs</span><span class="p">\</span><span class="n">selenium-learning</span><span class="p">\</span><span class="n">tools</span><span class="p">\</span><span class="n">build_site</span><span class="p">.</span><span class="n">py</span></code></pre></div>
+<p>Kiểm tra bằng script (đã dùng ở phiên trước, viết lại nếu cần):</p>
+<ol>
+<li>Mỗi <code>*.md</code> (trừ <code>site/</code>, <code>tools/</code>, <code>README.md</code> gốc) có <code>site/&lt;cùng đường dẫn&gt;.html</code>; <strong>không</strong> có HTML mồ côi (xoá nếu có — do đổi tên/xoá Markdown).</li>
+<li>Mọi liên kết nội bộ trong HTML trỏ tới file tồn tại (đổi <code>.md</code> → <code>.html</code>, kể cả anchor). Lưu ý: anchor có tiếng Việt/ký tự đặc biệt (ví dụ <code>#1-tự-giới-thiệu-self-introduction</code> trong <code>interview/README.md</code>) — kiểm tra id thực tế do script sinh.</li>
+<li><code>assets/nav.js</code> chứa đủ 11 tài liệu phỏng vấn và nhóm <code>evaluation/</code> (nếu giữ).</li>
+<li><code>assets/search-index.js</code> tìm được một cụm chỉ có ở nội dung mới (ví dụ <code>ThreadLocal</code>, <code>Integer cache</code>, <code>STAR</code>).</li>
+</ol>
+<h3 id="bước-3--kiểm-tra-trên-trình-duyệt-2030-phút">Bước 3 — Kiểm tra trên trình duyệt (20–30 phút)</h3>
+<p>Mở <code>docs/selenium-learning/site/index.html</code> (bấm đúp, không cần server). Có thể dùng công cụ browser nếu phiên sau có. Checklist:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Kiểm tra</th>
+<th>Mong đợi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Menu trái có nhóm <strong>Phỏng vấn</strong> với 11 mục (java, maven, selenium, wait, framework, git, scenario, <strong>automation-concepts, code-reading, behavioral-and-english, cheatsheet</strong>)</td>
+<td>Có, thứ tự hợp lý</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Quiz</strong>: mở ít nhất 5 bài ngẫu nhiên (gồm 1 bài Wait, 1 bài Java, 1 bài Maven); bấm từng đáp án</td>
+<td>Đáp án đúng được tô đúng; điểm đếm đúng; <strong>không còn chuyện "luôn là B"</strong>; thử cả các câu 2–3 lựa chọn</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Bài có 9 câu <strong>không xáo</strong> (đáp án nhắc chữ cái / "tất cả đều đúng" / số có thứ tự)</td>
+<td>Hiển thị đúng như cũ</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Tìm kiếm (<code>/</code>): gõ <code>ThreadLocal</code>, <code>Integer cache</code>, <code>STAR</code>, <code>cheatsheet</code></td>
+<td>Ra kết quả trong trang mới</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Khối code (Java trong <code>java-interview</code> Q27–Q31, <code>code-reading</code>)</td>
+<td>Tô màu đúng, nút Copy chạy; <code>#</code> hay <code>//</code> không phá định dạng</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Trang <code>interview/README</code></td>
+<td>Bảng 11 tài liệu hiển thị, liên kết nhảy đúng, anchor lộ trình ôn hoạt động</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Bài Wait: liên kết "README chương"</td>
+<td>Về <code>04-wait-mechanisms/README.html</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Phase 8/01: bài tập 1–3 và lời giải</td>
+<td>Không còn nhắc "R2 chưa có test"</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Tiến độ (3 trạng thái, xuất/nhập JSON), chế độ sáng/tối, điện thoại (thu nhỏ cửa sổ)</td>
+<td>Hoạt động</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Trang <code>LEARNING_PROGRESS</code></td>
+<td>Có thêm 4 mục phỏng vấn mới, trạng thái mặc định đúng</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nếu quiz lỗi: xem <code>tools/assets/app.js</code> (<code>quizzes()</code>): giả định cấu trúc <code>&lt;ul&gt;</code> đáp án + <code>&lt;details markdown="1"&gt;</code> ngay sau; các câu đã xáo vẫn giữ cấu trúc cũ (chỉ đổi thứ tự dòng và chữ cái) nên lỗi nếu có thường do <strong>bảng Markdown/ký tự đặc biệt trong lựa chọn</strong>, không do xáo.</p>
+<h3 id="bước-4--dọn-các-sai-khác-phát-hiện-được-tuỳ-kết-quả">Bước 4 — Dọn các sai khác phát hiện được (tuỳ kết quả)</h3>
+<ul>
+<li>Sửa Markdown nguồn (không sửa HTML), build lại, kiểm tra lại mục liên quan.</li>
+<li>Ghi các sửa vào mục 9 của <code>UPDATE_REPORT.md</code>.</li>
+</ul>
+<h3 id="bước-5--quyết-định-về-thư-mục-evaluation-trên-bản-web">Bước 5 — Quyết định về thư mục <code>evaluation/</code> trên bản web</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lựa chọn</th>
+<th>Khi nào chọn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Giữ</strong> (mặc định hiện tại)</td>
+<td>Bạn muốn đọc báo cáo/kế hoạch ngay trên bản web; chỉ dùng cá nhân</td>
+</tr>
+<tr>
+<td><strong>Loại khỏi site</strong></td>
+<td>Sắp <strong>xuất bản công khai</strong>: báo cáo nội bộ đánh giá lộ trình, có nhận xét về chính tài liệu, nên cân nhắc không công khai</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nếu loại: thêm <code>evaluation</code> vào danh sách thư mục bị bỏ qua trong <code>build_site.py</code> (tìm đoạn duyệt file, nơi đã loại <code>site</code>/<code>tools</code>), build lại, <strong>xoá <code>site/evaluation/</code></strong> và kiểm tra nav/tìm kiếm không còn mục đó. Hỏi người dùng trước khi chọn nếu chưa rõ.</p>
+<h3 id="bước-6--xuất-bản-online-chỉ-khi-người-dùng-đồng-ý-rõ-ràng">Bước 6 — Xuất bản online (CHỈ khi người dùng đồng ý rõ ràng)</h3>
+<ul>
+<li>Xác nhận repo đích tồn tại: <code>B:\Fresher\selenium-java-learning</code> (có <code>.git</code>) — nếu thiếu, <strong>dừng và báo người dùng</strong>.</li>
+<li>Chạy: <code>powershell -File docs\selenium-learning\tools\publish.ps1 -Message "Sync site after interview expansion"</code>.</li>
+<li>Hành động này <strong>commit và push</strong> lên GitHub Pages ⇒ nội dung thành công khai. Xem lại nội dung <code>site/</code> (đặc biệt <code>evaluation/</code>, bài tập có lời giải) trước khi push.</li>
+<li>Nếu người dùng chưa muốn: bỏ qua; ghi vào cuối file này "chưa xuất bản".</li>
+</ul>
+<h2 id="4-tiêu-chí-hoàn-thành">4. Tiêu chí hoàn thành</h2>
+<ul>
+<li class="task"><input type="checkbox" disabled> <code>build_site.py</code> thoát mã 0, không lỗi bảng mã; cách chạy đúng được ghi ở <code>tools/README.md</code>.</li>
+<li class="task"><input type="checkbox" disabled> 0 HTML mồ côi; 0 liên kết nội bộ hỏng trong HTML.</li>
+<li class="task"><input type="checkbox" disabled> Checklist trình duyệt §3 bước 3 đạt ≥ 9/10 (mục còn lại có ghi chú lý do).</li>
+<li class="task"><input type="checkbox" disabled> Đã quyết định giữ/loại <code>evaluation/</code> và áp dụng.</li>
+<li class="task"><input type="checkbox" disabled> Mục "Nhật ký" bên dưới được điền.</li>
+</ul>
+<h2 id="5-rủi-ro">5. Rủi ro</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rủi ro</th>
+<th>Giảm thiểu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quiz tương tác hỏng với câu đã xáo</td>
+<td>Kiểm tra ≥ 5 bài (§3.3); sửa Markdown nguồn rồi build lại</td>
+</tr>
+<tr>
+<td>Sửa nhầm file trong <code>site/</code> (bị ghi đè lần build sau)</td>
+<td>Chỉ sửa Markdown/<code>tools/assets</code>, không sửa <code>site/*.html</code></td>
+</tr>
+<tr>
+<td>Đẩy nhầm báo cáo nội bộ lên bản online</td>
+<td>Quyết định ở bước 5 trước bước 6; hỏi người dùng</td>
+</tr>
+<tr>
+<td>Dự án chưa phải Git repo ⇒ không hoàn tác</td>
+<td><code>git init</code> + commit trước khi sửa tiếp (nếu người dùng đồng ý) hoặc sao lưu ra thư mục tạm</td>
+</tr>
+<tr>
+<td>Hết token giữa chừng</td>
+<td>Mỗi bước độc lập, kết quả ghi vào "Nhật ký" bên dưới ngay sau khi xong</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-nhật-ký-điền-khi-thực-hiện">6. Nhật ký (điền khi thực hiện)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước</th>
+<th>Ngày</th>
+<th>Kết quả</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>15/11/2026</td>
+<td>Xong</td>
+<td>Có sao lưu tài liệu ở phiên trước; <code>markdown</code>, <code>pygments</code> sẵn sàng</td>
+</tr>
+<tr>
+<td>1</td>
+<td>15/11/2026</td>
+<td>Xong</td>
+<td>Thêm <code>sys.stdout.reconfigure(encoding="utf-8")</code> vào <code>build_site.py</code>; build thoát <strong>mã 0</strong>; ghi chú trong <code>tools/README.md</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>15/11/2026</td>
+<td>Xong</td>
+<td>111 trang + 404; <strong>0</strong> HTML mồ côi; <strong>2.237</strong> liên kết nội bộ, <strong>0</strong> hỏng (file và anchor); nav + chỉ mục tìm kiếm có đủ trang mới</td>
+</tr>
+<tr>
+<td>3</td>
+<td>15/11/2026</td>
+<td>Xong (kiểm bằng Chrome headless đọc DOM sau khi JS chạy)</td>
+<td>Quiz khởi tạo đúng (3 quiz/12 lựa chọn mỗi bài); mô phỏng bấm đáp án đúng trên 3 bài (Wait, Java, TestNG) cho "3/3 câu đúng". <strong>Chưa kiểm tay:</strong> giao diện sáng/tối, di động, nút Copy, xuất/nhập tiến độ</td>
+</tr>
+<tr>
+<td>4</td>
+<td>15/11/2026</td>
+<td>Có thay đổi</td>
+<td>Thêm nhóm menu <strong>🧪 Đánh giá &amp; kế hoạch</strong> (trước đó <code>evaluation/</code> chỉ tìm được bằng ô tìm kiếm) và <strong>thứ tự logic</strong> cho nhóm Phỏng vấn (<code>ORDER_OVERRIDE</code>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>15/11/2026</td>
+<td>Quyết định: <strong>giữ</strong> <code>evaluation/</code> trên web</td>
+<td>Người dùng xác nhận đây là tài liệu tự học, không nội bộ</td>
+</tr>
+<tr>
+<td>6</td>
+<td>—</td>
+<td><strong>Chưa làm</strong></td>
+<td>Cần người dùng yêu cầu rõ ràng; sẽ commit + push sang <code>B:\Fresher\selenium-java-learning</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-câu-lệnh-mở-đầu-gợi-ý-cho-phiên-sau">7. Câu lệnh mở đầu gợi ý cho phiên sau</h2>
+<blockquote>
+<p>"Đọc <code>docs/selenium-learning/evaluation/11-html-sync-plan.md</code> và thực hiện từ Bước 0 đến Bước 5. Chưa push/publish; hỏi tôi trước khi làm Bước 6."</p>
+</blockquote>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="10-changes-applied.html"><small>← Bài trước</small><span>10 · Nhật ký thay đổi đã áp dụng sau đánh giá (14/11/2026)</span></a><a class="next" href="../progress/README.html"><small>Bài tiếp theo →</small><span>Progress — Theo dõi học tập</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/11-html-sync-plan.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

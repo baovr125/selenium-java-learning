@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · Đánh giá hệ thống bài tập, thực hành và dự án · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/04-practical-exercise-assessment" data-root="../" data-lesson="0" data-title="04 · Đánh giá hệ thống bài tập, thực hành và dự án">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="04--đánh-giá-hệ-thống-bài-tập-thực-hành-và-dự-án">04 · Đánh giá hệ thống bài tập, thực hành và dự án</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Trước: <a href="03-learning-sequence-review.html">03 Thứ tự</a> · Tiếp: <a href="05-interview-readiness-assessment.html">05 Phỏng vấn</a></p>
+</blockquote>
+<h2 id="1-tổng-quan-số-liệu">1. Tổng quan số liệu</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Loại</th>
+<th>Số lượng</th>
+<th>Nguồn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bài tập cuối bài</td>
+<td><strong>180</strong> (60 bài × 3: Basic / Intermediate / Practical)</td>
+<td>Quét 60/60 bài</td>
+</tr>
+<tr>
+<td>Câu quiz</td>
+<td>180 (60 × 3 trắc nghiệm)</td>
+<td>Quét</td>
+</tr>
+<tr>
+<td>Labs</td>
+<td><strong>8 file</strong> (gói 12 "Bài")</td>
+<td><code>labs/README.md</code></td>
+</tr>
+<tr>
+<td>Bài tập từ source gốc</td>
+<td>10 Exercise (đã làm, 10/10 pass)</td>
+<td><code>Selenium1/src/test/java</code></td>
+</tr>
+<tr>
+<td>Dự án Phase 8</td>
+<td>3 bài hướng dẫn + Lab 08</td>
+<td><code>08-practical-project/</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-chất-lượng-bài-tập-cuối-bài-180-bài">2. Chất lượng bài tập cuối bài (180 bài)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Vấn đề</th>
+<th>Bằng chứng</th>
+<th>Hệ quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yêu cầu quá ngắn, "Expected Output" mơ hồ.</strong> 140/180 bài tập có Expected Output dạng văn xuôi ("3 cặp", "Bảng + 1 khoảng trống", "Click thành công hoặc ném lỗi") thay vì kết quả kiểm chứng được.</td>
+<td>Quét <code>**Expected Output:**</code>; ví dụ <code>10-selenium-exceptions</code> Ex1/Ex3, <code>08/01</code> Ex1–3</td>
+<td>Người học không tự chấm được → dễ "tưởng đã làm"</td>
+</tr>
+<tr>
+<td><strong>Basic/Intermediate/Practical chênh nhau ít.</strong> Ví dụ <code>04-control-flow</code>: "tổng 1–5" → "<code>switch</code> tên driver" → "đếm PASS/FAIL" (cả ba &lt; 10 dòng code). Mức "Practical" vẫn là bài tập đồ chơi.</td>
+<td><code>01-java-fundamentals/04-control-flow.md</code> Practice Exercises</td>
+<td>Không có bước nhảy lên kỹ năng thật</td>
+</tr>
+<tr>
+<td><strong>Không có bài "sửa test hỏng cho sẵn".</strong> Không tìm thấy bài nào đưa một test đang fail/flaky và yêu cầu chẩn đoán–sửa (quét <code>03/</code>, <code>04/</code>, <code>08/</code>).</td>
+<td>Quét từ khoá</td>
+<td>Debugging chỉ là <em>đọc quy trình 8 bước</em>, không phải <em>kỹ năng</em> — mà đây là điều interviewer hỏi nhiều nhất</td>
+</tr>
+<tr>
+<td><strong>Lời giải ngay cuối file.</strong></td>
+<td>Cấu trúc 60/60 bài</td>
+<td>Dễ mở sớm</td>
+</tr>
+<tr>
+<td><strong>Quiz lệch đáp án</strong> (135/180 = B).</td>
+<td>Script</td>
+<td>Mất giá trị tự kiểm tra</td>
+</tr>
+<tr>
+<td><strong>Bài tập Selenium cuối bài khó chạy độc lập</strong> (cần site/locator giả định); UPDATE_REPORT §7 thừa nhận 7/36 lời giải Selenium "không chạy độc lập".</td>
+<td>UPDATE_REPORT §7</td>
+<td>Người học không chắc mình sai ở đâu</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Điểm tốt:</strong> bài Java có ví dụ + lời giải <strong>đã chạy thật</strong> (93/93); bài tập Wait có tình huống đo thời gian thật; mỗi bài đều có Hint.</p>
+<h2 id="3-đánh-giá-theo-cấp-độ-level-15">3. Đánh giá theo cấp độ (Level 1–5)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Yêu cầu của bạn</th>
+<th>Hiện có</th>
+<th>Đánh giá</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 – Basic Java</strong></td>
+<td>Variables, điều kiện/vòng lặp, methods, class/object, Collections, Exceptions</td>
+<td>Bài <code>02</code>–<code>10</code>, 3 bài tập/bài, có lời giải chạy thật</td>
+<td><strong>Đủ về số lượng; thiếu mini-project.</strong> Không có bài Java nào <em>mô hình hoá Selenium</em> (ví dụ: lớp <code>TestCase</code> + <code>List&lt;TestCase&gt;</code> + đọc CSV + in báo cáo PASS/FAIL).</td>
+</tr>
+<tr>
+<td><strong>2 – Basic Selenium</strong></td>
+<td>WebDriver, tìm phần tử, WebElement, Login, Dropdown/Alert/Frame</td>
+<td>Lab 01, 02, 05; 10 Exercise của source</td>
+<td><strong>Tạm đủ.</strong> Nhưng Lab nằm ở <strong>Phase 8 (tuần 9–10)</strong>. Alert/Frame/Window <strong>chưa có bằng chứng thực hành</strong> trong source (<a href="../00-project-analysis.html">00-project-analysis.md:225</a>). Mọi thứ trên <strong>một site</strong>.</td>
+</tr>
+<tr>
+<td><strong>3 – Intermediate Selenium</strong></td>
+<td>Explicit Wait, dynamic elements, Selenium exceptions, POM, TestNG, chạy bằng <code>mvnw</code></td>
+<td>Lab 03, 06, 07; Exercise 6/7/8/10</td>
+<td><strong>Tốt nhất ở phần Wait</strong> (Lab 03: không chờ vs chờ đúng, đo thời gian, 3 thử nghiệm bắt buộc). <strong>Thiếu</strong> kỹ năng xử lý Stale/Intercepted bằng bài tập <em>cho sẵn lỗi</em>; Lab 06 (POM) làm trên <em>chính trang Login đã quen</em>.</td>
+</tr>
+<tr>
+<td><strong>4 – Automation Framework</strong></td>
+<td>Cấu trúc, DriverFactory, Config, Test Data, Reusable, Report, Debug/bảo trì</td>
+<td>Lab 08 (khung + code <code>Config</code>, <code>BaseTest</code>)</td>
+<td><strong>Đúng hướng, nhưng đưa sẵn quá nhiều code</strong> (<code>Config</code>, <code>BaseTest</code> đầy đủ; <code>DriverFactory/BasePage/Screenshots</code> ở bài khác); không có "bảo trì thật" (đổi giao diện → sửa 1 chỗ) ngoài thí nghiệm đổi một locator ở Lab 06.</td>
+</tr>
+<tr>
+<td><strong>5 – Project Simulation</strong></td>
+<td>11 bước như thực tế</td>
+<td>Phase 8: 3 bài + Lab 08</td>
+<td><strong>Chưa đạt</strong> — xem §4.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-phase-8-có-phải-mô-phỏng-dự-án-thật-không">4. Phase 8 có phải "mô phỏng dự án thật" không?</h2>
+<p>Đối chiếu 11 bước bạn nêu:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Bước</th>
+<th>Hiện có</th>
+<th>Nhận xét</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Nhận Requirement</td>
+<td>Có, nhưng <strong>tự rút ngược từ <code>de.md</code></strong>: <em>"R1–R10 (rút từ 10 bài tập của dự án)"</em> (<a href="../08-practical-project/01-requirements-and-test-design.html">01-requirements:62</a>)</td>
+<td>Không có tài liệu yêu cầu từ "stakeholder", không mơ hồ/thiếu sót cần hỏi lại</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Phân tích chức năng</td>
+<td>Một phần (bảng R1–R10)</td>
+<td>Chưa có phân tích rủi ro/ưu tiên theo nghiệp vụ</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Thiết kế Test Cases</td>
+<td>Có, <strong>6 test case mẫu</strong></td>
+<td>Không dùng BVA/EP/Decision Table (chưa được dạy); không có test case âm cho đa số chức năng</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Chọn Scenario cần automation</td>
+<td><strong>Tốt</strong> (bảng S1–S12, tiêu chí chọn)</td>
+<td>Giữ</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Thiết kế Framework</td>
+<td>Có (M1–M6)</td>
+<td>Giữ; thêm tiêu chí thiết kế</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Viết Scripts</td>
+<td>Có</td>
+<td>Giữ</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Thực thi Test</td>
+<td>Có (<code>mvnw clean test</code>, 3 lần xanh)</td>
+<td>Giữ</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Phân tích kết quả</td>
+<td>Một phần (bài <code>03</code>: đọc <code>Tests run</code>, 8 bước debug)</td>
+<td>Không có kết quả <strong>fail thật</strong> để phân tích (mọi thứ nhắm đến "xanh")</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Báo cáo Defect</strong></td>
+<td><strong>Không có</strong> (bước 11 của giáo trình là báo cáo <em>kết quả chạy</em>: mẫu Markdown "12 chạy, 0 fail")</td>
+<td>Thiếu hoàn toàn; không có mẫu bug report, không có bug để báo vì AUT ổn định</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Commit &amp; Push</td>
+<td><code>git init -b main</code> + <code>commit</code> <strong>cục bộ</strong> (<a href="../08-practical-project/03-run-debug-report-and-git.html">03:92-100</a>); không có <code>push</code>, không remote, không PR</td>
+<td>Giả lập</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Review &amp; bảo trì</td>
+<td>Có checklist review PR (Git bài 03), nhưng không có "người review", không có thay đổi yêu cầu giữa chừng</td>
+<td>Thiếu tình huống bảo trì</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Vấn đề gốc:</strong> AUT của Capstone là <strong>chính site demo công khai</strong> — trang người học đã tự động hoá 10/10 ở Phase gốc. Bản dựng lại thêm POM/Config/DataProvider nhưng không thêm <em>độ phức tạp nghiệp vụ</em>, không có <em>lỗi để tìm</em>, không có <em>CV-able artifact</em> khác biệt (hàng nghìn ứng viên có cùng project này). Kết luận: <strong>Phase 8 là "refactor lab", chưa phải "project simulation".</strong></p>
+<h2 id="5-thiếu-hụt-bài-tập-theo-nhu-cầu-phỏng-vấn">5. Thiếu hụt bài tập theo nhu cầu phỏng vấn</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kỹ năng interviewer kiểm tra</th>
+<th>Bài tập hiện có</th>
+<th>Khoảng trống</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Viết code Java tại chỗ (reverse string, đếm ký tự, duyệt List/Map)</td>
+<td>Có rải rác</td>
+<td>Cần 15 "kata" nhỏ có đáp án tự kiểm bằng test</td>
+</tr>
+<tr>
+<td>Giải thích đoạn code Selenium</td>
+<td>Không có định dạng này</td>
+<td>Thêm "đọc &amp; giải thích" (có lỗi cố ý)</td>
+</tr>
+<tr>
+<td>Debug script đang fail</td>
+<td><strong>Không có</strong></td>
+<td>Thêm "Flaky Clinic", "Broken Suite"</td>
+</tr>
+<tr>
+<td>Chọn locator/Wait trước tình huống mới</td>
+<td>Có tình huống (Wait <code>07</code>) nhưng <strong>chỉ để đọc</strong></td>
+<td>Chuyển thành bài làm trên máy</td>
+</tr>
+<tr>
+<td>Thiết kế test từ requirement</td>
+<td>1 bài</td>
+<td>Cần BVA/EP/Decision Table + bài tập</td>
+</tr>
+<tr>
+<td>Viết bug report</td>
+<td><strong>Không có</strong></td>
+<td>Thêm mẫu + 3 bài tập</td>
+</tr>
+<tr>
+<td>API test cơ bản, SQL</td>
+<td><strong>Không có</strong></td>
+<td>Thêm (xem <a href="06-recommended-learning-roadmap.html">06</a>)</td>
+</tr>
+<tr>
+<td>Làm việc nhóm (PR, conflict)</td>
+<td>Mô tả + repo thử</td>
+<td>Cần repo GitHub thật + PR thật</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-đề-xuất-hệ-thống-bài-tập-mới">6. Đề xuất hệ thống bài tập mới</h2>
+<h3 id="61-thang-bài-tập">6.1. Thang bài tập</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Bài tập</th>
+<th>Tiêu chí hoàn thành (đo được)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 Java</strong></td>
+<td>15 kata (chuỗi, List/Map, <code>equals</code>, exception) + <strong>2 mini-project:</strong> (a) <code>TestCase</code>/<code>TestResult</code> + đọc CSV + in tóm tắt; (b) <code>Retry.run(action, n)</code> có test</td>
+<td>Mỗi kata có <code>main</code> + test TestNG tự kiểm; mini-project chạy <code>mvnw test</code> xanh</td>
+</tr>
+<tr>
+<td><strong>2 Selenium cơ bản</strong></td>
+<td>12 "kata" trên 3 site: site demo hiện dùng + 1 site có form/giỏ hàng (một site demo công khai khác, ví dụ trang có giỏ hàng — <em>kiểm tra site còn hoạt động</em>) + 1 site có bảng/phân trang</td>
+<td>12 test xanh 3 lần liên tiếp; không <code>Thread.sleep</code></td>
+</tr>
+<tr>
+<td><strong>3 Selenium trung cấp</strong></td>
+<td><strong>"Flaky Clinic"</strong> (6 test cho sẵn lỗi: sleep, stale, overlay, message cũ, iframe, tab mới) + "Locator Refactor" (10 locator giòn → ổn định)</td>
+<td>Mỗi ca ghi: triệu chứng → nguyên nhân → sửa → bằng chứng chạy 5/5</td>
+</tr>
+<tr>
+<td><strong>4 Framework</strong></td>
+<td>Refactor 10 Exercise gốc → POM + DriverFactory + Config + Screenshot + DataProvider; <strong>không cho sẵn code</strong> (chỉ spec + tiêu chí)</td>
+<td><code>Tests run ≥ 15</code>; mọi <code>By</code> nằm trong Page; <code>-Dheadless=true</code>; screenshot tự sinh khi fail</td>
+</tr>
+<tr>
+<td><strong>5 Capstone</strong></td>
+<td>Xem §6.2</td>
+<td>Xem rubric</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="62-capstone-đề-xuất--test-automation-cho-một-ứng-dụng-web-có-nghiệp-vụ">6.2. Capstone đề xuất — "Test Automation cho một ứng dụng web có nghiệp vụ"</h3>
+<p><strong>Bối cảnh:</strong> nhận <em>Requirement Document 1 trang (có cố ý mơ hồ/thiếu)</em> cho một ứng dụng có luồng: đăng nhập → danh mục sản phẩm → giỏ hàng → thanh toán → lịch sử đơn (dùng demo site công khai hoặc app tự host; kiểm tra site còn hoạt động trước khi chọn).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước</th>
+<th>Deliverable</th>
+<th>Gắn với 11 bước của bạn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Phân tích</td>
+<td>Danh sách câu hỏi làm rõ requirement (≥ 5) + giả định</td>
+<td>1, 2</td>
+</tr>
+<tr>
+<td>2. Thiết kế</td>
+<td>≥ 25 test case áp dụng <strong>BVA, EP, Decision Table</strong> (bảng Excel/Markdown) + RTM</td>
+<td>3</td>
+</tr>
+<tr>
+<td>3. Chọn automation</td>
+<td>Bảng lý do (tiêu chí ROI) → ~12–15 test tự động, còn lại thủ công</td>
+<td>4</td>
+</tr>
+<tr>
+<td>4. Framework</td>
+<td>POM + BasePage + DriverFactory + Config + Logging (SLF4J) + Screenshot + TestNG groups (<code>smoke</code>, <code>regression</code>)</td>
+<td>5, 6</td>
+</tr>
+<tr>
+<td>5. Thực thi</td>
+<td><code>./mvnw clean test</code> + <code>-Dgroups=smoke</code>; chạy trên <strong>GitHub Actions</strong></td>
+<td>7</td>
+</tr>
+<tr>
+<td>6. Phân tích</td>
+<td>Báo cáo kết quả: ≥ 1 lỗi thật hoặc <strong>lỗi cố ý do người khác/AI cài vào</strong> để bạn tìm</td>
+<td>8</td>
+</tr>
+<tr>
+<td>7. Defect</td>
+<td><strong>≥ 3 bug report</strong> chuẩn (tiêu đề, môi trường, bước, kỳ vọng/thực tế, severity/priority, ảnh)</td>
+<td>9</td>
+</tr>
+<tr>
+<td>8. Git</td>
+<td>Repo GitHub thật, nhánh feature, <strong>≥ 4 PR</strong>, commit message chuẩn, <code>.gitignore</code>, <code>mvnw</code> mode <code>100755</code></td>
+<td>10</td>
+</tr>
+<tr>
+<td>9. Review &amp; bảo trì</td>
+<td>Một <strong>thay đổi UI/requirement</strong> giữa chừng → sửa test; 1 PR được review (người/AI) và sửa theo góp ý</td>
+<td>11</td>
+</tr>
+<tr>
+<td>10. Trình bày</td>
+<td>README + sơ đồ + video/ghi chú 5 phút giải thích bằng tiếng Anh</td>
+<td>Giao tiếp</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Rubric chấm Capstone (đủ để đưa vào CV):</strong> cấu trúc framework (20%) · chất lượng test case &amp; bao phủ (20%) · độ ổn định (3/3 lần xanh, không sleep) (20%) · Git/PR/CI (15%) · bug report (10%) · README &amp; giải thích (15%).</p>
+<h2 id="7-kết-luận">7. Kết luận</h2>
+<ul>
+<li><strong>Giữ:</strong> 180 bài tập Java/Selenium ở dạng "kata" nhưng <strong>viết lại Expected Output cụ thể</strong> và <strong>xáo đáp án quiz</strong>.</li>
+<li><strong>Chuyển:</strong> Labs từ Phase 8 về cuối <strong>từng Phase</strong> tương ứng (Lab 01/02 → Phase 2; 05 → Phase 3; 03 → Phase 4; 07/04 → Phase 5; 06/08-lite → Phase 6).</li>
+<li><strong>Thêm:</strong> Flaky Clinic, mini-project Java, 3 site thực hành, bài debug có lỗi cài sẵn, bug report, Capstone có nghiệp vụ + PR + CI.</li>
+<li><strong>Bỏ:</strong> việc đưa sẵn code đầy đủ của Lab 08 (chỉ giữ spec + tiêu chí); Lab 08 hiện còn như đáp án.</li>
+</ul>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="03-learning-sequence-review.html"><small>← Bài trước</small><span>03 · Đánh giá thứ tự học và cấu trúc bài học</span></a><a class="next" href="05-interview-readiness-assessment.html"><small>Bài tiếp theo →</small><span>05 · Đánh giá khả năng sẵn sàng phỏng vấn Fresher/Junior</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/04-practical-exercise-assessment.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

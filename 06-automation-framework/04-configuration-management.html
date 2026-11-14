@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="configuration-management">Configuration Management</h1>
 <blockquote>
-<p>🧭 Phase 6 · Page Object Model and Framework Design · Chapter 22 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="03-reusable-components.html">Reusable Components</a> · ➡️ <a href="05-maintainable-test-framework.html">Maintainable Test Framework</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-reusable-components.html">Trước: Reusable Components</a> · <a href="05-maintainable-test-framework.html">Sau: Maintainable Framework</a> · <a href="../05-testing-framework/05-test-data-and-configuration.html">Test data &amp; config</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -138,7 +136,7 @@
  -Dkey=value  &gt;  biến môi trường  &gt;  config-&lt;env&gt;.properties  &gt;  config.properties  &gt;  mặc định trong code</code></pre></div>
 <p>Ví dụ lớp bọc (Singleton đơn giản, bất biến):</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">baseUrl</span><span class="p">()</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;base.url&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">baseUrl</span><span class="p">()</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;base.url&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">browser</span><span class="p">()</span><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="s">&quot;browser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">headless</span><span class="p">()</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Boolean</span><span class="p">.</span><span class="na">parseBoolean</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;headless&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Duration</span><span class="w"> </span><span class="nf">timeout</span><span class="p">()</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="n">Long</span><span class="p">.</span><span class="na">parseLong</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;timeout.seconds&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;15&quot;</span><span class="p">)));</span><span class="w"> </span><span class="p">}</span>
@@ -160,7 +158,7 @@
 <p>kèm giá trị mặc định trong <code>&lt;properties&gt;</code>:</p>
 <div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;properties&gt;</span>
 <span class="w">    </span><span class="nt">&lt;browser&gt;</span>chrome<span class="nt">&lt;/browser&gt;</span>
-<span class="w">    </span><span class="nt">&lt;base.url&gt;</span>https://the-internet.herokuapp.com<span class="nt">&lt;/base.url&gt;</span>
+<span class="w">    </span><span class="nt">&lt;base.url&gt;</span>https://example.com<span class="nt">&lt;/base.url&gt;</span>
 <span class="nt">&lt;/properties&gt;</span></code></pre></div>
 <p>⇒ Không truyền gì thì dùng mặc định POM; truyền <code>-Dbrowser=firefox</code> thì đè. (Ví dụ minh hoạ; chạy thử và in giá trị ra để xác nhận.)</p>
 <h2 id="5-maven-profile-cho-môi-trường">5. Maven Profile cho môi trường</h2>
@@ -294,14 +292,14 @@
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> <code>.mvn/maven.config</code> làm gì ở dự án?</p>
 <ul>
-<li>A. Đặt Local Repository vào <code>.mvn/repository</code></li>
-<li>B. Đặt URL test</li>
-<li>C. Chọn browser</li>
+<li>A. Đặt URL test</li>
+<li>B. Chọn browser</li>
+<li>C. Đặt Local Repository vào <code>.mvn/repository</code></li>
 <li>D. Không gì</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Áp dụng cho mọi lệnh Maven.</p>
+<p><strong>Đáp án: C.</strong> Áp dụng cho mọi lệnh Maven.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>-Dbrowser=firefox</code> tới JVM test bằng?</p>
 <ul>
@@ -316,14 +314,14 @@
 </details>
 <p><strong>Câu 3.</strong> Bí mật nên ở?</p>
 <ul>
-<li>A. <code>config.properties</code> commit</li>
-<li>B. Biến môi trường / secret CI</li>
+<li>A. Biến môi trường / secret CI</li>
+<li>B. <code>config.properties</code> commit</li>
 <li>C. <code>pom.xml</code></li>
 <li>D. README</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Không commit.</p>
+<p><strong>Đáp án: A.</strong> Không commit.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you run the same tests against different environments?</strong></p>

@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="git-fundamentals-clone-status-add-commit-push-fetch-pull">Git Fundamentals (clone, status, add, commit, push, fetch, pull)</h1>
 <blockquote>
-<p>🧭 Phase 7 · Git and Team Collaboration · Chapter 23
-⬅️ <a href="../06-automation-framework/05-maintainable-test-framework.html">Maintainable Test Framework</a> · ➡️ <a href="02-branch-merge-rebase.html">Git: Branch, Merge và Rebase</a></p>
 <p>Phase 7 · Chapter 23 · Mức ưu tiên: <strong>Essential</strong>
 ℹ️ Thư mục <code>Selenium1</code> hiện <strong>chưa là Git repository</strong>. Các lệnh dưới đây đã được chạy thật trên một repo thử nghiệm (Git 2.49.0, Windows) — hãy thực hành trên bản sao hoặc repo thử, không thực hành trực tiếp trên dự án gốc.</p>
 </blockquote>
@@ -292,24 +290,24 @@ git<span class="w"> </span>commit<span class="w"> </span>--amend<span class="w">
 <p><strong>Câu 2.</strong> Vì sao tránh <code>git add .</code> bừa bãi?</p>
 <ul>
 <li>A. Chậm</li>
-<li>B. Dễ kéo theo <code>target/</code>, file nhạy cảm</li>
-<li>C. Lỗi cú pháp</li>
+<li>B. Lỗi cú pháp</li>
+<li>C. Dễ kéo theo <code>target/</code>, file nhạy cảm</li>
 <li>D. Không có lý do</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Add từng file cụ thể.</p>
+<p><strong>Đáp án: C.</strong> Add từng file cụ thể.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>git restore &lt;file&gt;</code> làm gì?</p>
 <ul>
-<li>A. Xoá commit</li>
-<li>B. Bỏ thay đổi chưa staged của file</li>
+<li>A. Bỏ thay đổi chưa staged của file</li>
+<li>B. Xoá commit</li>
 <li>C. Đẩy lên remote</li>
 <li>D. Tạo nhánh</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Không hoàn lại được.</p>
+<p><strong>Đáp án: A.</strong> Không hoàn lại được.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the difference between Git and GitHub?</strong></p>

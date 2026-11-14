@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · Phân tích khoảng trống kiến thức · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/02-knowledge-gap-analysis" data-root="../" data-lesson="0" data-title="02 · Phân tích khoảng trống kiến thức">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="02--phân-tích-khoảng-trống-kiến-thức">02 · Phân tích khoảng trống kiến thức</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Trước: <a href="01-current-roadmap-audit.html">01 Audit</a> · Tiếp: <a href="03-learning-sequence-review.html">03 Thứ tự học</a></p>
+</blockquote>
+<p><strong>Cách đọc:</strong> <em>Có</em> = có bài riêng, đủ sâu · <em>Một phần</em> = có nhắc/chưa đủ · <em>Thiếu</em> = không tìm thấy. Số liệu "n file" là kết quả quét từ khoá trên 96 file <code>.md</code> (trừ <code>site/</code>). Phân loại Essential/Important/Optional là cho <strong>Fresher/Junior Automation Tester</strong> (kinh nghiệm chuyên môn — hãy đối chiếu thêm với JD thật, xem <a href="07-final-recommendations.html#8-việc-bạn-nên-tự-kiểm-chứng">07 §8</a>).</p>
+<hr />
+<h2 id="nhóm-1--software-testing-fundamentals--critical">Nhóm 1 — Software Testing Fundamentals · <strong>Critical</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+<th>Bằng chứng quét</th>
+<th>Loại</th>
+<th>Mức học</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Testing fundamentals, 7 principles</td>
+<td><strong>Thiếu</strong></td>
+<td>ISTQB: 0 · "principles": 0</td>
+<td>Essential</td>
+<td>Học vừa</td>
+</tr>
+<tr>
+<td>SDLC / STLC</td>
+<td><strong>Thiếu</strong></td>
+<td>0 · 0</td>
+<td>Essential</td>
+<td>Ôn tập</td>
+</tr>
+<tr>
+<td>Test Levels / Test Types</td>
+<td><strong>Thiếu</strong> (chỉ nhắc ngầm "smoke/regression" làm <em>nhóm TestNG</em>)</td>
+<td>Smoke 12 file, Regression 6 file — đều trong ngữ cảnh <code>groups</code></td>
+<td>Essential</td>
+<td>Học vừa</td>
+</tr>
+<tr>
+<td>Test Scenario / Test Case</td>
+<td><strong>Có (1 bài)</strong></td>
+<td><code>08-practical-project/01</code> — mẫu TC, chọn tự động hoá, traceability</td>
+<td>Essential</td>
+<td>Đủ, cần thêm bài tập</td>
+</tr>
+<tr>
+<td>BVA, Equivalence Partitioning</td>
+<td><strong>Thiếu</strong></td>
+<td>0</td>
+<td>Essential</td>
+<td><strong>Học sâu</strong> (phỏng vấn hỏi rất hay)</td>
+</tr>
+<tr>
+<td>Decision Table, State Transition</td>
+<td><strong>Thiếu</strong></td>
+<td>0 · 0</td>
+<td>Important</td>
+<td>Học vừa</td>
+</tr>
+<tr>
+<td>Defect Lifecycle, Severity/Priority</td>
+<td><strong>Thiếu</strong> (chữ "Priority" chỉ xuất hiện trong ví dụ code Java <code>isHighPriority</code>)</td>
+<td>Severity 0</td>
+<td>Essential</td>
+<td>Học vừa</td>
+</tr>
+<tr>
+<td>Smoke vs Sanity vs Regression</td>
+<td><strong>Thiếu định nghĩa</strong></td>
+<td>Sanity: 0</td>
+<td>Essential</td>
+<td>Ôn tập</td>
+</tr>
+<tr>
+<td>Agile / Scrum</td>
+<td><strong>Thiếu</strong></td>
+<td>Scrum 0 · Agile 2 file (không liên quan)</td>
+<td>Important</td>
+<td>Ôn tập</td>
+</tr>
+<tr>
+<td>Bug Reporting</td>
+<td><strong>Thiếu</strong></td>
+<td>"bug report"/"báo cáo lỗi": 0; Phase 8 bước 11 là báo cáo <em>kết quả chạy</em>, không phải báo cáo <em>lỗi</em></td>
+<td>Essential</td>
+<td>Học vừa + thực hành</td>
+</tr>
+<tr>
+<td>Test Plan / RTM</td>
+<td>Một phần</td>
+<td>"traceability" trong Phase 8/01; Test Plan: 0</td>
+<td>Important</td>
+<td>Ôn tập</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đánh giá:</strong> đây là khoảng trống lớn nhất. Người phỏng vấn Junior Automation <strong>luôn</strong> hỏi vài câu nền tảng (BVA, severity vs priority, smoke vs regression, vòng đời bug). Hoàn thành lộ trình hiện tại mà trả lời được 0/15 câu lý thuyết kiểm thử là rủi ro cao. Cần học <strong>~12–16 giờ</strong>, không cần nhiều hơn.</p>
+<h2 id="nhóm-2--java-programming--mức-đủ-về-phạm-vi-chưa-đủ-về-bản-chất">Nhóm 2 — Java Programming · mức: <strong>Đủ về phạm vi, chưa đủ về "bản chất"</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variables, Operators, Conditions/Loops, Arrays, Methods</td>
+<td>Có</td>
+<td>Bài <code>02</code>–<code>06</code>, ví dụ chạy thật</td>
+</tr>
+<tr>
+<td>Classes, Constructors, OOP, Interface/Abstract</td>
+<td>Có</td>
+<td><code>07</code>, <code>08</code>; gắn <code>WebDriver</code>, <code>BaseTest</code></td>
+</tr>
+<tr>
+<td>Collections, Exceptions</td>
+<td>Có</td>
+<td><code>09</code>, <code>10</code></td>
+</tr>
+<tr>
+<td>Lambda, Generics</td>
+<td>Có</td>
+<td><code>11</code> — nhưng bài gộp thêm Annotations, RegEx, <strong>Threads</strong></td>
+</tr>
+<tr>
+<td>File Handling / Properties</td>
+<td>Có</td>
+<td><code>12</code></td>
+</tr>
+<tr>
+<td><code>equals()</code>/<code>hashCode()</code> contract</td>
+<td><strong>Thiếu</strong> (hashCode: 0 file)</td>
+<td>Important (hay hỏi, liên quan <code>Set</code>/<code>Map</code>, <code>WebElement.equals</code>)</td>
+</tr>
+<tr>
+<td>String immutability / String pool</td>
+<td>Rất ít (immutable: 2 file; pool: 0)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Overloading vs Overriding</td>
+<td>Có trong bài, <strong>không có trong Java interview</strong></td>
+<td>Essential cho phỏng vấn</td>
+</tr>
+<tr>
+<td><code>ArrayList</code> vs <code>LinkedList</code>, <code>HashMap</code></td>
+<td>Có trong bài; Java interview chỉ có 1 câu <code>List/Set/Map</code></td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Checked vs Unchecked, custom exception</td>
+<td>Có (1 file nhắc custom exception)</td>
+<td>Important</td>
+</tr>
+<tr>
+<td>Stream API cơ bản</td>
+<td>Có (4 file)</td>
+<td>Optional với Junior — ổn</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đủ để đọc/viết/debug Selenium script?</strong> Có — phạm vi phủ đủ danh sách bạn nêu. <strong>Vấn đề không phải thiếu chủ đề mà là:</strong>
+1. Bài tập Java đều là chương trình console tách rời (ví dụ <code>04-control-flow</code>: tính tổng 1–5, <code>switch</code> tên driver, đếm PASS/FAIL) — <strong>không có mini-project Java</strong> (đọc CSV, mô hình <code>TestCase</code>, tự viết lớp <code>Retry</code>), nên khó tạo phản xạ đọc <em>code Selenium thật</em>.
+2. <strong>Quá sâu cho Junior</strong> trong khuôn bài: Threads, RegEx, recursion, annotation tự định nghĩa, I/O stream nhị phân (đã gán Optional nhưng nằm lẫn trong bài 400–500 dòng).
+3. <code>interview/java-interview.md</code> chỉ có <strong>10 câu</strong> (cần 15+), thiên về "dùng thế nào trong Selenium", thiếu câu bản chất (<code>==</code> vs <code>equals</code>, immutable, overriding, checked/unchecked, <code>final</code>/<code>finally</code>).</p>
+<h2 id="nhóm-3--selenium-webdriver--có-bao-phủ-tốt">Nhóm 3 — Selenium WebDriver · <strong>Có, bao phủ tốt</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architecture, Browser Drivers, Selenium Manager</td>
+<td>Có (<code>01</code>, <code>02</code>)</td>
+</tr>
+<tr>
+<td>Locators, CSS/XPath (axes: <code>following-sibling</code>, <code>ancestor</code>, <code>parent</code>), Relative Locator</td>
+<td>Có (<code>03</code>)</td>
+</tr>
+<tr>
+<td>WebElement, Navigation, Element Interactions, Dropdown (<code>Select</code>)</td>
+<td>Có (<code>04</code>–<code>06</code>)</td>
+</tr>
+<tr>
+<td>Alert, Frame, Window/Tab</td>
+<td>Có (<code>07</code>) — <strong>nhưng không có bài nào trong source gốc thực hành</strong> (<code>00-project-analysis.md:225</code>)</td>
+</tr>
+<tr>
+<td>Actions, JavaScript Executor, Screenshots</td>
+<td>Có (<code>08</code>, <code>09</code>, <code>11</code>)</td>
+</tr>
+<tr>
+<td>Exceptions, Dynamic elements</td>
+<td>Có (<code>10</code>, Wait <code>07</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Khoảng trống nhỏ:</strong> Cookies, upload/download file, Shadow DOM chỉ xuất hiện rải rác (quét từ khoá trong <code>03</code>/<code>04</code>/<code>08</code>: mỗi chủ đề 1–2 file, không thấy bài tập riêng — suy ra từ quét, chưa đọc từng bài), <code>ChromeOptions</code>/headless (chỉ <code>02-webdriver</code> dạy, chưa có bài tập riêng), chạy đa trình duyệt. Các mục này <strong>Important/Optional</strong>, bổ sung bằng 2–3 bài tập, không cần bài mới.
+<strong>Rủi ro thật:</strong> toàn bộ thực hành dùng <strong>một site</strong> (site demo công khai), site "toy" gần như không có luồng nghiệp vụ → thiếu trải nghiệm form nhiều bước, bảng phân trang, giỏ hàng (xem <a href="04-practical-exercise-assessment.html">04</a>).</p>
+<h2 id="nhóm-4--wait--synchronization--mạnh-nhất-gần-đủ">Nhóm 4 — Wait &amp; Synchronization · <strong>Mạnh nhất, gần đủ</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Implicit / Explicit / Fluent, <code>WebDriverWait</code>, <code>ExpectedConditions</code></td>
+<td>Có, rất tốt (8 bài, ~2.000 dòng)</td>
+</tr>
+<tr>
+<td>Polling, Timeout, Ignored exceptions</td>
+<td>Có (<code>03</code>); 17 chỗ nhắc <code>pollingEvery</code></td>
+</tr>
+<tr>
+<td><code>Thread.sleep</code>: khi nào/không</td>
+<td>Có (<code>06</code>, 15 lần nhắc trong một bài)</td>
+</tr>
+<tr>
+<td>Presence vs Visibility vs Clickability</td>
+<td>Có (<code>04</code>)</td>
+</tr>
+<tr>
+<td><code>StaleElementReference</code>, <code>NoSuchElement</code>, <code>ElementClickIntercepted</code></td>
+<td>Có (21 file nhắc Stale; 10 file nhắc Intercepted)</td>
+</tr>
+<tr>
+<td>Custom Wait, 15 tình huống</td>
+<td>Có (<code>05</code>, <code>07</code>)</td>
+</tr>
+<tr>
+<td><strong>Synchronization với AJAX</strong></td>
+<td>Một phần: <code>textToBe</code>, <code>invisibility</code>, <code>stalenessOf</code> có; <strong>thiếu mẫu "chờ page-ready" (<code>document.readyState</code>) và "chờ request AJAX xong" (<code>jQuery.active</code>)</strong> — 0 kết quả</td>
+</tr>
+<tr>
+<td><strong>Chẩn đoán test flaky có hệ thống</strong></td>
+<td>Có trong lời giải phỏng vấn S1; <strong>không có bài tập "cho sẵn một test flaky, hãy tìm nguyên nhân và sửa"</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Người học <strong>chọn đúng loại Wait cho tình huống thật</strong> được không? Có kiến thức, nhưng <em>kỹ năng</em> cần bài tập mới: 5–6 test flaky cho sẵn (dùng <code>dynamic_loading</code>, <code>dynamic_controls</code>, <code>infinite_scroll</code>, <code>entry_ad</code>) để người học chẩn đoán. Ưu tiên <strong>High</strong>, chi phí thấp.</p>
+<h2 id="nhóm-5--maven--project-management--rất-mạnh-hơi-thừa">Nhóm 5 — Maven &amp; Project Management · <strong>Rất mạnh, hơi thừa</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fundamentals, <code>pom.xml</code>, Dependency, Scope, Repository</td>
+<td>Có (<code>01</code>, <code>02</code>, <code>06</code>)</td>
+</tr>
+<tr>
+<td>Lifecycle, Plugins (Surefire, Compiler), chạy test</td>
+<td>Có (<code>05</code>, <code>07</code>)</td>
+</tr>
+<tr>
+<td><strong>Maven Wrapper</strong>: <code>mvnw</code>/<code>mvnw.cmd</code>, <code>only-script</code>, team + Git, mode <code>100755</code></td>
+<td>Có, <strong>xuất sắc</strong> (<code>03</code>, <code>04</code>)</td>
+</tr>
+<tr>
+<td>Dependency conflict, debug build failure</td>
+<td>Có (<code>06</code>, <code>09</code>; phỏng vấn Q12, S4)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Chưa cần cho Junior (đề xuất <strong>Optional/Advanced</strong>): Failsafe, Maven Profile, Enforcer (đã đánh dấu "chưa chạy" trong UPDATE_REPORT §6), <code>dependencyManagement</code>/BOM, <code>-DsuiteFile</code> đa suite. <strong>10 bài/3.612 dòng</strong> nên nén còn <strong>~6 bài</strong> (xem <a href="03-learning-sequence-review.html">03</a>).</p>
+<h2 id="nhóm-6--testing-framework-testngjunit--có-thiếu-thực-hành">Nhóm 6 — Testing Framework (TestNG/JUnit) · <strong>Có; thiếu thực hành</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Annotations, lifecycle, Assertions (hard/soft)</td>
+<td>Có (<code>01</code>, <code>03</code>, <code>04</code>)</td>
+</tr>
+<tr>
+<td>DataProvider, Parameters, Groups, <code>testng.xml</code></td>
+<td>Có trong <strong>một</strong> bài 429 dòng (<code>01</code>); bài tập dữ liệu ở <code>05</code></td>
+</tr>
+<tr>
+<td>Parallel + <code>ThreadLocal&lt;WebDriver&gt;</code></td>
+<td>Chỉ <strong>lý thuyết</strong> (<code>01</code> mục 9) + "mở rộng tuỳ chọn" của Lab 08</td>
+</tr>
+<tr>
+<td>Listener, Retry</td>
+<td>Có nhắc (<code>01</code> mục 10); chưa có bài tập bắt buộc</td>
+</tr>
+<tr>
+<td>Reports</td>
+<td>Surefire/emailable (đã có thật); Extent/Allure <strong>minh hoạ chưa chạy</strong></td>
+</tr>
+<tr>
+<td>JUnit 5</td>
+<td>So sánh (<code>02</code>) — đúng vì dự án dùng TestNG; Optional</td>
+</tr>
+</tbody>
+</table></div>
+<p>Với Junior: DataProvider, Groups, testng.xml, Soft/Hard assert = <strong>Essential</strong>; Parallel/ThreadLocal, Listener, Retry = <strong>Important</strong>; Extent/Allure = <strong>Optional</strong>.</p>
+<h2 id="nhóm-7--automation-framework-design--có-cần-bằng-chứng-chạy-thật">Nhóm 7 — Automation Framework Design · <strong>Có; cần bằng chứng chạy thật</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POM, <code>BasePage</code>, <code>BaseTest</code>, DriverFactory, Config, Test Data, Utilities</td>
+<td>Có (5 bài, 1.765 dòng); "ví dụ đã biên dịch thử"</td>
+</tr>
+<tr>
+<td>Logging, Reporting tích hợp</td>
+<td>Có nhắc (Log4j: 4 file; Allure/Extent: 6 file) nhưng <strong>chưa chạy thật</strong> (UPDATE_REPORT §6)</td>
+</tr>
+<tr>
+<td>Screenshot khi fail, Listener</td>
+<td>Có (Debugging, Lab 08 gợi ý)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mức cần cho Fresher/Junior: POM + BasePage + DriverFactory + Config + screenshot khi fail = <strong>Essential</strong>; Logging cơ bản (SLF4J/Log4j2) = <strong>Important</strong>; Extent/Allure, Grid, Docker, Cucumber/BDD = <strong>Optional</strong>. Tài liệu đặt đúng mức nhưng <strong>thiếu một framework tham chiếu đã chạy xanh</strong> để người học đối chiếu (Lab 08 chỉ cho khung).</p>
+<h2 id="nhóm-8--git--team-collaboration--có-nội-dung-thiếu-thực-hành-thật">Nhóm 8 — Git &amp; Team Collaboration · <strong>Có nội dung; thiếu thực hành thật</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clone/pull/fetch/branch/commit/push/merge</td>
+<td>Có (<code>01</code>, <code>02</code>)</td>
+</tr>
+<tr>
+<td>rebase, conflict, PR, code review</td>
+<td>Có (<code>02</code>, <code>03</code>) — conflict <code>pom.xml</code> thật đã chạy</td>
+</tr>
+<tr>
+<td>Git workflow</td>
+<td>Một phần: không nêu feature-branch vs trunk-based, quy ước commit/branch, PR template ở mức đủ</td>
+</tr>
+<tr>
+<td><strong>Làm việc với remote thật (GitHub), fork, review của người khác</strong></td>
+<td><strong>Thiếu</strong> — chỉ có 1 dòng <code>git remote add origin &lt;url&gt;</code>; dự án gốc chưa là Git repo</td>
+</tr>
+</tbody>
+</table></div>
+<p>Rebase nâng cao/<code>cherry-pick</code>/hooks = <strong>Optional</strong>. Quan trọng hơn: bắt buộc tạo <strong>repo GitHub thật</strong> từ Phase đầu và mọi bài tập được commit/push; thực hiện <strong>ít nhất 3 PR</strong> (tự review + nhờ người khác/AI review).</p>
+<h2 id="nhóm-9--api-testing--kiến-thức-bổ-trợ--criticalhigh-thiếu-hoàn-toàn">Nhóm 9 — API Testing &amp; kiến thức bổ trợ · <strong>Critical–High: thiếu hoàn toàn</strong></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+<th>Loại (Junior)</th>
+<th>Mức học</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP fundamentals, Methods, Status codes, Headers, Request/Response</td>
+<td><strong>Thiếu</strong> (HTTP chỉ là URL)</td>
+<td><strong>Essential</strong></td>
+<td>Học vừa (~4 h)</td>
+</tr>
+<tr>
+<td>REST, JSON</td>
+<td><strong>Thiếu</strong> (JSON chỉ là định dạng data ở vài bài)</td>
+<td><strong>Essential</strong></td>
+<td>Học vừa</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td><strong>Thiếu</strong> (0)</td>
+<td><strong>Important → gần Essential</strong></td>
+<td>Thực hành ~6 h</td>
+</tr>
+<tr>
+<td>API Automation bằng Java (REST Assured)</td>
+<td>Chỉ 1 dòng so sánh (<code>03/01-selenium-introduction.md:146</code>)</td>
+<td>Important</td>
+<td>~8–10 h</td>
+</tr>
+<tr>
+<td>SQL cơ bản (SELECT/WHERE/JOIN)</td>
+<td><strong>Thiếu</strong> (0; JDBC chỉ 1 nhắc <code>scope runtime</code>)</td>
+<td><strong>Important</strong> (nhiều JD ghi "biết SQL")</td>
+<td>~8 h</td>
+</tr>
+<tr>
+<td>Database verification từ code</td>
+<td>Thiếu</td>
+<td>Optional</td>
+<td>Sau Junior</td>
+</tr>
+<tr>
+<td>CI/CD cơ bản (GitHub Actions chạy <code>./mvnw test</code>)</td>
+<td>Chỉ ví dụ minh hoạ, <strong>chưa chạy</strong> (UPDATE_REPORT §6)</td>
+<td>Important</td>
+<td>~4 h thực hành</td>
+</tr>
+</tbody>
+</table></div>
+<p>Không đề xuất Docker, Jenkins server, Selenium Grid, BDD/Cucumber cho giai đoạn này.</p>
+<hr />
+<h2 id="bảng-tổng-hợp-theo-yêu-cầu-9-đề-bài">Bảng tổng hợp theo yêu cầu (§9 đề bài)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Hiện trạng</th>
+<th>Vấn đề</th>
+<th>Ưu tiên</th>
+<th>Đề xuất</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Java Fundamentals</strong></td>
+<td>Đủ phạm vi, ví dụ chạy thật (93/93); 6.073 dòng</td>
+<td>Thiếu bản chất (<code>equals</code>/<code>hashCode</code>, immutable, override); bài tập console rời; Threads/RegEx lẫn trong bài; Java interview chỉ 10 câu</td>
+<td>Medium</td>
+<td>Chia bài thành Core/Optional; thêm 2 mini-project Java; mở rộng Java interview lên 15–20 câu</td>
+</tr>
+<tr>
+<td><strong>Software Testing</strong></td>
+<td>Chỉ 1 bài Test Case/Traceability (Phase 8)</td>
+<td>Thiếu ISTQB, BVA/EP, defect lifecycle, severity/priority, sanity, Scrum, bug report (đều 0 kết quả quét)</td>
+<td><strong>Critical</strong></td>
+<td>Thêm Track T 5–6 bài ngắn chạy song song Phase 1; thêm bài Bug Report + Test Design vào Capstone</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>11 bài đủ rộng</td>
+<td>Thực hành chỉ trên 1 site toy; Alert/Frame/Window/FluentWait/Screenshot không có bằng chứng trong source; Cookies/Upload/Headless mỏng</td>
+<td>Medium</td>
+<td>Thêm 1 AUT có luồng nghiệp vụ; bổ sung 3 bài tập (cookie, upload, headless)</td>
+</tr>
+<tr>
+<td><strong>Wait Mechanisms</strong></td>
+<td>8 bài, rất sâu</td>
+<td>Thiếu mẫu page-ready/<code>jQuery.active</code>; thiếu bài "test flaky cho sẵn"</td>
+<td><strong>High</strong> (thêm), cấu trúc giữ nguyên</td>
+<td>Thêm Lab "Flaky Clinic" 5–6 ca; thêm 1 mục page-ready vào bài 07</td>
+</tr>
+<tr>
+<td><strong>Maven</strong></td>
+<td>10 bài, 3.612 dòng</td>
+<td>Nhiều hơn Wait 1,8 lần; Profile/Failsafe là Optional</td>
+<td>Medium</td>
+<td>Chia Maven Lite (trước Selenium) / Maven Deep (sau Wait); nén còn ~6 bài</td>
+</tr>
+<tr>
+<td><strong>Maven Wrapper</strong></td>
+<td>Xuất sắc (<code>only-script</code>, team, mode <code>100755</code>, bẫy <code>Tests run: 0</code>)</td>
+<td>Chưa thực hành trên Linux/macOS (UPDATE_REPORT §7); <code>distributionSha256Sum</code> chưa khai báo</td>
+<td>Low</td>
+<td>Giữ nguyên; chỉ thêm 1 bài tập "clone repo lạ, chạy bằng <code>mvnw</code>" ở Capstone</td>
+</tr>
+<tr>
+<td><strong>TestNG/JUnit</strong></td>
+<td>TestNG đủ; JUnit chỉ so sánh</td>
+<td>Dạy sau khi đã dùng (Phase 2–4 dùng <code>@Test</code>); Parallel/Listener/Retry chỉ lý thuyết</td>
+<td><strong>High</strong> (vị trí)</td>
+<td>Chuyển <em>TestNG Core</em> lên trước Wait; để DataProvider/Parallel/Listener sau; JUnit → Optional</td>
+</tr>
+<tr>
+<td><strong>POM</strong></td>
+<td>5 bài + Lab 06</td>
+<td>Chỉ có ví dụ trên 3–4 trang; <code>PageFactory</code> lấn sang</td>
+<td>Medium</td>
+<td>Giữ; PageFactory → Optional; thêm Page cho AUT mới</td>
+</tr>
+<tr>
+<td><strong>Framework Design</strong></td>
+<td>DriverFactory/Config/Reusable có ví dụ biên dịch</td>
+<td>Không có framework tham chiếu chạy xanh; Logging/Report chưa chạy thật</td>
+<td>Medium</td>
+<td>Cung cấp 1 "reference framework" chạy được; Log SLF4J bắt buộc, Extent/Allure Optional</td>
+</tr>
+<tr>
+<td><strong>Git</strong></td>
+<td>4 bài, conflict <code>pom.xml</code> thật</td>
+<td>Đến ở tuần 8; không có remote thật/PR thật; dự án gốc chưa là repo</td>
+<td><strong>High</strong></td>
+<td>Git Lite từ Phase 0; GitHub thật; ≥ 3 PR; rebase nâng cao → Optional</td>
+</tr>
+<tr>
+<td><strong>API Testing</strong></td>
+<td>Gần như không có (1 dòng)</td>
+<td>Thiếu HTTP/REST/Postman/REST Assured</td>
+<td><strong>Critical</strong> (HTTP/REST/Postman) · High (REST Assured)</td>
+<td>Phase "Bổ trợ" ~20 giờ: HTTP+Postman → REST Assured cơ bản</td>
+</tr>
+<tr>
+<td><strong>SQL</strong></td>
+<td>0</td>
+<td>Thiếu hoàn toàn</td>
+<td><strong>High</strong></td>
+<td>~8 giờ SELECT/WHERE/JOIN/GROUP BY + 5 bài truy vấn</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>Ví dụ YAML minh hoạ, chưa chạy</td>
+<td>Không có bằng chứng chạy thật</td>
+<td><strong>High</strong></td>
+<td>1 workflow GitHub Actions chạy <code>./mvnw -B clean test</code> trên repo Capstone</td>
+</tr>
+<tr>
+<td><strong>Interview Preparation</strong></td>
+<td>7 bộ (~123 câu) + 120 câu cuối bài; scenario rất tốt</td>
+<td>0 câu Testing; Java 10 câu; không có mock/behavioral/code-explain có hệ thống; quiz đáp án B 75%</td>
+<td><strong>High</strong></td>
+<td>Bộ 95 câu mô phỏng (<a href="05-interview-readiness-assessment.html">05</a>); lịch mock theo Phase</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="danh-sách-nên-chuyển-sang-optional--advanced-không-bắt-buộc-cho-junior">Danh sách nên chuyển sang Optional / Advanced (không bắt buộc cho Junior)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hạng mục hiện đang nằm trong lộ trình</th>
+<th>Đề xuất</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java: Threads, RegEx, recursion, annotation tự định nghĩa, I/O stream nhị phân, <code>LinkedList</code>/<code>TreeMap</code></td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Java: Stream API</td>
+<td>Optional (đọc được là đủ)</td>
+</tr>
+<tr>
+<td>Maven: Failsafe, Profile, Enforcer, BOM, nâng cấp Maven toàn team</td>
+<td>Advanced</td>
+</tr>
+<tr>
+<td>TestNG: JUnit 5 chi tiết; Retry/Listener nâng cao</td>
+<td>JUnit Optional; Retry/Listener Important (sau)</td>
+</tr>
+<tr>
+<td>Selenium: CDP, Shadow DOM chi tiết, Grid</td>
+<td>Advanced</td>
+</tr>
+<tr>
+<td>POM: <code>PageFactory</code>/<code>@FindBy</code> chi tiết</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Reporting: Extent/Allure</td>
+<td>Optional (Surefire + screenshot là đủ)</td>
+</tr>
+<tr>
+<td>Git: <code>cherry-pick</code>, tags, hooks, rebase tương tác</td>
+<td>Advanced</td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-current-roadmap-audit.html"><small>← Bài trước</small><span>01 · Audit tổng quan lộ trình hiện tại</span></a><a class="next" href="03-learning-sequence-review.html"><small>Bài tiếp theo →</small><span>03 · Đánh giá thứ tự học và cấu trúc bài học</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/02-knowledge-gap-analysis.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

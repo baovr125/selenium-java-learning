@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="javascript-executor">JavaScript Executor</h1>
 <blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 18 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="08-mouse-and-keyboard-actions.html">Keyboard và Mouse Actions</a> · ➡️ <a href="10-selenium-exceptions.html">Exception Handling</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="08-mouse-and-keyboard-actions.html">Trước: Keyboard &amp; Mouse</a> · <a href="10-selenium-exceptions.html">Sau: Exception Handling</a>
 🧩 Trong dự án: <a href="../../../../src/test/java/tests/Exercise07_InfiniteScrollTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise07_InfiniteScrollTest</a>.</p>
 </blockquote>
@@ -254,34 +252,34 @@
 <ul>
 <li>A. <code>(int)</code></li>
 <li>B. <code>(Long)</code></li>
-<li>C. <code>((Number) x).longValue()</code></li>
-<li>D. Không cần</li>
+<li>C. Không cần</li>
+<li>D. <code>((Number) x).longValue()</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: C.</strong> Có thể là <code>Long</code> hoặc <code>Double</code>.</p>
+<p><strong>Đáp án: D.</strong> Có thể là <code>Long</code> hoặc <code>Double</code>.</p>
 </details>
 <p><strong>Câu 2.</strong> Vì sao tránh <code>arguments[0].click()</code> làm mặc định?</p>
 <ul>
 <li>A. Chậm</li>
-<li>B. Bỏ qua kiểm tra người dùng thật có bấm được không</li>
-<li>C. Không hỗ trợ</li>
+<li>B. Không hỗ trợ</li>
+<li>C. Bỏ qua kiểm tra người dùng thật có bấm được không</li>
 <li>D. Lỗi cú pháp</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Test pass dù người dùng thật không bấm được.</p>
+<p><strong>Đáp án: C.</strong> Test pass dù người dùng thật không bấm được.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>executeScript</code> trả giá trị khi nào?</p>
 <ul>
 <li>A. Luôn</li>
-<li>B. Khi script có <code>return</code></li>
-<li>C. Khi dùng <code>async</code></li>
+<li>B. Khi dùng <code>async</code></li>
+<li>C. Khi script có <code>return</code></li>
 <li>D. Không bao giờ</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Thiếu <code>return</code> ⇒ <code>null</code>.</p>
+<p><strong>Đáp án: C.</strong> Thiếu <code>return</code> ⇒ <code>null</code>.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. When would you use JavascriptExecutor?</strong></p>
@@ -323,14 +321,14 @@
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return document.title;&quot;</span><span class="p">));</span></code></pre></div>
 </details>
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/floating_menu&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/floating_menu&quot;</span><span class="p">);</span>
 <span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;window.scrollTo(0, document.body.scrollHeight);&quot;</span><span class="p">);</span>
 <span class="kt">long</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">Number</span><span class="p">)</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return window.scrollY;&quot;</span><span class="p">)).</span><span class="na">longValue</span><span class="p">();</span>
@@ -340,7 +338,7 @@
 <details>
 <summary>Lời giải Exercise 3</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/infinite_scroll&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/infinite_scroll&quot;</span><span class="p">);</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">presenceOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)));</span>
 <span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">();</span>

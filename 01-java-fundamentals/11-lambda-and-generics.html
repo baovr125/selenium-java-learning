@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-generics-lambda-annotations-regex-và-threads-mức-cần-cho-selenium">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 07
-⬅️ <a href="10-exception-handling.html">Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</a> · ➡️ <a href="12-file-handling.html">Java: File Handling, Properties và Configuration</a></p>
 <p>Chapter 07 (tiếp) · Mức ưu tiên: <strong>Important</strong> (Generics, Lambda, Annotations), <strong>Optional</strong> (Streams nâng cao, RegEx, Threads)</p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -402,14 +400,14 @@ false</code></pre></div>
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Biến cục bộ dùng trong lambda phải thế nào?</p>
 <ul>
-<li>A. <code>static</code></li>
-<li>B. final hoặc effectively final</li>
+<li>A. final hoặc effectively final</li>
+<li>B. <code>static</code></li>
 <li>C. <code>public</code></li>
 <li>D. <code>volatile</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Không được gán lại sau khi khai báo.</p>
+<p><strong>Đáp án: A.</strong> Không được gán lại sau khi khai báo.</p>
 </details>
 <p><strong>Câu 2.</strong> <code>List&lt;int&gt;</code> có hợp lệ không?</p>
 <ul>
@@ -425,13 +423,13 @@ false</code></pre></div>
 <p><strong>Câu 3.</strong> <code>wait.until(d -&gt; ...)</code> nhận lambda thuộc kiểu nào?</p>
 <ul>
 <li>A. <code>Runnable</code></li>
-<li>B. <code>Function&lt;WebDriver, V&gt;</code></li>
-<li>C. <code>Comparator</code></li>
-<li>D. <code>Thread</code></li>
+<li>B. <code>Comparator</code></li>
+<li>C. <code>Thread</code></li>
+<li>D. <code>Function&lt;WebDriver, V&gt;</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>until(Function&lt;? super T, V&gt;)</code>: gọi lặp đến khi kết quả truthy.</p>
+<p><strong>Đáp án: D.</strong> <code>until(Function&lt;? super T, V&gt;)</code>: gọi lặp đến khi kết quả truthy.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is a lambda expression and where do you use it in Selenium?</strong></p>
@@ -465,7 +463,7 @@ false</code></pre></div>
 <li><code>List&lt;int&gt;</code> không hợp lệ</li>
 <li><code>static WebDriver</code> ≠ <code>ThreadLocal&lt;WebDriver&gt;</code></li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="12-file-handling.html">Java: File Handling, Properties và Configuration</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../04-wait-mechanisms/01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -521,7 +519,7 @@ false</code></pre></div>
 <div class="code out" data-lang="output"><div class="code-head"><span class="lang">output</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">đạt ở lần 2</code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="10-exception-handling.html"><small>← Bài trước</small><span>Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</span></a><a class="next" href="12-file-handling.html"><small>Bài tiếp theo →</small><span>Java: File Handling, Properties và Configuration</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../04-wait-mechanisms/README.html"><small>← Bài trước</small><span>Phase 4 — Wait and Synchronization (Chapter 19)</span></a><a class="next" href="../04-wait-mechanisms/01-wait-introduction.html"><small>Bài tiếp theo →</small><span>Wait Introduction: vì sao Selenium cần Wait?</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/11-lambda-and-generics.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

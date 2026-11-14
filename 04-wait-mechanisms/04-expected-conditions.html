@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="expectedconditions-và-presence-vs-visibility-vs-clickability">ExpectedConditions (và Presence vs Visibility vs Clickability)</h1>
-<blockquote>
-<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="03-explicit-wait.html">Explicit Wait và WebDriverWait</a> · ➡️ <a href="05-fluent-wait.html">Fluent Wait và Custom Wait</a></p>
-<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="03-explicit-wait.html">Explicit Wait</a> · Tiếp: <a href="05-fluent-wait.html">Fluent Wait</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -386,25 +381,25 @@
 </details>
 <p><strong>Câu 2.</strong> <code>invisibilityOfElementLocated</code> trả <code>true</code> khi?</p>
 <ul>
-<li>A. Phần tử không có trong DOM hoặc đang ẩn</li>
-<li>B. Chỉ khi không có trong DOM</li>
-<li>C. Chỉ khi ẩn</li>
+<li>A. Chỉ khi không có trong DOM</li>
+<li>B. Chỉ khi ẩn</li>
+<li>C. Phần tử không có trong DOM hoặc đang ẩn</li>
 <li>D. Khi bị che</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Có thể "pass sớm" nếu phần tử chưa từng xuất hiện.</p>
+<p><strong>Đáp án: C.</strong> Có thể "pass sớm" nếu phần tử chưa từng xuất hiện.</p>
 </details>
 <p><strong>Câu 3.</strong> Vì sao Exercise 10 dùng <code>textToBe</code>?</p>
 <ul>
 <li>A. Nhanh hơn</li>
-<li>B. Thông báo cũ vẫn hiện nên <code>visibility</code> thoả ngay và đọc nhầm</li>
-<li>C. Bắt buộc</li>
+<li>B. Bắt buộc</li>
+<li>C. Thông báo cũ vẫn hiện nên <code>visibility</code> thoả ngay và đọc nhầm</li>
 <li>D. Không có lý do</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Phải chờ nội dung đặc trưng cho trạng thái mới.</p>
+<p><strong>Đáp án: C.</strong> Phải chờ nội dung đặc trưng cho trạng thái mới.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the difference between presence, visibility and clickability?</strong></p>
@@ -446,7 +441,7 @@
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/1&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/1&quot;</span><span class="p">);</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">));</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertFalse</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">isDisplayed</span><span class="p">());</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">finish</span><span class="p">.</span><span class="na">getText</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
@@ -458,7 +453,7 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_loading/2&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_loading/2&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#start button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;loading&quot;</span><span class="p">)));</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)).</span><span class="na">isDisplayed</span><span class="p">());</span></code></pre></div>
@@ -466,7 +461,7 @@
 <details>
 <summary>Lời giải Exercise 3</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/dynamic_controls&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/dynamic_controls&quot;</span><span class="p">);</span>
 <span class="n">By</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#checkbox-example button&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;It&#39;s gone!&quot;</span><span class="p">));</span>

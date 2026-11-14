@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-operators-strings-math-và-booleans">Java: Operators, Strings, Math và Booleans</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 02
-⬅️ <a href="02-variables-and-data-types.html">Java: Variables, Data Types và Type Casting</a> · ➡️ <a href="04-control-flow.html">Java: Control Flow (If...Else, Switch, Loops, Break/Continue)</a></p>
 <p>Chapter 02 (tiếp) · Mức ưu tiên: <strong>Essential</strong></p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -234,7 +232,7 @@ true</code></pre></div>
 <span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span>
 <span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="na">replace</span><span class="p">(</span><span class="s">&quot;secure&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;safe&quot;</span><span class="p">));</span>
 
-<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://the-internet.herokuapp.com/secure&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com/secure&quot;</span><span class="p">;</span>
 <span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span>
 <span class="w">        </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">parts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Smith,John,jsmith@gmail.com&quot;</span><span class="p">.</span><span class="na">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">parts</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">parts</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span><span class="p">);</span>
@@ -446,25 +444,25 @@ true</code></pre></div>
 </details>
 <p><strong>Câu 2.</strong> <code>"Login".equals(x)</code> có ưu điểm gì so với <code>x.equals("Login")</code>?</p>
 <ul>
-<li>A. Nhanh hơn</li>
-<li>B. Không ném <code>NullPointerException</code> khi <code>x</code> là <code>null</code></li>
+<li>A. Không ném <code>NullPointerException</code> khi <code>x</code> là <code>null</code></li>
+<li>B. Nhanh hơn</li>
 <li>C. Phân biệt hoa-thường</li>
 <li>D. Không có</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Gọi <code>equals</code> trên hằng luôn an toàn.</p>
+<p><strong>Đáp án: A.</strong> Gọi <code>equals</code> trên hằng luôn an toàn.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>10 + 5 * 2</code> bằng?</p>
 <ul>
 <li>A. 30</li>
-<li>B. 20</li>
-<li>C. 25</li>
-<li>D. Lỗi</li>
+<li>B. 25</li>
+<li>C. Lỗi</li>
+<li>D. 20</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Nhân trước cộng: <code>5 * 2 = 10</code>, cộng 10 → 20.</p>
+<p><strong>Đáp án: D.</strong> Nhân trước cộng: <code>5 * 2 = 10</code>, cộng 10 → 20.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Why compare strings with equals() instead of ==?</strong></p>

@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Đề xuất tổng hợp và kế hoạch triển khai · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/07-final-recommendations" data-root="../" data-lesson="0" data-title="07 · Đề xuất tổng hợp và kế hoạch triển khai">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="07--đề-xuất-tổng-hợp-và-kế-hoạch-triển-khai">07 · Đề xuất tổng hợp và kế hoạch triển khai</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Trước: <a href="06-recommended-learning-roadmap.html">06 Lộ trình đề xuất</a></p>
+</blockquote>
+<h2 id="1-nhận-định-chung-thẳng-thắn">1. Nhận định chung (thẳng thắn)</h2>
+<p>Lộ trình hiện tại là <strong>một bộ tài liệu tham khảo xuất sắc ở lõi</strong> (Selenium + Wait + Maven Wrapper + phân tích source thật) nhưng <strong>chưa phải một chương trình đào tạo đưa người mới đến mức ứng tuyển Junior</strong>. Ba lý do:</p>
+<ol>
+<li><strong>Thiếu các mảng mà người phỏng vấn chắc chắn hỏi:</strong> Software Testing Fundamentals (0 kết quả quét cho ISTQB/STLC/BVA/EP/severity/bug report), API/SQL, CI thực hành.</li>
+<li><strong>Thứ tự và cấu trúc làm chậm thành quả:</strong> Lab dồn về Phase 8, TestNG được dùng trước khi dạy, Git muộn, bài học dài và đồng dạng (200–515 dòng) trong khi tinh thần W3Schools là bài ngắn.</li>
+<li><strong>Phase cuối không phải mô phỏng dự án:</strong> dựng lại đúng 10 bài tập công khai trên cùng một site; không có lỗi để tìm, không có bug report, không có PR thật, không có review.</li>
+</ol>
+<p>Đừng viết lại 25.000 dòng. Phần lớn giá trị có thể giữ; việc cần làm là <strong>chèn đúng những gì thiếu, đổi thứ tự, và cắt phần thừa</strong>.</p>
+<h2 id="2-trả-lời-trực-tiếp-11-câu-hỏi-của-bạn">2. Trả lời trực tiếp 11 câu hỏi của bạn</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Câu hỏi</th>
+<th>Trả lời</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Lộ trình có phù hợp để học Automation Testing từ đầu không?</td>
+<td><strong>Phù hợp một phần.</strong> Lõi tốt; nhưng người mới sẽ chạm trình duyệt muộn (~giờ 60–75), thiếu nền kiểm thử, và Lab bị dồn cuối. Cần các chỉnh sửa trong §3.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Thứ tự học đã hợp lý chưa?</td>
+<td><strong>Gần đúng ở trục chính</strong> (Java→Selenium→Wait→POM). Cần: Lab đi cùng bài; <strong>TestNG Core trước Wait</strong>; <strong>Git Lite từ ngày 1</strong>; Maven chia Lite/Deep; thêm Track Testing song song (<a href="03-learning-sequence-review.html">03</a>).</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Những kiến thức nào đang thiếu?</td>
+<td>Software Testing Fundamentals (<strong>Critical</strong>); HTTP/REST/Postman (<strong>Critical–High</strong>); SQL, CI thực chạy, Bug Report (<strong>High</strong>); Java bản chất (<code>equals/hashCode</code>, immutable, override), page-ready wait, bài debug cho sẵn, remote Git/PR thật (<strong>Medium–High</strong>) — <a href="02-knowledge-gap-analysis.html">02</a>.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Những kiến thức nào đang học quá sâu/chưa cần?</td>
+<td>Java Threads/RegEx/recursion/annotation; Maven Failsafe/Profile/Enforcer; rebase nâng cao/hooks; <code>PageFactory</code>; Extent/Allure chi tiết; JUnit chi tiết; CDP/Grid → <strong>Optional/Advanced</strong> (<a href="02-knowledge-gap-analysis.html">02 cuối file</a>). Maven chiếm 3.612 dòng, nhiều hơn Wait 1,8 lần.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Cần biết Java đến mức nào để học Selenium?</td>
+<td><strong>Java bài 01–08 (đến class/OOP) + Collections cơ bản + try/catch</strong> là đủ để <em>bắt đầu</em>; Lambda/Generics cần ngay trước Wait; File/Properties cần khi làm Config. Không cần Threads/RegEx/Stream.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Khi nào nên bắt đầu thực hành Selenium?</td>
+<td><strong>Ngay sau Java 01–08 (~giờ thứ 43, tuần 5)</strong> bằng một "Selenium Smoke" 1–2 giờ, rồi học Java 09–10 xen kẽ.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Maven và Maven Wrapper học ở giai đoạn nào?</td>
+<td><strong>Maven Lite (Init, Fundamentals, <code>pom.xml</code>, Wrapper) cùng tuần Selenium đầu</strong>; <strong>Maven Deep (Lifecycle, Dependency, Troubleshooting) sau Wait</strong>, gắn với bài "Broken Build". Wrapper là điểm mạnh — giữ nguyên nội dung.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Wait Mechanisms cần học sâu đến đâu?</td>
+<td><strong>Đã đủ sâu về lý thuyết</strong> — giữ 8 bài. Thêm <em>kỹ năng</em>: Flaky Clinic (6 ca), mẫu page-ready/AJAX; yêu cầu trả lời ≥ 80% 15 câu Wait không nhìn đáp án. Phân nhãn Core/Advanced.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Cần thực hành những dự án nào?</td>
+<td>(a) 15 kata Java + 2 mini-project; (b) 12 kata Selenium trên 3 site; (c) Flaky Clinic + Broken Build; (d) refactor 10 Exercise → framework (không cho code sẵn); (e) <strong>Capstone</strong> có nghiệp vụ, EP/BVA, bug report, 4 PR, CI (<a href="04-practical-exercise-assessment.html">04 §6</a>).</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Hoàn thành lộ trình, tôi có đủ năng lực ứng tuyển Fresher/Junior không?</td>
+<td><strong>Lộ trình hiện tại: đủ cho Selenium/Wait/Maven, chưa đủ để ứng tuyển Junior</strong> (dự báo: Testing ≈ 1, Debugging ≈ 2, Git ≈ 2, Project ≈ 2; <a href="05-interview-readiness-assessment.html">05 §3.1</a>). <strong>Lộ trình đề xuất:</strong> mức Fresher sau Phase 6 (~tuần 20), mức Junior sau Capstone + Exit Exam (~tuần 31) — <strong>nếu</strong> đạt Exit Criteria, không chỉ đọc.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Cần bổ sung gì để tự tin phỏng vấn kỹ thuật?</td>
+<td>Ngân hàng 95 câu (<a href="05-interview-readiness-assessment.html">05 §4</a>); Track Testing (BVA/EP, severity/priority, bug report); live coding Java; "đọc &amp; giải thích code"; <strong>mock bằng tiếng Anh có ghi âm</strong> theo lịch; dự án Capstone có thể kể trong 3 phút.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-đề-xuất-ưu-tiên">3. Đề xuất ưu tiên</h2>
+<h3 id="critical">Critical</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Đề xuất</th>
+<th>Lý do</th>
+<th>Công sức ước tính</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td><strong>Thêm Track Testing Fundamentals (T1–T6, ~14 giờ học)</strong>: nguyên tắc, SDLC/STLC, levels/types, EP/BVA, Decision Table, State Transition, defect lifecycle, severity/priority, bug report, smoke/sanity/regression, Agile/Scrum. Chuyển Phase 8/01 thành T2.</td>
+<td>Khoảng trống lớn nhất; phỏng vấn nào cũng hỏi</td>
+<td>6 bài × ~100–150 dòng (loại L1) + 15 câu phỏng vấn ≈ 2–3 ngày viết</td>
+</tr>
+<tr>
+<td>C2</td>
+<td><strong>Thêm HTTP/REST/Postman (~10 giờ học) + REST Assured cơ bản (~8 giờ)</strong></td>
+<td>Phần lớn JD Junior Automation đề cập API; hiện chỉ 1 dòng nhắc</td>
+<td>3–4 bài + 1 lab ≈ 3 ngày</td>
+</tr>
+<tr>
+<td>C3</td>
+<td><strong>Làm lại Phase 8 thành Capstone thật</strong> (requirement mơ hồ, EP/BVA, bug report, PR, CI, thay đổi UI giữa chừng, AUT khác site demo hiện dùng)</td>
+<td>CV và phỏng vấn dựa trên project; project hiện tại trùng bài tập công khai</td>
+<td>Spec + rubric ≈ 2 ngày; chọn/dựng AUT ≈ 1–2 ngày</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="high">High</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Đề xuất</th>
+<th>Công sức</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H1</td>
+<td><strong>Phân tán Labs vào từng Phase</strong> (Lab 01/02/04 → P2; 05 → P3; 03 → P4; 07 → P5; 06/08 → P6) và <strong>bỏ code đáp án đầy đủ</strong> khỏi Lab 03/08 (chỉ giữ spec + tiêu chí)</td>
+<td>1 ngày</td>
+</tr>
+<tr>
+<td>H2</td>
+<td><strong>Chuyển TestNG Core lên trước Selenium/Wait</strong>; tách bài TestNG 01 thành Core/Advanced</td>
+<td>0,5 ngày (chỉ tách + đổi thứ tự)</td>
+</tr>
+<tr>
+<td>H3</td>
+<td><strong>Git Lite từ Phase 0 + GitHub thật + ≥ 3 PR</strong>; thực chạy GitHub Actions</td>
+<td>1–2 ngày (bài tập + 1 workflow mẫu đã chạy thật)</td>
+</tr>
+<tr>
+<td>H4</td>
+<td><strong>Thêm SQL cơ bản (~8 giờ)</strong></td>
+<td>2 bài + 15 truy vấn ≈ 1,5 ngày</td>
+</tr>
+<tr>
+<td>H5</td>
+<td><strong>Flaky Clinic (6 ca) + Broken Build (5 ca)</strong> — bài sửa lỗi cho sẵn</td>
+<td>2 ngày</td>
+</tr>
+<tr>
+<td>H6</td>
+<td><strong>Sửa quiz:</strong> xáo đáp án (hiện 135/180 = B), viết lại 140 Expected Output cụ thể, thêm câu "tìm lỗi trong đoạn code"</td>
+<td>2 ngày (có thể script xáo đáp án)</td>
+</tr>
+<tr>
+<td>H7</td>
+<td><strong>Mở rộng interview:</strong> Java bản chất lên 15–20 câu, thêm bộ Testing 15 câu, API/SQL 8–10 câu, định dạng "đọc &amp; giải thích code", lịch mock</td>
+<td>2 ngày</td>
+</tr>
+<tr>
+<td>H8</td>
+<td><strong>Sửa thời lượng Roadmap</strong>: bỏ "1–2 giờ/bài, 10 tuần"; công bố ~190–245 giờ nội dung hiện có hoặc ~330 giờ cho lộ trình mới</td>
+<td>0,5 giờ</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="medium">Medium</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Đề xuất</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>Cắt/Optional hoá: Java Threads/RegEx/recursion/annotation; Maven Failsafe/Profile; <code>PageFactory</code>; Extent/Allure; JUnit; rebase nâng cao. Tách Java 11 thành 11a/11b.</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>Nén Maven 10 → ~6 bài (Lite 3 + Deep 3).</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>Thêm 3 bài tập nhỏ: cookie, upload, headless; thêm mẫu page-ready/<code>jQuery.active</code> vào Wait 07.</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>Cung cấp <strong>1 framework tham chiếu chạy xanh</strong> (3 lần) để đối chiếu sau khi người học tự làm.</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>Giảm khung bài: áp 5 loại bài L1–L5 (<a href="03-learning-sequence-review.html">03 §B.3</a>); Interview Corner chỉ ở bài Deep-dive.</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>Thêm 2 mini-project Java và 15 kata (có test tự kiểm).</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="low">Low</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Đề xuất</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>Sửa 8 liên kết "README chương" của Wait (đang trỏ Phase 3); bỏ khối điều hướng lặp.</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>Sửa mâu thuẫn R1/R2/R3 trong <a href="../08-practical-project/01-requirements-and-test-design.html">Phase 8/01</a> (dòng 67, 113, 155–157, 256, 268).</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>Thống nhất "Labs": 8 file hay 12 bài. Bỏ hệ đánh số "Chapter".</td>
+</tr>
+<tr>
+<td>L4</td>
+<td><code>UPDATE_REPORT.md</code> §8 và <code>README.md</code> lặp nhịp tuần → chỉ để một nơi (Roadmap).</td>
+</tr>
+<tr>
+<td>L5</td>
+<td><code>README.md</code> gốc dự án dòng 133 (<code>JAVA_HOME</code>) lệch với phát hiện trong <code>00-project-analysis.md</code> §10 #1 → sửa khi được phép chỉnh tài liệu dự án.</td>
+</tr>
+<tr>
+<td>L6</td>
+<td>Thêm <code>distributionSha256Sum</code> vào Wrapper; thử <code>./mvnw</code> trên Linux/macOS.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="4-kế-hoạch-triển-khai-4-sprint">4. Kế hoạch triển khai (4 sprint)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Sprint</th>
+<th>Thời lượng</th>
+<th>Nội dung</th>
+<th>Kết quả kiểm chứng được</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>S1 — Sửa nhanh</strong></td>
+<td>1–2 ngày</td>
+<td>L1–L4, H8, xáo đáp án quiz bằng script, ghi lại thời lượng thật; thêm <code>evaluation/</code> vào mục lục README</td>
+<td>Quét lại: không còn liên kết sai; phân bố đáp án A/B/C/D ≈ đều</td>
+</tr>
+<tr>
+<td><strong>S2 — Tái cấu trúc thứ tự</strong></td>
+<td>3–5 ngày</td>
+<td>H1, H2, H3 (khung), M1, M2; viết <strong>Bản đồ học</strong> (thứ tự Phase mới) <em>không di chuyển file</em>; gắn nhãn Core/Advanced/Optional</td>
+<td>Người học thử đi theo bản đồ tuần 1–5</td>
+</tr>
+<tr>
+<td><strong>S3 — Nội dung thiếu</strong></td>
+<td>2–3 tuần</td>
+<td>C1, C2, H4, M3, H7 (phần Testing/API/SQL)</td>
+<td>Mỗi bài mới có ví dụ <strong>đã chạy thật</strong> (giữ tiêu chuẩn kiểm chứng sẵn có)</td>
+</tr>
+<tr>
+<td><strong>S4 — Bài tập &amp; Capstone</strong></td>
+<td>2–3 tuần</td>
+<td>C3, H5, H6, M4, M6, Exit Exam</td>
+<td>Một người chưa từng đọc thử làm Capstone theo spec và báo thời gian/điểm vướng</td>
+</tr>
+</tbody>
+</table></div>
+<p>Thứ tự theo giá trị/chi phí: S1 → S3(C1) → S2 → S4(Capstone) → phần còn lại.</p>
+<h2 id="5-điều-không-nên-làm">5. Điều <strong>không</strong> nên làm</h2>
+<ul>
+<li>Không thêm Docker, Selenium Grid, Jenkins server, Cucumber/BDD, Playwright, performance/security testing vào lộ trình Junior — để backlog Optional.</li>
+<li>Không viết thêm bài Wait/Maven mới; chúng đã vượt nhu cầu.</li>
+<li>Không tăng số bài chỉ để "đủ chủ đề" — mỗi bài mới phải có bài tập đo được.</li>
+<li>Không đánh dấu "Completed" theo việc đã đọc; dùng Exit Criteria ở <a href="06-recommended-learning-roadmap.html">06</a>.</li>
+</ul>
+<h2 id="6-rủi-ro-khi-triển-khai">6. Rủi ro khi triển khai</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rủi ro</th>
+<th>Giảm thiểu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Site luyện tập bên thứ ba đổi/ngừng hoạt động (đã lưu ý trong README)</td>
+<td>Dùng ≥ 3 site; Capstone cân nhắc tự host một app nhỏ</td>
+</tr>
+<tr>
+<td>Nội dung mới lệch chuẩn kiểm chứng của dự án</td>
+<td>Giữ quy tắc "ví dụ phải chạy thật + ghi kết quả"</td>
+</tr>
+<tr>
+<td>Lộ trình dài (~7 tháng) gây nản</td>
+<td>Chia mốc: Fresher-ready ở tuần ~20; Capstone ở ~29; công khai tiến độ trên GitHub</td>
+</tr>
+<tr>
+<td>Người học bỏ qua bài tập, chỉ đọc</td>
+<td>Exit Criteria đo bằng sản phẩm (repo, CI, bản ghi mock), không bằng tick</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-chỉ-số-thành-công-của-lộ-trình-sau-cải-tiến">7. Chỉ số thành công của lộ trình sau cải tiến</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chỉ số</th>
+<th>Mục tiêu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Giờ đến lần chạy Selenium đầu tiên</td>
+<td>≤ 45 giờ</td>
+</tr>
+<tr>
+<td>Tỷ lệ thời gian thực hành</td>
+<td>≥ 55%</td>
+</tr>
+<tr>
+<td>Số nhóm năng lực &lt; 3 khi kết thúc</td>
+<td>0 (mức Junior)</td>
+</tr>
+<tr>
+<td>Exit Exam</td>
+<td>≥ 70%</td>
+</tr>
+<tr>
+<td>Mock interview (2 buổi liên tiếp)</td>
+<td>≥ 70%</td>
+</tr>
+<tr>
+<td>Capstone rubric</td>
+<td>≥ 70%</td>
+</tr>
+<tr>
+<td>Quiz: phân bố đáp án</td>
+<td>Không chữ nào &gt; 35%</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8-việc-bạn-nên-tự-kiểm-chứng">8. Việc bạn nên tự kiểm chứng</h2>
+<p>Báo cáo này dựa trên đọc tài liệu/source và kinh nghiệm chuyên môn; tôi <strong>không</strong> khảo sát thị trường tuyển dụng và <strong>không</strong> chạy lại test hay ví dụ. Trước khi đầu tư lớn:</p>
+<ol>
+<li><strong>Lấy 5–10 JD Junior/Fresher Automation Tester</strong> ở thị trường bạn nhắm tới, đếm tần suất: Java vs Python, Selenium vs Playwright/Cypress, TestNG vs JUnit, API testing (Postman/REST Assured), SQL, CI/Jenkins, BDD/Cucumber. Điều chỉnh Phase 8 và backlog theo kết quả (ví dụ nếu đa số yêu cầu Cucumber thì chuyển BDD từ Optional lên Important).</li>
+<li><strong>Chạy lại một mẫu</strong> trong <code>UPDATE_REPORT.md</code> §7 (một ví dụ Java, một Lab Selenium) để xác nhận tình trạng hiện tại vì trang site demo công khai là bên thứ ba.</li>
+<li><strong>Xác nhận ước lượng thời gian</strong> bằng cách tự đo 2–3 bài đầu (ghi giờ thực tế) rồi nhân hệ số cho các Phase còn lại.</li>
+<li><strong>Nhờ một người ngoài (hoặc một người mới học)</strong> thử 1 Phase theo bản đồ mới để phát hiện điểm vướng — đây là phép thử rẻ nhất.</li>
+</ol>
+<h2 id="9-bước-tiếp-theo-đề-xuất">9. Bước tiếp theo đề xuất</h2>
+<p>Nếu bạn đồng ý hướng này, thứ tự nên làm: <strong>(1)</strong> Sprint S1 (sửa nhanh) → <strong>(2)</strong> viết T1–T6 (Critical C1) → <strong>(3)</strong> bản đồ học mới (không di chuyển file) → <strong>(4)</strong> spec Capstone. Tôi chỉ mới tạo các file đánh giá trong <code>evaluation/</code>; chưa sửa bất kỳ tài liệu học hay source nào theo đúng yêu cầu của giai đoạn đánh giá.</p>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-recommended-learning-roadmap.html"><small>← Bài trước</small><span>06 · Lộ trình học đề xuất (tinh gọn, thiên về thực hành)</span></a><a class="next" href="08-two-week-fast-track.html"><small>Bài tiếp theo →</small><span>08 · Lộ trình cấp tốc 2 tuần (đã có Testing / API / SQL, chỉ cần Selenium)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/07-final-recommendations.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

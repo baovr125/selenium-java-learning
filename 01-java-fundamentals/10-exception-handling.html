@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="java-exception-handling-trycatchfinally-throwthrows-try-with-resources">Java: Exception Handling (try/catch/finally, throw/throws, try-with-resources)</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 07
-⬅️ <a href="09-collections.html">Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</a> · ➡️ <a href="11-lambda-and-generics.html">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</a></p>
 <p>Chapter 07 · Mức ưu tiên: <strong>Essential</strong> (<code>try/catch/finally</code>, phân biệt checked/unchecked), <strong>Important</strong> (<code>throw</code>, <code>throws</code>, multi-catch, try-with-resources), <strong>Optional</strong> (custom exception)</p>
 </blockquote>
 <div class="table-wrap"><table>
@@ -383,14 +381,14 @@ test lỗi: fail</code></pre></div>
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Exception của Selenium (<code>NoSuchElementException</code>...) thuộc loại nào?</p>
 <ul>
-<li>A. Checked</li>
-<li>B. Unchecked (RuntimeException)</li>
+<li>A. Unchecked (RuntimeException)</li>
+<li>B. Checked</li>
 <li>C. Error</li>
 <li>D. Không phải exception</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Chúng kế thừa <code>RuntimeException</code> nên không bắt buộc <code>try/catch</code>.</p>
+<p><strong>Đáp án: A.</strong> Chúng kế thừa <code>RuntimeException</code> nên không bắt buộc <code>try/catch</code>.</p>
 </details>
 <p><strong>Câu 2.</strong> Khối <code>finally</code> chạy khi nào?</p>
 <ul>
@@ -406,13 +404,13 @@ test lỗi: fail</code></pre></div>
 <p><strong>Câu 3.</strong> <code>catch (Exception e) { }</code> rỗng nguy hiểm vì?</p>
 <ul>
 <li>A. Chậm</li>
-<li>B. Nuốt lỗi khiến test pass giả</li>
-<li>C. Lỗi biên dịch</li>
+<li>B. Lỗi biên dịch</li>
+<li>C. Nuốt lỗi khiến test pass giả</li>
 <li>D. Không có vấn đề</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Lỗi bị che giấu, khó phát hiện.</p>
+<p><strong>Đáp án: C.</strong> Lỗi bị che giấu, khó phát hiện.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Checked vs unchecked exceptions?</strong></p>
@@ -446,7 +444,7 @@ test lỗi: fail</code></pre></div>
 <li><code>catch</code> cụ thể trước, chung sau</li>
 <li>Không <code>catch</code> rỗng</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="11-lambda-and-generics.html">Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../03-selenium-fundamentals/README.html">Phase 3 — Selenium Fundamentals (Chapter 13–18)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -515,7 +513,7 @@ tearDown
 test lỗi: fail</code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="09-collections.html"><small>← Bài trước</small><span>Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</span></a><a class="next" href="11-lambda-and-generics.html"><small>Bài tiếp theo →</small><span>Java: Generics, Lambda, Annotations, RegEx và Threads (mức cần cho Selenium)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="09-collections.html"><small>← Bài trước</small><span>Java: Collections (List, Set, Map, Iterator, Wrapper Classes)</span></a><a class="next" href="../03-selenium-fundamentals/README.html"><small>Bài tiếp theo →</small><span>Phase 3 — Selenium Fundamentals (Chapter 13–18)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/10-exception-handling.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

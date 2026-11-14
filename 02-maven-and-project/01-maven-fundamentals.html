@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="maven-fundamentals">Maven Fundamentals</h1>
 <blockquote>
-<p>🧭 Phase 2 · Maven and Project Management · Chapter 09 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a> · ➡️ <a href="02-pom-xml.html"><code>pom.xml</code> và Dependencies</a></p>
 <p>Liên quan: <a href="README.html">Mục lục Maven</a> · <a href="02-pom-xml.html">Tiếp: pom.xml</a> · <a href="../interview/maven-interview.html">Phỏng vấn Maven</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -346,36 +344,36 @@
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Maven tìm thư viện ở đâu <strong>trước tiên</strong>?</p>
 <ul>
-<li>A. Central Repository</li>
-<li>B. Local Repository</li>
+<li>A. Local Repository</li>
+<li>B. Central Repository</li>
 <li>C. Trang chủ thư viện</li>
 <li>D. GitHub</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Local trước; thiếu mới tải từ Remote/Central.</p>
+<p><strong>Đáp án: A.</strong> Local trước; thiếu mới tải từ Remote/Central.</p>
 </details>
 <p><strong>Câu 2.</strong> GAV là viết tắt của?</p>
 <ul>
-<li>A. groupId, artifactId, version</li>
-<li>B. group, archive, vendor</li>
-<li>C. git, api, version</li>
+<li>A. group, archive, vendor</li>
+<li>B. git, api, version</li>
+<li>C. groupId, artifactId, version</li>
 <li>D. Không có</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Tọa độ duy nhất của một thư viện.</p>
+<p><strong>Đáp án: C.</strong> Tọa độ duy nhất của một thư viện.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>.mvn/maven.config</code> của dự án làm gì?</p>
 <ul>
-<li>A. Đổi Local Repository sang <code>.mvn/repository</code></li>
-<li>B. Đặt phiên bản Java</li>
-<li>C. Khai báo test</li>
-<li>D. Không có tác dụng</li>
+<li>A. Đặt phiên bản Java</li>
+<li>B. Khai báo test</li>
+<li>C. Không có tác dụng</li>
+<li>D. Đổi Local Repository sang <code>.mvn/repository</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Chứa <code>-Dmaven.repo.local=.mvn/repository</code>.</p>
+<p><strong>Đáp án: D.</strong> Chứa <code>-Dmaven.repo.local=.mvn/repository</code>.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is Maven and why do Java projects use it?</strong></p>
@@ -409,7 +407,7 @@
 <li>Repository ≠ dependency</li>
 <li>Plugin ≠ dependency</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-pom-xml.html"><code>pom.xml</code> và Dependencies</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="02-pom-xml.html">pom.xml và Dependencies</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>

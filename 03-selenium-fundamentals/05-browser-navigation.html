@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="browser-navigation">Browser Navigation</h1>
 <blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 14 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="04-webelement.html">Selenium: WebElement API</a> · ➡️ <a href="06-element-interactions.html">Web Element Interactions</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="03-locators.html">Trước: Locators</a> · <a href="06-element-interactions.html">Sau: Element Interactions</a> · <a href="07-browser-interactions.html">Window/Frame</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -158,7 +156,7 @@
 </table></div>
 <p>Quy ước thực tế: <code>get()</code> cho lần mở đầu; <code>navigate()</code> khi thao tác lịch sử.</p>
 <h2 id="3-ví-dụ-chuỗi-điều-hướng">3. Ví dụ chuỗi điều hướng</h2>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">   </span><span class="c1">// → /secure</span>
@@ -228,7 +226,7 @@
 <p>🧩 <code>BaseTest.tearDown()</code> dùng <code>quit()</code> (đúng). Nếu thay bằng <code>close()</code> khi chỉ có 1 cửa sổ, Chrome đóng nhưng process <code>chromedriver.exe</code> có thể sót lại trong Task Manager (rò rỉ tài nguyên khi chạy nhiều test).</p>
 <h2 id="7-mở-tabcửa-sổ-mới-selenium-4">7. Mở tab/cửa sổ mới (Selenium 4)</h2>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">newWindow</span><span class="p">(</span><span class="n">WindowType</span><span class="p">.</span><span class="na">TAB</span><span class="p">);</span><span class="w">       </span><span class="c1">// tab mới và tự chuyển sang</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/windows&quot;</span><span class="p">);</span></code></pre></div>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/windows&quot;</span><span class="p">);</span></code></pre></div>
 <p>Chi tiết <a href="07-browser-interactions.html">06</a>.</p>
 <h2 id="8-page-load-và-đồng-bộ-hoá-điều-hướng">8. Page load và đồng bộ hoá điều hướng</h2>
 <ul>
@@ -306,35 +304,35 @@
 <p><strong>Câu 1.</strong> <code>get()</code> và <code>navigate().to()</code>?</p>
 <ul>
 <li>A. Hoàn toàn khác</li>
-<li>B. Gần như giống nhau (cùng tải URL, chờ load)</li>
-<li>C. <code>get</code> không chờ</li>
+<li>B. <code>get</code> không chờ</li>
+<li>C. Gần như giống nhau (cùng tải URL, chờ load)</li>
 <li>D. <code>to</code> chỉ nhận URL object</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>navigate()</code> thêm <code>back/forward/refresh</code>.</p>
+<p><strong>Đáp án: C.</strong> <code>navigate()</code> thêm <code>back/forward/refresh</code>.</p>
 </details>
 <p><strong>Câu 2.</strong> Sau <code>driver.close()</code> cửa sổ duy nhất, process driver?</p>
 <ul>
 <li>A. Luôn dừng</li>
-<li>B. Có thể còn sống</li>
-<li>C. Tự khởi động lại</li>
-<li>D. Không liên quan</li>
+<li>B. Tự khởi động lại</li>
+<li>C. Không liên quan</li>
+<li>D. Có thể còn sống</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Dùng <code>quit()</code> để giải phóng đầy đủ.</p>
+<p><strong>Đáp án: D.</strong> Dùng <code>quit()</code> để giải phóng đầy đủ.</p>
 </details>
 <p><strong>Câu 3.</strong> Đọc <code>getCurrentUrl()</code> ngay sau <code>click()</code> có thể?</p>
 <ul>
 <li>A. Luôn đúng</li>
-<li>B. Trả URL cũ nếu trang chưa chuyển</li>
-<li>C. Ném lỗi</li>
-<li>D. Trả null</li>
+<li>B. Ném lỗi</li>
+<li>C. Trả null</li>
+<li>D. Trả URL cũ nếu trang chưa chuyển</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Dùng <code>wait.until(urlContains(...))</code>.</p>
+<p><strong>Đáp án: D.</strong> Dùng <code>wait.until(urlContains(...))</code>.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the difference between close() and quit()?</strong></p>
@@ -376,13 +374,13 @@
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; | &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">());</span></code></pre></div>
 </details>
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
@@ -399,7 +397,7 @@
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
 <span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">newWindow</span><span class="p">(</span><span class="n">WindowType</span><span class="p">.</span><span class="na">TAB</span><span class="p">);</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">close</span><span class="p">();</span><span class="w">                       </span><span class="c1">// đóng tab phụ</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">main</span><span class="p">);</span><span class="w">       </span><span class="c1">// PHẢI quay lại</span>
 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span></code></pre></div>

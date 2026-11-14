@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview Cheatsheet — tóm tắt lý thuyết để ôn nhanh · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/interview-cheatsheet" data-root="../" data-lesson="0" data-title="Interview Cheatsheet — tóm tắt lý thuyết để ôn nhanh">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="interview-cheatsheet--tóm-tắt-lý-thuyết-để-ôn-nhanh">Interview Cheatsheet — tóm tắt lý thuyết để ôn nhanh</h1>
+<blockquote>
+<p>Bản <strong>một trang</strong> để đọc lại trước ngày phỏng vấn. Mỗi mục trỏ về bài/bộ câu hỏi đầy đủ. Không thay thế việc hiểu bản chất. Quay lại: <a href="README.html">Interview README</a></p>
+</blockquote>
+<h2 id="1-selenium">1. Selenium</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Cần nhớ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kiến trúc</td>
+<td>Test code (client) → giao thức W3C WebDriver → browser driver (chromedriver…) → trình duyệt. Selenium Manager (4.6+) tự tìm/tải driver</td>
+</tr>
+<tr>
+<td><code>close()</code> vs <code>quit()</code></td>
+<td><code>close()</code> đóng cửa sổ hiện tại; <code>quit()</code> đóng tất cả, kết thúc session, dừng driver</td>
+</tr>
+<tr>
+<td><code>findElement</code> vs <code>findElements</code></td>
+<td>Không thấy: ném <code>NoSuchElementException</code> vs trả danh sách rỗng</td>
+</tr>
+<tr>
+<td><code>getText()</code> vs <code>getAttribute("value")</code></td>
+<td>Chữ hiển thị vs giá trị của input</td>
+</tr>
+<tr>
+<td><code>isDisplayed/isEnabled/isSelected</code></td>
+<td>Hiển thị / cho thao tác / đã chọn (checkbox, radio, option)</td>
+</tr>
+<tr>
+<td>Locator ưu tiên</td>
+<td><code>id</code> → <code>name</code> → CSS → XPath; ổn định, duy nhất, dễ đọc; tránh XPath tuyệt đối và class tự sinh</td>
+</tr>
+<tr>
+<td>CSS vs XPath</td>
+<td>CSS ngắn, nhanh, không chọn theo text/không đi lên cha; XPath mạnh hơn (text, axes <code>parent/following-sibling/ancestor</code>)</td>
+</tr>
+<tr>
+<td>Tìm trong một element</td>
+<td><code>parent.findElement(...)</code>; XPath bắt đầu <code>.//</code> (không <code>//</code>)</td>
+</tr>
+<tr>
+<td>Dropdown</td>
+<td><code>Select</code> chỉ cho thẻ <code>&lt;select&gt;</code>; dropdown tự vẽ → click mở rồi click option</td>
+</tr>
+<tr>
+<td>Alert</td>
+<td><code>switchTo().alert()</code> → <code>accept/dismiss/sendKeys/getText</code></td>
+</tr>
+<tr>
+<td>iframe</td>
+<td><code>switchTo().frame(...)</code> → <code>parentFrame()</code> / <code>defaultContent()</code></td>
+</tr>
+<tr>
+<td>Window/tab</td>
+<td><code>getWindowHandles()</code>; lưu handle gốc; <code>switchTo().window(handle)</code></td>
+</tr>
+<tr>
+<td>Actions</td>
+<td><code>moveToElement</code>, <code>dragAndDrop</code>, <code>doubleClick</code>…; <strong>phải <code>.perform()</code></strong></td>
+</tr>
+<tr>
+<td>JavascriptExecutor</td>
+<td>Cuộn, lấy giá trị; dùng khi cần; không thay thế thao tác thật</td>
+</tr>
+<tr>
+<td>Screenshot</td>
+<td><code>TakesScreenshot</code> trước <code>quit()</code> (thường trong <code>@AfterMethod</code>/Listener)</td>
+</tr>
+<tr>
+<td>Timeouts</td>
+<td>implicit · <code>pageLoadTimeout</code> · script timeout; <code>pageLoadTimeout</code> <strong>không phải</strong> wait theo điều kiện</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-exceptions-đọc-dòng-đầu-stacktrace">2. Exceptions (đọc dòng đầu stacktrace)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Nguyên nhân</th>
+<th>Hướng xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoSuchElementException</code></td>
+<td>Chưa có trong DOM / locator sai / sai frame</td>
+<td>Wait <code>presence/visibility</code>; kiểm tra locator &amp; iframe</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td>Handle cũ, DOM đã bị thay</td>
+<td>Tìm lại element; lưu <code>By</code>; <code>stalenessOf</code>/wait lại</td>
+</tr>
+<tr>
+<td><code>ElementClickInterceptedException</code></td>
+<td>Có phần tử khác che (overlay, spinner, modal)</td>
+<td>Chờ che biến mất (<code>invisibilityOf…</code>) rồi <code>elementToBeClickable</code></td>
+</tr>
+<tr>
+<td><code>ElementNotInteractableException</code></td>
+<td>Ẩn/bị khoá/ngoài vùng</td>
+<td>Chờ visible/enabled; cuộn tới</td>
+</tr>
+<tr>
+<td><code>TimeoutException</code></td>
+<td>Điều kiện của Wait không đạt kịp</td>
+<td>Đọc message mô tả điều kiện; xem locator/điều kiện</td>
+</tr>
+<tr>
+<td><code>NoAlertPresentException</code></td>
+<td>Chưa có alert</td>
+<td><code>alertIsPresent</code></td>
+</tr>
+<tr>
+<td><code>UnexpectedTagNameException</code></td>
+<td>Dùng <code>Select</code> trên thẻ không phải <code>&lt;select&gt;</code></td>
+<td>Xử lý như dropdown tự vẽ</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>AssertionError</code> (assert sai) ≠ exception của Selenium (script/page có vấn đề).</p>
+<h2 id="3-wait">3. Wait</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Implicit</th>
+<th>Explicit (<code>WebDriverWait</code>)</th>
+<th>Fluent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phạm vi</td>
+<td>Toàn session, chỉ cho <code>findElement(s)</code></td>
+<td>Một điều kiện, tại chỗ gọi</td>
+<td>Như Explicit + tuỳ biến polling/ignore/message</td>
+</tr>
+<tr>
+<td>Điều kiện</td>
+<td>Chỉ "có trong DOM"</td>
+<td>Visible, clickable, text, URL, stale…</td>
+<td>Bất kỳ (lambda)</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><code>until()</code> <strong>trả ngay khi đúng</strong>; timeout là giới hạn trên. Mặc định <code>WebDriverWait</code>: <strong>polling 500 ms</strong>, bỏ qua <code>NotFoundException</code>.</li>
+<li><strong>Presence</strong> (có trong DOM) ≠ <strong>Visibility</strong> (hiển thị) ≠ <strong>Clickability</strong> (hiển thị + enabled).</li>
+<li><strong>Không</strong> trộn Implicit + Explicit; <code>findElements</code> rỗng với implicit vẫn chờ hết giờ.</li>
+<li><code>Thread.sleep</code>: chờ cố định → chậm hoặc flaky; tránh.</li>
+<li>Thông báo cũ còn hiển thị → chờ <strong>nội dung mới</strong> (<code>textToBe</code>), không chỉ <code>visibility</code>.</li>
+<li>Spinner che nút → chờ <code>invisibilityOfElementLocated</code> rồi <code>elementToBeClickable</code>.</li>
+<li>Flaky: lặp lại → đọc lỗi → điều kiện chờ đặc trưng trạng thái mới; <strong>không</strong> chỉ tăng timeout hay thêm retry.</li>
+</ul>
+<h2 id="4-java-bản-chất">4. Java (bản chất)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Ý chính</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK/JRE/JVM</td>
+<td>JDK ⊃ JRE ⊃ JVM; JVM chạy bytecode</td>
+</tr>
+<tr>
+<td><code>==</code> vs <code>equals</code></td>
+<td>Tham chiếu vs nội dung; chuỗi dùng <code>equals</code></td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td>Bất biến; <code>StringBuilder</code> nhanh, không an toàn luồng; <code>StringBuffer</code> đồng bộ</td>
+</tr>
+<tr>
+<td>Overload vs override</td>
+<td>Cùng tên khác tham số (compile-time) vs lớp con ghi đè (runtime)</td>
+</tr>
+<tr>
+<td>4 trụ cột OOP</td>
+<td>Đóng gói, kế thừa, đa hình, trừu tượng — luôn kèm ví dụ (<code>WebDriver driver = new ChromeDriver()</code>, <code>extends BaseTest</code>)</td>
+</tr>
+<tr>
+<td>Interface vs abstract class</td>
+<td>Nhiều interface, một lớp cha; abstract có constructor/state; interface có <code>default/static</code> (Java 8)</td>
+</tr>
+<tr>
+<td><code>final</code>/<code>finally</code>/<code>finalize</code></td>
+<td>Hằng/không ghi đè/không kế thừa · khối luôn chạy · hook GC (đã lỗi thời)</td>
+</tr>
+<tr>
+<td>Checked vs unchecked</td>
+<td>Bắt buộc xử lý vs không; Selenium exception là unchecked</td>
+</tr>
+<tr>
+<td><code>ArrayList</code> vs <code>LinkedList</code></td>
+<td>Mảng động (truy cập nhanh) vs danh sách liên kết (chèn/xoá tại vị trí)</td>
+</tr>
+<tr>
+<td><code>HashMap</code></td>
+<td><code>hashCode</code> → bucket, <code>equals</code> tìm key; hợp đồng equals/hashCode</td>
+</tr>
+<tr>
+<td><code>List/Set/Map</code></td>
+<td>Có thứ tự &amp; trùng / không trùng / cặp key-value</td>
+</tr>
+<tr>
+<td>Wrapper</td>
+<td><code>Integer</code> cache −128..127 → dùng <code>equals</code></td>
+</tr>
+<tr>
+<td>Pass-by-value</td>
+<td>Luôn tham trị; với object là bản sao tham chiếu</td>
+</tr>
+<tr>
+<td><code>static</code></td>
+<td>Thuộc lớp; không dùng <code>this</code>; <code>static WebDriver</code> nguy hiểm khi song song</td>
+</tr>
+<tr>
+<td>Lambda</td>
+<td>Cài functional interface; <code>wait.until(d -&gt; …)</code></td>
+</tr>
+<tr>
+<td><code>ThreadLocal</code></td>
+<td>Mỗi luồng một bản (driver khi chạy song song), nhớ <code>remove()</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-testng--pom">5. TestNG &amp; POM</h2>
+<ul>
+<li><strong>Thứ tự annotation:</strong> <code>@BeforeSuite</code> → <code>@BeforeTest</code> → <code>@BeforeClass</code> → <code>@BeforeMethod</code> → <strong><code>@Test</code></strong> → <code>@AfterMethod</code> → <code>@AfterClass</code> → <code>@AfterTest</code> → <code>@AfterSuite</code>.</li>
+<li><code>testng.xml</code>: <code>&lt;suite&gt;</code> ⊃ <code>&lt;test&gt;</code> ⊃ <code>&lt;class&gt;</code>; <code>groups</code>, <code>parameter</code>, <code>parallel</code>, <code>thread-count</code>.</li>
+<li><code>@DataProvider</code> trả <code>Object[][]</code> cho test nhiều bộ dữ liệu; hard assert dừng ngay, <strong>soft assert</strong> gom lỗi (<code>assertAll</code>).</li>
+<li>TestNG <code>assertEquals(actual, expected)</code> — thứ tự ngược JUnit <code>(expected, actual)</code>.</li>
+<li><strong>POM:</strong> locator <code>private By</code> trong Page; method nghiệp vụ (<code>loginAs</code>); Page <strong>không</strong> chứa assertion; trả về Page kế tiếp; lưu <code>By</code> không lưu <code>WebElement</code>; test độc lập.</li>
+<li><code>BaseTest</code> quản lý vòng đời driver; <code>BasePage</code> chứa wait/click/type dùng chung; <code>DriverFactory</code> tạo driver theo cấu hình; <code>Config</code> đọc <code>config.properties</code> và cho ghi đè bằng <code>-D…</code>.</li>
+</ul>
+<h2 id="6-maven--wrapper">6. Maven &amp; Wrapper</h2>
+<ul>
+<li>Lifecycle mặc định: <code>validate → compile → test → package → verify → install → deploy</code>; <code>clean</code> là lifecycle riêng.</li>
+<li>Dự án chỉ có <code>src/test/java</code> ⇒ <code>compile</code> báo <em>Nothing to compile</em>; phải <code>test-compile</code>/<code>test</code>.</li>
+<li>Scope <code>test</code>: thư viện chỉ có khi biên dịch/chạy test.</li>
+<li><strong>Wrapper:</strong> <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/maven-wrapper.properties</code> — commit cả ba; khoá phiên bản Maven; chạy không cần cài Maven (vẫn cần JDK); <code>mvnw</code> cần mode thực thi trên Linux/macOS (<code>git update-index --chmod=+x</code>).</li>
+<li>Chạy test: <code>.\mvnw.cmd clean test</code> · một class <code>-Dtest=Class</code> · một method <code>-Dtest=Class#method</code>.</li>
+<li><strong>Bẫy:</strong> <code>Tests run: 0</code> nhưng <code>BUILD SUCCESS</code> (gõ sai <code>-Dtest</code>, sai import <code>@Test</code>) — luôn đọc dòng <code>Tests run</code>.</li>
+<li>Xung đột phiên bản: <code>dependency:tree</code>; <code>NoSuchMethodError</code> thường do xung đột.</li>
+</ul>
+<h2 id="7-git">7. Git</h2>
+<ul>
+<li><code>fetch</code> tải về không gộp; <code>pull</code> = <code>fetch</code> + <code>merge</code> (hoặc rebase).</li>
+<li><code>merge</code> giữ lịch sử phân nhánh; <code>rebase</code> làm lịch sử thẳng (không rebase nhánh đã chia sẻ).</li>
+<li>Không commit: <code>target/</code>, <code>test-output/</code>, <code>.mvn/repository/</code>, IDE files, mật khẩu thật. Commit: <code>src/</code>, <code>pom.xml</code>, <code>mvnw*</code>, <code>.mvn/wrapper</code>, <code>testng.xml</code>, <code>.gitignore</code>.</li>
+<li>Conflict: mở file → chọn nội dung đúng → xoá dấu <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>/<code>=======</code>/<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> → build kiểm chứng → <code>git add</code> → commit.</li>
+<li>PR: mục đích, thay đổi, cách kiểm chứng; review test: không sleep, không XPath tuyệt đối, assertion có message.</li>
+</ul>
+<h2 id="8-tư-duy-automation-nói-được-trong-1-câu">8. Tư duy automation (nói được trong 1 câu)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Một câu trả lời</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tự động hoá cái gì?</td>
+<td>Lặp lại, ổn định, giá trị cao, kết quả rõ ràng; không phải kiểm tra một lần/chủ quan</td>
+</tr>
+<tr>
+<td>Test pyramid</td>
+<td>Nhiều unit/API, ít UI end-to-end</td>
+</tr>
+<tr>
+<td>Vì sao flaky?</td>
+<td>Đồng bộ, locator, dữ liệu, thứ tự, môi trường</td>
+</tr>
+<tr>
+<td>Retry?</td>
+<td>Biện pháp tạm, che nguyên nhân gốc</td>
+</tr>
+<tr>
+<td>UI vs API</td>
+<td>Logic ở API, UI cho luồng người dùng; dùng API để chuẩn bị dữ liệu</td>
+</tr>
+<tr>
+<td>Selenium vs Playwright</td>
+<td>Selenium: giao thức W3C, đa ngôn ngữ, hệ sinh thái lớn, tự chờ bằng explicit wait; Playwright: auto-wait, browser context, trace (kiểm chứng lại khi phỏng vấn)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9-10-câu-phải-nói-trôi-chảy-bằng-tiếng-anh">9. 10 câu phải nói trôi chảy bằng tiếng Anh</h2>
+<ol>
+<li>Tell me about yourself (30 s).</li>
+<li>Walk me through your project.</li>
+<li>Why explicit waits and not implicit waits?</li>
+<li>A test is flaky. How do you diagnose it?</li>
+<li><code>StaleElementReferenceException</code> — cause and fix.</li>
+<li>What is the Page Object Model and why use it?</li>
+<li>What is Maven Wrapper and what do you commit?</li>
+<li><code>==</code> vs <code>equals()</code>.</li>
+<li>Why <code>WebDriver driver = new ChromeDriver()</code>?</li>
+<li>How do you decide what to automate?</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="behavioral-and-english-interview.html"><small>← Bài trước</small><span>Behavioral &amp; English — Interview (giới thiệu, hành vi, tiếng Anh)</span></a><a class="next" href="../evaluation/README.html"><small>Bài tiếp theo →</small><span>Báo cáo đánh giá lộ trình Automation Testing (Selenium Java)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/interview-cheatsheet.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

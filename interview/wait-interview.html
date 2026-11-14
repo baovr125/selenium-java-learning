@@ -118,7 +118,7 @@
 <p><strong>Dịch:</strong> <code>frameToBeAvailableAndSwitchToIt</code> làm hai việc gì?</p>
 <p><strong>Sample answer:</strong> It waits until the frame is available and then switches the driver context into it. I leave the frame later with <code>switchTo().defaultContent()</code>.</p>
 <p><strong>Giải thích:</strong> Tiện hơn <code>switchTo().frame()</code> vì có chờ.</p>
-<p><strong>Ví dụ:</strong> Trang <code>/iframe</code> của the-internet với editor trong iframe.</p>
+<p><strong>Ví dụ:</strong> Trang <code>/iframe</code> của site demo với editor trong iframe.</p>
 <p><strong>Đào sâu:</strong> <em>What happens if you forget to switch back?</em></p>
 <hr />
 <h3 id="q14-why-should-we-not-mix-implicit-and-explicit-waits">Q14. Why should we not mix Implicit and Explicit Waits?</h3>
@@ -185,7 +185,7 @@
 <span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">().</span><span class="na">stream</span><span class="p">().</span><span class="na">filter</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">)).</span><span class="na">findFirst</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">h</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">));</span></code></pre></div>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="selenium-interview.html"><small>← Bài trước</small><span>Selenium (Fundamentals, Locators, Exceptions) — Interview</span></a><a class="next" href="../progress/README.html"><small>Bài tiếp theo →</small><span>Progress — Theo dõi học tập</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="selenium-interview.html"><small>← Bài trước</small><span>Selenium (Fundamentals, Locators, Exceptions) — Interview</span></a><a class="next" href="framework-interview.html"><small>Bài tiếp theo →</small><span>Testing Framework và Page Object Model — Interview</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/wait-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

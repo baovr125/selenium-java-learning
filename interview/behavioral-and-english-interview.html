@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Behavioral &amp; English — Interview (giới thiệu, hành vi, tiếng Anh) · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="interview/behavioral-and-english-interview" data-root="../" data-lesson="0" data-title="Behavioral &amp; English — Interview (giới thiệu, hành vi, tiếng Anh)">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="behavioral--english--interview-giới-thiệu-hành-vi-tiếng-anh">Behavioral &amp; English — Interview (giới thiệu, hành vi, tiếng Anh)</h1>
+<blockquote>
+<p>Phần lớn ứng viên Fresher/Junior rớt vì <strong>không kể được về mình và project</strong>, không phải vì thiếu kiến thức. Phần này không cần chạy code — chỉ cần chuẩn bị và nói thành tiếng. Quay lại: <a href="README.html">Interview README</a>
+⚠️ <strong>Nguyên tắc trung thực:</strong> các mẫu bên dưới có chỗ trống <code>[...]</code>. Chỉ điền những điều <strong>có thật</strong> về bạn. Interviewer đào sâu rất nhanh; câu chuyện bịa sẽ sụp ở câu hỏi thứ hai.</p>
+</blockquote>
+<h2 id="1-tự-giới-thiệu-self-introduction">1. Tự giới thiệu (Self-introduction)</h2>
+<h3 id="11-cấu-trúc-4-ý-present--past--skill--future">1.1. Cấu trúc 4 ý (Present → Past → Skill → Future)</h3>
+<ol>
+<li><strong>Hiện tại:</strong> bạn là ai, đang học/làm gì.</li>
+<li><strong>Quá khứ ngắn:</strong> nền tảng liên quan (OOP Java ở đại học, kiến thức testing/API/SQL).</li>
+<li><strong>Kỹ năng + bằng chứng:</strong> Selenium Java, project cụ thể.</li>
+<li><strong>Mục tiêu:</strong> vì sao vị trí này, bạn sẽ học thêm gì.</li>
+</ol>
+<h3 id="12-mẫu-30-giây-điền-chỗ-trống">1.2. Mẫu 30 giây (điền chỗ trống)</h3>
+<blockquote>
+<p>"Hi, I'm <strong>[name]</strong>. I'm looking for a Junior Automation Tester role. I have a background in <strong>[testing fundamentals, API testing and SQL]</strong>, and I studied Java and OOP at university. Recently I've focused on UI automation with Selenium, Java, TestNG and Maven. I built a practice project that automates <strong>[10]</strong> scenarios on a public demo site, with explicit waits only, a shared base test and the Maven Wrapper. I'm now learning Page Object Model and I plan to learn Playwright next. I'd like to join a team where I can grow my automation skills."</p>
+</blockquote>
+<h3 id="13-mẫu-2-phút-thêm-chi-tiết-kỹ-thuật">1.3. Mẫu 2 phút (thêm chi tiết kỹ thuật)</h3>
+<p>Thêm sau ý 3, mỗi ý 1–2 câu và <strong>chọn 2 trong 3</strong>: (a) một vấn đề đồng bộ hoá đã gặp và cách bạn xử lý (ví dụ thông báo cũ → <code>textToBe</code>); (b) vì sao bạn không dùng Implicit Wait; (c) bạn tổ chức project thế nào (<code>BaseTest</code>, <code>testng.xml</code>, <code>mvnw</code>). Kết thúc bằng câu mục tiêu.</p>
+<h2 id="2-câu-hỏi-hành-vi-thường-gặp-12-câu">2. Câu hỏi hành vi thường gặp (12 câu)</h2>
+<p>Dùng khung <strong>STAR</strong>: <em>Situation</em> (bối cảnh) → <em>Task</em> (nhiệm vụ) → <em>Action</em> (bạn đã làm gì) → <em>Result</em> (kết quả/bài học). Mỗi câu trả lời 60–90 giây.</p>
+<h3 id="b1-tell-me-about-yourself">B1. Tell me about yourself.</h3>
+<p>Dùng mục 1. <strong>Tránh:</strong> đọc lại CV, kể tuổi thơ.</p>
+<h3 id="b2-why-do-you-want-to-be-an-automation-tester">B2. Why do you want to be an automation tester?</h3>
+<p><strong>Sample answer:</strong> "I enjoy understanding how software can fail and I like building tools that check it reliably. Automation lets me combine testing thinking with programming. I also like that a good automated suite gives the whole team fast feedback."
+<strong>Ghi chú:</strong> nêu lý do thật; liên hệ cả hai nửa: <em>kiểm thử</em> và <em>lập trình</em>.</p>
+<h3 id="b3-walk-me-through-your-project">B3. Walk me through your project.</h3>
+<p><strong>Cấu trúc:</strong> mục tiêu → công nghệ (Java 21, Selenium 4.52.0, TestNG, Maven Wrapper) → cấu trúc (<code>BaseTest</code>, 10 Test class, <code>testng.xml</code>) → <strong>một thử thách kỹ thuật</strong> (flaky/Wait) → bạn sẽ cải thiện gì (POM, config, screenshot, CI).
+<strong>Ghi chú:</strong> chuẩn bị bản 3 phút và bản 10 phút. Xem <a href="automation-concepts-interview.html">AC15</a>.</p>
+<h3 id="b4-tell-me-about-a-bug-you-found--a-test-that-failed-for-a-surprising-reason">B4. Tell me about a bug you found / a test that failed for a surprising reason.</h3>
+<p><strong>Mẫu STAR:</strong> <em>S:</em> "In my dynamic controls test the assertion passed too early." <em>T:</em> "I needed it to be reliable." <em>A:</em> "I found the old message 'It's gone!' was still visible, so waiting for visibility returned immediately; I changed the wait to <code>textToBe</code> for the exact new text." <em>R:</em> "The test became stable, and I learned to wait for a condition specific to the new state."
+<strong>Ghi chú:</strong> chỉ dùng nếu đúng với những gì bạn đã làm (<a href="../../../../src/test/java/tests/Exercise10_DynamicControlsTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise 10</a>); nếu không, dùng một lỗi <strong>bạn thật sự đã gặp</strong>.</p>
+<h3 id="b5-describe-a-time-you-were-stuck-how-did-you-get-unstuck">B5. Describe a time you were stuck. How did you get unstuck?</h3>
+<p><strong>Sample answer:</strong> "I read the exact exception first, reproduced it in a small test, checked the element in browser DevTools, searched the official docs, and only then asked for help with what I had tried. [Example: ...]"
+<strong>Ghi chú:</strong> thể hiện quy trình tự giải quyết rồi mới hỏi.</p>
+<h3 id="b6-how-do-you-learn-a-new-technology">B6. How do you learn a new technology?</h3>
+<p><strong>Sample answer:</strong> "I learn the core concepts, then rebuild something I already know with the new tool. For example, I'm learning Selenium with Java and plan to rewrite my 10 Selenium exercises in Playwright to compare them."
+<strong>Ghi chú:</strong> nhất quán với kế hoạch của bạn.</p>
+<h3 id="b7-tell-me-about-a-disagreement-with-a-teammate">B7. Tell me about a disagreement with a teammate.</h3>
+<p><strong>Khung:</strong> nêu bất đồng <em>về kỹ thuật</em> (không công kích cá nhân) → bạn lắng nghe, đưa dữ liệu/thử nghiệm → kết quả và bài học. Nếu chưa có kinh nghiệm làm việc, dùng ví dụ từ <strong>dự án nhóm ở trường</strong> và nói rõ.</p>
+<h3 id="b8-how-do-you-handle-a-tight-deadline-or-many-tasks">B8. How do you handle a tight deadline or many tasks?</h3>
+<p><strong>Sample answer:</strong> "I clarify priorities, split the work into small deliverables, do the highest-risk or highest-value part first, and tell the team early if something will slip."</p>
+<h3 id="b9-what-is-your-biggest-weakness">B9. What is your biggest weakness?</h3>
+<p><strong>Sample answer:</strong> "I'm still building hands-on experience in large frameworks. To address it I work on a small framework with Page Objects and CI, and I review my own failures to find root causes."
+<strong>Ghi chú:</strong> điểm yếu thật + hành động khắc phục; tránh "I'm a perfectionist".</p>
+<h3 id="b10-what-are-your-strengths">B10. What are your strengths?</h3>
+<p><strong>Sample answer:</strong> "I'm methodical when diagnosing problems: I reproduce, form a hypothesis and verify it, instead of adding sleeps. I also have a testing and API/SQL background, so I think about what is worth automating."
+<strong>Ghi chú:</strong> mỗi điểm mạnh kèm bằng chứng.</p>
+<h3 id="b11-where-do-you-see-yourself-in-a-few-years">B11. Where do you see yourself in a few years?</h3>
+<p><strong>Sample answer:</strong> "I want to become a reliable automation engineer who can design maintainable frameworks and contribute to quality across API and UI levels."</p>
+<h3 id="b12-do-you-have-any-questions-for-us">B12. Do you have any questions for us?</h3>
+<p>Luôn có 2–3 câu hỏi. Gợi ý: <em>What does the current automation suite look like and what tools do you use?</em> · <em>How are flaky tests handled in your team?</em> · <em>How is automation integrated with CI?</em> · <em>What would the first 3 months look like for this role?</em> · <em>How does the team review test code?</em></p>
+<h2 id="3-khi-bạn-chưa-biết-hoặc-chưa-làm">3. Khi bạn chưa biết hoặc chưa làm</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Cách nói</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chưa dùng công cụ đó</td>
+<td>"I haven't used Selenium Grid in a project, but I understand the idea: a hub distributes tests to nodes to run in parallel on different browsers. I'd start by reading the docs and trying a local setup."</td>
+</tr>
+<tr>
+<td>Quên đáp án</td>
+<td>"I don't remember the exact name, but here's how I would find out / how I think it works…"</td>
+</tr>
+<tr>
+<td>Câu hỏi không rõ</td>
+<td>"Just to confirm, do you mean…?"</td>
+</tr>
+<tr>
+<td>Cần thời gian nghĩ</td>
+<td>"Let me think for a moment."</td>
+</tr>
+<tr>
+<td>Mới học Playwright</td>
+<td>"I haven't used it in a project yet. I know it auto-waits and uses browser contexts, and I plan to learn it after my Selenium foundation."</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Không nên:</strong> nói "I know everything about…", đoán bừa như thật, im lặng quá lâu, chê công cụ/công ty cũ.</p>
+<h2 id="4-ngân-hàng-cụm-từ-tiếng-anh">4. Ngân hàng cụm từ tiếng Anh</h2>
+<h3 id="41-giải-thích-codequy-trình">4.1. Giải thích code/quy trình</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mục đích</th>
+<th>Cụm từ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mở đầu</td>
+<td>"Let me walk you through…" · "The goal of this test is…"</td>
+</tr>
+<tr>
+<td>Mô tả luồng</td>
+<td>"First…, then…, finally…" · "After the click, the test waits until…"</td>
+</tr>
+<tr>
+<td>Giải thích lý do</td>
+<td>"The reason is…" · "I chose X over Y because…"</td>
+</tr>
+<tr>
+<td>Nêu trade-off</td>
+<td>"The advantage is…, but the downside is…"</td>
+</tr>
+<tr>
+<td>Mô tả lỗi</td>
+<td>"The test failed with a <code>StaleElementReferenceException</code> because the page was refreshed."</td>
+</tr>
+<tr>
+<td>Mô tả cách sửa</td>
+<td>"I replaced the fixed sleep with an explicit wait for…"</td>
+</tr>
+<tr>
+<td>Chưa chắc</td>
+<td>"As far as I know…" · "I believe…, but I'd like to double-check."</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="42-mẫu-giải-thích-ngắn-thường-dùng">4.2. Mẫu giải thích ngắn thường dùng</h3>
+<ul>
+<li><em>Locator:</em> "A locator tells Selenium how to find an element on the page, for example by id, CSS selector or XPath. I prefer stable attributes like id or a test id."</li>
+<li><em>Explicit wait:</em> "An explicit wait pauses the test until a specific condition is true or a timeout expires, so it never waits longer than needed."</li>
+<li><em>Page Object Model:</em> "I keep locators and page actions in a class per page, so tests read like steps and a UI change needs a fix in one place."</li>
+<li><em>Maven Wrapper:</em> "It pins the Maven version for the project, so anyone can run <code>mvnw</code> without installing Maven."</li>
+<li><em>Flaky test:</em> "A flaky test sometimes passes and sometimes fails without any code change, usually because of timing, data or environment."</li>
+</ul>
+<h3 id="43-phát-âm-thuật-ngữ-hay-nói-sai-gợi-ý-hãy-nghe-lại-với-từ-điển">4.3. Phát âm thuật ngữ hay nói sai (gợi ý, hãy nghe lại với từ điển)</h3>
+<p><code>locator</code> · <code>XPath</code> ("ex-path") · <code>iframe</code> ("eye-frame") · <code>Selenium</code> · <code>stale</code> · <code>ExpectedConditions</code> · <code>asynchronous</code> · <code>parameter</code> · <code>dependency</code> · <code>repository</code> · <code>Maven</code> · <code>TestNG</code> ("test-en-gee") · <code>Javadoc</code>.</p>
+<h2 id="5-cách-luyện-không-cần-máy-tính">5. Cách luyện (không cần máy tính)</h2>
+<ol>
+<li>Viết ra <strong>3 câu chuyện thật</strong> của bạn (một lỗi, một lúc bị kẹt, một điều bạn đã học nhanh), mỗi câu theo STAR.</li>
+<li>Luyện <strong>tự giới thiệu 30 giây và 2 phút</strong> cho đến khi nói trơn; ghi âm bằng điện thoại, nghe lại để bắt từ đệm ("um", "like").</li>
+<li>Mỗi ngày trả lời <strong>5 câu</strong> từ các bộ phỏng vấn bằng tiếng Anh thành tiếng; mỗi tuần 1 buổi mock với người khác.</li>
+<li>Tự đánh giá mỗi buổi theo 4 tiêu chí (0–4): rõ ràng · có cấu trúc · có ví dụ · nêu trade-off.</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="code-reading-interview.html"><small>← Bài trước</small><span>Code Reading — Interview (đọc code, tìm lỗi, nói output)</span></a><a class="next" href="interview-cheatsheet.html"><small>Bài tiếp theo →</small><span>Interview Cheatsheet — tóm tắt lý thuyết để ôn nhanh</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/interview/behavioral-and-english-interview.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

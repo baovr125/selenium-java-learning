@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · Đánh giá khả năng sẵn sàng phỏng vấn Fresher/Junior · Selenium Java — học từng bài</title>
+<meta name="description" content="Giáo trình Selenium Java từng bài nhỏ: Java, Maven, Selenium, Wait, TestNG, POM, Git, phỏng vấn.">
+<script>(function(){try{var t=localStorage.getItem('sl.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/pygments.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E">
+</head>
+<body data-route="evaluation/05-interview-readiness-assessment" data-root="../" data-lesson="0" data-title="05 · Đánh giá khả năng sẵn sàng phỏng vấn Fresher/Junior">
+<a class="skip" href="#content">Bỏ qua điều hướng</a>
+<header class="topbar">
+  <button id="menu-btn" class="icon-btn" aria-label="Mở menu" aria-expanded="false">☰</button>
+  <a class="brand" href="../index.html">☕ <span>Selenium Java</span><small>học từng bài</small></a>
+  <div class="search">
+    <input id="q" type="search" placeholder="Tìm trong giáo trình…  ( / )" autocomplete="off" aria-label="Tìm kiếm">
+    <div id="results" role="listbox" hidden></div>
+  </div>
+  <button id="theme-btn" class="icon-btn" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">🌓</button>
+</header>
+<div class="layout">
+  <nav id="sidebar" aria-label="Mục lục giáo trình"><noscript>Cần bật JavaScript để dùng thanh điều hướng. <a href="../index.html">Trang chủ</a></noscript></nav>
+  <div id="scrim" hidden></div>
+  <main>
+    <article id="content" class="md">
+<h1 id="05--đánh-giá-khả-năng-sẵn-sàng-phỏng-vấn-fresherjunior">05 · Đánh giá khả năng sẵn sàng phỏng vấn Fresher/Junior</h1>
+<blockquote>
+<p>Quay lại <a href="README.html">README đánh giá</a> · Trước: <a href="04-practical-exercise-assessment.html">04 Bài tập</a> · Tiếp: <a href="06-recommended-learning-roadmap.html">06 Lộ trình đề xuất</a></p>
+</blockquote>
+<h2 id="1-đánh-giá-bộ-câu-hỏi-phỏng-vấn-hiện-có">1. Đánh giá bộ câu hỏi phỏng vấn hiện có</h2>
+<p>Số liệu đếm từ các file trong <a href="../interview/README.html">interview/</a>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bộ</th>
+<th>Số câu (đếm thật)</th>
+<th>Đề bài yêu cầu mô phỏng</th>
+<th>Đánh giá</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Software Testing</td>
+<td><strong>0</strong></td>
+<td>15</td>
+<td><strong>Thiếu hoàn toàn</strong></td>
+</tr>
+<tr>
+<td>Java</td>
+<td><strong>10</strong></td>
+<td>15</td>
+<td>Thiếu 5; thiên về "dùng trong Selenium", thiếu câu bản chất</td>
+</tr>
+<tr>
+<td>Selenium (gồm Locators + Exceptions)</td>
+<td><strong>30</strong></td>
+<td>20</td>
+<td>Đủ, rộng; thiếu câu <em>đọc code</em></td>
+</tr>
+<tr>
+<td>Wait</td>
+<td><strong>20</strong> (+3 câu viết code)</td>
+<td>15</td>
+<td><strong>Vượt yêu cầu, chất lượng cao</strong></td>
+</tr>
+<tr>
+<td>Maven &amp; Wrapper</td>
+<td><strong>17</strong> + 6 tình huống</td>
+<td>10</td>
+<td><strong>Vượt yêu cầu</strong></td>
+</tr>
+<tr>
+<td>TestNG + POM</td>
+<td><strong>10 + 8</strong></td>
+<td>10</td>
+<td>Đủ</td>
+</tr>
+<tr>
+<td>Scenario-based</td>
+<td><strong>12</strong> (+6 tình huống Maven)</td>
+<td>10</td>
+<td>Tốt</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>10</td>
+<td>(không yêu cầu bộ riêng)</td>
+<td>Đủ cho Junior</td>
+</tr>
+<tr>
+<td><em>Interview Corner cuối bài</em></td>
+<td>120 (2/bài)</td>
+<td>—</td>
+<td>Trùng với bộ chủ đề; một số "Giải thích (VI)" chỉ một câu cụt</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="11-trả-lời-các-câu-hỏi-chất-lượng">1.1. Trả lời các câu hỏi chất lượng</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Kết quả</th>
+<th>Bằng chứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bao phủ kiến thức quan trọng?</td>
+<td><strong>Selenium/Wait/Maven/POM: có. Testing, Java bản chất, API/SQL/CI: không.</strong></td>
+<td>Số liệu trên</td>
+</tr>
+<tr>
+<td>Câu hỏi bản chất hay chỉ định nghĩa?</td>
+<td><strong>Phần lớn kiểm tra bản chất</strong> ở Wait/Selenium (ví dụ Wait Q4 <em>Implicit vs Explicit</em>, Q5 <em><code>WebDriverWait</code> vs <code>FluentWait</code></em>, mẫu answer có trade-off). Java thì thiên về "cách dùng".</td>
+<td><code>interview/wait-interview.md</code></td>
+</tr>
+<tr>
+<td>Scenario-based?</td>
+<td><strong>Có, tốt</strong> (S1–S12: quy trình chẩn đoán, "không chỉ tăng timeout", có follow-up).</td>
+<td><code>interview/scenario-based-interview.md:5-16</code></td>
+</tr>
+<tr>
+<td>Giải thích/viết code?</td>
+<td><strong>Một phần</strong>: Wait có 3 câu viết code; <strong>không có</strong> định dạng "đọc đoạn code (có lỗi) và giải thích output/lỗi".</td>
+<td>Quét danh sách câu hỏi</td>
+</tr>
+<tr>
+<td>Xử lý lỗi?</td>
+<td>Có (Selenium Exceptions Q1–Q10, scenario S1–S5).</td>
+<td></td>
+</tr>
+<tr>
+<td>Làm việc nhóm?</td>
+<td>Có ở mức Git/Maven (Q8–Q9 Git, Maven S4–S6); <strong>không có câu hành vi</strong> (xung đột, báo lỗi cho dev, chậm deadline).</td>
+<td><code>interview/git-interview.md</code>; quét "behavio/STAR": 0</td>
+</tr>
+<tr>
+<td>Maven/Wrapper?</td>
+<td><strong>Rất tốt</strong> (17 câu + 6 tình huống).</td>
+<td><code>interview/maven-interview.md</code></td>
+</tr>
+<tr>
+<td>Wait/Synchronization?</td>
+<td><strong>Rất tốt.</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>Tư duy Automation Testing (chọn gì để tự động hoá, ROI, test pyramid, flaky)?</td>
+<td>Có S10 <em>decide what to automate</em>, Phase 8 Q1; <strong>thiếu</strong> test pyramid, API-vs-UI, chi phí bảo trì.</td>
+<td></td>
+</tr>
+<tr>
+<td>Luyện nói tiếng Anh?</td>
+<td>Có câu trả lời mẫu EN + dịch VI; hướng dẫn "tự trả lời thành tiếng" (<code>interview/README.md</code>) nhưng <strong>không có lịch mock, ghi âm, người nghe</strong>.</td>
+<td><code>interview/README.md</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="12-ứng-viên-hoàn-thành-lộ-trình-hiện-tại-có-trả-lời-được-phỏng-vấn-junior-không">1.2. Ứng viên hoàn thành lộ trình hiện tại có trả lời được phỏng vấn Junior không?</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Vòng</th>
+<th>Kỳ vọng</th>
+<th>Khả năng (nếu học và làm bài thật)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vòng kỹ thuật phần Selenium/Wait/Maven/TestNG/POM</td>
+<td>Tốt</td>
+<td><strong>Tốt — điểm mạnh</strong></td>
+</tr>
+<tr>
+<td>Vòng kiểm thử nền tảng</td>
+<td>Test design, bug, severity/priority, STLC</td>
+<td><strong>Yếu — gần như 0</strong></td>
+</tr>
+<tr>
+<td>Java bản chất / live coding</td>
+<td>Trung bình</td>
+<td>Trung bình (chưa luyện live coding)</td>
+</tr>
+<tr>
+<td>Debug script / flaky tại chỗ</td>
+<td>Cao</td>
+<td>Trung bình thấp (chưa có bài sửa test hỏng)</td>
+</tr>
+<tr>
+<td>API/SQL</td>
+<td>Xuất hiện ở ~nhiều JD</td>
+<td><strong>Yếu</strong></td>
+</tr>
+<tr>
+<td>Dự án CV</td>
+<td>Có project khác biệt</td>
+<td><strong>Yếu</strong> (project trùng với 10 Exercise công khai)</td>
+</tr>
+<tr>
+<td>Giao tiếp tiếng Anh</td>
+<td>Giải thích code/quy trình</td>
+<td>Chưa rèn luyện hệ thống</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Kết luận:</strong> <em>chưa sẵn sàng phỏng vấn Junior đầy đủ.</em> Có thể qua phần Selenium của vòng kỹ thuật, nhưng thiếu 3 mảng thường bị hỏi.</p>
+<hr />
+<h2 id="2-bộ-tiêu-chí-đánh-giá-sau-lộ-trình">2. Bộ tiêu chí đánh giá sau lộ trình</h2>
+<h3 id="21-rubric-theo-nhóm">2.1. Rubric theo nhóm</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhóm</th>
+<th>Tiêu chí</th>
+<th>Cách đo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Technical Knowledge</strong></td>
+<td>Software Testing, Java, Selenium, Wait, Maven, TestNG/JUnit, POM, Git</td>
+<td>Trả lời ≥ 70% câu hỏi mô phỏng (§4) đúng ý chính, có ví dụ từ dự án của mình</td>
+</tr>
+<tr>
+<td><strong>Practical Skills</strong></td>
+<td>Viết Java; tạo Selenium test; debug script; xử lý Wait/Exception; xây Page Object; chạy bằng Maven</td>
+<td><strong>Bài thi thực hành 3 giờ</strong> (§2.3)</td>
+</tr>
+<tr>
+<td><strong>Problem-solving</strong></td>
+<td>Element không thấy/không click được; flaky; Stale; test fail chập chờn; phân tích nguyên nhân</td>
+<td>5 ca "Flaky Clinic" mới (không thấy trước), mỗi ca ≤ 15 phút: nêu giả thuyết → kiểm chứng → sửa</td>
+</tr>
+<tr>
+<td><strong>Communication</strong></td>
+<td>Giải thích code bằng tiếng Anh; trình bày cách xử lý; mô tả quy trình; trả lời tình huống</td>
+<td>Mock interview bằng tiếng Anh, ghi âm, chấm theo thang 0–4 (rõ ràng, cấu trúc, có ví dụ, nêu trade-off)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-thang-điểm-năng-lực-04">2.2. Thang điểm năng lực (0–4)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Điểm</th>
+<th>Mô tả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Chưa biết</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Biết khái niệm</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Có thể giải thích</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Có thể tự thực hành</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Có thể áp dụng và xử lý vấn đề thực tế</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="23-bài-thi-thực-hành-exit-exam-3-giờ-không-xem-tài-liệu-ngoài-javadocdevtools">2.3. Bài thi thực hành (Exit Exam, 3 giờ, không xem tài liệu ngoài Javadoc/DevTools)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Nhiệm vụ</th>
+<th>Thời lượng</th>
+<th>Đạt khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>3 kata Java (chuỗi, <code>Map</code> đếm tần suất, exception)</td>
+<td>25 phút</td>
+<td>3/3 chạy đúng</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Viết 8 locator (CSS/XPath) cho 8 phần tử khó</td>
+<td>15 phút</td>
+<td>≥ 7/8 ổn định, giải thích lựa chọn</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tự động hoá luồng form 2 trang bằng POM + Explicit Wait + TestNG</td>
+<td>60 phút</td>
+<td>Chạy xanh 3/3, không sleep, <code>By</code> chỉ trong Page</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Sửa 3 test hỏng/flaky cho sẵn</td>
+<td>45 phút</td>
+<td>Nêu đúng nguyên nhân, sửa bằng điều kiện chờ đặc trưng</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Chạy bằng <code>mvnw</code> một repo lạ, đọc lỗi, sửa</td>
+<td>15 phút</td>
+<td>Chạy được; giải thích <code>Tests run</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Viết bug report cho một lỗi cho sẵn</td>
+<td>10 phút</td>
+<td>Đủ trường, severity/priority hợp lý</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Giải thích framework của mình bằng tiếng Anh</td>
+<td>5 phút</td>
+<td>Cấu trúc rõ, nêu 2 trade-off</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="3-bảng-năng-lực-cuối-lộ-trình--4-mức-sẵn-sàng">3. Bảng năng lực cuối lộ trình &amp; 4 mức sẵn sàng</h2>
+<h3 id="31-điểm-mục-tiêu-theo-mức">3.1. Điểm mục tiêu theo mức</h3>
+<p>Cột "Dự báo (lộ trình hiện tại)" là <strong>ước tính của reviewer</strong> cho người học làm <em>đủ</em> bài tập thật của lộ trình hiện tại (không chỉ đọc).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Năng lực</th>
+<th>Fresher</th>
+<th>Junior</th>
+<th>Tự làm việc cơ bản</th>
+<th>Dự báo (lộ trình hiện tại)</th>
+<th>Ghi chú dự báo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Software Testing Fundamentals</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td><strong>1</strong></td>
+<td>Chỉ có Test Case/Traceability (1 bài)</td>
+</tr>
+<tr>
+<td>Java Programming</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>Đủ phạm vi; chưa luyện live coding</td>
+</tr>
+<tr>
+<td>Selenium WebDriver</td>
+<td>3</td>
+<td>3</td>
+<td>4</td>
+<td>3</td>
+<td>Rộng; một site</td>
+</tr>
+<tr>
+<td>Locators</td>
+<td>3</td>
+<td>3</td>
+<td>4</td>
+<td>3</td>
+<td>Có Lab 02, phân tích Exercise 1</td>
+</tr>
+<tr>
+<td>Wait Mechanisms</td>
+<td>3</td>
+<td>3</td>
+<td>4</td>
+<td><strong>4</strong></td>
+<td>Điểm mạnh nhất</td>
+</tr>
+<tr>
+<td>Exception Handling</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>Maven &amp; Maven Wrapper</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td><strong>3–4</strong></td>
+<td>Rất mạnh</td>
+</tr>
+<tr>
+<td>TestNG/JUnit</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>Parallel/Listener chỉ lý thuyết</td>
+</tr>
+<tr>
+<td>Page Object Model</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>Automation Framework</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>2</td>
+<td>Có khung, thiếu framework tham chiếu chạy xanh</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td><strong>2</strong></td>
+<td>Không remote/PR thật</td>
+</tr>
+<tr>
+<td>Debugging</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td><strong>2</strong></td>
+<td>Không có bài debug cho sẵn</td>
+</tr>
+<tr>
+<td>Practical Project</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td><strong>2</strong></td>
+<td>Dự án trùng bài tập gốc</td>
+</tr>
+<tr>
+<td>Interview Communication</td>
+<td>2</td>
+<td>3</td>
+<td>3</td>
+<td><strong>2</strong></td>
+<td>Không có mock/ghi âm</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="32-tiêu-chí-4-mức">3.2. Tiêu chí 4 mức</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mức</th>
+<th>Điều kiện (tất cả phải thoả)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Chưa sẵn sàng ứng tuyển</strong></td>
+<td>Bất kỳ: Testing &lt; 2, Java &lt; 2, Selenium &lt; 3, Wait &lt; 2, hoặc chưa tự chạy được dự án bằng <code>mvnw</code> ba lần liên tiếp xanh, hoặc không có repo Git thật</td>
+</tr>
+<tr>
+<td><strong>2. Có thể ứng tuyển Fresher</strong></td>
+<td>Testing ≥ 2, Java ≥ 2, Selenium ≥ 3, Locators ≥ 3, Wait ≥ 3, Maven ≥ 2, TestNG ≥ 2, POM ≥ 2, Git ≥ 2, Interview ≥ 2; <strong>có repo GitHub</strong> với framework POM chạy xanh + README; trả lời ≥ 60% bộ câu mô phỏng; <strong>không có nhóm nào &lt; 2</strong></td>
+</tr>
+<tr>
+<td><strong>3. Có thể ứng tuyển Junior Automation Tester</strong></td>
+<td>Mức 2 + Testing ≥ 3, Java ≥ 3, Exception ≥ 3, Maven ≥ 3, TestNG ≥ 3, POM ≥ 3, Git ≥ 3, Debugging ≥ 3, Interview ≥ 3; Capstone ≥ 70% rubric (có bug report, PR, CI); <strong>Exit Exam ≥ 70%</strong>; qua ≥ 2 buổi mock liên tiếp</td>
+</tr>
+<tr>
+<td><strong>4. Tự thực hiện nhiệm vụ Automation cơ bản trong dự án</strong></td>
+<td>Mức 3 + Wait = 4, Debugging = 4, Framework ≥ 3, API cơ bản ≥ 2; chứng minh được: (a) nhận 1 test case thủ công → script ổn định 5/5 xanh trong ≤ 1 ngày; (b) chẩn đoán–sửa 1 test flaky có kèm nguyên nhân; (c) thêm Page/Test vào framework có sẵn qua PR được review; (d) báo bug đúng chuẩn</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Nguyên tắc:</strong> không xét "đã đọc hết tài liệu". Bằng chứng gồm: repo, kết quả chạy 3/3, PR, bug report, bản ghi âm mock, điểm Exit Exam.</p>
+<hr />
+<h2 id="4-bộ-câu-hỏi-phỏng-vấn-mô-phỏng-95-câu">4. Bộ câu hỏi phỏng vấn mô phỏng (95 câu)</h2>
+<p>Câu hỏi bằng <strong>tiếng Anh</strong> (để luyện nói); "Ý chính" bằng tiếng Việt, là những điểm tối thiểu một câu trả lời tốt cần có. Có thể điều chỉnh theo JD thực tế. Chấm mỗi câu 0/1/2 (không/đúng một phần/đúng ý chính + ví dụ).</p>
+<h3 id="41-software-testing-15">4.1. Software Testing (15)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ST1</td>
+<td>Explain the 7 testing principles. Pick two and give an example.</td>
+<td>Testing shows presence of defects; exhaustive testing impossible; early testing; defect clustering; pesticide paradox; context-dependent; absence-of-errors fallacy</td>
+</tr>
+<tr>
+<td>ST2</td>
+<td>What is the difference between SDLC and STLC? Where does testing start?</td>
+<td>STLC là chuỗi hoạt động test trong SDLC; test bắt đầu từ phân tích requirement (shift-left)</td>
+</tr>
+<tr>
+<td>ST3</td>
+<td>Verification vs validation?</td>
+<td>"Build the product right" vs "build the right product"; review/static vs chạy/động</td>
+</tr>
+<tr>
+<td>ST4</td>
+<td>What are the test levels and test types?</td>
+<td>Unit/Integration/System/Acceptance; functional/non-functional/regression/confirmation; level ≠ type</td>
+</tr>
+<tr>
+<td>ST5</td>
+<td>Smoke vs sanity vs regression vs retesting.</td>
+<td>Smoke = build có đủ ổn để test tiếp; sanity = kiểm nhanh vùng vừa sửa; regression = không hỏng phần cũ; retest = xác nhận bug đã sửa</td>
+</tr>
+<tr>
+<td>ST6</td>
+<td>Test scenario vs test case vs test plan.</td>
+<td>Mức trừu tượng khác nhau; test case có precondition/bước/dữ liệu/kết quả mong đợi</td>
+</tr>
+<tr>
+<td>ST7</td>
+<td>A field accepts ages 18–60. Which values do you test with BVA?</td>
+<td>17, 18, 19, 59, 60, 61 (+ biên của kiểu dữ liệu/rỗng)</td>
+</tr>
+<tr>
+<td>ST8</td>
+<td>Apply equivalence partitioning to a discount field (0–100%).</td>
+<td>Phân vùng hợp lệ (0–100), không hợp lệ (&lt;0, &gt;100, không phải số, rỗng); 1 đại diện/phân vùng</td>
+</tr>
+<tr>
+<td>ST9</td>
+<td>Build a decision table for login with valid/invalid user, valid/invalid password, and captcha.</td>
+<td>Liệt kê điều kiện × hành động; gộp luật; kỳ vọng từng luật</td>
+</tr>
+<tr>
+<td>ST10</td>
+<td>Describe state transition testing using "account locked after 3 failed logins".</td>
+<td>Trạng thái, sự kiện, chuyển; test chuyển hợp lệ &amp; không hợp lệ</td>
+</tr>
+<tr>
+<td>ST11</td>
+<td>Describe the defect lifecycle. When is a bug Rejected, Deferred, Reopened?</td>
+<td>New → Assigned → Open → Fixed → Retest → Closed/Reopened; Rejected (không phải bug), Deferred (hoãn)</td>
+</tr>
+<tr>
+<td>ST12</td>
+<td>Severity vs priority — give four examples (high/low combinations).</td>
+<td>Severity = mức ảnh hưởng kỹ thuật; priority = thứ tự xử lý theo nghiệp vụ; ví dụ logo sai ở trang chủ (low sev/high prio)</td>
+</tr>
+<tr>
+<td>ST13</td>
+<td>What makes a good bug report? Write one for "Login button does nothing on Firefox".</td>
+<td>Tiêu đề, môi trường, bước tái hiện, kỳ vọng/thực tế, bằng chứng, severity/priority, tái hiện được không</td>
+</tr>
+<tr>
+<td>ST14</td>
+<td>Explain Scrum roles/events. What does a QA/automation engineer do in a sprint?</td>
+<td>PO/SM/Dev; planning/daily/review/retro; tham gia refinement, viết test cùng sprint, regression tự động</td>
+</tr>
+<tr>
+<td>ST15</td>
+<td>How do you decide what to automate? What is the test pyramid?</td>
+<td>Lặp lại, ổn định, giá trị cao, ROI/bảo trì; nhiều unit/API, ít UI; không tự động hoá kiểm tra một lần/chủ quan</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="42-java-15">4.2. Java (15)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J1</td>
+<td>JDK vs JRE vs JVM.</td>
+<td>Dev kit / runtime / máy ảo; bytecode</td>
+</tr>
+<tr>
+<td>J2</td>
+<td><code>==</code> vs <code>equals()</code> for Strings. Show an example.</td>
+<td>So tham chiếu vs nội dung; <code>new String("a") == "a"</code> là false</td>
+</tr>
+<tr>
+<td>J3</td>
+<td>Why is <code>String</code> immutable? <code>String</code> vs <code>StringBuilder</code>?</td>
+<td>An toàn luồng, String pool, hashCode cache; StringBuilder khi nối nhiều</td>
+</tr>
+<tr>
+<td>J4</td>
+<td>Overloading vs overriding.</td>
+<td>Compile-time vs runtime; chữ ký/kiểu trả về; <code>@Override</code></td>
+</tr>
+<tr>
+<td>J5</td>
+<td>Interface vs abstract class. Why <code>WebDriver driver = new ChromeDriver()</code>?</td>
+<td>Đa hình, lập trình theo interface, đổi browser không đổi test</td>
+</tr>
+<tr>
+<td>J6</td>
+<td>Access modifiers; <code>static</code> vs instance; <code>final</code>.</td>
+<td>Phạm vi; <code>driver</code> protected trong BaseTest; hằng số; không kế thừa/ghi đè</td>
+</tr>
+<tr>
+<td>J7</td>
+<td>What does a constructor do? How is it used in Page Objects?</td>
+<td>Khởi tạo đối tượng; <code>this</code>/<code>super</code>; truyền <code>driver</code> vào Page</td>
+</tr>
+<tr>
+<td>J8</td>
+<td><code>ArrayList</code> vs <code>LinkedList</code>; <code>List</code> vs <code>Set</code> vs <code>Map</code>.</td>
+<td>Truy cập ngẫu nhiên vs chèn/xoá; trùng lặp/thứ tự/cặp key-value</td>
+</tr>
+<tr>
+<td>J9</td>
+<td>How does <code>HashMap</code> find a key? Why do <code>equals</code>/<code>hashCode</code> matter?</td>
+<td>Băm → bucket → equals; hợp đồng equals/hashCode</td>
+</tr>
+<tr>
+<td>J10</td>
+<td>Checked vs unchecked exceptions; <code>throw</code> vs <code>throws</code>; does <code>finally</code> always run?</td>
+<td>Bắt buộc xử lý vs không; <code>finally</code> chạy trừ <code>System.exit</code>/crash</td>
+</tr>
+<tr>
+<td>J11</td>
+<td>Code: remove duplicates from a <code>List&lt;String&gt;</code> and count character frequency in a word.</td>
+<td><code>LinkedHashSet</code>/<code>Set</code>; <code>Map&lt;Character,Integer&gt;</code> + <code>merge</code>/<code>getOrDefault</code></td>
+</tr>
+<tr>
+<td>J12</td>
+<td>What are wrapper classes and autoboxing? What happens with <code>Integer.parseInt("abc")</code>?</td>
+<td><code>NumberFormatException</code>; <code>Integer</code> vs <code>int</code>, so sánh <code>equals</code></td>
+</tr>
+<tr>
+<td>J13</td>
+<td>What is a lambda/functional interface? Where do you use it in Selenium?</td>
+<td><code>wait.until(d -&gt; …)</code>, <code>Function&lt;WebDriver,T&gt;</code></td>
+</tr>
+<tr>
+<td>J14</td>
+<td>What are generics? Why <code>List&lt;WebElement&gt;</code> instead of raw <code>List</code>?</td>
+<td>An toàn kiểu lúc biên dịch, không ép kiểu</td>
+</tr>
+<tr>
+<td>J15</td>
+<td>Read this snippet and explain the output/bug (NPE, <code>==</code> on strings, modifying list in loop).</td>
+<td>Đọc đúng luồng, chỉ ra lỗi, sửa</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="43-selenium-20">4.3. Selenium (20)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>What are the components of Selenium?</td>
+<td>WebDriver, IDE, Grid; hôm nay chủ yếu WebDriver</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>Explain WebDriver architecture.</td>
+<td>Client binding → W3C protocol → browser driver → browser</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>What is Selenium Manager?</td>
+<td>Tự tìm/tải driver khớp browser (Selenium 4.6+)</td>
+</tr>
+<tr>
+<td>S4</td>
+<td><code>close()</code> vs <code>quit()</code>.</td>
+<td>Đóng cửa sổ vs kết thúc session + dừng driver; process mồ côi</td>
+</tr>
+<tr>
+<td>S5</td>
+<td><code>get()</code> vs <code>navigate().to()</code>; how do you go back/forward/refresh?</td>
+<td>Gần như tương đương; <code>navigate().back/forward/refresh</code></td>
+</tr>
+<tr>
+<td>S6</td>
+<td>List locators and your priority order.</td>
+<td>id → name → CSS → XPath…; ổn định, duy nhất, dễ đọc; tránh XPath tuyệt đối</td>
+</tr>
+<tr>
+<td>S7</td>
+<td>CSS vs XPath. Write an XPath for a button by text and a sibling input.</td>
+<td><code>//button[text()='…']</code>, <code>following-sibling</code>, <code>.//</code> trong phạm vi</td>
+</tr>
+<tr>
+<td>S8</td>
+<td><code>findElement</code> vs <code>findElements</code>.</td>
+<td>Ném <code>NoSuchElementException</code> vs trả danh sách rỗng</td>
+</tr>
+<tr>
+<td>S9</td>
+<td><code>getText()</code> vs <code>getAttribute("value")</code>/<code>getDomProperty</code>.</td>
+<td>Text hiển thị vs giá trị input</td>
+</tr>
+<tr>
+<td>S10</td>
+<td>Why can <code>isDisplayed()</code> be false while the element is in the DOM?</td>
+<td>Ẩn bằng CSS, ngoài viewport/kích thước 0; presence ≠ visibility</td>
+</tr>
+<tr>
+<td>S11</td>
+<td>How do you handle <code>&lt;select&gt;</code> and a custom (non-select) dropdown?</td>
+<td><code>Select</code> / click mở + chọn option</td>
+</tr>
+<tr>
+<td>S12</td>
+<td>How do you handle JavaScript alerts?</td>
+<td><code>switchTo().alert()</code>, accept/dismiss/sendKeys; chờ <code>alertIsPresent</code></td>
+</tr>
+<tr>
+<td>S13</td>
+<td>How do you work with iframes?</td>
+<td><code>switchTo().frame(...)</code>, <code>parentFrame</code>, <code>defaultContent</code></td>
+</tr>
+<tr>
+<td>S14</td>
+<td>How do you handle new windows/tabs?</td>
+<td><code>getWindowHandles</code>, lưu handle gốc, chờ <code>numberOfWindowsToBe</code>, chuyển/đóng</td>
+</tr>
+<tr>
+<td>S15</td>
+<td>What is the <code>Actions</code> class? Common mistake?</td>
+<td>Hover/drag/double-click; quên <code>.perform()</code></td>
+</tr>
+<tr>
+<td>S16</td>
+<td>When would you use <code>JavascriptExecutor</code>? Risks?</td>
+<td>Cuộn, lấy giá trị; bỏ qua hành vi người dùng thật → che lỗi</td>
+</tr>
+<tr>
+<td>S17</td>
+<td>How do you capture a screenshot on failure?</td>
+<td><code>TakesScreenshot</code> trong <code>@AfterMethod</code>/Listener, trước <code>quit()</code></td>
+</tr>
+<tr>
+<td>S18</td>
+<td>How do you upload a file and handle cookies?</td>
+<td><code>sendKeys(path)</code> vào <code>input[type=file]</code>; <code>manage().getCookies()/addCookie</code></td>
+</tr>
+<tr>
+<td>S19</td>
+<td>How do you run headless or on multiple browsers?</td>
+<td><code>ChromeOptions --headless=new</code>, <code>--window-size</code>; DriverFactory theo config</td>
+</tr>
+<tr>
+<td>S20</td>
+<td>Stale vs ElementNotInteractable vs ElementClickIntercepted — causes and fixes.</td>
+<td>DOM đổi/handle cũ; ẩn/bị khoá; bị che bởi overlay</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="44-wait-mechanisms-15">4.4. Wait Mechanisms (15)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W1</td>
+<td>Why do we need waits?</td>
+<td>Ứng dụng bất đồng bộ; Selenium chạy ngay; đồng bộ theo điều kiện</td>
+</tr>
+<tr>
+<td>W2</td>
+<td>Implicit vs explicit vs fluent.</td>
+<td>Phạm vi toàn cục vs một điều kiện vs tuỳ biến polling/ignore</td>
+</tr>
+<tr>
+<td>W3</td>
+<td>What is wrong with implicit wait when <code>findElements</code> returns empty?</td>
+<td>Vẫn chờ hết timeout (đo thật: 17 ms vs 3050 ms)</td>
+</tr>
+<tr>
+<td>W4</td>
+<td>Why not mix implicit and explicit waits?</td>
+<td>Thời gian chờ khó đoán, cộng dồn</td>
+</tr>
+<tr>
+<td>W5</td>
+<td>Defaults of <code>WebDriverWait</code>?</td>
+<td>Polling 500 ms; bỏ qua <code>NotFoundException</code>; <code>TimeoutException</code> mô tả điều kiện</td>
+</tr>
+<tr>
+<td>W6</td>
+<td>Presence vs visibility vs clickability — when each?</td>
+<td>Có trong DOM / hiển thị / hiển thị + enabled</td>
+</tr>
+<tr>
+<td>W7</td>
+<td>Why avoid <code>Thread.sleep</code>? Is it ever acceptable?</td>
+<td>Chờ cố định, chậm hoặc flaky; chỉ khi debug/không có điều kiện quan sát được</td>
+</tr>
+<tr>
+<td>W8</td>
+<td>How do you choose timeout and polling interval?</td>
+<td>10–20 s UI thường; wait trả ngay khi đúng; polling 250–500 ms</td>
+</tr>
+<tr>
+<td>W9</td>
+<td>How do you handle <code>StaleElementReferenceException</code>?</td>
+<td>Tìm lại element, <code>refreshed</code>/<code>stalenessOf</code>, dùng <code>By</code> thay vì lưu <code>WebElement</code></td>
+</tr>
+<tr>
+<td>W10</td>
+<td>A spinner blocks the button. What do you wait for?</td>
+<td><code>invisibilityOfElementLocated</code> rồi <code>elementToBeClickable</code>; chờ spinner xuất hiện trước</td>
+</tr>
+<tr>
+<td>W11</td>
+<td>An old message is still visible while waiting for a new one.</td>
+<td><code>textToBe</code>/điều kiện đặc trưng trạng thái mới</td>
+</tr>
+<tr>
+<td>W12</td>
+<td>Write a custom wait: wait until item count increases.</td>
+<td>Lambda <code>d -&gt; d.findElements(...).size() &gt; before</code>; FluentWait nếu cần ignore/polling</td>
+</tr>
+<tr>
+<td>W13</td>
+<td>How do you synchronize with AJAX-heavy pages?</td>
+<td>Chờ theo điều kiện UI cụ thể; (thêm) <code>document.readyState</code>/request đã xong</td>
+</tr>
+<tr>
+<td>W14</td>
+<td><code>TimeoutException</code> vs <code>NoSuchElementException</code>.</td>
+<td>Điều kiện chờ không đạt trong hạn vs tìm không thấy ngay</td>
+</tr>
+<tr>
+<td>W15</td>
+<td>A test is flaky. Walk me through your diagnosis.</td>
+<td>Chạy lặp, đọc exception, DevTools, thay sleep bằng điều kiện đặc trưng; không chỉ tăng timeout/retry</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="45-maven--maven-wrapper-10">4.5. Maven &amp; Maven Wrapper (10)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>What is Maven and what is in <code>pom.xml</code>?</td>
+<td>Build/dependency tool; coordinates, properties, dependencies, plugins</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>What are dependency scopes? Why is Selenium <code>test</code> scope here?</td>
+<td>compile/test/provided/runtime; code chỉ ở <code>src/test</code></td>
+</tr>
+<tr>
+<td>M3</td>
+<td><code>clean</code>, <code>test</code>, <code>package</code>, <code>install</code> — differences. Why does <code>compile</code> say "Nothing to compile" in this project?</td>
+<td>Lifecycle; không có <code>src/main</code></td>
+</tr>
+<tr>
+<td>M4</td>
+<td>What is Maven Wrapper? <code>mvnw</code> vs <code>mvn</code>; what do you commit?</td>
+<td>Khoá phiên bản Maven; <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/</code></td>
+</tr>
+<tr>
+<td>M5</td>
+<td>Can you run the project without Maven installed? Do you still need a JDK?</td>
+<td>Có (Wrapper tự tải); vẫn cần JDK/<code>JAVA_HOME</code> hoặc <code>PATH</code></td>
+</tr>
+<tr>
+<td>M6</td>
+<td>How do you run a single class/method? What if you mistype <code>-Dtest</code>?</td>
+<td><code>-Dtest=Class#method</code>; gõ sai có thể <code>Tests run: 0</code> nhưng <code>BUILD SUCCESS</code> — đọc dòng tổng kết</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>How do Surefire and <code>testng.xml</code> interact?</td>
+<td><code>suiteXmlFiles</code>; <code>-Dtest</code> bỏ qua suite</td>
+</tr>
+<tr>
+<td>M8</td>
+<td>How do you diagnose a dependency conflict (<code>NoSuchMethodError</code>)?</td>
+<td><code>dependency:tree</code>, loại trừ/ghim phiên bản</td>
+</tr>
+<tr>
+<td>M9</td>
+<td>A Linux teammate gets "Permission denied: ./mvnw".</td>
+<td>Mode git <code>100644</code> → <code>git update-index --chmod=+x</code></td>
+</tr>
+<tr>
+<td>M10</td>
+<td>Build fails on CI but passes locally — where do you start?</td>
+<td>JDK/browser/headless/quyền file/log; clone sạch</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="46-testngjunit--pom-10">4.6. TestNG/JUnit &amp; POM (10)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>Explain TestNG annotation order.</td>
+<td>Suite/Test/Class/Method; <code>@BeforeMethod</code> mỗi test</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>What is <code>testng.xml</code>? How do you run a group?</td>
+<td>suite/test/class; <code>groups</code>, <code>-Dgroups=smoke</code></td>
+</tr>
+<tr>
+<td>T3</td>
+<td>DataProvider vs Parameters.</td>
+<td>Dữ liệu nhiều bộ vs tham số từ XML</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>Hard assert vs soft assert.</td>
+<td>Dừng ngay vs gom lỗi, <code>assertAll</code></td>
+</tr>
+<tr>
+<td>T5</td>
+<td>TestNG vs JUnit 5.</td>
+<td>Groups/DataProvider/XML/parallel vs unit/Spring; ngày nay gần nhau</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>How do you run in parallel safely?</td>
+<td><code>parallel</code>, <code>thread-count</code>; <code>ThreadLocal&lt;WebDriver&gt;</code>; field instance không an toàn</td>
+</tr>
+<tr>
+<td>T7</td>
+<td>What is POM? Should pages contain assertions?</td>
+<td>Tách locator/hành vi khỏi test; Page trả dữ liệu, assert ở test</td>
+</tr>
+<tr>
+<td>T8</td>
+<td>Responsibilities of <code>BaseTest</code>, <code>BasePage</code>, <code>DriverFactory</code>, <code>Config</code>.</td>
+<td>Một trách nhiệm mỗi lớp</td>
+</tr>
+<tr>
+<td>T9</td>
+<td><code>@BeforeMethod</code> vs <code>@BeforeClass</code>: trade-offs.</td>
+<td>Độc lập vs tốc độ</td>
+</tr>
+<tr>
+<td>T10</td>
+<td>When is POM overkill? <code>By</code> fields vs <code>@FindBy</code>/PageFactory.</td>
+<td>Script ném đi; trade-off bảo trì</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="47-scenario-based-10">4.7. Scenario-based (10)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Scenario</th>
+<th>Ý chính cần có</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SC1</td>
+<td>Tests pass locally but fail on CI.</td>
+<td>So JDK/browser/headless/kích thước/locale/tốc độ; artifacts; clone sạch</td>
+</tr>
+<tr>
+<td>SC2</td>
+<td><code>ElementClickInterceptedException</code> appears intermittently.</td>
+<td>Overlay/animation; chờ <code>invisibility</code> + <code>clickable</code>; cuộn; không dùng JS click vội</td>
+</tr>
+<tr>
+<td>SC3</td>
+<td>A locator breaks every sprint.</td>
+<td>Thoả thuận <code>data-test-id</code>, CSS ổn định, đặt locator ở một Page</td>
+</tr>
+<tr>
+<td>SC4</td>
+<td>50 tests log in and the suite is slow.</td>
+<td>Đăng nhập qua API/cookie, tái dùng session, <code>@BeforeClass</code> có cân nhắc độc lập</td>
+</tr>
+<tr>
+<td>SC5</td>
+<td>A new teammate clones the repo and nothing runs.</td>
+<td>README, JDK, <code>mvnw</code>, <code>Tests run: 0</code>, quyền file</td>
+</tr>
+<tr>
+<td>SC6</td>
+<td>A teammate adds a library and your build fails with <code>NoSuchMethodError</code>.</td>
+<td><code>dependency:tree</code>, xung đột phiên bản, PR riêng cho nâng cấp</td>
+</tr>
+<tr>
+<td>SC7</td>
+<td>You find a bug: wrong error message but login succeeds. Report it.</td>
+<td>Bug report đầy đủ; severity thấp–trung, priority theo ngữ cảnh</td>
+</tr>
+<tr>
+<td>SC8</td>
+<td>Requirement says "users can buy products". Design tests.</td>
+<td>Hỏi làm rõ; EP/BVA; luồng chính/phụ/âm; chọn automation</td>
+</tr>
+<tr>
+<td>SC9</td>
+<td>The regression suite takes 40 minutes.</td>
+<td>Song song, bỏ UI thừa → API, tag smoke, tối ưu đăng nhập, headless</td>
+</tr>
+<tr>
+<td>SC10</td>
+<td>In code review you see <code>Thread.sleep</code>, absolute XPath and assertions in Page classes.</td>
+<td>Nêu từng vấn đề + thay thế + giọng nhận xét tôn trọng</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="5-cách-dùng-bộ-câu-hỏi-trong-lộ-trình">5. Cách dùng bộ câu hỏi trong lộ trình</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thời điểm</th>
+<th>Việc làm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cuối mỗi Phase</td>
+<td>Mock 20 phút, trả lời thành tiếng bằng tiếng Anh, ghi âm; chấm 0/1/2</td>
+</tr>
+<tr>
+<td>Sau Phase 6</td>
+<td>Mock 45 phút trộn Selenium/Wait/POM/Maven</td>
+</tr>
+<tr>
+<td>Trước Capstone nộp</td>
+<td>Mock 60 phút gồm 1 bài debug trực tiếp</td>
+</tr>
+<tr>
+<td>Tuần cuối</td>
+<td>3 mock đầy đủ 90 phút (Testing + Java + Selenium + Scenario + giải thích project)</td>
+</tr>
+</tbody>
+</table></div>
+    </article>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="04-practical-exercise-assessment.html"><small>← Bài trước</small><span>04 · Đánh giá hệ thống bài tập, thực hành và dự án</span></a><a class="next" href="06-recommended-learning-roadmap.html"><small>Bài tiếp theo →</small><span>06 · Lộ trình học đề xuất (tinh gọn, thiên về thực hành)</span></a></nav>
+    <footer class="foot">Nguồn: <code>docs/selenium-learning/evaluation/05-interview-readiness-assessment.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
+  </main>
+  <aside id="toc" aria-label="Trong bài này"></aside>
+</div>
+<script src="../assets/nav.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

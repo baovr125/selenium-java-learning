@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="junit-fundamentals-so-sánh-với-testng">JUnit Fundamentals (so sánh với TestNG)</h1>
 <blockquote>
-<p>🧭 Phase 5 · Testing Framework · Chapter 20 · Mức ưu tiên: <strong>Optional</strong>
-⬅️ <a href="01-testng-fundamentals.html">TestNG Fundamentals</a> · ➡️ <a href="03-assertions-and-verification.html">Assertions và Verification</a></p>
 <p>Liên quan: <a href="README.html">Mục lục</a> · <a href="01-testng-fundamentals.html">Trước: TestNG</a> · <a href="03-assertions-and-verification.html">Sau: Assertions</a> · <a href="../interview/framework-interview.html">Phỏng vấn</a>
 ⚠️ <strong>Dự án <code>Selenium1</code> không dùng JUnit.</strong> Tài liệu này để bạn hiểu và so sánh, vì nhiều công ty dùng JUnit 5. Ví dụ code <strong>không được biên dịch trong dự án</strong>; hãy thử trong thư mục thực hành riêng.</p>
 </blockquote>
@@ -127,6 +125,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">org.junit.jupiter.api.BeforeEach</span><span class="p">;</span>
 
 <span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseJUnitTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">;</span><span class="w">   </span><span class="c1">// đặt địa chỉ site demo của bạn</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
 
@@ -147,7 +146,7 @@
 <span class="w">    </span><span class="nd">@Test</span>
 <span class="w">    </span><span class="nd">@DisplayName</span><span class="p">(</span><span class="s">&quot;Đăng nhập thành công hiển thị thông báo&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">loginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;SuperSecretPassword!&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
@@ -298,24 +297,24 @@
 <p><strong>Câu 1.</strong> Thứ tự <code>assertEquals</code> của JUnit 5?</p>
 <ul>
 <li>A. (actual, expected)</li>
-<li>B. (expected, actual)</li>
-<li>C. Không quan trọng</li>
-<li>D. (a, b, c)</li>
+<li>B. Không quan trọng</li>
+<li>C. (a, b, c)</li>
+<li>D. (expected, actual)</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> TestNG dùng (actual, expected).</p>
+<p><strong>Đáp án: D.</strong> TestNG dùng (actual, expected).</p>
 </details>
 <p><strong>Câu 2.</strong> <code>@BeforeEach</code> của JUnit tương đương TestNG?</p>
 <ul>
-<li>A. <code>@BeforeClass</code></li>
-<li>B. <code>@BeforeMethod</code></li>
+<li>A. <code>@BeforeMethod</code></li>
+<li>B. <code>@BeforeClass</code></li>
 <li>C. <code>@BeforeSuite</code></li>
 <li>D. <code>@Test</code></li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Chạy trước mỗi test.</p>
+<p><strong>Đáp án: A.</strong> Chạy trước mỗi test.</p>
 </details>
 <p><strong>Câu 3.</strong> Dự án <code>Selenium1</code> dùng framework nào?</p>
 <ul>
@@ -360,7 +359,7 @@
 <li>TestNG (actual, expected) ≠ JUnit (expected, actual)</li>
 <li><code>@BeforeAll</code> thường cần <code>static</code></li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="03-assertions-and-verification.html">Assertions và Verification</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../08-practical-project/labs/07-run-tests-with-maven.html">Lab 07: Test Suite với TestNG và chạy bằng Maven (Bài 11)</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -401,6 +400,7 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseJUnitTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">;</span><span class="w">   </span><span class="c1">// đặt địa chỉ site demo của bạn</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">WebDriverWait</span><span class="w"> </span><span class="n">wait</span><span class="p">;</span>
 
@@ -427,7 +427,7 @@
 <span class="kt">void</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">pass</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span></code></pre></div>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-testng-fundamentals.html"><small>← Bài trước</small><span>TestNG Fundamentals</span></a><a class="next" href="03-assertions-and-verification.html"><small>Bài tiếp theo →</small><span>Assertions và Verification</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="06-test-execution-and-reports.html"><small>← Bài trước</small><span>Chạy test và báo cáo</span></a><a class="next" href="../08-practical-project/labs/07-run-tests-with-maven.html"><small>Bài tiếp theo →</small><span>Lab 07: Test Suite với TestNG và chạy bằng Maven (Bài 11)</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/05-testing-framework/02-junit-fundamentals.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>

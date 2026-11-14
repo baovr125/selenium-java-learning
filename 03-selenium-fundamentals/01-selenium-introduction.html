@@ -28,8 +28,6 @@
     <article id="content" class="md">
 <h1 id="selenium-là-gì">Selenium là gì?</h1>
 <blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 13 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="../02-maven-and-project/09-maven-troubleshooting.html">Troubleshooting</a> · ➡️ <a href="02-webdriver.html">WebDriver Fundamentals</a></p>
 <p>Liên quan: <a href="../01-java-fundamentals/13-java-selenium-cheatsheet.html">Tiếp theo: Java cho Selenium</a> · <a href="02-webdriver.html">WebDriver chi tiết</a> · <a href="../interview/selenium-interview.html">Phỏng vấn</a></p>
 </blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
@@ -171,7 +169,7 @@
 <li><code>WebElement</code>: đại diện <strong>một phần tử trên trang</strong> (click, nhập chữ, đọc text, đọc thuộc tính).</li>
 </ul>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// thao tác cấp trình duyệt</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// thao tác cấp trình duyệt</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span><span class="w">       </span><span class="c1">// thao tác cấp phần tử</span>
 <span class="n">user</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span></code></pre></div>
 <p>Chi tiết: <a href="03-locators.html">selenium/02</a>.</p>
@@ -213,11 +211,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeDriver</span><span class="p">;</span>
 
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">FirstTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">;</span><span class="w">   </span><span class="c1">// đặt địa chỉ site demo của bạn</span>
+
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
 <span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
-<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span><span class="w">   </span><span class="c1">// The Internet</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span><span class="w">   </span><span class="c1">// in ra tiêu đề của trang chủ</span>
 <span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w">                            </span><span class="c1">// luôn giải phóng dù lỗi</span>
 <span class="w">        </span><span class="p">}</span>
@@ -307,24 +307,24 @@
 <p><strong>Câu 2.</strong> <code>close()</code> khác <code>quit()</code>?</p>
 <ul>
 <li>A. Giống nhau</li>
-<li>B. <code>close()</code> đóng cửa sổ hiện tại; <code>quit()</code> kết thúc session</li>
-<li>C. <code>quit()</code> chỉ đóng tab</li>
-<li>D. Không khác</li>
+<li>B. <code>quit()</code> chỉ đóng tab</li>
+<li>C. Không khác</li>
+<li>D. <code>close()</code> đóng cửa sổ hiện tại; <code>quit()</code> kết thúc session</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> <code>quit()</code> đóng mọi cửa sổ và dừng driver.</p>
+<p><strong>Đáp án: D.</strong> <code>quit()</code> đóng mọi cửa sổ và dừng driver.</p>
 </details>
 <p><strong>Câu 3.</strong> <code>WebElement</code> thực chất là?</p>
 <ul>
 <li>A. Bản sao DOM</li>
-<li>B. Một handle tới phần tử trong browser (có thể stale)</li>
-<li>C. Một class HTML</li>
+<li>B. Một class HTML</li>
+<li>C. Một handle tới phần tử trong browser (có thể stale)</li>
 <li>D. Một file</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> DOM đổi thì handle có thể hết hiệu lực.</p>
+<p><strong>Đáp án: C.</strong> DOM đổi thì handle có thể hết hiệu lực.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Explain the Selenium WebDriver architecture.</strong></p>
@@ -378,10 +378,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.chrome.ChromeDriver</span><span class="p">;</span>
 
 <span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">FirstTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://example.com&quot;</span><span class="p">;</span><span class="w">   </span><span class="c1">// đặt địa chỉ site demo của bạn</span>
+
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span>
 <span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">());</span>
 <span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>

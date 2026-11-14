@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="selenium-locators-cách-tìm-phần-tử">Selenium: Locators (cách tìm phần tử)</h1>
-<blockquote>
-<p>🧭 Phase 3 · Selenium Fundamentals · Chapter 15 · Mức ưu tiên: <strong>Essential</strong>
-⬅️ <a href="02-webdriver.html">WebDriver Fundamentals</a> · ➡️ <a href="04-webelement.html">Selenium: WebElement API</a></p>
-<p>Chapter 15 · Liên quan: <a href="README.html">README chương</a> · <a href="04-webelement.html">WebElement</a> · <a href="../08-practical-project/labs/02-locator-practice.html">Practice</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -55,7 +50,7 @@
 </ul>
 <p>🧩 <a href="../../../../src/test/java/tests/Exercise01_LoginTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise01_LoginTest</a>, <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03_WebTablesTest</a> (dùng <code>row.findElements(By.tagName("td"))</code>).</p>
 <h2 id="2-tám-loại-locator">2. Tám loại locator</h2>
-<p>Dựa trên HTML của trang login (the-internet):</p>
+<p>Dựa trên HTML của trang login (site demo):</p>
 <div class="code" data-lang="html"><div class="code-head"><span class="lang">html</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">&lt;input type=&quot;text&quot; name=&quot;username&quot; id=&quot;username&quot;&gt;
 &lt;input type=&quot;password&quot; name=&quot;password&quot; id=&quot;password&quot;&gt;
 &lt;button class=&quot;radius&quot; type=&quot;submit&quot;&gt;&lt;i class=&quot;fa fa-2x fa-sign-in&quot;&gt; Login&lt;/i&gt;&lt;/button&gt;
@@ -102,7 +97,7 @@
 <tr>
 <td>5</td>
 <td><strong>LinkText</strong></td>
-<td><code>By.linkText("Elemental Selenium")</code></td>
+<td><code>By.linkText("&lt;chữ của liên kết&gt;")</code></td>
 <td>Dễ đọc</td>
 <td>Chỉ cho <code>&lt;a&gt;</code>; khớp <strong>toàn bộ</strong> chữ, nhạy hoa/thường; đổi ngôn ngữ thì hỏng</td>
 </tr>
@@ -502,13 +497,13 @@
 <p><strong>Câu 3.</strong> Locator ưu tiên hàng đầu?</p>
 <ul>
 <li>A. XPath tuyệt đối</li>
-<li>B. <code>id</code>/<code>data-testid</code> ổn định</li>
-<li>C. <code>nth-child</code> sâu</li>
-<li>D. Class do framework sinh</li>
+<li>B. <code>nth-child</code> sâu</li>
+<li>C. Class do framework sinh</li>
+<li>D. <code>id</code>/<code>data-testid</code> ổn định</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Ngắn, duy nhất, có nghĩa.</p>
+<p><strong>Đáp án: D.</strong> Ngắn, duy nhất, có nghĩa.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you choose a stable locator?</strong></p>

@@ -27,11 +27,6 @@
   <main>
     <article id="content" class="md">
 <h1 id="implicit-wait">Implicit Wait</h1>
-<blockquote>
-<p>🧭 Phase 4 · Wait and Synchronization · Chapter 19 · Mức ưu tiên: <strong>Important</strong>
-⬅️ <a href="01-wait-introduction.html">Wait Introduction: vì sao Selenium cần Wait?</a> · ➡️ <a href="03-explicit-wait.html">Explicit Wait và WebDriverWait</a></p>
-<p><a href="../03-selenium-fundamentals/README.html">README chương</a> · Trước: <a href="01-wait-introduction.html">Wait Introduction</a> · Tiếp: <a href="03-explicit-wait.html">Explicit Wait</a></p>
-</blockquote>
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
@@ -81,7 +76,7 @@
 </blockquote>
 <h3 id="exercise-2-intermediate">Exercise 2 (Intermediate)</h3>
 <p><strong>Yêu cầu:</strong> Đo thời gian <code>findElements(By.id("khong-co")).isEmpty()</code> khi <strong>có</strong> implicit wait 3 s và khi <strong>không có</strong>.</p>
-<p><strong>Input:</strong> Trang chủ the-internet</p>
+<p><strong>Input:</strong> Trang chủ của site demo</p>
 <p><strong>Expected Output:</strong></p>
 <div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Không implicit: vài ms (đo được 17 ms); có implicit 3 s: ≈ 3000 ms (đo được 3050 ms)</code></pre></div>
 <blockquote>
@@ -108,25 +103,25 @@
 </details>
 <p><strong>Câu 2.</strong> <code>findElements</code> không thấy gì khi có implicit 10 s?</p>
 <ul>
-<li>A. Trả ngay</li>
-<li>B. Chờ đủ 10 s rồi trả list rỗng</li>
+<li>A. Chờ đủ 10 s rồi trả list rỗng</li>
+<li>B. Trả ngay</li>
 <li>C. Ném lỗi ngay</li>
 <li>D. Treo vô hạn</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Lý do dự án cấm implicit.</p>
+<p><strong>Đáp án: A.</strong> Lý do dự án cấm implicit.</p>
 </details>
 <p><strong>Câu 3.</strong> Mặc định của implicit wait là?</p>
 <ul>
-<li>A. 0</li>
-<li>B. 10 s</li>
-<li>C. 30 s</li>
-<li>D. Không xác định</li>
+<li>A. 10 s</li>
+<li>B. 30 s</li>
+<li>C. Không xác định</li>
+<li>D. 0</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> Không chờ.</p>
+<p><strong>Đáp án: D.</strong> Không chờ.</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How does implicit wait work and what is its scope?</strong></p>
@@ -174,7 +169,7 @@
 <details>
 <summary>Lời giải Exercise 2</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">);</span>
 <span class="kt">long</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
 <span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-co&quot;</span><span class="p">));</span>
 <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;không implicit: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; ms&quot;</span><span class="p">);</span>

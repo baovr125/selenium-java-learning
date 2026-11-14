@@ -28,8 +28,7 @@
     <article id="content" class="md">
 <h1 id="cài-đặt-môi-trường">Cài đặt môi trường</h1>
 <blockquote>
-<p>🧭 Phase 1 · Java Fundamentals · Chapter 01 · Mức ưu tiên: <strong>Essential</strong>
-➡️ <a href="01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a></p>
+<p>➡️ <a href="01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a></p>
 <p>Mục tiêu: máy của bạn chạy được <code>.\mvnw.cmd test</code>. <strong>Không cần cài Maven</strong> vì dự án có Maven Wrapper.
 Liên quan: <a href="13-java-selenium-cheatsheet.html">Trước</a> · <a href="../02-maven-and-project/00-project-initialization.html">Sau: Khởi tạo dự án</a> · <a href="../02-maven-and-project/03-maven-wrapper.html">Maven Wrapper</a></p>
 </blockquote>
@@ -230,14 +229,14 @@ Java version: 25.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> JDK khác JRE ở điểm nào?</p>
 <ul>
-<li>A. JDK có trình biên dịch <code>javac</code>, JRE chỉ để chạy</li>
-<li>B. JRE có <code>javac</code>, JDK thì không</li>
-<li>C. Hai thứ giống hệt nhau</li>
+<li>A. JRE có <code>javac</code>, JDK thì không</li>
+<li>B. Hai thứ giống hệt nhau</li>
+<li>C. JDK có trình biên dịch <code>javac</code>, JRE chỉ để chạy</li>
 <li>D. JDK chỉ dùng cho Android</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: A.</strong> JDK = JRE + công cụ phát triển (<code>javac</code>...). Để biên dịch test cần JDK.</p>
+<p><strong>Đáp án: C.</strong> JDK = JRE + công cụ phát triển (<code>javac</code>...). Để biên dịch test cần JDK.</p>
 </details>
 <p><strong>Câu 2.</strong> Dự án chạy được <code>.\mvnw.cmd</code> dù <code>JAVA_HOME</code> trống vì sao?</p>
 <ul>
@@ -253,13 +252,13 @@ Java version: 25.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java
 <p><strong>Câu 3.</strong> Có cần tải <code>chromedriver.exe</code> thủ công cho dự án Selenium 4.52.0?</p>
 <ul>
 <li>A. Có, bắt buộc</li>
-<li>B. Không, Selenium Manager tự tải</li>
-<li>C. Chỉ cần với Firefox</li>
-<li>D. Chỉ trên Linux</li>
+<li>B. Chỉ cần với Firefox</li>
+<li>C. Chỉ trên Linux</li>
+<li>D. Không, Selenium Manager tự tải</li>
 </ul>
 <details>
 <summary>Xem đáp án</summary>
-<p><strong>Đáp án: B.</strong> Từ Selenium 4.6, Selenium Manager tự phát hiện Chrome và tải driver khớp (cần Internet).</p>
+<p><strong>Đáp án: D.</strong> Từ Selenium 4.6, Selenium Manager tự phát hiện Chrome và tải driver khớp (cần Internet).</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. Do you need to install Maven to run a Maven project?</strong></p>
@@ -294,7 +293,7 @@ Java version: 25.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java
 <li>JRE ≠ JDK</li>
 <li>Maven ≠ Maven Wrapper</li>
 </ul>
-<p><strong>Bài tiếp theo:</strong> ➡️ <a href="01-getting-started.html">Java: Getting Started (Introduction, Syntax, Output, Comments)</a></p>
+<p><strong>Bài tiếp theo:</strong> ➡️ <a href="../02-maven-and-project/00-project-initialization.html">Khởi tạo dự án Selenium Java + Maven + TestNG</a></p>
 <h2 id="-reference-solutions">🔑 Reference Solutions</h2>
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
@@ -323,7 +322,7 @@ Java version: 25.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java
 <p>Ghi chú mẫu: <code>Apache Maven 3.9.16</code> · <code>Java version: 25.0.1</code> · <code>Tests run: 1, Failures: 0</code>.</p>
 </details>
     </article>
-    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="README.html"><small>← Bài trước</small><span>Phase 1 — Java Fundamentals (Chapter 01–08)</span></a><a class="next" href="01-getting-started.html"><small>Bài tiếp theo →</small><span>Java: Getting Started (Introduction, Syntax, Output, Comments)</span></a></nav>
+    <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="../02-maven-and-project/README.html"><small>← Bài trước</small><span>Phase 2 — Maven and Project Management (Chapter 09–12)</span></a><a class="next" href="../02-maven-and-project/00-project-initialization.html"><small>Bài tiếp theo →</small><span>Khởi tạo dự án Selenium Java + Maven + TestNG</span></a></nav>
     <footer class="foot">Nguồn: <code>docs/selenium-learning/01-java-fundamentals/00-environment-setup.md</code> · Trang tĩnh sinh bởi <code>tools/build_site.py</code></footer>
   </main>
   <aside id="toc" aria-label="Trong bài này"></aside>
