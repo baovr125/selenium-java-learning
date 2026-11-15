@@ -53,49 +53,98 @@
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">actions</span><span class="p">.</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">el</span><span class="p">).</span><span class="na">click</span><span class="p">().</span><span class="na">build</span><span class="p">().</span><span class="na">perform</span><span class="p">();</span><span class="w">   </span><span class="c1">// build() có thể bỏ; perform() gọi build()</span></code></pre></div>
 <p>Dùng lại <code>Actions</code>: sau <code>perform()</code>, chuỗi đã được xoá, có thể tạo chuỗi mới trên cùng đối tượng (🧩 Ex5 dùng lại <code>actions</code> trong vòng lặp).</p>
 <h2 id="2-mouse-actions">2. Mouse Actions</h2>
+<p><strong>Mọi method dưới đây chỉ "ghi lại" hành động</strong> và trả về chính <code>Actions</code> để nối tiếp; chỉ <code>perform()</code> mới chạy thật.</p>
+<h4 id="perform-và-build"><code>perform()</code> và <code>build()</code></h4>
+<ul>
+<li><strong><code>perform()</code>:</strong> <strong>thực thi</strong> toàn bộ chuỗi đã ghi, rồi xoá chuỗi. Trả <code>void</code>. Quên <code>perform()</code> → <strong>không có gì xảy ra, không báo lỗi</strong>.</li>
+<li><strong><code>build()</code>:</strong> đóng gói chuỗi thành một đối tượng <code>Action</code> <strong>chưa chạy</strong>. Thường bỏ qua vì <code>perform()</code> tự gọi nó.</li>
+</ul>
+<h4 id="movetoelementwebelement-el"><code>moveToElement(WebElement el)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> di chuyển con trỏ chuột tới <strong>tâm</strong> phần tử (như người dùng đưa chuột lên — <strong>hover</strong>). Tự cuộn phần tử vào vùng nhìn nếu cần.</li>
+<li><strong>Ví dụ:</strong> <code>actions.moveToElement(menu).perform();</code> → mở menu thả xuống khi hover.</li>
+<li><strong>Lưu ý:</strong> sau hover, nội dung hiện ra có thể chậm → chờ bằng <code>visibilityOf</code>.</li>
+</ul>
+<h4 id="movetoelementwebelement-el-int-xoffset-int-yoffset"><code>moveToElement(WebElement el, int xOffset, int yOffset)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> như trên nhưng <strong>lệch</strong> <code>x</code>, <code>y</code> pixel <strong>so với tâm</strong> phần tử (Selenium 4).</li>
+<li><strong>Lưu ý:</strong> offset ra ngoài vùng nhìn → <code>MoveTargetOutOfBoundsException</code>.</li>
+</ul>
+<h4 id="movebyoffsetint-x-int-y"><code>moveByOffset(int x, int y)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> di chuyển chuột <strong>tương đối</strong> so với <strong>vị trí con trỏ hiện tại</strong> (không cần phần tử).</li>
+<li><strong>Lưu ý:</strong> phụ thuộc vị trí trước đó; dễ ra ngoài cửa sổ.</li>
+</ul>
+<h4 id="click--clickwebelement-el"><code>click()</code> / <code>click(WebElement el)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>click()</code> bấm chuột trái <strong>tại vị trí con trỏ hiện tại</strong>; <code>click(el)</code> = di chuột tới <code>el</code> rồi click.</li>
+<li><strong>Khác <code>element.click()</code>:</strong> <code>Actions.click</code> mô phỏng một chuỗi chuột nên kết hợp được với phím (ví dụ giữ Ctrl).</li>
+</ul>
+<h4 id="doubleclickwebelement-el"><code>doubleClick(WebElement el)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>click đúp</strong> vào phần tử. Dùng cho chỉnh sửa tại chỗ, chọn từ.</li>
+</ul>
+<h4 id="contextclickwebelement-el"><code>contextClick(WebElement el)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>click chuột phải</strong> — mở menu ngữ cảnh.</li>
+</ul>
+<h4 id="clickandholdwebelement-el-và-release"><code>clickAndHold(WebElement el)</code> và <code>release()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>clickAndHold</code> <strong>nhấn giữ</strong> chuột trái trên <code>el</code> mà chưa nhả; <code>release()</code> <strong>nhả</strong> chuột tại vị trí hiện tại (bản <code>release(el)</code> di chuột tới <code>el</code> rồi nhả).</li>
+<li><strong>Dùng khi:</strong> kéo thả tự điều khiển từng bước, hoặc kéo thanh trượt.</li>
+</ul>
+<h4 id="draganddropwebelement-source-webelement-target"><code>dragAndDrop(WebElement source, WebElement target)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kéo <code>source</code> thả lên <code>target</code>. <strong>Tương đương</strong> <code>clickAndHold(source).moveToElement(target).release()</code>. 🧩 Ex9.</li>
+<li><strong>Lưu ý:</strong> với HTML5 Drag &amp; Drop có thể không kích hoạt — xem mục 2.2.</li>
+</ul>
+<h4 id="draganddropbywebelement-source-int-x-int-y"><code>dragAndDropBy(WebElement source, int x, int y)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kéo <code>source</code> đi một đoạn <code>x</code>, <code>y</code> pixel (không cần phần tử đích). Hợp kéo thanh trượt.</li>
+</ul>
+<h4 id="scrolltoelementwebelement-el-selenium-4"><code>scrollToElement(WebElement el)</code> (Selenium 4)</h4>
+<ul>
+<li><strong>Làm gì:</strong> cuộn trang để <code>el</code> vào vùng nhìn (dưới đáy cửa sổ).</li>
+<li><strong>Lưu ý:</strong> có thêm <code>scrollByAmount(deltaX, deltaY)</code> để cuộn một lượng cố định.</li>
+</ul>
+<h4 id="pauseduration"><code>pause(Duration)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chèn <strong>khoảng nghỉ</strong> giữa các bước của chuỗi (ví dụ chờ tooltip). </li>
+<li><strong>Lưu ý:</strong> là nghỉ cứng trong chuỗi; ưu tiên chờ điều kiện sau <code>perform()</code>.</li>
+</ul>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Ý nghĩa</th>
+<th>Lệnh</th>
+<th>Thao tác với phần tử?</th>
+<th>Dùng để</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>moveToElement(el)</code></td>
-<td>Di chuột (hover) vào <strong>tâm</strong> phần tử</td>
+<td><code>moveToElement</code></td>
+<td>Có (di chuột tới)</td>
+<td>Hover</td>
 </tr>
 <tr>
-<td><code>moveToElement(el, xOffset, yOffset)</code></td>
-<td>Hover với độ lệch (Selenium 4: offset tính từ <strong>tâm</strong>)</td>
+<td><code>moveByOffset</code></td>
+<td>Không (tương đối con trỏ)</td>
+<td>Di chuyển từng bước</td>
 </tr>
 <tr>
-<td><code>click()</code>, <code>click(el)</code></td>
-<td>Click trái</td>
+<td><code>click</code> / <code>doubleClick</code> / <code>contextClick</code></td>
+<td>Click tại con trỏ hoặc tại phần tử</td>
+<td>Trái / đúp / phải</td>
 </tr>
 <tr>
-<td><code>doubleClick(el)</code></td>
-<td>Click đúp</td>
+<td><code>clickAndHold</code> + <code>release</code></td>
+<td>Nhấn giữ rồi thả</td>
+<td>Kéo thả thủ công</td>
 </tr>
 <tr>
-<td><code>contextClick(el)</code></td>
-<td>Click phải</td>
-</tr>
-<tr>
-<td><code>clickAndHold(el)</code> / <code>release()</code></td>
-<td>Nhấn giữ / thả</td>
-</tr>
-<tr>
-<td><code>dragAndDrop(source, target)</code></td>
-<td>Kéo thả (🧩 Ex9)</td>
-</tr>
-<tr>
-<td><code>dragAndDropBy(source, x, y)</code></td>
-<td>Kéo theo toạ độ</td>
-</tr>
-<tr>
-<td><code>scrollToElement(el)</code></td>
-<td>Selenium 4: cuộn đến phần tử</td>
+<td><code>dragAndDrop</code> / <code>dragAndDropBy</code></td>
+<td>Kéo gộp</td>
+<td>Kéo thả nhanh</td>
 </tr>
 </tbody>
 </table></div>
@@ -132,28 +181,34 @@
 <thead>
 <tr>
 <th>Method</th>
-<th>Ý nghĩa</th>
+<th>Làm chính xác gì</th>
+<th>Ví dụ</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>sendKeys(CharSequence...)</code></td>
-<td>Gõ vào phần tử đang focus</td>
+<td>Gõ vào <strong>phần tử đang focus</strong> (không cần chỉ định)</td>
+<td><code>actions.sendKeys("abc")</code></td>
 </tr>
 <tr>
-<td><code>sendKeys(el, text)</code></td>
-<td>Gõ vào phần tử cụ thể</td>
+<td><code>sendKeys(WebElement el, CharSequence...)</code></td>
+<td><strong>Click vào <code>el</code></strong> để focus rồi gõ</td>
+<td><code>actions.sendKeys(input, "abc")</code></td>
 </tr>
 <tr>
+<td><code>keyDown(Keys key)</code></td>
+<td><strong>Nhấn giữ</strong> một phím (chưa nhả) — thường là phím bổ trợ <code>SHIFT</code>/<code>CONTROL</code>/<code>ALT</code></td>
 <td><code>keyDown(Keys.SHIFT)</code></td>
-<td>Nhấn giữ phím</td>
 </tr>
 <tr>
+<td><code>keyUp(Keys key)</code></td>
+<td><strong>Nhả</strong> phím đang giữ</td>
 <td><code>keyUp(Keys.SHIFT)</code></td>
-<td>Nhả phím</td>
 </tr>
 </tbody>
 </table></div>
+<p>Quy tắc: mỗi <code>keyDown</code> phải có <code>keyUp</code> tương ứng trong chuỗi; thiếu <code>keyUp</code> thì phím "kẹt" cho tới hết phiên.</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">actions</span><span class="p">.</span><span class="na">keyDown</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">SHIFT</span><span class="p">)</span>
 <span class="w">       </span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;selenium&quot;</span><span class="p">)</span><span class="w">          </span><span class="c1">// gõ chữ HOA</span>
 <span class="w">       </span><span class="p">.</span><span class="na">keyUp</span><span class="p">(</span><span class="n">Keys</span><span class="p">.</span><span class="na">SHIFT</span><span class="p">)</span>

@@ -142,6 +142,82 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-một-dòng-code-tái-hiện-cho-từng-exception">2.1. Một dòng code tái hiện cho từng exception</h3>
+<p>Học bằng cách <strong>gây ra lỗi có chủ đích</strong>: biết dòng code nào sinh ra lỗi nào, bạn sẽ nhận ra nó ngay khi gặp.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Dòng code gây lỗi (tình huống)</th>
+<th>Lỗi do ai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoSuchElementException</code></td>
+<td><code>driver.findElement(By.id("khong-ton-tai"))</code></td>
+<td>Locator sai, hoặc phần tử chưa xuất hiện</td>
+</tr>
+<tr>
+<td><code>TimeoutException</code></td>
+<td><code>wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("khong-ton-tai")))</code></td>
+<td>Điều kiện không đạt trong thời gian chờ</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td><code>el = findElement(...); driver.navigate().refresh(); el.click();</code></td>
+<td>Dùng handle cũ sau khi DOM đổi</td>
+</tr>
+<tr>
+<td><code>ElementNotInteractableException</code></td>
+<td><code>driver.findElement(By.id("hidden-input")).sendKeys("x")</code> (phần tử đang <code>display:none</code>)</td>
+<td>Phần tử có nhưng không tương tác được</td>
+</tr>
+<tr>
+<td><code>ElementClickInterceptedException</code></td>
+<td><code>click()</code> nút khi có modal/overlay đang che</td>
+<td>Có phần tử khác nhận click</td>
+</tr>
+<tr>
+<td><code>InvalidSelectorException</code></td>
+<td><code>By.className("a b")</code> hoặc XPath sai cú pháp</td>
+<td>Viết locator sai</td>
+</tr>
+<tr>
+<td><code>NoSuchWindowException</code></td>
+<td><code>driver.close(); driver.getTitle();</code> (chỉ có một cửa sổ, vừa đóng)</td>
+<td>Dùng cửa sổ đã đóng</td>
+</tr>
+<tr>
+<td><code>NoSuchFrameException</code></td>
+<td><code>driver.switchTo().frame("khong-co")</code></td>
+<td>Tên/id iframe sai hoặc iframe chưa tải</td>
+</tr>
+<tr>
+<td><code>NoAlertPresentException</code></td>
+<td><code>driver.switchTo().alert()</code> khi chưa có popup</td>
+<td>Gọi quá sớm</td>
+</tr>
+<tr>
+<td><code>UnhandledAlertException</code></td>
+<td>Có popup đang mở mà gọi <code>driver.findElement(...)</code></td>
+<td>Chưa xử lý popup</td>
+</tr>
+<tr>
+<td><code>SessionNotCreatedException</code></td>
+<td><code>new ChromeDriver()</code> khi Chrome và driver không tương thích</td>
+<td>Môi trường</td>
+</tr>
+<tr>
+<td><code>JavascriptException</code></td>
+<td><code>js.executeScript("return abc.def;")</code> (biến <code>abc</code> không tồn tại)</td>
+<td>Script sai</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Một số dòng trên (ví dụ <code>driver.close(); driver.getTitle();</code>) có thể ra loại exception khác nhau tuỳ driver/phiên bản; mục đích là nhớ <strong>tình huống</strong> gây lỗi.</p>
+</blockquote>
 <h3 id="-bẫy-import-nosuchelementexception-bị-ambiguous">⚠️ Bẫy import: <code>NoSuchElementException</code> bị "ambiguous"</h3>
 <p>Cả <code>java.util</code> và <code>org.openqa.selenium</code> đều có class tên <code>NoSuchElementException</code>. Nếu bạn dùng import kiểu <code>*</code> cho cả hai, trình biên dịch báo:</p>
 <div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">error: reference to NoSuchElementException is ambiguous

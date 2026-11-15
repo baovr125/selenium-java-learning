@@ -189,6 +189,84 @@
 <p>Chạy ghi đè: <code>.\mvnw.cmd test "-Dbrowser=firefox" "-Dtimeout.seconds=30"</code>.</p>
 <p>Nhờ cơ chế <strong>chuỗi ưu tiên</strong> (<code>-D</code> &gt; file &gt; mặc định) bạn có cùng mã nguồn cho local và CI.</p>
 <p>⚠️ Chỉ khi Surefire <strong>chuyển</strong> system property sang JVM test thì <code>System.getProperty</code> thấy giá trị từ <code>-D</code> — mặc định Surefire sao chép property của Maven; hoặc khai báo tường minh qua <code>systemPropertyVariables</code> (<a href="../02-maven-and-project/02-pom-xml.html">maven/02</a>). Hãy tự kiểm chứng bằng cách in giá trị ra.</p>
+<h3 id="41-từng-method-java-dùng-để-đọc-cấu-hình">4.1. Từng method Java dùng để đọc cấu hình</h3>
+<h4 id="classloadergetresourceasstreamstring-name"><code>ClassLoader.getResourceAsStream(String name)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> mở file nằm trong <strong>classpath</strong> (với Maven: thư mục <code>src/test/resources</code> sau khi build) thành một <code>InputStream</code>.</li>
+<li><strong>Trả về:</strong> <code>InputStream</code>, hoặc <strong><code>null</code></strong> nếu không tìm thấy file (không ném exception).</li>
+<li><strong>Ví dụ:</strong> <code>Config.class.getClassLoader().getResourceAsStream("config.properties")</code></li>
+<li><strong>Lưu ý:</strong> tên không có <code>/</code> đầu, và đường dẫn tính từ gốc classpath. Luôn kiểm tra <code>null</code> (xem code ở trên) và đóng stream bằng <code>try-with-resources</code>.</li>
+</ul>
+<h4 id="propertiesloadinputstream--propertiesloadreader"><code>Properties.load(InputStream)</code> / <code>Properties.load(Reader)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đọc file <code>key=value</code> vào đối tượng <code>Properties</code>.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Lưu ý:</strong> bản <code>InputStream</code> đọc theo <strong>ISO-8859-1</strong> → ký tự tiếng Việt có thể hỏng. Cần UTF-8 thì dùng <code>load(new InputStreamReader(in, StandardCharsets.UTF_8))</code>.</li>
+</ul>
+<h4 id="propertiesgetpropertystring-key-và-getpropertystring-key-string-defaultvalue"><code>Properties.getProperty(String key)</code> và <code>getProperty(String key, String defaultValue)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> lấy giá trị theo khoá.</li>
+<li><strong>Trả về:</strong> <code>String</code>. Bản 1 tham số trả <strong><code>null</code></strong> nếu không có khoá; bản 2 tham số trả <code>defaultValue</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">PROPS</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">&quot;base.url&quot;</span><span class="p">);</span><span class="w">                 </span><span class="c1">// null nếu thiếu</span>
+<span class="n">String</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PROPS</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">&quot;timeout.seconds&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;15&quot;</span><span class="p">);</span><span class="w">    </span><span class="c1">// &quot;15&quot; nếu thiếu</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> luôn là <code>String</code>; số phải tự <code>Integer.parseInt(...)</code>. <code>NumberFormatException</code> nếu giá trị không phải số.</li>
+</ul>
+<h4 id="systemgetpropertystring-key-string-defaultvalue"><code>System.getProperty(String key[, String defaultValue])</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đọc <strong>system property</strong> của JVM — chính là giá trị bạn truyền bằng <code>-Dkey=value</code> khi chạy.</li>
+<li><strong>Trả về:</strong> <code>String</code>; <code>null</code> (hoặc <code>defaultValue</code>) nếu chưa đặt.</li>
+<li><strong>Ví dụ:</strong> <code>.\mvnw.cmd test "-Dbrowser=firefox"</code> rồi <code>System.getProperty("browser", "chrome")</code> → <code>"firefox"</code>.</li>
+</ul>
+<h4 id="systemgetenvstring-name"><code>System.getenv(String name)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đọc <strong>biến môi trường</strong> của hệ điều hành (đặt bằng <code>$env:APP_PASSWORD</code> hoặc secret của CI).</li>
+<li><strong>Trả về:</strong> <code>String</code>, hoặc <code>null</code> nếu chưa đặt.</li>
+<li><strong>Lưu ý:</strong> không phải <code>-D</code>. Tên phân biệt hoa/thường trên Linux, <strong>không</strong> phân biệt trên Windows. Phù hợp cho <strong>bí mật</strong> (mật khẩu, token).</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nguồn</th>
+<th>Cách đặt</th>
+<th>Cách đọc</th>
+<th>Thiếu thì</th>
+<th>Dùng cho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tham số <code>-D</code></td>
+<td><code>mvnw test -Dbrowser=firefox</code></td>
+<td><code>System.getProperty("browser")</code></td>
+<td><code>null</code></td>
+<td>Đổi giá trị cho một lần chạy</td>
+</tr>
+<tr>
+<td>Biến môi trường</td>
+<td><code>$env:APP_PASSWORD="..."</code></td>
+<td><code>System.getenv("APP_PASSWORD")</code></td>
+<td><code>null</code></td>
+<td>Bí mật, CI</td>
+</tr>
+<tr>
+<td>File properties</td>
+<td><code>config.properties</code> trong resources</td>
+<td><code>PROPS.getProperty(key)</code></td>
+<td><code>null</code></td>
+<td>Cấu hình mặc định</td>
+</tr>
+<tr>
+<td>Hằng số trong code</td>
+<td><code>"chrome"</code></td>
+<td>Trực tiếp</td>
+<td>—</td>
+<td>Giá trị mặc định cuối cùng</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="5-nhiều-môi-trường">5. Nhiều môi trường</h2>
 <div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">src/test/resources/
 ├── config.properties            # mặc định
@@ -211,6 +289,48 @@
 <span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">getFirstSelectedOption</span><span class="p">().</span><span class="na">getAttribute</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>Dữ liệu lớn, ngoài code: đọc file rồi trả <code>Object[][]</code>.</p>
+<h3 id="61-từng-thành-phần-của-dataprovider">6.1. Từng thành phần của <code>@DataProvider</code></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@DataProvider(name = "x")</code></td>
+<td>Đặt tên để test tham chiếu bằng <code>dataProvider = "x"</code></td>
+<td>Không đặt <code>name</code> thì tên mặc định là <strong>tên method</strong></td>
+</tr>
+<tr>
+<td>Trả về <code>Object[][]</code></td>
+<td>Mỗi hàng <code>Object[]</code> = một lần chạy test; số phần tử mỗi hàng = số tham số của test</td>
+<td>Số/kiểu không khớp → lỗi lúc chạy</td>
+</tr>
+<tr>
+<td>Trả về <code>Iterator&lt;Object[]&gt;</code></td>
+<td>Giống trên nhưng sinh dần từng hàng</td>
+<td>Hợp dữ liệu lớn</td>
+</tr>
+<tr>
+<td><code>@DataProvider(parallel = true)</code></td>
+<td>Chạy các hàng dữ liệu <strong>song song</strong></td>
+<td>Cần driver riêng mỗi luồng</td>
+</tr>
+<tr>
+<td><code>@Test(dataProvider = "x", dataProviderClass = TestData.class)</code></td>
+<td>Lấy dữ liệu từ class khác</td>
+<td>Method provider phải <strong><code>static</code></strong></td>
+</tr>
+<tr>
+<td><code>@Parameters("browser")</code> + <code>@Optional("chrome")</code></td>
+<td>Nhận giá trị từ <code>testng.xml</code>; <code>@Optional</code> là mặc định khi XML thiếu</td>
+<td>Dùng cho cấu hình ít thay đổi, không phải bảng dữ liệu</td>
+</tr>
+</tbody>
+</table></div>
 <h3 id="csv-không-cần-thư-viện">CSV (không cần thư viện)</h3>
 <p><code>src/test/resources/login.csv</code>:</p>
 <div class="code" data-lang="csv"><div class="code-head"><span class="lang">csv</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">username,password,expected

@@ -48,21 +48,53 @@
 <p>Interface cho phép chạy <strong>JavaScript ngay trong trang</strong> đang mở. <code>ChromeDriver</code> implement nó nên bạn ép kiểu:</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">js</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w">     </span><span class="c1">// 🧩 Ex7</span>
 <span class="n">Object</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return document.title;&quot;</span><span class="p">);</span></code></pre></div>
+<h4 id="executescriptstring-script-object-args"><code>executeScript(String script, Object... args)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy đoạn JavaScript <strong>ngay trong trang</strong> hiện tại như một hàm; chạy xong là trả về. Các <code>args</code> thành <code>arguments[0]</code>, <code>arguments[1]</code>... trong script.</li>
+<li><strong>Trả về:</strong> <code>Object</code> — là giá trị sau từ khoá <code>return</code> trong script (xem bảng ánh xạ kiểu ở mục 2). <strong>Không có <code>return</code> → trả <code>null</code>.</strong></li>
+<li><strong>Khi lỗi:</strong> script sai → <code>JavascriptException</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="p">)</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return document.title;&quot;</span><span class="p">);</span><span class="w">       </span><span class="c1">// đọc</span>
+<span class="n">js</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;window.scrollTo(0, 0);&quot;</span><span class="p">);</span><span class="w">                               </span><span class="c1">// hành động, không cần return</span></code></pre></div>
+<h4 id="executeasyncscriptstring-script-object-args"><code>executeAsyncScript(String script, Object... args)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy JavaScript <strong>bất đồng bộ</strong>: Selenium <strong>chờ</strong> cho tới khi script <strong>gọi callback cuối cùng</strong> (<code>arguments[arguments.length - 1]</code>) rồi lấy giá trị truyền vào callback đó.</li>
+<li><strong>Trả về:</strong> <code>Object</code> — giá trị truyền cho callback.</li>
+<li><strong>Khi lỗi:</strong> không gọi callback trong <code>scriptTimeout</code> (mặc định 30 s) → <code>ScriptTimeoutException</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Object</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">js</span><span class="p">.</span><span class="na">executeAsyncScript</span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;var done = arguments[arguments.length - 1];&quot;</span>
+<span class="w">  </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;setTimeout(function() { done(&#39;xong&#39;); }, 2000);&quot;</span><span class="p">);</span><span class="w">      </span><span class="c1">// đợi 2 giây rồi trả &#39;xong&#39;</span></code></pre></div>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Ý nghĩa</th>
+<th></th>
+<th><code>executeScript</code></th>
+<th><code>executeAsyncScript</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>executeScript(String script, Object... args)</code></td>
-<td>Chạy <strong>đồng bộ</strong>, trả giá trị</td>
+<td>Khi nào kết thúc</td>
+<td>Khi script chạy xong</td>
+<td>Khi script <strong>gọi callback</strong></td>
 </tr>
 <tr>
-<td><code>executeAsyncScript(String script, Object... args)</code></td>
-<td>Chạy bất đồng bộ, kết thúc khi gọi callback cuối (chịu <code>scriptTimeout</code>)</td>
+<td>Lấy kết quả</td>
+<td>Từ khoá <code>return</code></td>
+<td>Đối số truyền vào callback</td>
+</tr>
+<tr>
+<td>Chịu <code>scriptTimeout</code></td>
+<td>Không</td>
+<td><strong>Có</strong></td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Phần lớn trường hợp</td>
+<td>Cần chờ một tác vụ JS bất đồng bộ (<code>setTimeout</code>, <code>fetch</code>)</td>
 </tr>
 </tbody>
 </table></div>
@@ -102,48 +134,59 @@
 <tr>
 <th>Mục đích</th>
 <th>Script</th>
+<th>Giải thích từng phần</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Cuộn xuống đáy</td>
 <td><code>window.scrollTo(0, document.body.scrollHeight)</code></td>
+<td><code>scrollTo(x, y)</code> cuộn cửa sổ tới toạ độ; <code>document.body.scrollHeight</code> là <strong>chiều cao toàn bộ nội dung</strong> → cuộn tới cuối trang</td>
 </tr>
 <tr>
 <td>Cuộn lên đầu</td>
 <td><code>window.scrollTo(0, 0)</code></td>
+<td>Toạ độ <code>(0, 0)</code> là góc trên cùng bên trái</td>
 </tr>
 <tr>
 <td>Cuộn tới phần tử</td>
 <td><code>arguments[0].scrollIntoView({block:'center'})</code></td>
+<td><code>arguments[0]</code> là <code>WebElement</code> truyền vào; <code>scrollIntoView</code> cuộn để nó hiện; <code>block:'center'</code> đặt nó <strong>giữa</strong> màn hình</td>
 </tr>
 <tr>
 <td>Click bằng JS</td>
 <td><code>arguments[0].click()</code></td>
+<td>Gọi hàm <code>click()</code> của DOM trực tiếp — <strong>bỏ qua</strong> kiểm tra "có bị che không" như người dùng thật</td>
 </tr>
 <tr>
 <td>Đọc <code>scrollY</code></td>
 <td><code>return window.scrollY;</code></td>
+<td><code>scrollY</code> = số pixel đã cuộn theo chiều dọc; <code>return</code> để trả giá trị về Java</td>
 </tr>
 <tr>
 <td>Đọc trạng thái load</td>
 <td><code>return document.readyState;</code></td>
+<td><code>"loading"</code>, <code>"interactive"</code>, hoặc <code>"complete"</code></td>
 </tr>
 <tr>
 <td>Lấy text ẩn</td>
 <td><code>return arguments[0].textContent;</code></td>
+<td><code>textContent</code> đọc <strong>mọi chữ</strong> trong phần tử kể cả khi bị ẩn (khác <code>getText()</code>)</td>
 </tr>
 <tr>
 <td>Gán giá trị input</td>
 <td><code>arguments[0].value='abc'</code></td>
+<td>Gán thẳng thuộc tính <code>value</code> — <strong>không sinh</strong> sự kiện gõ phím</td>
 </tr>
 <tr>
 <td>Highlight</td>
 <td><code>arguments[0].style.border='2px solid red'</code></td>
+<td>Đổi CSS viền để nhìn thấy phần tử khi debug</td>
 </tr>
 <tr>
 <td>Xoá thuộc tính <code>readonly</code></td>
 <td><code>arguments[0].removeAttribute('readonly')</code></td>
+<td>Gỡ thuộc tính HTML khỏi phần tử</td>
 </tr>
 </tbody>
 </table></div>

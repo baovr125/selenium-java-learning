@@ -33,6 +33,8 @@
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
+<li>Nói được <strong>từng method</strong> của <code>WebDriver</code> làm gì, trả về gì, khi nào ném exception</li>
+<li>Phân biệt các method gần giống: <code>get</code> / <code>navigate().to</code>, <code>findElement</code> / <code>findElements</code>, <code>getWindowHandle</code> / <code>getWindowHandles</code>, <code>close</code> / <code>quit</code></li>
 <li>Khởi tạo <code>ChromeDriver</code> và cấu hình <code>ChromeOptions</code></li>
 <li>Phân biệt ba loại timeout của <code>manage().timeouts()</code> và <code>WebDriverWait</code></li>
 <li>Hiểu vòng đời driver trong <code>BaseTest</code></li>
@@ -43,49 +45,451 @@
 <li><a href="01-selenium-introduction.html">Selenium Introduction</a></li>
 <li><a href="../01-java-fundamentals/08-oop-concepts.html">Java OOP Concepts</a></li>
 </ul>
-<h2 id="1-interface-webdriver--các-nhóm-method">1. Interface <code>WebDriver</code> — các nhóm method</h2>
+<h2 id="1-interface-webdriver--từng-method-làm-gì">1. Interface <code>WebDriver</code> — từng method làm gì</h2>
+<p><code>WebDriver</code> là <strong>interface</strong> (bản "hợp đồng"): nó khai báo các lệnh bạn có thể gửi cho trình duyệt. <code>ChromeDriver</code>, <code>FirefoxDriver</code>, <code>EdgeDriver</code> là các lớp thực hiện hợp đồng đó. Mọi lệnh bên dưới đều gọi qua biến <code>driver</code>, ví dụ <code>driver.get(...)</code>.</p>
+<p><strong>Cách đọc các thẻ method:</strong> mỗi method có <em>Làm gì</em> · <em>Trả về</em> · <em>Khi lỗi / trường hợp đặc biệt</em> · <em>Ví dụ</em> · <em>Lưu ý</em>.</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Nhóm</th>
+<th>Câu hỏi nhóm này trả lời</th>
 <th>Method</th>
-<th>Ghi chú</th>
+<th>Học kỹ ở</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Điều hướng</td>
+<td>Điều hướng và thông tin trang</td>
+<td>"Mở trang nào? Đang ở đâu?"</td>
 <td><code>get(url)</code>, <code>navigate()</code>, <code>getCurrentUrl()</code>, <code>getTitle()</code>, <code>getPageSource()</code></td>
-<td><a href="05-browser-navigation.html">03</a></td>
+<td>mục 1.1 và <a href="05-browser-navigation.html">05</a></td>
 </tr>
 <tr>
 <td>Tìm phần tử</td>
+<td>"Phần tử nào trên trang?"</td>
 <td><code>findElement(By)</code>, <code>findElements(By)</code></td>
-<td><a href="03-locators.html">02</a></td>
+<td>mục 1.2 và <a href="03-locators.html">03</a></td>
 </tr>
 <tr>
 <td>Quản lý</td>
-<td><code>manage()</code> → <code>window()</code>, <code>timeouts()</code>, <code>getCookies()</code>...</td>
-<td>Mục 3</td>
+<td>"Cấu hình cửa sổ, timeout, cookie"</td>
+<td><code>manage()</code> → <code>window()</code>, <code>timeouts()</code>, cookie</td>
+<td>mục 4, 5, 6 bên dưới</td>
 </tr>
 <tr>
 <td>Chuyển ngữ cảnh</td>
+<td>"Điều khiển iframe, tab, alert nào?"</td>
 <td><code>switchTo()</code> → <code>frame</code>, <code>window</code>, <code>alert</code>, <code>activeElement</code>, <code>defaultContent</code>, <code>newWindow</code></td>
-<td><a href="07-browser-interactions.html">06</a></td>
+<td>mục 1.4 và <a href="07-browser-interactions.html">07</a></td>
 </tr>
 <tr>
 <td>Cửa sổ</td>
+<td>"Đang có những cửa sổ nào?"</td>
 <td><code>getWindowHandle()</code>, <code>getWindowHandles()</code></td>
-<td><a href="07-browser-interactions.html">06</a></td>
+<td>mục 1.5</td>
 </tr>
 <tr>
 <td>Kết thúc</td>
+<td>"Đóng trình duyệt"</td>
 <td><code>close()</code>, <code>quit()</code></td>
-<td><a href="05-browser-navigation.html">03</a></td>
+<td>mục 1.6</td>
 </tr>
 </tbody>
 </table></div>
 <p>Các interface mở rộng mà <code>ChromeDriver</code> cũng implement: <code>JavascriptExecutor</code>, <code>TakesScreenshot</code>, <code>HasDevTools</code>, <code>Interactive</code>...</p>
+<h3 id="11-điều-hướng-và-thông-tin-trang">1.1. Điều hướng và thông tin trang</h3>
+<h4 id="getstring-url"><code>get(String url)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> mở URL trong tab đang focus (như gõ URL vào thanh địa chỉ rồi Enter) và <strong>chờ trang tải xong</strong> theo <code>PageLoadStrategy</code> (mặc định chờ <code>document.readyState = "complete"</code>).</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khi lỗi:</strong> quá <code>pageLoadTimeout</code> (🧩 30 s) → <code>TimeoutException</code>. URL thiếu giao thức (<code>"google.com"</code> thay vì <code>"https://google.com"</code>) → thường là <code>InvalidArgumentException</code> (tên chính xác có thể khác nhẹ tuỳ driver/phiên bản).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/login&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// dòng sau chỉ chạy khi trang đã tải xong</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> URL phải có <code>https://</code> hoặc <code>http://</code>. <code>get()</code> chặn (block) tới khi tải xong nhưng <strong>không</strong> chờ nội dung do JavaScript sinh ra sau đó — việc đó cần Wait.</li>
+</ul>
+<h4 id="navigate--navigation"><code>navigate()</code> → <code>Navigation</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>navigate()</code> không làm gì ngay; nó trả về một đối tượng <code>Navigation</code> có các lệnh điều khiển <strong>lịch sử duyệt web</strong> giống thanh công cụ trình duyệt.</li>
+<li><strong>Trả về:</strong> <code>WebDriver.Navigation</code>. Bốn lệnh của nó:</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Tương đương</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>navigate().to(String url)</code></td>
+<td>Mở URL, chờ tải xong. Thêm một mục vào lịch sử</td>
+<td><code>get(url)</code></td>
+</tr>
+<tr>
+<td><code>navigate().to(URL url)</code></td>
+<td>Như trên nhưng nhận đối tượng <code>java.net.URL</code></td>
+<td><code>get(url.toString())</code></td>
+</tr>
+<tr>
+<td><code>navigate().back()</code></td>
+<td>Quay lại trang <strong>trước</strong> trong lịch sử</td>
+<td>Nút Back</td>
+</tr>
+<tr>
+<td><code>navigate().forward()</code></td>
+<td>Đi tới trang <strong>sau</strong> (chỉ có sau khi đã <code>back()</code>)</td>
+<td>Nút Forward</td>
+</tr>
+<tr>
+<td><code>navigate().refresh()</code></td>
+<td>Tải lại trang hiện tại</td>
+<td>F5</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[type=&#39;submit&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">   </span><span class="c1">// → /secure</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">back</span><span class="p">();</span><span class="w">       </span><span class="c1">// về /login</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">forward</span><span class="p">();</span><span class="w">    </span><span class="c1">// lại /secure</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">refresh</span><span class="p">();</span><span class="w">    </span><span class="c1">// tải lại /secure</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> sau <code>back()</code>, <code>forward()</code>, <code>refresh()</code> mọi <code>WebElement</code> đã tìm <strong>đều stale</strong> (<code>StaleElementReferenceException</code>) — phải tìm lại. <code>back()</code>/<code>forward()</code> khi không có trang trước/sau thường không làm gì.</li>
+</ul>
+<h4 id="getcurrenturl"><code>getCurrentUrl()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả URL của tab đang focus, <strong>sau khi</strong> mọi lần chuyển hướng (redirect) đã xong; có cả phần <code>?query</code> và <code>#fragment</code>.</li>
+<li><strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getCurrentUrl</span><span class="p">();</span><span class="w">                 </span><span class="c1">// &quot;https://the-internet.herokuapp.com/secure&quot;</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">url</span><span class="p">.</span><span class="na">endsWith</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span><span class="w">          </span><span class="c1">// 🧩 Ex1</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> gọi ngay sau <code>click()</code> có thể ra URL <strong>cũ</strong> vì trang chưa kịp chuyển. Luôn chờ <code>wait.until(ExpectedConditions.urlContains("/secure"))</code> rồi mới đọc.</li>
+</ul>
+<h4 id="gettitle"><code>getTitle()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả nội dung thẻ <code>&lt;title&gt;</code> của trang hiện tại (đã bỏ khoảng trắng thừa ở đầu/cuối).</li>
+<li><strong>Trả về:</strong> <code>String</code> (chuỗi rỗng nếu trang không có <code>&lt;title&gt;</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;The Internet&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// 🧩 EnvironmentCheckTest</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> cùng bẫy "đọc quá sớm" với <code>getCurrentUrl()</code>. Title <strong>không</strong> phải tiêu đề <code>&lt;h1&gt;</code> trên trang.</li>
+</ul>
+<h4 id="getpagesource"><code>getPageSource()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả HTML <strong>hiện tại của DOM</strong>, tức là sau khi JavaScript đã sửa trang — <strong>không phải</strong> HTML gốc server gửi về.</li>
+<li><strong>Trả về:</strong> <code>String</code> (có thể rất dài).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kt">boolean</span><span class="w"> </span><span class="n">hasWelcome</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getPageSource</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;Welcome&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// chủ yếu để debug</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> chậm và dễ lệch nếu dùng làm cách chính để assert. Ưu tiên kiểm tra bằng locator.</li>
+</ul>
+<p><strong>Khác nhau giữa các method gần giống trong nhóm này:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>get(url)</code></th>
+<th><code>navigate().to(url)</code></th>
+<th><code>getCurrentUrl()</code></th>
+<th><code>getTitle()</code></th>
+<th><code>getPageSource()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Là lệnh</td>
+<td><strong>Hành động</strong> mở trang</td>
+<td><strong>Hành động</strong> mở trang</td>
+<td><strong>Đọc</strong> thông tin</td>
+<td><strong>Đọc</strong> thông tin</td>
+<td><strong>Đọc</strong> thông tin</td>
+</tr>
+<tr>
+<td>Trả về</td>
+<td><code>void</code></td>
+<td><code>void</code></td>
+<td>URL hiện tại</td>
+<td><code>&lt;title&gt;</code></td>
+<td>Toàn bộ HTML của DOM</td>
+</tr>
+<tr>
+<td>Thuộc</td>
+<td><code>WebDriver</code></td>
+<td><code>Navigation</code></td>
+<td><code>WebDriver</code></td>
+<td><code>WebDriver</code></td>
+<td><code>WebDriver</code></td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Mở trang đầu của test</td>
+<td>Chuỗi thao tác lịch sử (<code>to</code> → <code>back</code> → <code>forward</code>)</td>
+<td>Kiểm tra đã đúng trang</td>
+<td>Kiểm tra đúng trang bằng tiêu đề</td>
+<td>Debug, tìm chuỗi</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><code>get()</code> và <code>navigate().to()</code> <strong>cùng tải URL và cùng chờ tải xong</strong>. Khác biệt chỉ là cách tổ chức API: quy ước thực tế là <code>get()</code> cho lần mở đầu, <code>navigate()</code> khi thao tác lịch sử.</p>
+</blockquote>
+<h3 id="12-tìm-phần-tử">1.2. Tìm phần tử</h3>
+<h4 id="findelementby-by"><code>findElement(By by)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tìm trong trang hiện tại (hoặc <strong>frame đang chọn</strong>) và trả <strong>phần tử đầu tiên</strong> khớp locator, theo thứ tự xuất hiện trong DOM.</li>
+<li><strong>Trả về:</strong> <code>WebElement</code>.</li>
+<li><strong>Khi lỗi:</strong> không có phần tử nào khớp → <code>NoSuchElementException</code> (sau khi hết thời gian implicit wait nếu có bật).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">));</span>
+<span class="n">username</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> locator khớp nhiều phần tử thì chỉ lấy cái <strong>đầu tiên</strong>, không báo lỗi — dễ lấy nhầm nếu locator quá rộng.</li>
+</ul>
+<h4 id="findelementsby-by"><code>findElements(By by)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tìm <strong>tất cả</strong> phần tử khớp locator.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code> (theo thứ tự DOM).</li>
+<li><strong>Khi lỗi:</strong> <strong>không ném</strong> <code>NoSuchElementException</code>; không có phần tử nào thì trả <strong>danh sách rỗng</strong> (<code>size() == 0</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;table#table1 tbody tr&quot;</span><span class="p">));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">rows</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+
+<span class="kt">boolean</span><span class="w"> </span><span class="n">hasError</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="p">)).</span><span class="na">isEmpty</span><span class="p">();</span><span class="w">   </span><span class="c1">// kiểm tra &quot;có tồn tại không&quot; mà không bắt exception</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> khi có implicit wait, <code>findElements</code> vẫn <strong>chờ đủ thời gian</strong> rồi mới trả list rỗng — làm các bước "kiểm tra không tồn tại" chậm đi.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>findElement</code></th>
+<th><code>findElements</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trả về</td>
+<td>1 <code>WebElement</code> (đầu tiên khớp)</td>
+<td><code>List&lt;WebElement&gt;</code> (mọi phần tử khớp)</td>
+</tr>
+<tr>
+<td>Không thấy</td>
+<td>Ném <code>NoSuchElementException</code></td>
+<td>Trả list rỗng</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Thao tác với một phần tử</td>
+<td>Đếm, duyệt, hoặc kiểm tra "có/không có"</td>
+</tr>
+</tbody>
+</table></div>
+<p>Xem cách viết <code>By</code> ở <a href="03-locators.html">03 - Locators</a>.</p>
+<h3 id="13-quản-lý--manage">1.3. Quản lý — <code>manage()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>manage()</code> là <strong>cổng vào</strong> của nhóm cấu hình trình duyệt. Nó trả về <code>WebDriver.Options</code>; từ đó bạn gọi tiếp:</li>
+<li><code>manage().window()</code> → kích thước/vị trí cửa sổ (mục 5)</li>
+<li><code>manage().timeouts()</code> → giới hạn thời gian (mục 4)</li>
+<li><code>manage().addCookie(...)</code>, <code>getCookies()</code>, <code>deleteAllCookies()</code>... → cookie (mục 6)</li>
+<li><strong>Trả về:</strong> <code>WebDriver.Options</code>.</li>
+<li><strong>Lưu ý:</strong> <code>manage()</code> bản thân không làm gì; chỉ có lệnh nối phía sau mới có tác dụng.</li>
+</ul>
+<h3 id="14-chuyển-ngữ-cảnh--switchto">1.4. Chuyển ngữ cảnh — <code>switchTo()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>switchTo()</code> trả về <code>WebDriver.TargetLocator</code>. Mặc định driver "đang nhìn" vào <strong>trang chính của tab đầu tiên</strong>. Iframe, tab khác, alert là những "thế giới" riêng; muốn tìm phần tử bên trong chúng phải <strong>chuyển sang</strong> trước, nếu không <code>findElement</code> ném <code>NoSuchElementException</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Khi lỗi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switchTo().frame(int index)</code></td>
+<td>Vào iframe thứ <code>index</code> (đếm từ <strong>0</strong>)</td>
+<td><code>WebDriver</code></td>
+<td><code>NoSuchFrameException</code></td>
+</tr>
+<tr>
+<td><code>switchTo().frame(String nameOrId)</code></td>
+<td>Vào iframe theo <code>name</code> hoặc <code>id</code></td>
+<td><code>WebDriver</code></td>
+<td><code>NoSuchFrameException</code></td>
+</tr>
+<tr>
+<td><code>switchTo().frame(WebElement frame)</code></td>
+<td>Vào iframe là phần tử bạn đã tìm</td>
+<td><code>WebDriver</code></td>
+<td><code>NoSuchFrameException</code></td>
+</tr>
+<tr>
+<td><code>switchTo().parentFrame()</code></td>
+<td>Ra <strong>một cấp</strong> (iframe lồng nhau)</td>
+<td><code>WebDriver</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>switchTo().defaultContent()</code></td>
+<td>Ra thẳng <strong>trang chính</strong> (ngoài mọi iframe)</td>
+<td><code>WebDriver</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>switchTo().window(String handle)</code></td>
+<td>Chuyển sang tab/cửa sổ có handle đó</td>
+<td><code>WebDriver</code></td>
+<td><code>NoSuchWindowException</code></td>
+</tr>
+<tr>
+<td><code>switchTo().newWindow(WindowType)</code></td>
+<td><strong>Mở</strong> tab/cửa sổ mới (<code>TAB</code>/<code>WINDOW</code>) <strong>và chuyển sang nó</strong></td>
+<td><code>WebDriver</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>switchTo().alert()</code></td>
+<td>Chuyển sang hộp thoại JS (alert/confirm/prompt)</td>
+<td><code>Alert</code></td>
+<td><code>NoAlertPresentException</code></td>
+</tr>
+<tr>
+<td><code>switchTo().activeElement()</code></td>
+<td>Lấy phần tử <strong>đang được focus</strong></td>
+<td><code>WebElement</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">frame</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">);</span><span class="w">                    </span><span class="c1">// vào iframe</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// tìm bên TRONG iframe</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">                      </span><span class="c1">// ra ngoài trang chính</span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">   </span><span class="c1">// mở tab mới nhưng driver vẫn ở tab cũ</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">())</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">))</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">);</span>
+
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">newWindow</span><span class="p">(</span><span class="n">WindowType</span><span class="p">.</span><span class="na">TAB</span><span class="p">);</span><span class="w">             </span><span class="c1">// Selenium 4: mở tab mới và tự chuyển sang</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/windows&quot;</span><span class="p">);</span>
+
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;search&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">focused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">activeElement</span><span class="p">();</span><span class="w">  </span><span class="c1">// chính là ô #search</span>
+<span class="n">focused</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;selenium&quot;</span><span class="p">);</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong></li>
+<li>Sau khi bấm link mở tab mới, <strong>driver không tự chuyển</strong> sang tab đó (khác <code>newWindow(...)</code> thì có) — phải <code>switchTo().window(handle)</code>.</li>
+<li>Quên <code>defaultContent()</code> sau khi làm việc trong iframe → phần tử ngoài iframe "biến mất".</li>
+<li><code>alert()</code> gọi khi chưa có hộp thoại → <code>NoAlertPresentException</code>; chờ bằng <code>ExpectedConditions.alertIsPresent()</code> (<a href="../04-wait-mechanisms/04-expected-conditions.html">Phase 4</a>).</li>
+<li><code>Alert</code> có 4 lệnh: <code>getText()</code>, <code>accept()</code> (OK), <code>dismiss()</code> (Cancel), <code>sendKeys(String)</code> (nhập vào prompt).</li>
+</ul>
+<p>Chi tiết từng tình huống: <a href="07-browser-interactions.html">07 - Browser Interactions</a>.</p>
+<h3 id="15-cửa-sổ--handle">1.5. Cửa sổ — handle</h3>
+<h4 id="getwindowhandle"><code>getWindowHandle()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả "mã định danh" (handle) của <strong>cửa sổ/tab đang focus</strong>. Handle là một chuỗi dạng <code>CDwindow-1A2B3C...</code>, không có ý nghĩa với con người, chỉ dùng để chuyển qua lại.</li>
+<li><strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span><span class="w">   </span><span class="c1">// lưu lại để quay về</span></code></pre></div>
+<h4 id="getwindowhandles"><code>getWindowHandles()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả handle của <strong>tất cả</strong> cửa sổ/tab đang mở trong session.</li>
+<li><strong>Trả về:</strong> <code>Set&lt;String&gt;</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">();</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">all</span><span class="p">.</span><span class="na">size</span><span class="p">());</span><span class="w">     </span><span class="c1">// 2 nếu đang có 2 tab</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> thứ tự trong <code>Set</code> <strong>không đáng tin</strong> — không giả định "phần tử cuối là tab mới nhất"; hãy loại handle <code>main</code> ra. Ngay sau <code>click()</code> mở tab, có thể mới có 1 handle (tab mở bất đồng bộ) → chờ <code>numberOfWindowsToBe(2)</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>getWindowHandle()</code></th>
+<th><code>getWindowHandles()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Trả về</td>
+<td>1 <code>String</code></td>
+<td><code>Set&lt;String&gt;</code></td>
+</tr>
+<tr>
+<td>Phạm vi</td>
+<td>Cửa sổ <strong>đang focus</strong></td>
+<td><strong>Mọi</strong> cửa sổ</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Lưu cửa sổ chính để quay về</td>
+<td>Tìm tab mới vừa mở</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="16-kết-thúc--close-và-quit">1.6. Kết thúc — <code>close()</code> và <code>quit()</code></h3>
+<h4 id="close"><code>close()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đóng <strong>cửa sổ/tab đang focus</strong> (như bấm dấu ✕ của tab đó).</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Lưu ý:</strong> session vẫn sống nếu còn cửa sổ khác. Sau <code>close()</code>, driver <strong>không tự chuyển</strong> sang cửa sổ còn lại — phải <code>switchTo().window(main)</code>, nếu không lệnh sau ném <code>NoSuchWindowException</code>.</li>
+</ul>
+<h4 id="quit"><code>quit()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đóng <strong>toàn bộ</strong> cửa sổ, <strong>kết thúc session</strong> và dừng process <code>chromedriver</code>.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Lưu ý:</strong> sau <code>quit()</code> không dùng được <code>driver</code> nữa. 🧩 <code>BaseTest.tearDown()</code> dùng <code>quit()</code> (đúng).</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>close()</code></th>
+<th><code>quit()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đóng</td>
+<td>Cửa sổ/tab đang focus</td>
+<td>Toàn bộ cửa sổ của session</td>
+</tr>
+<tr>
+<td>Session</td>
+<td>Còn nếu còn cửa sổ khác</td>
+<td><strong>Kết thúc</strong></td>
+</tr>
+<tr>
+<td>Process <code>chromedriver</code></td>
+<td>Có thể còn chạy</td>
+<td>Dừng</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Đóng tab phụ rồi <code>switchTo().window(main)</code></td>
+<td><code>@AfterMethod</code> / <code>@AfterClass</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Chi tiết và ví dụ: <a href="05-browser-navigation.html">05 - Browser Navigation</a>.</p>
 <h2 id="2-khởi-tạo-trình-duyệt">2. Khởi tạo trình duyệt</h2>
 <p>🧩 <strong>Trong dự án</strong> (<a href="../../../../src/test/java/base/BaseTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">BaseTest.setup()</a>):</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w">                                   </span><span class="c1">// 1. mở Chrome</span>
@@ -179,59 +583,193 @@
 </tr>
 </tbody>
 </table></div>
-<h2 id="4-timeouts-3-loại">4. Timeouts (3 loại)</h2>
-<p><code>driver.manage().timeouts()</code> cấu hình 3 giới hạn thời gian <strong>khác nhau hoàn toàn</strong>:</p>
+<h2 id="4-timeouts-3-loại--từng-method">4. Timeouts (3 loại) — từng method</h2>
+<p><code>driver.manage().timeouts()</code> cấu hình 3 giới hạn thời gian <strong>khác nhau hoàn toàn</strong>. Tất cả nhận <code>java.time.Duration</code>.</p>
+<h3 id="41-pageloadtimeoutduration">4.1. <code>pageLoadTimeout(Duration)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đặt thời gian <strong>tối đa chờ một trang tải xong</strong> cho <code>get()</code>, <code>navigate().to()</code>, <code>refresh()</code> và các click gây điều hướng.</li>
+<li><strong>Mặc định:</strong> 300 giây. 🧩 Dự án đặt 30 giây.</li>
+<li><strong>Khi vượt giới hạn:</strong> <code>TimeoutException</code> ném ra từ chính lệnh <code>get()</code> (trang có thể đã tải dở).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">pageLoadTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span><span class="w">   </span><span class="c1">// 🧩 BaseTest</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> mặc định 300 giây quá lâu cho CI, nên đặt giá trị hợp lý.</li>
+</ul>
+<h3 id="42-implicitlywaitduration">4.2. <code>implicitlyWait(Duration)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> bảo driver: mỗi lần <code>findElement</code>/<code>findElements</code> không thấy phần tử thì <strong>cứ thử lại</strong> tới hết thời gian này.</li>
+<li><code>findElement</code>: thấy là trả ngay; hết giờ vẫn không thấy → <code>NoSuchElementException</code>.</li>
+<li><code>findElements</code>: chờ tới khi có <strong>ít nhất 1</strong> phần tử hoặc hết giờ, rồi trả list (rỗng nếu không có).</li>
+<li><strong>Mặc định:</strong> 0 (không chờ).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">implicitlyWait</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span><span class="w">   </span><span class="c1">// 🧩 dự án CỐ Ý KHÔNG dùng</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> áp dụng cho <strong>mọi</strong> lần tìm phần tử trong cả session, nên các kiểm tra "không tồn tại" bị chậm. Không nên trộn với Explicit Wait (thời gian cộng dồn khó đoán). Xem <a href="../04-wait-mechanisms/02-implicit-wait.html">Phase 4 - Implicit Wait</a>.</li>
+</ul>
+<h3 id="43-scripttimeoutduration">4.3. <code>scriptTimeout(Duration)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> thời gian tối đa chờ một đoạn JavaScript <strong>bất đồng bộ</strong> (<code>executeAsyncScript</code>) gọi lại callback.</li>
+<li><strong>Mặc định:</strong> 30 giây.</li>
+<li><strong>Khi vượt giới hạn:</strong> <code>ScriptTimeoutException</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">scriptTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> không ảnh hưởng <code>executeScript</code> thường (đồng bộ).</li>
+</ul>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Timeout</th>
 <th>Method</th>
 <th>Mặc định</th>
-<th>Ý nghĩa</th>
+<th>Giới hạn thời gian của</th>
+<th>Exception khi vượt</th>
 <th>Trong dự án</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Page load</strong></td>
-<td><code>pageLoadTimeout(Duration)</code></td>
+<td><code>pageLoadTimeout</code></td>
 <td>300 s</td>
-<td>Tối đa chờ <code>get()</code>/<code>navigate()</code></td>
+<td>Tải trang (<code>get()</code>, <code>navigate()</code>)</td>
+<td><code>TimeoutException</code></td>
 <td>✅ 30 s</td>
 </tr>
 <tr>
 <td><strong>Implicit wait</strong></td>
-<td><code>implicitlyWait(Duration)</code></td>
+<td><code>implicitlyWait</code></td>
 <td>0</td>
-<td>Thời gian <code>findElement(s)</code> thử lại</td>
-<td>❌ <strong>cố ý không dùng</strong></td>
+<td>Tìm phần tử (<code>findElement(s)</code>)</td>
+<td><code>NoSuchElementException</code> (<code>findElement</code>)</td>
+<td>❌ cố ý không dùng</td>
 </tr>
 <tr>
 <td><strong>Script</strong></td>
-<td><code>scriptTimeout(Duration)</code></td>
+<td><code>scriptTimeout</code></td>
 <td>30 s</td>
-<td>Chờ <code>executeAsyncScript</code></td>
+<td><code>executeAsyncScript</code></td>
+<td><code>ScriptTimeoutException</code></td>
 <td>❌ mặc định</td>
 </tr>
 </tbody>
 </table></div>
-<p>Khi page load vượt giới hạn ⇒ <code>TimeoutException</code> từ <code>driver.get()</code>.</p>
 <blockquote>
-<p><code>WebDriverWait</code> (15 s trong dự án) <strong>không phải</strong> loại timeout nào trong 3 loại trên: nó là <strong>cơ chế chờ ở phía test code</strong>. Xem <a href="../04-wait-mechanisms/01-wait-introduction.html">05</a>.</p>
+<p><code>WebDriverWait</code> (15 s trong dự án) <strong>không phải</strong> loại timeout nào trong 3 loại trên: nó là <strong>cơ chế chờ ở phía test code</strong>. Xem <a href="../04-wait-mechanisms/01-wait-introduction.html">Phase 4</a>.</p>
 </blockquote>
-<h2 id="5-quản-lý-cửa-sổ">5. Quản lý cửa sổ</h2>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">maximize</span><span class="p">();</span><span class="w">                  </span><span class="c1">// 🧩 dự án dùng</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">minimize</span><span class="p">();</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">fullscreen</span><span class="p">();</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">setSize</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Dimension</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span><span class="w"> </span><span class="mi">720</span><span class="p">));</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">setPosition</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
-<span class="n">Dimension</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">getSize</span><span class="p">();</span></code></pre></div>
-<p>Lưu ý: <code>maximize()</code> trong chế độ headless có thể không có hiệu quả như mong đợi → dùng <code>--window-size</code>.</p>
-<h2 id="6-cookie">6. Cookie</h2>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">addCookie</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Cookie</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">));</span>
-<span class="n">Cookie</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookieNamed</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">);</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">deleteAllCookies</span><span class="p">();</span></code></pre></div>
-<p>Ứng dụng: đăng nhập một lần rồi dùng lại cookie phiên cho các test sau (tránh login UI lặp lại).</p>
+<h2 id="5-quản-lý-cửa-sổ--managewindow">5. Quản lý cửa sổ — <code>manage().window()</code></h2>
+<p>Các lệnh dưới đây thao tác <strong>cửa sổ trình duyệt</strong> (không phải trang web bên trong).</p>
+<h3 id="51-maximize">5.1. <code>maximize()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> phóng to cửa sổ kín vùng làm việc của màn hình (như bấm nút □), vẫn còn thanh tiêu đề.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Ví dụ:</strong> <code>driver.manage().window().maximize();</code> 🧩 dự án dùng.</li>
+<li><strong>Lưu ý:</strong> trong <strong>headless</strong> có thể không có hiệu quả như mong đợi → dùng <code>--window-size=W,H</code>.</li>
+</ul>
+<h3 id="52-minimize">5.2. <code>minimize()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> thu cửa sổ xuống thanh taskbar.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Lưu ý:</strong> hiếm dùng trong test; cửa sổ thu nhỏ có thể làm một số thao tác UI lỗi.</li>
+</ul>
+<h3 id="53-fullscreen">5.3. <code>fullscreen()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chuyển sang toàn màn hình (như phím F11): <strong>ẩn</strong> thanh tiêu đề và thanh địa chỉ.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khác <code>maximize()</code>:</strong> <code>maximize</code> vẫn thấy thanh trình duyệt; <code>fullscreen</code> thì không.</li>
+</ul>
+<h3 id="54-setsizedimension-và-getsize">5.4. <code>setSize(Dimension)</code> và <code>getSize()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>setSize</code> đặt kích thước cửa sổ theo pixel; <code>getSize</code> đọc kích thước hiện tại.</li>
+<li><strong>Trả về:</strong> <code>setSize</code> → <code>void</code>; <code>getSize</code> → <code>Dimension</code> (có <code>getWidth()</code>, <code>getHeight()</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">setSize</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Dimension</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span><span class="w"> </span><span class="mi">720</span><span class="p">));</span><span class="w">   </span><span class="c1">// test responsive</span>
+<span class="n">Dimension</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">window</span><span class="p">().</span><span class="na">getSize</span><span class="p">();</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">size</span><span class="p">.</span><span class="na">getWidth</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;x&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">size</span><span class="p">.</span><span class="na">getHeight</span><span class="p">());</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> đây là kích thước <strong>cả cửa sổ</strong> (gồm thanh địa chỉ), nên vùng hiển thị trang nhỏ hơn một chút.</li>
+</ul>
+<h3 id="55-setpositionpoint-và-getposition">5.5. <code>setPosition(Point)</code> và <code>getPosition()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đặt/đọc vị trí <strong>góc trên bên trái</strong> của cửa sổ trên màn hình (pixel).</li>
+<li><strong>Trả về:</strong> <code>setPosition</code> → <code>void</code>; <code>getPosition</code> → <code>Point</code> (có <code>getX()</code>, <code>getY()</code>).</li>
+<li><strong>Ví dụ:</strong> <code>driver.manage().window().setPosition(new Point(0, 0));</code></li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Hiệu ứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maximize()</code></td>
+<td>Kín màn hình, còn thanh tiêu đề</td>
+</tr>
+<tr>
+<td><code>fullscreen()</code></td>
+<td>Kín màn hình, ẩn cả thanh tiêu đề (như F11)</td>
+</tr>
+<tr>
+<td><code>minimize()</code></td>
+<td>Thu xuống taskbar</td>
+</tr>
+<tr>
+<td><code>setSize(...)</code></td>
+<td>Kích thước cố định theo pixel (headless/CI nên dùng)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-cookie--manage">6. Cookie — <code>manage()</code></h2>
+<p><strong>Cookie</strong> là dữ liệu nhỏ trình duyệt lưu theo từng website (thường chứa phiên đăng nhập). Ứng dụng: đăng nhập một lần rồi dùng lại cookie phiên cho các test sau (tránh login UI lặp lại).</p>
+<h3 id="61-addcookiecookie">6.1. <code>addCookie(Cookie)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> thêm một cookie vào trình duyệt cho <strong>website của trang đang mở</strong>.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khi lỗi:</strong> cookie không thuộc domain của trang hiện tại (hoặc đang ở <code>about:blank</code>) → <code>InvalidCookieDomainException</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">);</span><span class="w">                                    </span><span class="c1">// PHẢI mở đúng website trước</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">addCookie</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Cookie</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">navigate</span><span class="p">().</span><span class="na">refresh</span><span class="p">();</span><span class="w">                             </span><span class="c1">// tải lại để trang dùng cookie</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> cookie có hiệu lực cho các request <strong>sau</strong> đó; trang đã tải sẽ không tự thay đổi.</li>
+</ul>
+<h3 id="62-getcookienamedstring-name">6.2. <code>getCookieNamed(String name)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> lấy cookie theo tên.</li>
+<li><strong>Trả về:</strong> <code>Cookie</code>, hoặc <strong><code>null</code></strong> nếu không có cookie tên đó.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Cookie</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookieNamed</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> nhớ kiểm tra <code>null</code> — không ném exception.</li>
+</ul>
+<h3 id="63-getcookies">6.3. <code>getCookies()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> lấy <strong>tất cả</strong> cookie của website hiện tại.</li>
+<li><strong>Trả về:</strong> <code>Set&lt;Cookie&gt;</code> (rỗng nếu không có).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Cookie</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookies</span><span class="p">())</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;=&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="na">getValue</span><span class="p">());</span></code></pre></div>
+<h3 id="64-deletecookienamedstring-và-deletecookiecookie">6.4. <code>deleteCookieNamed(String)</code> và <code>deleteCookie(Cookie)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> xoá <strong>một</strong> cookie, theo tên hoặc theo đối tượng <code>Cookie</code>.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Lưu ý:</strong> cookie không tồn tại thì không báo lỗi.</li>
+</ul>
+<h3 id="65-deleteallcookies">6.5. <code>deleteAllCookies()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> xoá <strong>mọi</strong> cookie của website hiện tại.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Ví dụ:</strong> <code>driver.manage().deleteAllCookies();</code> — dọn phiên đăng nhập giữa các test để chúng <strong>độc lập</strong>.</li>
+</ul>
 <h2 id="7-browser-session">7. Browser Session</h2>
 <ul>
 <li><strong>Session</strong> = một "cuộc hội thoại" giữa test và browser; giữ cookie, localStorage, cửa sổ, timeout.</li>
@@ -353,6 +891,18 @@
 <blockquote>
 <p>💡 <strong>Hint:</strong> Java 21: <code>switch</code> expression.</p>
 </blockquote>
+<h3 id="exercise-4-đoán-trước-khi-chạy">Exercise 4 (Đoán trước khi chạy)</h3>
+<p><strong>Yêu cầu:</strong> Với mỗi dòng, <strong>viết dự đoán</strong> rồi mới chạy kiểm tra (trên <code>https://the-internet.herokuapp.com</code>):</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;the-internet.herokuapp.com&quot;</span><span class="p">);</span><span class="w">                       </span><span class="c1">// (a) thiếu https://</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">BASE_URL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/login&quot;</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">();</span><span class="w">    </span><span class="c1">// (b) giá trị n1? có exception không?</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">));</span><span class="w">                     </span><span class="c1">// (c)</span>
+<span class="n">Cookie</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookieNamed</span><span class="p">(</span><span class="s">&quot;khong-co&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">// (d) cookie không tồn tại</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">alert</span><span class="p">();</span><span class="w">                                       </span><span class="c1">// (e) khi chưa có alert nào</span></code></pre></div>
+<p><strong>Expected Output:</strong> Ghi dự đoán (kết quả hoặc tên exception) cho 5 dòng, rồi so với thực tế.</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Với (a)(c)(e) hãy nhớ tên exception; với (b) xem <code>findElements</code> khác <code>findElement</code> ở điểm nào; với (d) xem thẻ <code>getCookieNamed</code>.</p>
+</blockquote>
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Timeout nào KHÔNG thuộc <code>manage().timeouts()</code>?</p>
 <ul>
@@ -387,6 +937,39 @@
 <summary>Xem đáp án</summary>
 <p><strong>Đáp án: C.</strong> Tránh <code>NullPointerException</code> che lỗi gốc.</p>
 </details>
+<p><strong>Câu 4.</strong> Không có phần tử nào khớp locator. Điều gì đúng?</p>
+<ul>
+<li>A. <code>findElement</code> trả <code>null</code></li>
+<li>B. <code>findElements</code> ném <code>NoSuchElementException</code></li>
+<li>C. <code>findElement</code> ném <code>NoSuchElementException</code>, <code>findElements</code> trả list rỗng</li>
+<li>D. Cả hai đều trả list rỗng</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: C.</strong> Vì vậy <code>findElements(...).isEmpty()</code> là cách kiểm tra "không tồn tại" mà không cần <code>try/catch</code>.</p>
+</details>
+<p><strong>Câu 5.</strong> Bấm một link mở tab mới. Câu nào đúng?</p>
+<ul>
+<li>A. Driver tự chuyển sang tab mới</li>
+<li>B. Driver vẫn ở tab cũ; phải <code>switchTo().window(handle)</code></li>
+<li>C. <code>getWindowHandle()</code> trả handle của tab mới</li>
+<li>D. <code>getWindowHandles()</code> trả handle theo thứ tự đảm bảo (tab mới ở cuối)</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Chỉ <code>switchTo().newWindow(...)</code> mới tự chuyển. <code>getWindowHandles()</code> trả <code>Set</code> nên thứ tự không đáng tin: hãy loại handle chính ra.</p>
+</details>
+<p><strong>Câu 6.</strong> <code>close()</code> khác <code>quit()</code> thế nào?</p>
+<ul>
+<li>A. Không khác</li>
+<li>B. <code>close()</code> đóng tab đang focus; <code>quit()</code> đóng mọi cửa sổ và kết thúc session</li>
+<li>C. <code>close()</code> kết thúc session; <code>quit()</code> chỉ đóng tab</li>
+<li>D. <code>quit()</code> chỉ dùng cho Firefox</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> Cuối test luôn dùng <code>quit()</code> để dừng cả process <code>chromedriver</code>.</p>
+</details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. How do you run Chrome in headless mode?</strong></p>
 <ul>
@@ -411,10 +994,19 @@
 </ul>
 <p><strong>Method / lệnh cần biết</strong></p>
 <ul>
-<li><code>manage().window().maximize()</code>, <code>manage().timeouts().pageLoadTimeout(Duration)</code>, <code>ChromeOptions</code>, <code>quit()</code></li>
+<li>Điều hướng/thông tin: <code>get</code>, <code>navigate().to/back/forward/refresh</code>, <code>getCurrentUrl</code>, <code>getTitle</code>, <code>getPageSource</code></li>
+<li>Tìm: <code>findElement</code> (ném lỗi nếu không thấy), <code>findElements</code> (list rỗng nếu không thấy)</li>
+<li>Quản lý: <code>manage().window().maximize/setSize</code>, <code>manage().timeouts().pageLoadTimeout/implicitlyWait/scriptTimeout</code>, <code>manage().addCookie/getCookies/deleteAllCookies</code></li>
+<li>Chuyển ngữ cảnh: <code>switchTo().frame/parentFrame/defaultContent/window/newWindow/alert/activeElement</code></li>
+<li>Cửa sổ: <code>getWindowHandle</code>, <code>getWindowHandles</code></li>
+<li>Kết thúc: <code>close</code>, <code>quit</code>; cấu hình: <code>ChromeOptions</code></li>
 </ul>
 <p><strong>Điểm dễ nhầm lẫn</strong></p>
 <ul>
+<li><code>findElement</code> (đầu tiên, ném lỗi) ≠ <code>findElements</code> (tất cả, list rỗng)</li>
+<li><code>get</code> ≈ <code>navigate().to</code>; <code>back/forward/refresh</code> chỉ có trong <code>navigate()</code></li>
+<li><code>getWindowHandle</code> (1 cửa sổ đang focus) ≠ <code>getWindowHandles</code> (tất cả); bấm link mở tab <strong>không</strong> tự chuyển driver sang tab mới</li>
+<li><code>close</code> (tab hiện tại) ≠ <code>quit</code> (cả session)</li>
 <li><code>pageLoadTimeout</code> ≠ <code>WebDriverWait</code></li>
 <li>Số giây <code>long</code> (cũ) ≠ <code>Duration</code></li>
 <li>Không dùng <code>var</code> cho driver</li>
@@ -453,6 +1045,46 @@
 <span class="w">        </span><span class="p">};</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
+</details>
+<details>
+<summary>Đáp án gợi ý Exercise 4 (dự đoán)</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Dòng</th>
+<th>Dự đoán</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a) <code>get("the-internet.herokuapp.com")</code></td>
+<td>Exception (thường <code>InvalidArgumentException</code>)</td>
+<td>URL thiếu <code>https://</code></td>
+</tr>
+<tr>
+<td>(b) <code>findElements(...).size()</code></td>
+<td><code>n1 == 0</code>, <strong>không</strong> có exception</td>
+<td><code>findElements</code> trả list rỗng khi không thấy</td>
+</tr>
+<tr>
+<td>(c) <code>findElement(By.id("khong-ton-tai"))</code></td>
+<td><code>NoSuchElementException</code></td>
+<td><code>findElement</code> ném lỗi khi không thấy</td>
+</tr>
+<tr>
+<td>(d) <code>getCookieNamed("khong-co")</code></td>
+<td>Trả <code>null</code>, không exception</td>
+<td>Phải tự kiểm tra <code>null</code></td>
+</tr>
+<tr>
+<td>(e) <code>switchTo().alert()</code></td>
+<td><code>NoAlertPresentException</code></td>
+<td>Chưa có hộp thoại JS nào; muốn chờ dùng <code>ExpectedConditions.alertIsPresent()</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Hãy chạy lại để xác nhận. Nếu (a) trong môi trường của bạn ra loại exception khác, ghi lại tên chính xác.</p>
 </details>
     </article>
     <nav class="pager" aria-label="Bài trước và sau"><a class="prev" href="01-selenium-introduction.html"><small>← Bài trước</small><span>Selenium là gì?</span></a><a class="next" href="03-locators.html"><small>Bài tiếp theo →</small><span>Selenium: Locators (cách tìm phần tử)</span></a></nav>

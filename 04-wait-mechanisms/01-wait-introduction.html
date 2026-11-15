@@ -98,6 +98,53 @@ Browser :   click ──► gửi AJAX ──► chờ server (800 ms) ──►
 </tbody>
 </table></div>
 <p>Quan hệ: <code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code> với cấu hình mặc định hợp lý (polling 500 ms, bỏ qua <code>NotFoundException</code>).</p>
+<h2 id="3-từ-vựng-lỗi-nào-cho-biết-bạn-thiếu-wait">3. Từ vựng: lỗi nào cho biết bạn thiếu Wait?</h2>
+<p>Nhiều lỗi Selenium thực chất là <strong>triệu chứng của việc thiếu đồng bộ hoá</strong>. Học tên lỗi và ý nghĩa để chẩn đoán nhanh:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Nghĩa chính xác</th>
+<th>Thiếu Wait nào thường gây ra</th>
+<th>Cách xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NoSuchElementException</code></td>
+<td>Phần tử <strong>chưa có trong DOM</strong> tại lúc tìm</td>
+<td>Phần tử được JS/AJAX thêm sau</td>
+<td><code>presenceOf...</code> hoặc <code>visibilityOf...</code></td>
+</tr>
+<tr>
+<td><code>ElementNotInteractableException</code></td>
+<td>Phần tử <strong>có</strong> trong DOM nhưng ẩn/không thể tương tác</td>
+<td>Phần tử chưa hiện</td>
+<td><code>visibilityOf...</code> / <code>elementToBeClickable</code></td>
+</tr>
+<tr>
+<td><code>ElementClickInterceptedException</code></td>
+<td>Phần tử có và hiện, nhưng có phần tử khác <strong>che lên đúng điểm click</strong></td>
+<td>Overlay/spinner chưa biến mất</td>
+<td><code>invisibilityOfElementLocated(spinner)</code> rồi click</td>
+</tr>
+<tr>
+<td><code>StaleElementReferenceException</code></td>
+<td>Phần tử bạn giữ <strong>đã bị tách/thay</strong> khỏi DOM</td>
+<td>Trang vẽ lại sau khi bạn tìm phần tử</td>
+<td><code>stalenessOf</code> rồi tìm lại; hoặc tìm lại mỗi lần</td>
+</tr>
+<tr>
+<td><code>TimeoutException</code></td>
+<td>Điều kiện chờ <strong>không đạt trong thời gian cho phép</strong></td>
+<td>Không phải lỗi thiếu Wait, mà là lỗi <strong>do Wait báo</strong></td>
+<td>Đọc thông báo: điều kiện nào? Locator đúng chưa? Timeout đủ chưa?</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><code>NoSuchElementException</code> có thể có hai nghĩa: <em>chưa kịp xuất hiện</em> (thiếu Wait) hoặc <em>locator sai</em> (lỗi viết). Thêm Wait mà vẫn <code>TimeoutException</code> thì gần như chắc chắn là locator sai hoặc phần tử nằm trong iframe.</p>
+</blockquote>
 <hr />
 <h2 id="-practice-exercises">✍️ Practice Exercises</h2>
 <blockquote>

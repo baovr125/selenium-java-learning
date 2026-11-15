@@ -178,6 +178,140 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span><span class="n">By</span><span class="w"> </span><span class="n">by</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">by</span><span class="p">)).</span><span class="na">getText</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
+<h3 id="31-đọc-từng-thành-phần-của-một-page-class">3.1. Đọc từng thành phần của một Page class</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần (trong <code>LoginPage</code>)</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Vì sao thiết kế vậy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>private final By usernameInput = By.id("username")</code></td>
+<td>Lưu <strong>cách tìm</strong> ô username (chưa tìm gì cả). Nơi <strong>duy nhất</strong> biết locator</td>
+<td>—</td>
+<td><code>private</code> để test không biết locator; <code>By</code> (không phải <code>WebElement</code>) để mỗi lần dùng đều tìm lại → ít stale</td>
+</tr>
+<tr>
+<td><code>LoginPage(WebDriver driver)</code></td>
+<td>Nhận <code>driver</code> từ test rồi gọi <code>super(driver)</code> để <code>BasePage</code> giữ <code>driver</code> và <code>wait</code></td>
+<td>đối tượng <code>LoginPage</code></td>
+<td>Page không tự tạo trình duyệt; dùng chung <code>driver</code> của <code>BaseTest</code></td>
+</tr>
+<tr>
+<td><code>open()</code></td>
+<td>Mở URL của trang (<code>driver.get(BASE_URL + "/login")</code>)</td>
+<td><code>LoginPage</code> (<code>return this</code>)</td>
+<td>Trả về <strong>chính trang này</strong> để nối chuỗi: <code>new LoginPage(driver).open().loginAs(...)</code></td>
+</tr>
+<tr>
+<td><code>loginAs(user, pass)</code></td>
+<td>Nhập tên, nhập mật khẩu, bấm nút (qua <code>type</code>/<code>click</code> của <code>BasePage</code>, đã có chờ)</td>
+<td><code>SecureAreaPage</code> (<code>return new ...</code>)</td>
+<td>Đăng nhập <strong>thành công</strong> chuyển sang trang khác → trả về Page mới; test tiếp tục với trang đó</td>
+</tr>
+<tr>
+<td><code>loginWithInvalid(user, pass)</code></td>
+<td>Cùng thao tác nhưng sai thông tin</td>
+<td><code>LoginPage</code> (<code>return this</code>)</td>
+<td>Đăng nhập <strong>thất bại</strong> vẫn ở <code>/login</code> → trả về chính trang này</td>
+</tr>
+<tr>
+<td><code>getFlashMessage()</code></td>
+<td>Chờ thông báo hiện rồi <strong>đọc chữ</strong></td>
+<td><code>String</code></td>
+<td>Page <strong>trả dữ liệu</strong>, <strong>không assert</strong>: việc <code>assertEquals</code> là của test</td>
+</tr>
+<tr>
+<td><code>isAtSecureArea()</code></td>
+<td>Kiểm tra URL kết thúc bằng <code>/secure</code></td>
+<td><code>boolean</code></td>
+<td>Giúp test xác nhận "đã đúng trang" mà page không assert hộ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Quy tắc chọn kiểu trả về của một method trong Page:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hành động trong method</th>
+<th>Kiểu trả về</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ở lại cùng trang</td>
+<td>chính class đó (<code>return this</code>)</td>
+<td><code>open()</code>, <code>loginWithInvalid(...)</code>, <code>addElement()</code></td>
+</tr>
+<tr>
+<td>Chuyển sang trang khác</td>
+<td>Page mới (<code>return new NextPage(driver)</code>)</td>
+<td><code>loginAs(...)</code> → <code>SecureAreaPage</code></td>
+</tr>
+<tr>
+<td>Lấy dữ liệu để test assert</td>
+<td><code>String</code>, <code>int</code>, <code>boolean</code>, <code>List&lt;...&gt;</code></td>
+<td><code>getFlashMessage()</code>, <code>getRowCount()</code></td>
+</tr>
+<tr>
+<td>Hành động độc lập, không có "bước kế tiếp"</td>
+<td><code>void</code></td>
+<td><code>closeModal()</code> (hiếm)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="32-findby-và-pagefactoryinitelements--từng-phần-làm-gì">3.2. <code>@FindBy</code> và <code>PageFactory.initElements</code> — từng phần làm gì</h3>
+<p>Đây là cách khai báo locator <strong>kiểu cũ</strong> (bạn sẽ gặp trong dự án có sẵn).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@FindBy(id = "username")</code></td>
+<td>Gắn locator vào một field <code>WebElement</code>. Có thể dùng <code>id</code>, <code>name</code>, <code>className</code>, <code>css</code>, <code>xpath</code>, <code>linkText</code>, <code>partialLinkText</code>, <code>tagName</code></td>
+<td>Mỗi <code>@FindBy</code> chỉ chọn <strong>một</strong> kiểu</td>
+</tr>
+<tr>
+<td><code>private WebElement usernameInput;</code></td>
+<td>Field <strong>không</strong> chứa phần tử thật ngay: sau khi khởi tạo nó là một <strong>proxy</strong></td>
+<td>Mỗi lần dùng (<code>usernameInput.sendKeys(...)</code>) proxy mới đi tìm phần tử</td>
+</tr>
+<tr>
+<td><code>PageFactory.initElements(driver, this)</code></td>
+<td>Duyệt các field có <code>@FindBy</code> của <code>this</code> và <strong>gán proxy</strong> cho chúng. Phải gọi (thường trong constructor)</td>
+<td>Quên gọi → <code>NullPointerException</code> khi dùng field</td>
+</tr>
+<tr>
+<td><code>@CacheLookup</code></td>
+<td>Tìm <strong>một lần</strong> rồi nhớ phần tử</td>
+<td>⚠️ Gặp <code>StaleElementReferenceException</code> nếu DOM vẽ lại; thường không nên dùng</td>
+</tr>
+<tr>
+<td><code>@FindBys</code> / <code>@FindAll</code></td>
+<td>Kết hợp nhiều locator theo kiểu <strong>AND</strong> (<code>@FindBys</code>) / <strong>OR</strong> (<code>@FindAll</code>)</td>
+<td>Hiếm dùng; khó đọc</td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@FindBy</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;username&quot;</span><span class="p">)</span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="n">usernameInput</span><span class="p">;</span>
+<span class="w">    </span><span class="nd">@FindBy</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="p">)</span><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="n">WebElement</span><span class="w"> </span><span class="n">passwordInput</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">LoginPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PageFactory</span><span class="p">.</span><span class="na">initElements</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">);</span><span class="w">     </span><span class="c1">// gán proxy cho các field @FindBy</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">typeUsername</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">usernameInput</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="n">u</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// proxy tìm phần tử lúc gọi</span>
+<span class="p">}</span></code></pre></div>
 <h2 id="4-quy-tắc-thiết-kế-page-class">4. Quy tắc thiết kế Page Class</h2>
 <div class="table-wrap"><table>
 <thead>

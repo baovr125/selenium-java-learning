@@ -30,286 +30,278 @@
 <h2 id="-learning-objectives">🎯 Learning Objectives</h2>
 <p>Sau bài này bạn có thể:</p>
 <ul>
-<li>Chọn đúng <code>ExpectedConditions</code> cho từng tình huống</li>
-<li>Phân biệt Presence, Visibility, Clickability</li>
-<li>Biết bẫy của <code>invisibilityOfElementLocated</code> và <code>textToBe</code></li>
-<li>Dùng <code>stalenessOf</code>, <code>numberOfWindowsToBe</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>alertIsPresent</code></li>
+<li>Nói được một <code>ExpectedCondition</code> trả về gì khi "đạt", khi "chưa đạt", và khi nào <code>wait.until</code> ném <code>TimeoutException</code></li>
+<li>Với từng method: biết <strong>làm chính xác gì</strong>, <strong>trả về kiểu gì</strong>, <strong>đạt khi nào</strong></li>
+<li>Phân biệt các method gần giống nhau: Presence / Visibility / Clickability, <code>invisibilityOf</code> / <code>stalenessOf</code>, <code>textToBe</code> / <code>textToBePresentInElement</code>, <code>urlToBe</code> / <code>urlContains</code></li>
+<li>Biết bẫy của <code>invisibilityOfElementLocated</code>, <code>textToBe</code>, <code>elementToBeClickable</code>, <code>visibilityOf(WebElement)</code></li>
+<li>Chọn đúng method theo tình huống và đọc được thông báo <code>TimeoutException</code></li>
 </ul>
 <h2 id="-prerequisites">📋 Prerequisites</h2>
 <ul>
 <li><a href="03-explicit-wait.html">Explicit Wait</a></li>
 <li><a href="../03-selenium-fundamentals/04-webelement.html">WebElement</a></li>
 </ul>
-<h2 id="1-expectedconditions--phân-tích-chi-tiết">1. ExpectedConditions — phân tích chi tiết</h2>
-<p><code>ExpectedConditions</code> là lớp tiện ích nằm trong <code>selenium-support</code> (<code>org.openqa.selenium.support.ui.ExpectedConditions</code>). Mỗi method trả về một <code>ExpectedCondition&lt;T&gt;</code> (là một <code>Function&lt;WebDriver, T&gt;</code>).</p>
-<h3 id="bảng-tổng-hợp">Bảng tổng hợp</h3>
+<h2 id="1-cách-đọc-một-expectedcondition">1. Cách đọc một <code>ExpectedCondition</code></h2>
+<p><code>ExpectedConditions</code> là lớp tiện ích nằm trong <code>selenium-support</code> (<code>org.openqa.selenium.support.ui.ExpectedConditions</code>). Mỗi method <strong>không chờ gì cả</strong> — nó chỉ tạo ra một "câu hỏi" (<code>ExpectedCondition&lt;T&gt;</code>, thực chất là <code>Function&lt;WebDriver, T&gt;</code>). Chính <code>wait.until(câu hỏi)</code> mới là thứ chờ: cứ mỗi chu kỳ (mặc định <strong>500 ms</strong>) nó hỏi lại một lần, cho tới khi câu trả lời là "đạt" hoặc hết thời gian.</p>
+<p><strong>Quy tắc trả lời của một điều kiện:</strong></p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Trả về</th>
-<th>Điều kiện thoả khi</th>
-<th>Hay dùng cho</th>
-<th>🧩</th>
+<th>Điều kiện trả về</th>
+<th>Ý nghĩa với <code>until</code></th>
+<th>Kết quả</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>presenceOfElementLocated(By)</code></td>
-<td><code>WebElement</code></td>
-<td>Phần tử <strong>có trong DOM</strong> (có thể ẩn)</td>
-<td>Biết phần tử sẽ được sinh ra</td>
-<td>Ex 7</td>
+<td><code>null</code> hoặc <code>false</code></td>
+<td>Chưa đạt</td>
+<td>Chờ hết chu kỳ rồi hỏi lại</td>
 </tr>
 <tr>
-<td><code>visibilityOfElementLocated(By)</code></td>
-<td><code>WebElement</code></td>
-<td>Có trong DOM <strong>và hiển thị</strong> (kích thước &gt; 0, không ẩn)</td>
-<td>Đọc text/kiểm tra hiển thị</td>
-<td>Ex 1, 6, 8, 10</td>
+<td>Bất kỳ giá trị khác (<code>WebElement</code>, <code>List</code>, <code>true</code>, <code>Alert</code>...)</td>
+<td>Đạt</td>
+<td><code>until</code> <strong>trả luôn giá trị đó</strong> và dừng chờ</td>
 </tr>
 <tr>
-<td><code>visibilityOf(WebElement)</code></td>
-<td><code>WebElement</code></td>
-<td>Phần tử đã tìm <strong>đang hiển thị</strong></td>
-<td>Đã có <code>WebElement</code>, chờ nó hiện</td>
-<td>Ex 5</td>
+<td><code>NotFoundException</code> (gồm <code>NoSuchElementException</code>) ném ra</td>
+<td>Bị bỏ qua, coi như chưa đạt</td>
+<td>Hỏi lại</td>
 </tr>
 <tr>
-<td><code>elementToBeClickable(By \| WebElement)</code></td>
-<td><code>WebElement</code></td>
-<td><strong>Hiển thị và enabled</strong></td>
-<td>Trước khi <code>click()</code></td>
-<td>Ex 10</td>
-</tr>
-<tr>
-<td><code>invisibilityOfElementLocated(By)</code></td>
-<td><code>Boolean</code></td>
-<td>Phần tử <strong>không có trong DOM hoặc ẩn</strong></td>
-<td>Chờ spinner/modal biến mất</td>
-<td>Ex 8, 10</td>
-</tr>
-<tr>
-<td><code>textToBePresentInElement(WebElement, String)</code></td>
-<td><code>Boolean</code></td>
-<td>Text của phần tử <strong>chứa</strong> chuỗi</td>
-<td>Trạng thái đổi chữ</td>
+<td>Hết timeout mà vẫn chưa đạt</td>
 <td>—</td>
+<td>Ném <code>TimeoutException</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><code>TimeoutException</code> có thông báo dạng: <code>Expected condition failed: waiting for visibility of element located by By.id: flash (tried for 15 second(s) with 500 milliseconds interval)</code> — đọc thông báo này là biết <strong>điều kiện nào</strong> không đạt và đã chờ bao lâu.</p>
+<p><strong>Kiểu trả về quyết định cách dùng tiếp:</strong></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span>
+<span class="n">flash</span><span class="p">.</span><span class="na">getText</span><span class="p">();</span><span class="w">                       </span><span class="c1">// dùng luôn phần tử trả về, không cần findElement lần nữa</span>
+
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// trả Boolean (luôn true khi đạt) → bỏ qua giá trị</span></code></pre></div>
+<p><strong>Ba kiểu trả về thường gặp:</strong> <code>WebElement</code> (dùng tiếp), <code>List&lt;WebElement&gt;</code> (dùng tiếp), <code>Boolean</code> (chỉ để chờ, không có gì để dùng).</p>
+<p><strong>Hai "họ" overload — nhớ điểm khác này trước khi học từng method:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tham số</th>
+<th>Mỗi lần hỏi lại có tìm phần tử lại không?</th>
+<th>Khi DOM bị vẽ lại</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>By</code> (vd <code>visibilityOfElementLocated(By)</code>)</td>
+<td><strong>Có</strong> — gọi <code>findElement</code> mới mỗi lần</td>
+<td>Bền: lần hỏi sau tìm được phần tử mới</td>
 </tr>
 <tr>
-<td><code>textToBe(By, String)</code></td>
-<td><code>Boolean</code></td>
-<td>Text <strong>bằng đúng</strong> chuỗi</td>
-<td>Thông báo kết quả chính xác</td>
-<td>Ex 10</td>
-</tr>
-<tr>
-<td><code>alertIsPresent()</code></td>
-<td><code>Alert</code></td>
-<td>Có alert đang mở</td>
-<td>Chờ JS alert</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>frameToBeAvailableAndSwitchToIt(By \| String \| int \| WebElement)</code></td>
-<td><code>WebDriver</code></td>
-<td>Frame có sẵn <strong>và tự chuyển vào</strong></td>
-<td>Iframe tải chậm</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>numberOfWindowsToBe(int)</code></td>
-<td><code>Boolean</code></td>
-<td>Số cửa sổ/tab đúng bằng n</td>
-<td>Mở tab mới</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>stalenessOf(WebElement)</code></td>
-<td><code>Boolean</code></td>
-<td>Phần tử cũ đã <strong>bị tách khỏi DOM</strong></td>
-<td>Chờ trang/vùng được vẽ lại</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>numberOfElementsToBe(By, int)</code></td>
-<td><code>List&lt;WebElement&gt;</code></td>
-<td>Số phần tử khớp đúng bằng n</td>
-<td>Chờ thêm/xoá item</td>
-<td>Ex 6</td>
-</tr>
-<tr>
-<td><code>titleIs(String)</code>, <code>titleContains(String)</code></td>
-<td><code>Boolean</code></td>
-<td>Tiêu đề trang</td>
-<td>Sau khi điều hướng</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>urlContains(String)</code>, <code>urlToBe(String)</code></td>
-<td><code>Boolean</code></td>
-<td>URL</td>
-<td>Sau khi điều hướng</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>attributeToBe(By, String, String)</code></td>
-<td><code>Boolean</code></td>
-<td>Thuộc tính bằng giá trị</td>
-<td><code>class</code> đổi, <code>disabled</code> bỏ</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>and</code>, <code>or</code>, <code>not</code></td>
-<td></td>
-<td>Kết hợp điều kiện</td>
-<td></td>
-<td>—</td>
+<td><code>WebElement</code> (vd <code>visibilityOf(WebElement)</code>)</td>
+<td><strong>Không</strong> — dùng phần tử bạn đã giữ</td>
+<td>Dễ <code>StaleElementReferenceException</code></td>
 </tr>
 </tbody>
 </table></div>
 <blockquote>
-<p><code>ExpectedConditions</code> vẫn nằm trong <code>selenium-support</code> của 4.52.0 và 🧩 được dự án sử dụng. Tuỳ phiên bản, một số method có thể được đánh dấu deprecated hoặc có phiên bản overload mới; luôn đọc cảnh báo của trình biên dịch/IDE.</p>
+<p><strong>Cách đọc các thẻ method bên dưới.</strong> Mỗi method có một thẻ gồm: <strong>Làm gì</strong> (hành vi thật bên trong) · <strong>Trả về</strong> · <strong>Đạt / chưa đạt khi</strong> · <strong>Ví dụ</strong> · <strong>Lưu ý</strong>. Các method được chia theo <strong>câu hỏi bạn muốn đặt ra</strong>: "có đó chưa?", "biến mất chưa?", "chữ/thuộc tính đúng chưa?", "đủ số lượng chưa?", "trang/cửa sổ đổi chưa?". Cuối mỗi nhóm có bảng so sánh các method dễ nhầm.</p>
 </blockquote>
-<h3 id="11-presenceofelementlocated">1.1. <code>presenceOfElementLocated</code></h3>
+<h2 id="2-nhóm-a--phần-tử-đã-có-và-dùng-được-chưa">2. Nhóm A — "Phần tử đã có và dùng được chưa?"</h2>
+<h3 id="21-presenceofelementlocatedby">2.1. <code>presenceOfElementLocated(By)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> mỗi lần hỏi, gọi <code>driver.findElement(by)</code>. Chỉ quan tâm phần tử <strong>có trong DOM hay chưa</strong>, hoàn toàn không xét hiển thị.</li>
+<li><strong>Trả về:</strong> <code>WebElement</code> (phần tử tìm được).</li>
+<li><strong>Đạt khi:</strong> <code>findElement</code> tìm thấy. <strong>Chưa đạt khi:</strong> chưa có trong DOM (bị <code>NoSuchElementException</code> bỏ qua, hỏi lại).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">presenceOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)));</span><span class="w">  </span><span class="c1">// 🧩 Ex7</span></code></pre></div>
 <ul>
-<li>Thoả khi <code>findElement</code> thành công. <strong>Không</strong> quan tâm hiển thị.</li>
-<li>Dùng khi chỉ cần biết "đã tồn tại" (ví dụ chờ nội dung ban đầu sinh ra, hoặc phần tử ẩn cố ý như <code>&lt;input type=hidden&gt;</code>).</li>
-<li>⚠️ Rồi <code>click()</code>/<code>getText()</code> ngay có thể vẫn lỗi vì phần tử <strong>chưa hiện</strong>.</li>
+<li><strong>Lưu ý:</strong> phần tử ẩn vẫn đạt. Sau đó <code>click()</code> hoặc <code>getText()</code> ngay có thể lỗi/trả rỗng vì phần tử <strong>chưa hiện</strong>. Dùng khi chỉ cần biết "đã sinh ra", hoặc phần tử ẩn có chủ đích như <code>&lt;input type="hidden"&gt;</code>.</li>
 </ul>
-<h3 id="12-visibilityofelementlocated">1.2. <code>visibilityOfElementLocated</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span><span class="w">  </span><span class="c1">// 🧩 Ex1</span></code></pre></div>
+<h3 id="22-presenceofallelementslocatedbyby">2.2. <code>presenceOfAllElementsLocatedBy(By)</code></h3>
 <ul>
-<li>Thoả khi: có trong DOM <strong>và</strong> <code>isDisplayed() == true</code>.</li>
-<li>Bên trong tự bỏ qua <code>NoSuchElementException</code> (và <code>StaleElementReferenceException</code>) trong lúc chờ.</li>
-<li>Lựa chọn <strong>mặc định</strong> khi cần đọc <code>getText()</code> hoặc kiểm tra hiển thị.</li>
+<li><strong>Làm gì:</strong> gọi <code>driver.findElements(by)</code> (số nhiều) mỗi lần hỏi.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code>.</li>
+<li><strong>Đạt khi:</strong> danh sách có <strong>ít nhất 1</strong> phần tử. <strong>Chưa đạt khi:</strong> danh sách rỗng.</li>
+<li><strong>Ví dụ:</strong></li>
 </ul>
-<h3 id="13-visibilityofwebelement">1.3. <code>visibilityOf(WebElement)</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFigure</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.figcaption h5&quot;</span><span class="p">));</span>
-<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOf</span><span class="p">(</span><span class="n">caption</span><span class="p">));</span><span class="w">        </span><span class="c1">// 🧩 Ex5 (sau khi hover)</span></code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">presenceOfAllElementsLocatedBy</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.item&quot;</span><span class="p">)));</span></code></pre></div>
 <ul>
-<li>Dùng khi <strong>đã có <code>WebElement</code></strong> (phần tử tồn tại sẵn nhưng ẩn, hiện sau hover/click).</li>
-<li>Không tìm lại phần tử ⇒ nếu phần tử bị stale thì lỗi. Nếu DOM có thể vẽ lại, dùng bản <code>By</code>.</li>
+<li><strong>Lưu ý:</strong> đạt <strong>ngay khi có 1 phần tử</strong>, không phải khi đủ số lượng bạn mong. Cần đủ N phần tử → <code>numberOfElementsToBe</code> (nhóm D). Không kiểm tra hiển thị.</li>
 </ul>
-<h3 id="14-elementtobeclickable">1.4. <code>elementToBeClickable</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">textInput</span><span class="p">));</span><span class="w">   </span><span class="c1">// 🧩 Ex10</span>
-<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span></code></pre></div>
+<h3 id="23-visibilityofelementlocatedby">2.3. <code>visibilityOfElementLocated(By)</code></h3>
 <ul>
-<li>Thoả khi: <strong>visible + enabled</strong>.</li>
-<li>⚠️ <strong>Không</strong> đảm bảo phần tử không bị che bởi overlay (Selenium chỉ biết visible/enabled, không biết có phần tử khác nằm đè). Nếu có spinner đè lên, hãy chờ <code>invisibilityOfElementLocated(spinner)</code> trước.</li>
-<li>🧩 Ex10 dùng nó để biết <code>input</code> đã được bật (enabled) — có chủ đích: "clickable" ngụ ý enabled.</li>
+<li><strong>Làm gì:</strong> tìm phần tử bằng <code>By</code>, rồi gọi <code>isDisplayed()</code> (có trong DOM, không bị <code>display:none</code>/<code>visibility:hidden</code>, kích thước &gt; 0).</li>
+<li><strong>Trả về:</strong> <code>WebElement</code>.</li>
+<li><strong>Đạt khi:</strong> phần tử có <strong>và</strong> đang hiển thị. <strong>Chưa đạt khi:</strong> chưa có trong DOM hoặc đang ẩn. Tự bỏ qua <code>NoSuchElementException</code> và <code>StaleElementReferenceException</code> trong lúc chờ.</li>
+<li><strong>Ví dụ:</strong></li>
 </ul>
-<h3 id="15-invisibilityofelementlocated">1.5. <code>invisibilityOfElementLocated</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Boolean</span><span class="w"> </span><span class="n">closed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;modal&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// 🧩 Ex8</span></code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">flash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">)));</span><span class="w">  </span><span class="c1">// 🧩 Ex1</span>
+<span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flash</span><span class="p">.</span><span class="na">getText</span><span class="p">();</span></code></pre></div>
 <ul>
-<li>Thoả khi phần tử <strong>không còn trong DOM</strong> <em>hoặc</em> <strong>có nhưng ẩn</strong>.</li>
-<li>Nên dùng để chờ spinner/loader/modal biến mất.</li>
-<li>⚠️ Nếu phần tử <strong>chưa từng xuất hiện</strong>, điều kiện cũng thoả ngay ⇒ có thể "pass giả". Với spinner xuất hiện chậm: chờ nó <strong>xuất hiện</strong> trước (<code>visibilityOfElementLocated</code>), rồi chờ <strong>biến mất</strong>; hoặc chấp nhận rủi ro nếu spinner luôn hiện tức thì.</li>
+<li><strong>Lưu ý:</strong> lựa chọn <strong>mặc định</strong> khi cần đọc <code>getText()</code> hoặc kiểm tra hiển thị. Phần tử hiện sẵn nhưng <strong>đang chứa nội dung cũ</strong> thì đạt ngay — xem mục 4.1 (<code>textToBe</code>).</li>
 </ul>
-<h3 id="16-texttobepresentinelement">1.6. <code>textToBePresentInElement</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBePresentInElement</span><span class="p">(</span><span class="n">statusEl</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Completed&quot;</span><span class="p">));</span></code></pre></div>
+<h3 id="24-visibilityofwebelement">2.4. <code>visibilityOf(WebElement)</code></h3>
 <ul>
-<li>Thoả khi text <strong>chứa</strong> chuỗi. Có biến thể <code>textToBePresentInElementLocated(By, String)</code>, <code>textToBePresentInElementValue(...)</code>.</li>
-<li><code>textToBe(By, String)</code> (🧩 Ex10) so sánh <strong>bằng đúng</strong> — chặt hơn.</li>
-<li>⚠️ Cách dùng <code>WebElement</code> có thể bị stale nếu DOM vẽ lại; bản <code>Located</code> (dùng <code>By</code>) bền hơn.</li>
+<li><strong>Làm gì:</strong> chỉ gọi <code>isDisplayed()</code> trên <code>WebElement</code> bạn <strong>đã giữ</strong>. <strong>Không</strong> tìm lại phần tử.</li>
+<li><strong>Trả về:</strong> <code>WebElement</code> (chính phần tử bạn truyền vào).</li>
+<li><strong>Đạt khi:</strong> phần tử đó đang hiển thị.</li>
+<li><strong>Ví dụ:</strong></li>
 </ul>
-<p>🧩 <strong>Bài học then chốt của Ex10:</strong> sau "Remove" thông báo <code>#message</code> = "It's gone!". Bấm "Enable", <code>#message</code> <strong>vẫn là "It's gone!"</strong> cho đến khi AJAX xong. Nếu chỉ chờ <code>visibilityOfElementLocated(#message)</code> sẽ thoả <strong>ngay lập tức</strong> (đang hiện sẵn) và đọc nhầm. Dùng <code>textToBe(messageLocator, "It's enabled!")</code> là cách đúng.</p>
-<h3 id="17-alertispresent">1.7. <code>alertIsPresent</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
-<span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span></code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">caption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFigure</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.figcaption h5&quot;</span><span class="p">));</span><span class="w">  </span><span class="c1">// có sẵn nhưng ẩn</span>
+<span class="k">new</span><span class="w"> </span><span class="n">Actions</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">currentFigure</span><span class="p">).</span><span class="na">perform</span><span class="p">();</span><span class="w">                        </span><span class="c1">// hover</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOf</span><span class="p">(</span><span class="n">caption</span><span class="p">));</span><span class="w">                              </span><span class="c1">// 🧩 Ex5</span></code></pre></div>
 <ul>
-<li>Chờ alert JS xuất hiện, trả <code>Alert</code>. Nếu gọi <code>switchTo().alert()</code> quá sớm ⇒ <code>NoAlertPresentException</code>.</li>
+<li><strong>Lưu ý:</strong> nếu DOM bị vẽ lại, <code>caption</code> thành stale và <code>visibilityOf</code> ném <code>StaleElementReferenceException</code> <strong>ra ngoài</strong> (<code>until</code> chỉ bỏ qua <code>NotFoundException</code>). Trang có thể vẽ lại → dùng bản <code>By</code>.</li>
 </ul>
-<h3 id="18-frametobeavailableandswitchtoit">1.8. <code>frameToBeAvailableAndSwitchToIt</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span>
-<span class="c1">// từ giờ driver đang ở BÊN TRONG iframe</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">   </span><span class="c1">// trở ra</span></code></pre></div>
+<h3 id="25-visibilityofallelementslocatedbyby">2.5. <code>visibilityOfAllElementsLocatedBy(By)</code></h3>
 <ul>
-<li>Vừa <strong>chờ</strong> iframe sẵn sàng vừa <strong>chuyển ngữ cảnh</strong> (hiếm khi cần <code>switchTo().frame()</code> riêng).</li>
-<li>Nhận <code>By</code>, tên/id (<code>String</code>), chỉ số (<code>int</code>), hoặc <code>WebElement</code>.</li>
+<li><strong>Làm gì:</strong> <code>findElements(by)</code> rồi kiểm tra <code>isDisplayed()</code> của <strong>từng</strong> phần tử.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code>.</li>
+<li><strong>Đạt khi:</strong> danh sách <strong>không rỗng và mọi phần tử đều hiển thị</strong>. <strong>Chưa đạt khi:</strong> rỗng hoặc có ít nhất một phần tử đang ẩn.</li>
+<li><strong>Ví dụ:</strong></li>
 </ul>
-<h3 id="19-numberofwindowstobe">1.9. <code>numberOfWindowsToBe</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">          </span><span class="c1">// mở tab mới</span>
-<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">())</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">))</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">);</span></code></pre></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfAllElementsLocatedBy</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;tbody tr&quot;</span><span class="p">)));</span></code></pre></div>
 <ul>
-<li><code>getWindowHandles()</code> ngay sau click có thể mới có 1 cửa sổ (tab mở bất đồng bộ) ⇒ chờ trước.</li>
+<li><strong>Lưu ý:</strong> chặt hơn <code>presenceOfAllElementsLocatedBy</code>. Chỉ cần <strong>một</strong> dòng ẩn là không đạt. Cũng không kiểm tra số lượng.</li>
 </ul>
-<h3 id="110-stalenessof">1.10. <code>stalenessOf</code></h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">oldRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;tbody tr&quot;</span><span class="p">));</span>
-<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;refresh&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
-<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">stalenessOf</span><span class="p">(</span><span class="n">oldRow</span><span class="p">));</span><span class="w">                 </span><span class="c1">// DOM cũ đã bị thay</span>
-<span class="n">WebElement</span><span class="w"> </span><span class="n">newRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;tbody tr&quot;</span><span class="p">));</span><span class="w"> </span><span class="c1">// lấy phần tử MỚI</span></code></pre></div>
+<h3 id="26-visibilityofallelementslistwebelement-và-bản-webelement">2.6. <code>visibilityOfAllElements(List&lt;WebElement&gt;)</code> (và bản <code>WebElement...</code>)</h3>
 <ul>
-<li>Thoả khi phần tử cũ <strong>không còn gắn với DOM</strong>. Dùng để biết "trang/bảng đã được vẽ lại" trước khi đọc dữ liệu mới.</li>
-<li>Mẫu "chờ <strong>cái cũ</strong> biến mất rồi lấy <strong>cái mới</strong>" giúp tránh <code>StaleElementReferenceException</code>.</li>
+<li><strong>Làm gì:</strong> như 2.5 nhưng trên danh sách <code>WebElement</code> bạn <strong>đã giữ</strong> (không tìm lại).</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code>.</li>
+<li><strong>Đạt khi:</strong> mọi phần tử trong danh sách đều hiển thị.</li>
+<li><strong>Ví dụ:</strong></li>
 </ul>
-<h3 id="111-kết-hợp-điều-kiện">1.11. Kết hợp điều kiện</h3>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">or</span><span class="p">(</span>
-<span class="w">        </span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;success&quot;</span><span class="p">)),</span>
-<span class="w">        </span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="p">))));</span><span class="w">      </span><span class="c1">// chờ một trong hai</span>
-<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">not</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">)));</span>
-<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">and</span><span class="p">(</span><span class="n">cond1</span><span class="p">,</span><span class="w"> </span><span class="n">cond2</span><span class="p">));</span></code></pre></div>
-<h2 id="2-presence-vs-visibility-vs-clickability">2. Presence vs Visibility vs Clickability</h2>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">inputs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;form input&quot;</span><span class="p">));</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfAllElements</span><span class="p">(</span><span class="n">inputs</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> cùng rủi ro stale như <code>visibilityOf(WebElement)</code>.</li>
+</ul>
+<h3 id="27-elementtobeclickableby--elementtobeclickablewebelement">2.7. <code>elementToBeClickable(By)</code> / <code>elementToBeClickable(WebElement)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chờ phần tử <strong>hiển thị</strong>, rồi kiểm tra thêm <code>isEnabled()</code>. Bản <code>By</code> tìm lại mỗi lần; bản <code>WebElement</code> dùng phần tử đã giữ.</li>
+<li><strong>Trả về:</strong> <code>WebElement</code>.</li>
+<li><strong>Đạt khi:</strong> hiển thị <strong>và</strong> enabled (không có thuộc tính <code>disabled</code>). <strong>Chưa đạt khi:</strong> ẩn hoặc bị <code>disabled</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;save&quot;</span><span class="p">))).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeClickable</span><span class="p">(</span><span class="n">textInput</span><span class="p">));</span><span class="w">      </span><span class="c1">// 🧩 Ex10: biết ô input đã được bật</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> <strong>không</strong> đảm bảo <code>click()</code> thành công. Selenium không biết có phần tử khác nằm đè (spinner, modal); nếu có thì <code>click()</code> ném <code>ElementClickInterceptedException</code>. Hãy chờ overlay biến mất trước (nhóm B). Phần tử chỉ cần nhập chữ thì <code>visibility</code> thường là đủ.</li>
+</ul>
+<h3 id="28-elementtobeselectedby--elementtobeselectedwebelement">2.8. <code>elementToBeSelected(By)</code> / <code>elementToBeSelected(WebElement)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> gọi <code>isSelected()</code> trên checkbox, radio hoặc <code>&lt;option&gt;</code>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> phần tử <strong>đã được chọn</strong>. <strong>Chưa đạt khi:</strong> chưa chọn.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementToBeSelected</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;agree&quot;</span><span class="p">)));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> chỉ chờ trạng thái "đã chọn". Muốn chờ trạng thái "đã bỏ chọn" → 2.9.</li>
+</ul>
+<h3 id="29-elementselectionstatetobeby--webelement-boolean">2.9. <code>elementSelectionStateToBe(By | WebElement, boolean)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> so <code>isSelected()</code> với giá trị <code>true</code>/<code>false</code> bạn truyền.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> trạng thái chọn <strong>đúng bằng</strong> giá trị mong đợi (kể cả chờ <code>false</code> = đã bỏ chọn).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">elementSelectionStateToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;agree&quot;</span><span class="p">),</span><span class="w"> </span><span class="kc">false</span><span class="p">));</span><span class="w">   </span><span class="c1">// chờ checkbox được bỏ chọn</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> <code>elementToBeSelected(x)</code> tương đương <code>elementSelectionStateToBe(x, true)</code>.</li>
+</ul>
+<h3 id="210-khác-nhau-giữa-các-method-gần-giống">2.10. Khác nhau giữa các method gần giống</h3>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
-<th><strong>Presence</strong></th>
-<th><strong>Visibility</strong></th>
-<th><strong>Clickability</strong></th>
+<th><code>presenceOfElementLocated</code></th>
+<th><code>visibilityOfElementLocated</code></th>
+<th><code>visibilityOf</code></th>
+<th><code>elementToBeClickable</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Trong DOM?</td>
-<td>✅</td>
-<td>✅</td>
-<td>✅</td>
+<td>Tìm lại phần tử mỗi lần hỏi?</td>
+<td>Có</td>
+<td>Có</td>
+<td><strong>Không</strong></td>
+<td>Có (bản <code>By</code>)</td>
 </tr>
 <tr>
-<td>Hiển thị (không ẩn, kích thước &gt; 0)?</td>
-<td>❓ không quan tâm</td>
-<td>✅</td>
-<td>✅</td>
+<td>Phần tử có trong DOM nhưng ẩn</td>
+<td>✅ đạt</td>
+<td>❌ chưa đạt</td>
+<td>❌ chưa đạt</td>
+<td>❌ chưa đạt</td>
 </tr>
 <tr>
-<td>Enabled?</td>
-<td>❓</td>
-<td>❓</td>
-<td>✅</td>
+<td>Phần tử hiện nhưng <code>disabled</code></td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+<td>❌ chưa đạt</td>
 </tr>
 <tr>
-<td>Method</td>
+<td>Phần tử hiện, enabled, nhưng có overlay đè</td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+<td>✅ <strong>vẫn đạt</strong> (xem lưu ý 2.7)</td>
+</tr>
+<tr>
+<td>Phần tử chưa có trong DOM</td>
+<td>❌ tiếp tục chờ</td>
+<td>❌ tiếp tục chờ</td>
+<td>Phải đã có <code>WebElement</code></td>
+<td>❌ tiếp tục chờ</td>
+</tr>
+<tr>
+<td>Phần tử bị stale (DOM vẽ lại)</td>
+<td>Tìm lại được → đạt</td>
+<td>Tìm lại được → đạt</td>
+<td>⚠️ ném <code>StaleElementReferenceException</code></td>
+<td>Tìm lại được → đạt</td>
+</tr>
+<tr>
+<td>Dùng ngay sau đó để</td>
+<td>Đọc thuộc tính ẩn, biết "đã sinh ra"</td>
+<td><code>getText()</code>, kiểm tra hiển thị</td>
+<td>Chờ phần tử đã giữ hiện ra (sau hover)</td>
+<td><code>click()</code></td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Một phần tử</th>
+<th>Nhiều phần tử</th>
+<th>Điều kiện đạt (nhiều phần tử)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Presence</td>
 <td><code>presenceOfElementLocated</code></td>
-<td><code>visibilityOfElementLocated</code>, <code>visibilityOf</code></td>
-<td><code>elementToBeClickable</code></td>
+<td><code>presenceOfAllElementsLocatedBy</code></td>
+<td>Có ≥ 1 phần tử</td>
 </tr>
 <tr>
-<td>Tập hợp</td>
-<td>Rộng nhất</td>
-<td>⊂ Presence</td>
-<td>⊂ Visibility</td>
-</tr>
-<tr>
-<td>Dùng để</td>
-<td>Biết đã được sinh ra</td>
-<td>Đọc text, kiểm tra hiển thị</td>
-<td>Click, nhập</td>
-</tr>
-<tr>
-<td>Nguy cơ</td>
-<td><code>click()</code> lỗi vì ẩn</td>
-<td>Click lỗi nếu disabled</td>
-<td>Vẫn có thể bị overlay che</td>
+<td>Visibility</td>
+<td><code>visibilityOfElementLocated</code></td>
+<td><code>visibilityOfAllElementsLocatedBy</code></td>
+<td>Không rỗng và <strong>mọi</strong> phần tử hiển thị</td>
 </tr>
 </tbody>
 </table></div>
 <div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"> Presence  ⊇  Visibility  ⊇  Clickability  (không đảm bảo &quot;không bị che&quot;)</code></pre></div>
-<p><strong>Ví dụ minh hoạ bằng trang thật</strong> (hover — Ex 5): caption <code>&lt;h5&gt;</code> luôn <strong>có mặt (presence ✅)</strong> từ lúc tải trang nhưng <strong>ẩn (visibility ❌)</strong> bằng CSS cho tới khi chuột hover. <code>findElement</code> thành công ngay (presence), nhưng <code>getText()</code> trả <code>""</code>. Chỉ khi <code>visibilityOf</code> thoả mới đọc được "name: user1".</p>
+<h3 id="211-ví-dụ-bằng-trang-thật-presence--visibility">2.11. Ví dụ bằng trang thật: Presence ≠ Visibility</h3>
+<p>Trên trang hover (🧩 Ex 5), caption <code>&lt;h5&gt;</code> <strong>có mặt (presence ✅)</strong> ngay từ lúc tải trang nhưng <strong>ẩn (visibility ❌)</strong> bằng CSS cho tới khi chuột hover. <code>findElement</code> thành công ngay, nhưng <code>getText()</code> trả <code>""</code>. Chỉ khi <code>visibilityOf</code> đạt mới đọc được "name: user1".</p>
 <p><strong>Quy tắc chọn:</strong></p>
 <div class="table-wrap"><table>
 <thead>
@@ -320,27 +312,640 @@
 </thead>
 <tbody>
 <tr>
-<td><code>getText()</code>, <code>isDisplayed</code> assert</td>
+<td><code>getText()</code>, assert <code>isDisplayed()</code></td>
 <td>Visibility</td>
 </tr>
 <tr>
 <td><code>click()</code>, <code>sendKeys()</code></td>
-<td>Clickability (nhập liệu: visibility là đủ thường dùng)</td>
+<td>Clickability (nhập liệu: visibility thường là đủ)</td>
 </tr>
 <tr>
-<td>Đếm phần tử, kiểm tra tồn tại</td>
-<td>Presence / <code>numberOfElementsToBe</code></td>
+<td>Kiểm tra tồn tại</td>
+<td>Presence</td>
 </tr>
 <tr>
 <td>Đọc thuộc tính của phần tử ẩn</td>
 <td>Presence</td>
 </tr>
 <tr>
-<td>Xác nhận biến mất</td>
-<td>Invisibility / <code>numberOfElementsToBe(by, 0)</code></td>
+<td>Đếm phần tử, xác nhận biến mất</td>
+<td>Nhóm B, nhóm D</td>
 </tr>
 </tbody>
 </table></div>
+<h2 id="3-nhóm-b--phần-tử-đã-biến-mất-chưa">3. Nhóm B — "Phần tử đã biến mất chưa?"</h2>
+<h3 id="31-invisibilityofelementlocatedby">3.1. <code>invisibilityOfElementLocated(By)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> thử <code>findElement(by)</code>. Không tìm thấy → coi là đạt. Tìm thấy → kiểm tra <code>!isDisplayed()</code>. Phần tử bị stale giữa chừng cũng coi là đạt.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> phần tử <strong>không có trong DOM</strong>, hoặc <strong>có nhưng đang ẩn</strong>. <strong>Chưa đạt khi:</strong> phần tử đang hiển thị.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Boolean</span><span class="w"> </span><span class="n">closed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;modal&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// 🧩 Ex8</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý (pass giả):</strong> nếu phần tử <strong>chưa từng xuất hiện</strong>, điều kiện đạt <strong>ngay lập tức</strong>. Spinner hiện chậm 300 ms → bạn chờ "biến mất" khi nó chưa kịp hiện → qua luôn. Mẫu an toàn:</li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;loading&quot;</span><span class="p">)));</span><span class="w">      </span><span class="c1">// chờ HIỆN trước</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;loading&quot;</span><span class="p">)));</span><span class="w">    </span><span class="c1">// rồi chờ ẨN</span></code></pre></div>
+<h3 id="32-invisibilityofwebelement">3.2. <code>invisibilityOf(WebElement)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> gọi <code>isDisplayed()</code> trên phần tử đã giữ, đạt khi nó là <code>false</code>. Nếu phần tử bị stale (đã bị xoá/thay khỏi DOM) cũng coi là đạt.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> phần tử đã giữ <strong>đang ẩn hoặc đã stale</strong>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">toast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;toast&quot;</span><span class="p">));</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOf</span><span class="p">(</span><span class="n">toast</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> cần có sẵn <code>WebElement</code>. Nếu phần tử bị <strong>thay bằng bản mới</strong> cùng locator thì bản cũ stale → đạt, dù bản mới vẫn hiển thị.</li>
+</ul>
+<h3 id="33-invisibilityofallelementslistwebelement-và-bản-webelement">3.3. <code>invisibilityOfAllElements(List&lt;WebElement&gt;)</code> (và bản <code>WebElement...</code>)</h3>
+<ul>
+<li><strong>Làm gì:</strong> như 3.2 nhưng kiểm tra cho <strong>cả danh sách</strong>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> <strong>mọi</strong> phần tử trong danh sách đều ẩn.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">WebElement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">loaders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.loader&quot;</span><span class="p">));</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfAllElements</span><span class="p">(</span><span class="n">loaders</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> danh sách <code>loaders</code> được lấy <strong>một lần</strong> trước đó; phần tử sinh ra sau không nằm trong danh sách.</li>
+</ul>
+<h3 id="34-invisibilityofelementwithtextby-string">3.4. <code>invisibilityOfElementWithText(By, String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> tìm phần tử rồi so <code>getText()</code> với chuỗi.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> phần tử <strong>không còn</strong>, hoặc text của nó <strong>khác</strong> chuỗi đã cho.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementWithText</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;status&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Loading...&quot;</span><span class="p">));</span><span class="w">  </span><span class="c1">// chờ hết chữ &quot;Loading...&quot;</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> cũng "pass giả" nếu phần tử chưa từng có. Text so sánh <strong>bằng đúng</strong>, không phải chứa.</li>
+</ul>
+<h3 id="35-stalenessofwebelement">3.5. <code>stalenessOf(WebElement)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> gọi thử <code>isEnabled()</code> trên phần tử cũ. Nếu ném <code>StaleElementReferenceException</code> nghĩa là phần tử <strong>không còn gắn với DOM</strong> → đạt.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> phần tử cũ đã bị <strong>xoá hoặc thay thế</strong> khỏi DOM. <strong>Chưa đạt khi:</strong> vẫn còn gắn với DOM (kể cả đang bị ẩn CSS).</li>
+<li><strong>Ví dụ (mẫu "chờ CÁI CŨ biến mất rồi lấy CÁI MỚI"):</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">oldRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;tbody tr&quot;</span><span class="p">));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;refresh&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">stalenessOf</span><span class="p">(</span><span class="n">oldRow</span><span class="p">));</span><span class="w">                 </span><span class="c1">// DOM cũ đã bị thay</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">newRow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;tbody tr&quot;</span><span class="p">));</span><span class="w"> </span><span class="c1">// lấy phần tử MỚI</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> nếu trang chỉ ẩn phần tử bằng CSS thay vì xoá khỏi DOM, <code>stalenessOf</code> <strong>không bao giờ đạt</strong> → <code>TimeoutException</code>. Khi đó dùng <code>invisibilityOf</code>.</li>
+</ul>
+<h3 id="36-refreshedexpectedconditiont">3.6. <code>refreshed(ExpectedCondition&lt;T&gt;)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> bọc một điều kiện khác. Nếu điều kiện bên trong gặp <code>StaleElementReferenceException</code> thì coi là "chưa đạt" và hỏi lại thay vì ném lỗi.</li>
+<li><strong>Trả về:</strong> cùng kiểu với điều kiện được bọc.</li>
+<li><strong>Đạt khi:</strong> điều kiện bên trong đạt.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">refreshed</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOf</span><span class="p">(</span><span class="n">caption</span><span class="p">)));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> chỉ che lỗi stale của <strong>lần hỏi đó</strong>. Bản thân <code>caption</code> vẫn là phần tử cũ; muốn bền hơn hãy dùng bản <code>By</code>.</li>
+</ul>
+<h3 id="37-khác-nhau-giữa-các-method-gần-giống">3.7. Khác nhau giữa các method gần giống</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>invisibilityOfElementLocated</code></th>
+<th><code>invisibilityOf</code></th>
+<th><code>stalenessOf</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Câu hỏi</td>
+<td>"Có thấy phần tử này nữa không?"</td>
+<td>"Phần tử đang cầm có còn hiện không?"</td>
+<td>"Phần tử cũ có bị thay mất chưa?"</td>
+</tr>
+<tr>
+<td>Phần tử ẩn bằng CSS (<code>display:none</code>), vẫn còn trong DOM</td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+<td>❌ <strong>chưa đạt</strong> (vẫn gắn với DOM)</td>
+</tr>
+<tr>
+<td>Phần tử bị xoá khỏi DOM</td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+<td>✅ đạt</td>
+</tr>
+<tr>
+<td>Phần tử bị <strong>thay bằng bản mới</strong> cùng locator</td>
+<td>❌ chưa đạt (bản mới vẫn hiện)</td>
+<td>✅ đạt (bản cũ đã stale)</td>
+<td>✅ đạt</td>
+</tr>
+<tr>
+<td>Phần tử <strong>chưa từng xuất hiện</strong></td>
+<td>⚠️ <strong>đạt ngay</strong> (pass giả)</td>
+<td>Không áp dụng (cần có sẵn <code>WebElement</code>)</td>
+<td>Không áp dụng</td>
+</tr>
+<tr>
+<td>Dùng để</td>
+<td>Chờ spinner/modal/loader biến mất</td>
+<td>Chờ phần tử đã giữ ẩn đi</td>
+<td>Chờ bảng/trang được vẽ lại</td>
+</tr>
+</tbody>
+</table></div>
+<p>Xác nhận "đã xoá hết" bằng số lượng: <code>numberOfElementsToBe(by, 0)</code> (nhóm D).</p>
+<h2 id="4-nhóm-c--chữ-và-thuộc-tính-đã-đúng-chưa">4. Nhóm C — "Chữ và thuộc tính đã đúng chưa?"</h2>
+<h3 id="41-texttobeby-string">4.1. <code>textToBe(By, String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> tìm phần tử bằng <code>By</code>, lấy <code>getText()</code> (chữ <strong>đang hiển thị</strong>), so bằng <code>equals</code> với chuỗi.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> text <strong>bằng đúng</strong> chuỗi. <strong>Chưa đạt khi:</strong> khác (kể cả thừa/thiếu khoảng trắng, xuống dòng) hoặc phần tử chưa có.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;It&#39;s enabled!&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// 🧩 Ex10</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> phần tử đang ẩn thì <code>getText()</code> rỗng, nên <code>textToBe</code> không bao giờ đạt. Chuỗi hay thay đổi nhỏ → dùng 4.3.</li>
+</ul>
+<p>🧩 <strong>Bài học then chốt của Ex10:</strong> sau "Remove", <code>#message</code> = "It's gone!". Bấm "Enable", <code>#message</code> <strong>vẫn là "It's gone!"</strong> cho tới khi AJAX xong. Nếu chỉ chờ <code>visibilityOfElementLocated(#message)</code> thì đạt <strong>ngay</strong> (nội dung cũ đang hiện) và bạn đọc nhầm. Dùng <code>textToBe(...,"It's enabled!")</code> — chờ nội dung <strong>đặc trưng cho trạng thái mới</strong>.</p>
+<h3 id="42-texttobepresentinelementwebelement-string">4.2. <code>textToBePresentInElement(WebElement, String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> gọi <code>getText().contains(chuỗi)</code> trên phần tử đã giữ.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> text <strong>chứa</strong> chuỗi.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBePresentInElement</span><span class="p">(</span><span class="n">statusEl</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Completed&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> dùng <code>WebElement</code> nên dễ stale nếu DOM vẽ lại. Ưu tiên 4.3.</li>
+</ul>
+<h3 id="43-texttobepresentinelementlocatedby-string">4.3. <code>textToBePresentInElementLocated(By, String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> như 4.2 nhưng <strong>tìm lại phần tử mỗi lần hỏi</strong> bằng <code>By</code>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> text của phần tử <strong>chứa</strong> chuỗi.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBePresentInElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;status&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Completed&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> lựa chọn tốt khi chỉ cần một phần của chuỗi ("Hello, Anna!" → chỉ cần chứa "Hello").</li>
+</ul>
+<h3 id="44-texttobepresentinelementvalueby--webelement-string">4.4. <code>textToBePresentInElementValue(By | WebElement, String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đọc thuộc tính <strong><code>value</code></strong> của ô nhập (<code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>), <strong>không</strong> phải text hiển thị, rồi kiểm tra chứa chuỗi.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> <code>value</code> <strong>chứa</strong> chuỗi.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textToBePresentInElementValue</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;email&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;@gmail.com&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// JS tự điền email</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> với <code>&lt;input&gt;</code>, chữ người gõ nằm trong <code>value</code>, còn <code>getText()</code> trả <code>""</code>. Dùng <code>textToBe</code> cho input sẽ không bao giờ đạt.</li>
+</ul>
+<h3 id="45-textmatchesby-pattern">4.5. <code>textMatches(By, Pattern)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> lấy <code>getText()</code> rồi so với biểu thức chính quy (dạng <code>find()</code>: chỉ cần <strong>một đoạn</strong> text khớp).</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> có đoạn text khớp mẫu.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">textMatches</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;total&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">Pattern</span><span class="p">.</span><span class="na">compile</span><span class="p">(</span><span class="s">&quot;Total: [\\d,]+ USD&quot;</span><span class="p">)));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> dùng khi phần số/ngày thay đổi mỗi lần. Muốn khớp <strong>toàn bộ</strong> chuỗi, thêm <code>^</code> và <code>$</code> vào regex.</li>
+</ul>
+<h3 id="46-attributetobeby--webelement-string-attribute-string-value">4.6. <code>attributeToBe(By | WebElement, String attribute, String value)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đọc thuộc tính (<code>getAttribute</code>) và so <strong>bằng đúng</strong> với giá trị.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> thuộc tính bằng đúng giá trị.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">attributeToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;progress&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;aria-valuenow&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> với thuộc tính <code>class</code> có nhiều giá trị (<code>"tab active"</code>), so bằng đúng rất dễ hỏng → dùng 4.7.</li>
+</ul>
+<h3 id="47-attributecontainsby--webelement-string-attribute-string-value">4.7. <code>attributeContains(By | WebElement, String attribute, String value)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đọc thuộc tính và kiểm tra <strong>chứa</strong> chuỗi con.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> giá trị thuộc tính chứa chuỗi.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">attributeContains</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tab1&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;class&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;active&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// chờ tab được kích hoạt</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> "chứa chuỗi con" không phải "chứa class": <code>"inactive"</code> cũng chứa <code>"active"</code>. Cần chính xác theo từng class thì chờ bằng CSS selector, ví dụ <code>visibilityOfElementLocated(By.cssSelector("#tab1.active"))</code>.</li>
+</ul>
+<h3 id="48-attributetobenotemptywebelement-string-attribute">4.8. <code>attributeToBeNotEmpty(WebElement, String attribute)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra thuộc tính <strong>tồn tại và không rỗng</strong>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> thuộc tính có giá trị. <strong>Chưa đạt khi:</strong> thuộc tính vắng hoặc rỗng.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">attributeToBeNotEmpty</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;avatar&quot;</span><span class="p">)),</span><span class="w"> </span><span class="s">&quot;src&quot;</span><span class="p">));</span><span class="w">  </span><span class="c1">// chờ JS gán src</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> không quan tâm giá trị là gì, chỉ cần "đã được gán".</li>
+</ul>
+<h3 id="49-khác-nhau-giữa-các-method-gần-giống">4.9. Khác nhau giữa các method gần giống</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>textToBe</code></th>
+<th><code>textToBePresentInElementLocated</code></th>
+<th><code>textMatches</code></th>
+<th><code>textToBePresentInElementValue</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>So sánh</td>
+<td>Bằng đúng</td>
+<td>Chứa</td>
+<td>Regex (<code>find</code>)</td>
+<td>Chứa, trên <code>value</code></td>
+</tr>
+<tr>
+<td>Đọc từ đâu</td>
+<td>Text hiển thị (<code>getText()</code>)</td>
+<td>Text hiển thị</td>
+<td>Text hiển thị</td>
+<td>Thuộc tính <code>value</code></td>
+</tr>
+<tr>
+<td>Phù hợp</td>
+<td>Thông báo cố định "It's gone!"</td>
+<td>Câu có phần động ("Hello, Anna! ...")</td>
+<td>Số/ngày có dạng thay đổi</td>
+<td>Ô <code>&lt;input&gt;</code> / <code>&lt;textarea&gt;</code></td>
+</tr>
+<tr>
+<td>Phần tử chưa có</td>
+<td>Chưa đạt, chờ tiếp</td>
+<td>Chưa đạt, chờ tiếp</td>
+<td>Chưa đạt, chờ tiếp</td>
+<td>Chưa đạt, chờ tiếp</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>attributeToBe</code></th>
+<th><code>attributeContains</code></th>
+<th><code>attributeToBeNotEmpty</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>So sánh</td>
+<td>Bằng đúng</td>
+<td>Chứa chuỗi con</td>
+<td>Chỉ cần có giá trị</td>
+</tr>
+<tr>
+<td>Dùng cho</td>
+<td><code>aria-valuenow</code>, <code>value</code> cố định</td>
+<td><code>class</code> nhiều giá trị</td>
+<td><code>src</code>, <code>href</code> được JS gán sau</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-nhóm-d--đủ-số-lượng-phần-tử-chưa">5. Nhóm D — "Đủ số lượng phần tử chưa?"</h2>
+<h3 id="51-numberofelementstobeby-integer">5.1. <code>numberOfElementsToBe(By, Integer)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> gọi <code>findElements(by)</code> rồi so <code>size()</code> với số đã cho. Đếm cả phần tử <strong>đang ẩn</strong>.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code> (danh sách tìm được).</li>
+<li><strong>Đạt khi:</strong> số phần tử khớp <strong>bằng đúng</strong> <code>n</code> (kể cả <code>n = 0</code>, khi đó trả list rỗng — vẫn tính là đạt vì list rỗng <strong>không phải</strong> <code>null</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.added-manually&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span><span class="w">   </span><span class="c1">// chờ đủ 3 nút Delete</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.added-manually&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span><span class="w">   </span><span class="c1">// 🧩 Ex6: chờ còn 0</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> muốn đếm phần tử <strong>đang hiển thị</strong>, dùng <code>visibilityOfAllElementsLocatedBy</code> rồi kiểm tra <code>size()</code>.</li>
+</ul>
+<h3 id="52-numberofelementstobemorethanby-integer">5.2. <code>numberOfElementsToBeMoreThan(By, Integer)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> như 5.1 nhưng đạt khi <code>size()</code> <strong>lớn hơn</strong> <code>n</code>.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kt">int</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">)).</span><span class="na">size</span><span class="p">();</span>
+<span class="c1">// cuộn trang để tải thêm...</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBeMoreThan</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;jscroll-added&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">before</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> lý tưởng cho infinite scroll — "có nhiều hơn lúc nãy" thay vì đoán số chính xác.</li>
+</ul>
+<h3 id="53-numberofelementstobelessthanby-integer">5.3. <code>numberOfElementsToBeLessThan(By, Integer)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> như 5.1 nhưng đạt khi <code>size()</code> <strong>nhỏ hơn</strong> <code>n</code>.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBeLessThan</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.row&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">));</span><span class="w">   </span><span class="c1">// chờ lọc còn dưới 10 dòng</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> <code>LessThan(by, 1)</code> tương đương chờ còn 0 phần tử.</li>
+</ul>
+<h2 id="6-nhóm-e--trang-cửa-sổ-frame-alert-đã-đổi-chưa">6. Nhóm E — "Trang, cửa sổ, frame, alert đã đổi chưa?"</h2>
+<h3 id="61-urltobestring">6.1. <code>urlToBe(String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> so <code>driver.getCurrentUrl()</code> <strong>bằng đúng</strong> chuỗi.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> URL giống từng ký tự (gồm <code>https://</code>, dấu <code>/</code> cuối, cả <code>?query</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlToBe</span><span class="p">(</span><span class="s">&quot;https://the-internet.herokuapp.com/secure&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> dễ hỏng vì tham số query hoặc dấu <code>/</code> cuối. Chỉ cần biết "đã đổi trang" → <code>urlContains</code>.</li>
+</ul>
+<h3 id="62-urlcontainsstring">6.2. <code>urlContains(String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>getCurrentUrl().contains(chuỗi)</code>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> URL <strong>chứa</strong> chuỗi.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/secure&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// sau khi đăng nhập</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> lựa chọn an toàn nhất để xác nhận "đã chuyển trang".</li>
+</ul>
+<h3 id="63-urlmatchesstring-regex">6.3. <code>urlMatches(String regex)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> so URL với regex (dạng <code>find()</code>).</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> URL có đoạn khớp mẫu.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlMatches</span><span class="p">(</span><span class="s">&quot;.*/orders/\\d+$&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// URL có ID đơn hàng thay đổi</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> dùng khi một phần URL luôn đổi (ID, token).</li>
+</ul>
+<h3 id="64-titleisstring">6.4. <code>titleIs(String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> so <code>getTitle()</code> <strong>bằng đúng</strong> chuỗi.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> title giống hệt.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">titleIs</span><span class="p">(</span><span class="s">&quot;The Internet&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> title có phần thay đổi → <code>titleContains</code>.</li>
+</ul>
+<h3 id="65-titlecontainsstring">6.5. <code>titleContains(String)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>getTitle().contains(chuỗi)</code>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> title <strong>chứa</strong> chuỗi.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">titleContains</span><span class="p">(</span><span class="s">&quot;Dashboard&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> ngay sau <code>click()</code>, trang cũ vẫn là trang hiện tại cho tới khi điều hướng xong. Luôn chờ bằng <code>wait.until(...)</code>, đừng đọc <code>getTitle()</code> trực tiếp.</li>
+</ul>
+<h3 id="66-numberofwindowstobeint">6.6. <code>numberOfWindowsToBe(int)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đếm <code>driver.getWindowHandles().size()</code> và so với <code>n</code>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> số cửa sổ/tab <strong>đúng bằng</strong> <code>n</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandle</span><span class="p">();</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">linkText</span><span class="p">(</span><span class="s">&quot;Click Here&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span><span class="w">                 </span><span class="c1">// mở tab mới (bất đồng bộ)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfWindowsToBe</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">getWindowHandles</span><span class="p">())</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">h</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">main</span><span class="p">))</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">window</span><span class="p">(</span><span class="n">h</span><span class="p">);</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> ngay sau click có thể mới có 1 cửa sổ nên phải chờ. Method này <strong>chỉ đếm, không chuyển</strong> cửa sổ — bạn vẫn phải <code>switchTo().window(handle)</code>.</li>
+</ul>
+<h3 id="67-frametobeavailableandswitchtoitby--string--int--webelement">6.7. <code>frameToBeAvailableAndSwitchToIt(By | String | int | WebElement)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chờ iframe sẵn sàng <strong>và chuyển driver vào bên trong</strong> nó. Nhận <code>By</code>, tên/id (<code>String</code>), chỉ số (<code>int</code>) hoặc <code>WebElement</code>.</li>
+<li><strong>Trả về:</strong> <code>WebDriver</code> (driver đã ở trong iframe).</li>
+<li><strong>Đạt khi:</strong> iframe có sẵn và đã chuyển vào được. <strong>Chưa đạt khi:</strong> chưa có iframe (<code>NoSuchFrameException</code> bị bỏ qua).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">frameToBeAvailableAndSwitchToIt</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;mce_0_ifr&quot;</span><span class="p">)));</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;tinymce&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// đang ở BÊN TRONG iframe</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">                        </span><span class="c1">// trở ra</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> sau khi đạt, mọi <code>findElement</code> tìm <strong>bên trong iframe</strong>; quên <code>defaultContent()</code> thì không thấy phần tử ngoài iframe (<code>NoSuchElementException</code>). Khác <code>switchTo().frame()</code>: bản này <strong>chờ</strong>, bản kia chuyển ngay và ném <code>NoSuchFrameException</code> nếu iframe chưa có.</li>
+</ul>
+<h3 id="68-alertispresent">6.8. <code>alertIsPresent()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> thử <code>driver.switchTo().alert()</code>. Nếu chưa có alert thì bỏ qua <code>NoAlertPresentException</code> và hỏi lại.</li>
+<li><strong>Trả về:</strong> <code>Alert</code> (đối tượng để <code>accept()</code>/<code>dismiss()</code>/<code>getText()</code>).</li>
+<li><strong>Đạt khi:</strong> có JS alert/confirm/prompt đang mở.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;button[onclick=&#39;jsAlert()&#39;]&quot;</span><span class="p">)).</span><span class="na">click</span><span class="p">();</span>
+<span class="n">Alert</span><span class="w"> </span><span class="n">alert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">alertIsPresent</span><span class="p">());</span>
+<span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> gọi <code>switchTo().alert()</code> quá sớm → <code>NoAlertPresentException</code>. Chỉ áp dụng cho alert JS, không áp dụng cho modal HTML.</li>
+</ul>
+<h3 id="69-khác-nhau-giữa-các-method-gần-giống">6.9. Khác nhau giữa các method gần giống</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cặp</th>
+<th>Khác nhau</th>
+<th>Chọn khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>urlToBe</code> vs <code>urlContains</code></td>
+<td>Bằng đúng (dễ hỏng vì <code>?query</code>, dấu <code>/</code> cuối) vs chứa chuỗi con</td>
+<td><code>urlContains("/secure")</code> an toàn hơn cho kiểm tra đã đổi trang</td>
+</tr>
+<tr>
+<td><code>urlContains</code> vs <code>urlMatches</code></td>
+<td>Chuỗi con cố định vs regex</td>
+<td>URL có ID thay đổi (<code>/orders/\d+</code>) → <code>urlMatches</code></td>
+</tr>
+<tr>
+<td><code>titleIs</code> vs <code>titleContains</code></td>
+<td>Bằng đúng vs chứa</td>
+<td>Title có phần thay đổi → <code>titleContains</code></td>
+</tr>
+<tr>
+<td><code>frameToBeAvailableAndSwitchToIt</code> vs <code>switchTo().frame()</code></td>
+<td>Vừa <strong>chờ</strong> vừa chuyển vs chuyển ngay (ném <code>NoSuchFrameException</code> nếu chưa có)</td>
+<td>Iframe tải chậm → dùng bản chờ</td>
+</tr>
+<tr>
+<td><code>alertIsPresent</code> vs <code>switchTo().alert()</code></td>
+<td>Chờ alert xuất hiện vs ném <code>NoAlertPresentException</code> nếu gọi quá sớm</td>
+<td>Alert hiện sau một hành động bất đồng bộ</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7-nhóm-f--kết-hợp-điều-kiện-và-javascript">7. Nhóm F — Kết hợp điều kiện và JavaScript</h2>
+<h3 id="71-orexpectedcondition">7.1. <code>or(ExpectedCondition&lt;?&gt;...)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> hỏi lần lượt các điều kiện; chỉ cần <strong>một</strong> điều kiện đạt là đạt.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">or</span><span class="p">(</span>
+<span class="w">        </span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;success&quot;</span><span class="p">)),</span>
+<span class="w">        </span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="p">))));</span><span class="w">      </span><span class="c1">// chờ một trong hai kết quả</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> <code>or</code> <strong>không cho biết điều kiện nào đã đạt</strong>. Sau khi <code>until</code> kết thúc hãy kiểm tra lại (ví dụ <code>driver.findElements(By.id("error")).isEmpty()</code>).</li>
+</ul>
+<h3 id="72-andexpectedcondition">7.2. <code>and(ExpectedCondition&lt;?&gt;...)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> hỏi các điều kiện; <strong>tất cả</strong> phải đạt trong cùng một lần hỏi.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">and</span><span class="p">(</span>
+<span class="w">        </span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/dashboard&quot;</span><span class="p">),</span>
+<span class="w">        </span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">titleContains</span><span class="p">(</span><span class="s">&quot;Dashboard&quot;</span><span class="p">)));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> không nhận lại các <code>WebElement</code> từ điều kiện bên trong; cần phần tử thì dùng <code>until</code> riêng.</li>
+</ul>
+<h3 id="73-notexpectedcondition">7.3. <code>not(ExpectedCondition&lt;?&gt;)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đảo kết quả: điều kiện bên trong trả <code>null</code>/<code>false</code> → đạt.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">not</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">urlContains</span><span class="p">(</span><span class="s">&quot;/login&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// chờ rời khỏi trang login</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> hợp với điều kiện kiểu <code>Boolean</code> (URL, title...). Để chờ phần tử biến mất, dùng các method <code>invisibilityOf...</code> chuyên dụng thay vì <code>not(visibility...)</code>.</li>
+</ul>
+<h3 id="74-jsreturnsvaluestring-script">7.4. <code>jsReturnsValue(String script)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy đoạn JavaScript và lấy giá trị trả về.</li>
+<li><strong>Trả về:</strong> <code>Object</code> (giá trị JS trả về).</li>
+<li><strong>Đạt khi:</strong> JS trả về giá trị <strong>khác <code>null</code> và <code>false</code></strong>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">jsReturnsValue</span><span class="p">(</span><span class="s">&quot;return document.readyState === &#39;complete&#39;&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> script phải có <code>return</code>. Dùng khi không có <code>ExpectedCondition</code> sẵn cho tình huống (ví dụ chờ biến JS của trang).</li>
+</ul>
+<h3 id="75-javascriptthrowsnoexceptionsstring-script">7.5. <code>javaScriptThrowsNoExceptions(String script)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy đoạn JS và kiểm tra nó <strong>không ném lỗi</strong>.</li>
+<li><strong>Trả về:</strong> <code>Boolean</code>.</li>
+<li><strong>Đạt khi:</strong> JS chạy xong không có exception. <strong>Chưa đạt khi:</strong> JS ném lỗi (ví dụ biến chưa định nghĩa).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">javaScriptThrowsNoExceptions</span><span class="p">(</span><span class="s">&quot;window.myApp.init()&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> script <strong>được chạy thật</strong> nhiều lần (mỗi chu kỳ) — đừng đưa lệnh có tác dụng phụ (gửi form, tăng bộ đếm).</li>
+</ul>
+<h2 id="8-bảng-chọn-nhanh-tình-huống--method">8. Bảng chọn nhanh: tình huống → method</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Method nên dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Đợi nút hiện ra rồi click</td>
+<td><code>elementToBeClickable(By)</code></td>
+</tr>
+<tr>
+<td>Đợi thông báo hiện rồi đọc</td>
+<td><code>visibilityOfElementLocated(By)</code></td>
+</tr>
+<tr>
+<td>Đợi thông báo <strong>đổi</strong> sang nội dung mới</td>
+<td><code>textToBe(By, String)</code></td>
+</tr>
+<tr>
+<td>Đợi ô input được JS điền</td>
+<td><code>textToBePresentInElementValue</code></td>
+</tr>
+<tr>
+<td>Đợi spinner biến mất</td>
+<td><code>invisibilityOfElementLocated(By)</code> (chờ hiện trước nếu spinner xuất hiện chậm)</td>
+</tr>
+<tr>
+<td>Đợi bảng/danh sách được vẽ lại</td>
+<td><code>stalenessOf(oldElement)</code> rồi tìm lại</td>
+</tr>
+<tr>
+<td>Đợi đủ N dòng</td>
+<td><code>numberOfElementsToBe(By, N)</code></td>
+</tr>
+<tr>
+<td>Đợi thêm dòng (infinite scroll)</td>
+<td><code>numberOfElementsToBeMoreThan(By, before)</code></td>
+</tr>
+<tr>
+<td>Đợi chuyển trang</td>
+<td><code>urlContains</code> hoặc <code>titleContains</code></td>
+</tr>
+<tr>
+<td>Đợi tab mới</td>
+<td><code>numberOfWindowsToBe(2)</code> rồi <code>switchTo().window</code></td>
+</tr>
+<tr>
+<td>Đợi iframe</td>
+<td><code>frameToBeAvailableAndSwitchToIt(By)</code></td>
+</tr>
+<tr>
+<td>Đợi alert</td>
+<td><code>alertIsPresent()</code></td>
+</tr>
+<tr>
+<td>Đợi một trong hai kết quả</td>
+<td><code>or(c1, c2)</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9-khi-timeoutexception-xảy-ra--đọc-lỗi-thế-nào">9. Khi <code>TimeoutException</code> xảy ra — đọc lỗi thế nào?</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cụm từ trong thông báo (sau <code>waiting for</code>)</th>
+<th>Điều kiện nào không đạt</th>
+<th>Hướng kiểm tra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>visibility of element located by ...</code></td>
+<td>Phần tử không có hoặc luôn ẩn</td>
+<td>Locator đúng chưa? Phần tử nằm trong iframe? Có bị <code>display:none</code>?</td>
+</tr>
+<tr>
+<td><code>element to be clickable ...</code></td>
+<td>Ẩn hoặc <code>disabled</code></td>
+<td>Có điều kiện nào làm nút bị khoá? Cần thao tác trước?</td>
+</tr>
+<tr>
+<td><code>element to no longer be visible ...</code></td>
+<td>Phần tử vẫn hiển thị</td>
+<td>Spinner treo? Hay là bản <strong>mới</strong> của phần tử?</td>
+</tr>
+<tr>
+<td><code>text ... to be ...</code></td>
+<td>Text khác hẳn</td>
+<td>In <code>getText()</code> ra để so; chú ý khoảng trắng/xuống dòng</td>
+</tr>
+<tr>
+<td><code>number of elements ...</code></td>
+<td>Đếm sai</td>
+<td>Locator khớp cả phần tử ẩn/không liên quan?</td>
+</tr>
+<tr>
+<td><code>element ... to become stale</code></td>
+<td>Phần tử cũ không bị thay</td>
+<td>Trang ẩn bằng CSS thay vì vẽ lại?</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>ExpectedConditions vẫn nằm trong <code>selenium-support</code> của 4.52.0 và 🧩 được dự án sử dụng. Tuỳ phiên bản, một số method có thể bị đánh dấu deprecated hoặc có overload mới; luôn đọc cảnh báo của trình biên dịch/IDE. Danh sách và hành vi ở trên dựa trên API chính thức của Selenium 4; thông báo lỗi ở mục 9 là <strong>dạng điển hình</strong>, từ ngữ chính xác có thể khác nhẹ giữa các phiên bản.</p>
+</blockquote>
 <hr />
 <h2 id="-practice-exercises">✍️ Practice Exercises</h2>
 <blockquote>
@@ -366,6 +971,22 @@
 <p><strong>Expected Output:</strong> Hai thông báo đúng; input gõ được</p>
 <blockquote>
 <p>💡 <strong>Hint:</strong> Không chỉ chờ <code>visibility</code> của <code>#message</code>.</p>
+</blockquote>
+<h3 id="exercise-4-đoán-trước-khi-chạy">Exercise 4 (Đoán trước khi chạy)</h3>
+<p><strong>Yêu cầu:</strong> Với mỗi dòng dưới đây, <strong>viết dự đoán</strong> (đạt ngay / chờ rồi đạt / <code>TimeoutException</code> / ném exception khác) rồi mới chạy kiểm tra. Trang: <code>/dynamic_loading/1</code>, ngay sau khi tải trang (chưa bấm Start).</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (a)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">presenceOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>
+<span class="c1">// (b)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">visibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// timeout rút gọn còn 3 giây</span>
+<span class="c1">// (c)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;finish&quot;</span><span class="p">)));</span>
+<span class="c1">// (d)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">invisibilityOfElementLocated</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">)));</span>
+<span class="c1">// (e)</span>
+<span class="n">wait</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">ExpectedConditions</span><span class="p">.</span><span class="na">numberOfElementsToBe</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span></code></pre></div>
+<p><strong>Expected Output:</strong> Ghi lại 5 dự đoán và so với kết quả thật; giải thích dòng nào sai và vì sao.</p>
+<blockquote>
+<p>💡 <strong>Hint:</strong> Với từng dòng, hỏi: phần tử có trong DOM không? Có hiển thị không? Điều kiện trả <code>null</code>/<code>false</code> hay một giá trị?</p>
 </blockquote>
 <h2 id="-knowledge-check">✅ Knowledge Check</h2>
 <p><strong>Câu 1.</strong> Thứ tự bao hàm đúng?</p>
@@ -401,6 +1022,50 @@
 <summary>Xem đáp án</summary>
 <p><strong>Đáp án: C.</strong> Phải chờ nội dung đặc trưng cho trạng thái mới.</p>
 </details>
+<p><strong>Câu 4.</strong> <code>wait.until(ExpectedConditions.xxx)</code> thử lại cho tới khi điều kiện trả về…?</p>
+<ul>
+<li>A. <code>true</code></li>
+<li>B. Giá trị khác <code>null</code> và khác <code>false</code></li>
+<li>C. Đúng kiểu <code>WebElement</code></li>
+<li>D. Không ném exception</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>null</code>/<code>false</code> = chưa đạt, hỏi lại; giá trị khác = đạt và <code>until</code> trả luôn giá trị đó. Điều kiện kiểu <code>Boolean</code> trả <code>true</code>, kiểu <code>WebElement</code> trả phần tử, kiểu <code>List</code> trả danh sách.</p>
+</details>
+<p><strong>Câu 5.</strong> Phần tử có trong DOM nhưng bị <code>display:none</code>. Điều kiện nào <strong>đạt ngay</strong>?</p>
+<ul>
+<li>A. <code>visibilityOfElementLocated</code></li>
+<li>B. <code>elementToBeClickable</code></li>
+<li>C. <code>presenceOfElementLocated</code></li>
+<li>D. <code>visibilityOf</code> (phần tử đã giữ)</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: C.</strong> Presence chỉ cần có trong DOM. Ba điều kiện còn lại đều yêu cầu hiển thị.</p>
+</details>
+<p><strong>Câu 6.</strong> Bảng được vẽ lại hoàn toàn sau khi bấm Refresh. Bạn đang giữ <code>WebElement oldRow</code>. Cách chờ nào đúng?</p>
+<ul>
+<li>A. <code>visibilityOf(oldRow)</code></li>
+<li>B. <code>stalenessOf(oldRow)</code> rồi <code>findElement</code> lại</li>
+<li>C. <code>invisibilityOfElementLocated(By.cssSelector("tbody tr"))</code></li>
+<li>D. <code>presenceOfElementLocated</code> rồi dùng tiếp <code>oldRow</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>oldRow</code> đã bị tách khỏi DOM nên <code>stalenessOf</code> đạt khi bảng mới đã thay thế; sau đó tìm lại phần tử mới. A ném <code>StaleElementReferenceException</code>; C không đạt vì dòng mới vẫn hiển thị; D vẫn dùng phần tử cũ.</p>
+</details>
+<p><strong>Câu 7.</strong> Hai điều kiện nào dưới đây <strong>khác nhau</strong> khi URL hiện tại là <code>https://site.com/orders/42?lang=vi</code>?</p>
+<ul>
+<li>A. <code>urlContains("/orders/42")</code> đạt; <code>urlToBe("https://site.com/orders/42")</code> không đạt</li>
+<li>B. Cả hai đều đạt</li>
+<li>C. Cả hai đều không đạt</li>
+<li>D. <code>urlToBe</code> đạt; <code>urlContains</code> không đạt</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: A.</strong> <code>urlContains</code> chỉ cần chứa chuỗi con; <code>urlToBe</code> so bằng đúng cả chuỗi, kể cả phần <code>?lang=vi</code>.</p>
+</details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is the difference between presence, visibility and clickability?</strong></p>
 <ul>
@@ -419,18 +1084,27 @@
 <h2 id="-lesson-summary">📌 Lesson Summary</h2>
 <p><strong>Kiến thức cần nhớ</strong></p>
 <ul>
+<li>Điều kiện trả <code>null</code>/<code>false</code> = chưa đạt; giá trị khác = đạt và <code>until</code> trả luôn giá trị đó; hết giờ → <code>TimeoutException</code></li>
 <li><code>presenceOfElementLocated</code> ⊇ <code>visibilityOfElementLocated</code> ⊇ <code>elementToBeClickable</code></li>
-<li>Biến mất: <code>invisibilityOfElementLocated</code>/<code>numberOfElementsToBe(by, 0)</code></li>
+<li>Biến mất: <code>invisibilityOfElementLocated</code> (ẩn <strong>hoặc</strong> không còn), <code>stalenessOf</code> (bị thay khỏi DOM), <code>numberOfElementsToBe(by, 0)</code></li>
 <li>Điều kiện chờ phải đặc trưng cho trạng thái <strong>mới</strong></li>
 </ul>
-<p><strong>Method / lệnh cần biết</strong></p>
+<p><strong>Method / lệnh cần biết</strong> (theo nhóm)</p>
 <ul>
-<li><code>visibilityOf</code>, <code>textToBe</code>, <code>textToBePresentInElement</code>, <code>stalenessOf</code>, <code>alertIsPresent</code>, <code>numberOfWindowsToBe</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>urlContains</code>, <code>titleIs</code></li>
+<li>Có và dùng được: <code>presenceOfElementLocated</code>, <code>visibilityOfElementLocated</code>, <code>visibilityOf</code>, <code>elementToBeClickable</code>, <code>visibilityOfAllElementsLocatedBy</code></li>
+<li>Biến mất: <code>invisibilityOfElementLocated</code>, <code>invisibilityOf</code>, <code>stalenessOf</code></li>
+<li>Chữ/thuộc tính: <code>textToBe</code>, <code>textToBePresentInElementLocated</code>, <code>textMatches</code>, <code>attributeToBe</code>, <code>attributeContains</code></li>
+<li>Số lượng: <code>numberOfElementsToBe</code>, <code>numberOfElementsToBeMoreThan</code></li>
+<li>Trang/cửa sổ: <code>urlContains</code>, <code>urlToBe</code>, <code>titleIs</code>, <code>numberOfWindowsToBe</code>, <code>frameToBeAvailableAndSwitchToIt</code>, <code>alertIsPresent</code></li>
+<li>Kết hợp: <code>or</code>, <code>and</code>, <code>not</code></li>
 </ul>
 <p><strong>Điểm dễ nhầm lẫn</strong></p>
 <ul>
-<li><code>textToBe</code> (bằng) ≠ <code>textToBePresentInElement</code> (chứa)</li>
-<li><code>visibilityOf(WebElement)</code> ≠ <code>visibilityOfElementLocated(By)</code></li>
+<li><code>textToBe</code> (bằng) ≠ <code>textToBePresentInElement</code> (chứa) ≠ <code>textMatches</code> (regex)</li>
+<li><code>visibilityOf(WebElement)</code> (không tìm lại, dễ stale) ≠ <code>visibilityOfElementLocated(By)</code> (tìm lại mỗi lần)</li>
+<li><code>invisibilityOfElementLocated</code> <strong>pass giả</strong> khi phần tử chưa từng xuất hiện</li>
+<li><code>stalenessOf</code> không đạt nếu phần tử chỉ bị ẩn bằng CSS</li>
+<li><code>frameToBeAvailableAndSwitchToIt</code> đã chuyển driver vào iframe — nhớ <code>defaultContent()</code></li>
 <li>Overlay che dù <code>clickable</code></li>
 </ul>
 <p><strong>Bài tiếp theo:</strong> ➡️ <a href="05-fluent-wait.html">Fluent Wait và Custom Wait</a></p>
@@ -438,6 +1112,47 @@
 <blockquote>
 <p>Chỉ mở sau khi đã tự làm bài tập ở trên.</p>
 </blockquote>
+<details>
+<summary>Đáp án gợi ý Exercise 4 (dự đoán)</summary>
+<p>Trên <code>/dynamic_loading/1</code> trước khi bấm Start: <code>#finish</code> <strong>có trong DOM nhưng ẩn</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Dòng</th>
+<th>Dự đoán</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(a) <code>presenceOfElementLocated(finish)</code></td>
+<td>Đạt ngay</td>
+<td>Có trong DOM, presence không quan tâm hiển thị</td>
+</tr>
+<tr>
+<td>(b) <code>visibilityOfElementLocated(finish)</code></td>
+<td><code>TimeoutException</code> sau 3 giây</td>
+<td>Có trong DOM nhưng ẩn, chưa ai bấm Start</td>
+</tr>
+<tr>
+<td>(c) <code>invisibilityOfElementLocated(finish)</code></td>
+<td>Đạt ngay</td>
+<td>Phần tử có nhưng ẩn → thoả "ẩn"</td>
+</tr>
+<tr>
+<td>(d) <code>invisibilityOfElementLocated("khong-ton-tai")</code></td>
+<td>Đạt ngay</td>
+<td>Không có trong DOM cũng được coi là "không hiển thị" (<strong>pass giả</strong>)</td>
+</tr>
+<tr>
+<td>(e) <code>numberOfElementsToBe("khong-ton-tai", 0)</code></td>
+<td>Đạt ngay</td>
+<td><code>findElements</code> trả list rỗng, đúng bằng 0</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nếu dự đoán (c) hoặc (d) của bạn là "chờ/Timeout", hãy đọc lại mục 3.1 (<code>invisibilityOfElementLocated</code>, phần "pass giả") ở trên.</p>
+</details>
 <details>
 <summary>Lời giải Exercise 1</summary>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// (đặt trong một @Test — có sẵn driver và wait từ BaseTest)</span>

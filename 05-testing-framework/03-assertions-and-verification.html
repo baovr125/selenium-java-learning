@@ -45,64 +45,160 @@
 </ul>
 <h2 id="1-assertion-là-gì">1. Assertion là gì?</h2>
 <p><strong>Assertion</strong> là phép kiểm tra "kết quả thực tế có đúng kỳ vọng không". Sai ⇒ ném <code>AssertionError</code> ⇒ test <strong>fail</strong>. Không có assertion ⇒ test chỉ kiểm tra "không crash" — không phải kiểm thử thực sự.</p>
-<h2 id="2-orgtestngassert--các-method">2. <code>org.testng.Assert</code> — các method</h2>
+<h2 id="2-orgtestngassert--từng-method-làm-gì">2. <code>org.testng.Assert</code> — từng method làm gì</h2>
+<p>Các method của <code>Assert</code> đều <strong><code>static</code></strong> (gọi <code>Assert.xxx(...)</code>) và trả về <code>void</code>. Khi <strong>đúng</strong> → không có gì xảy ra, test chạy tiếp. Khi <strong>sai</strong> → ném <code>AssertionError</code> → test <strong>fail</strong> ngay tại dòng đó, các dòng sau không chạy.</p>
+<p>⚠️ <strong>Tham số <code>message</code> luôn nằm cuối</strong> và là tuỳ chọn. <strong>Thứ tự của TestNG:</strong> <code>assertEquals(actual, expected)</code> — giá trị <strong>thực tế trước</strong>, kỳ vọng sau. JUnit ngược lại (<code>expected, actual</code>).</p>
+<h3 id="21-assertequalsactual-expected-message">2.1. <code>assertEquals(actual, expected[, message])</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra hai giá trị <strong>bằng nhau theo <code>equals()</code></strong>. Có bản riêng cho <code>String</code>, số, <code>boolean</code>, mảng (so từng phần tử), <code>List</code> (so cả <strong>thứ tự</strong>), <code>Set</code>, <code>Map</code>.</li>
+<li><strong>Sai thì:</strong> ném <code>AssertionError</code> với thông báo dạng <code>expected [Secure Area] but found [Login Page]</code> (kèm <code>message</code> của bạn ở đầu nếu có).</li>
+<li><strong>🧩 Dùng ở:</strong> Ex 3, 4, 5, 6, 8, 9, 10.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;The Internet&quot;</span><span class="p">);</span><span class="w">                 </span><span class="c1">// String</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">rows</span><span class="p">.</span><span class="na">size</span><span class="p">(),</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bảng phải có 4 dòng&quot;</span><span class="p">);</span><span class="w">            </span><span class="c1">// int</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">actualList</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;Smith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;John&quot;</span><span class="p">));</span><span class="w">              </span><span class="c1">// List: so cả thứ tự</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> với số thực dùng bản có sai số <code>assertEquals(actual, expected, delta)</code>, vì <code>0.1 + 0.2 != 0.3</code>.</li>
+</ul>
+<h3 id="22-assertnotequalsactual-unexpected-message">2.2. <code>assertNotEquals(actual, unexpected[, message])</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra hai giá trị <strong>khác nhau</strong>.</li>
+<li><strong>Sai thì:</strong> ném <code>AssertionError</code> khi hai giá trị bằng nhau.</li>
+<li><strong>🧩 Dùng ở:</strong> Ex 2.</li>
+<li><strong>Ví dụ:</strong> <code>Assert.assertNotEquals(checkbox.isSelected(), stateBeforeClick, "click phải đổi trạng thái");</code></li>
+<li><strong>Lưu ý:</strong> chỉ nói "khác", không nói "khác thế nào" — nếu biết giá trị mong đợi, dùng <code>assertEquals</code> chặt hơn.</li>
+</ul>
+<h3 id="23-asserttruecondition-message">2.3. <code>assertTrue(condition[, message])</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra biểu thức <code>boolean</code> là <strong><code>true</code></strong>.</li>
+<li><strong>Sai thì:</strong> <code>AssertionError</code> thông báo <code>expected [true] but found [false]</code> — <strong>không</strong> cho biết giá trị nào gây ra, nên <code>message</code> rất quan trọng.</li>
+<li><strong>🧩 Dùng ở:</strong> Ex 1, 2, 5, 6, 7, 8, 10.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Thông báo thực tế: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> nên ghi giá trị thực tế vào <code>message</code>. Nếu so sánh bằng, dùng <code>assertEquals</code> thay vì <code>assertTrue(a.equals(b))</code> để có thông báo đầy đủ.</li>
+</ul>
+<h3 id="24-assertfalsecondition-message">2.4. <code>assertFalse(condition[, message])</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra biểu thức là <strong><code>false</code></strong>.</li>
+<li><strong>Sai thì:</strong> <code>AssertionError</code> khi biểu thức là <code>true</code>.</li>
+<li><strong>🧩 Dùng ở:</strong> Ex 10.</li>
+<li><strong>Ví dụ:</strong> <code>Assert.assertFalse(input.isEnabled(), "Ban đầu input phải bị khoá");</code></li>
+</ul>
+<h3 id="25-assertnullobject-message--assertnotnullobject-message">2.5. <code>assertNull(object[, message])</code> / <code>assertNotNull(object[, message])</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra đối tượng <strong>là</strong> / <strong>không là</strong> <code>null</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Assert</span><span class="p">.</span><span class="na">assertNull</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookieNamed</span><span class="p">(</span><span class="s">&quot;khong-co&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Không được có cookie này&quot;</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertNotNull</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">getCookieNamed</span><span class="p">(</span><span class="s">&quot;session&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Phải có cookie phiên&quot;</span><span class="p">);</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> <code>getCookieNamed</code> trả <code>null</code> khi không có — đây là dạng kiểm tra tự nhiên.</li>
+</ul>
+<h3 id="26-assertsameactual-expected--assertnotsame">2.6. <code>assertSame(actual, expected)</code> / <code>assertNotSame(...)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra hai biến trỏ vào <strong>cùng một đối tượng trong bộ nhớ</strong> (so bằng <code>==</code>), không phải "giá trị giống nhau".</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">String</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w">     </span><span class="c1">// ✅ pass: nội dung bằng nhau</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertSame</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w">       </span><span class="c1">// ❌ fail: hai đối tượng khác nhau</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> hiếm dùng trong Selenium. Chỉ dùng khi cần xác nhận "chính là đối tượng đó" (ví dụ singleton).</li>
+</ul>
+<h3 id="27-assertequalsnoorderactual-expected-message">2.7. <code>assertEqualsNoOrder(actual, expected[, message])</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> so hai <strong>mảng</strong> có <strong>cùng phần tử, bỏ qua thứ tự</strong> (cùng số lượng, trùng lặp vẫn phải khớp số lần).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Assert</span><span class="p">.</span><span class="na">assertEqualsNoOrder</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[]</span><span class="p">{</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">});</span><span class="w">   </span><span class="c1">// ✅</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> với <code>List</code>, <code>assertEquals</code> so cả thứ tự; muốn bỏ qua thứ tự thì so hai <code>Set</code> (mục 8).</li>
+</ul>
+<h3 id="28-assertthrowsclasst-expected-throwingrunnable-code--expectthrows">2.8. <code>assertThrows(Class&lt;T&gt; expected, ThrowingRunnable code)</code> / <code>expectThrows</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy đoạn <code>code</code> và kiểm tra nó <strong>ném đúng loại exception</strong> (hoặc lớp con) đã chỉ định. Không ném gì hoặc ném loại khác → fail.</li>
+<li><strong>Khác nhau:</strong> <code>assertThrows</code> trả <code>void</code>; <code>expectThrows</code> <strong>trả về chính exception</strong> để bạn kiểm tra thêm (ví dụ <code>getMessage()</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Assert</span><span class="p">.</span><span class="na">assertThrows</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">)));</span>
+
+<span class="n">NoSuchElementException</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Assert</span><span class="p">.</span><span class="na">expectThrows</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+<span class="w">        </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">)));</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="na">getMessage</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> chặt hơn <code>@Test(expectedExceptions=...)</code> vì chỉ bao đúng một dòng, không phải cả method.</li>
+</ul>
+<h3 id="29-failmessage">2.9. <code>fail(message)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <strong>ép test fail ngay</strong> với thông báo cho trước.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;must-not-exist&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="n">Assert</span><span class="p">.</span><span class="na">fail</span><span class="p">(</span><span class="s">&quot;Phần tử không được tồn tại&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// đến đây nghĩa là findElement không ném lỗi</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="w"> </span><span class="n">expected</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> dùng khi đường chạy "lẽ ra không bao giờ đến được".</li>
+</ul>
+<h3 id="210-bảng-so-sánh-các-method-dễ-nhầm">2.10. Bảng so sánh các method dễ nhầm</h3>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Ý nghĩa</th>
-<th>🧩 Dùng ở</th>
+<th>Muốn kiểm tra</th>
+<th>Nên dùng</th>
+<th>Không nên dùng</th>
+<th>Vì sao</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>assertEquals(actual, expected, message)</code></td>
-<td>Bằng nhau</td>
-<td>Ex 3, 4, 5, 6, 8, 9, 10</td>
+<td>Hai giá trị bằng nhau</td>
+<td><code>assertEquals(a, b)</code></td>
+<td><code>assertTrue(a.equals(b))</code></td>
+<td><code>assertEquals</code> in cả hai giá trị khi sai</td>
 </tr>
 <tr>
-<td><code>assertNotEquals(actual, unexpected, message)</code></td>
-<td>Khác nhau</td>
-<td>Ex 2</td>
+<td>Hai chuỗi bằng nhau</td>
+<td><code>assertEquals(s1, s2)</code></td>
+<td><code>assertTrue(s1 == s2)</code> / <code>assertSame</code></td>
+<td><code>==</code> so địa chỉ, không so nội dung</td>
 </tr>
 <tr>
-<td><code>assertTrue(condition, message)</code></td>
-<td>Điều kiện đúng</td>
-<td>Ex 1, 2, 5, 6, 7, 8, 10</td>
+<td>Cùng một đối tượng</td>
+<td><code>assertSame(a, b)</code></td>
+<td><code>assertEquals(a, b)</code></td>
+<td><code>assertEquals</code> chỉ so nội dung</td>
 </tr>
 <tr>
-<td><code>assertFalse(condition, message)</code></td>
-<td>Điều kiện sai</td>
-<td>Ex 10</td>
+<td>Chuỗi <strong>chứa</strong> một đoạn</td>
+<td><code>assertTrue(s.contains(x), msg)</code></td>
+<td><code>assertEquals(s, x)</code></td>
+<td><code>assertEquals</code> đòi bằng <strong>toàn bộ</strong></td>
 </tr>
 <tr>
-<td><code>assertNull</code>, <code>assertNotNull</code></td>
-<td>Null</td>
-<td>—</td>
+<td>Có/không có phần tử</td>
+<td><code>assertTrue(list.isEmpty())</code> / <code>assertFalse(...)</code></td>
+<td><code>assertEquals(list.size(), 0)</code></td>
+<td>Cả hai được; <code>isEmpty</code> rõ nghĩa hơn</td>
 </tr>
 <tr>
-<td><code>assertSame</code>, <code>assertNotSame</code></td>
-<td>Cùng tham chiếu</td>
-<td>—</td>
+<td>Hai list bằng, <strong>bỏ qua thứ tự</strong></td>
+<td>So hai <code>Set</code>, hoặc <code>assertEqualsNoOrder</code> (mảng)</td>
+<td><code>assertEquals(list1, list2)</code></td>
+<td><code>assertEquals(List, List)</code> so cả thứ tự</td>
 </tr>
 <tr>
-<td><code>assertEqualsNoOrder(array, array)</code></td>
-<td>So không quan tâm thứ tự</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>assertThrows(...)</code>, <code>expectThrows</code></td>
-<td>Mong đợi exception</td>
-<td>—</td>
-</tr>
-<tr>
-<td><code>fail(message)</code></td>
-<td>Ép fail</td>
-<td>—</td>
+<td>Bắt exception ở <strong>một dòng</strong></td>
+<td><code>assertThrows</code></td>
+<td><code>expectedExceptions</code></td>
+<td><code>expectedExceptions</code> bao cả method</td>
 </tr>
 </tbody>
 </table></div>
-<p>⚠️ <strong>Thứ tự tham số của TestNG:</strong> <code>assertEquals(**actual**, **expected**)</code>. JUnit ngược lại (<code>expected, actual</code>). Sai thứ tự khiến thông báo lỗi đảo nghĩa.</p>
+<p>🧩 <strong>Thứ tự tham số khi sai:</strong> nếu viết <code>assertEquals(expected, actual)</code> (đảo), thông báo lỗi "expected [..] but found [..]" sẽ <strong>đảo nghĩa</strong> làm bạn debug sai hướng.</p>
 <p>🧩 Phân tích assert trong dự án:</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// Ex1 — assertTrue với message có giá trị thực tế</span>
 <span class="n">Assert</span><span class="p">.</span><span class="na">assertTrue</span><span class="p">(</span><span class="n">actualMessage</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="s">&quot;You logged into a secure area!&quot;</span><span class="p">),</span>
@@ -149,6 +245,33 @@
 <span class="n">soft</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">firstRow</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;jsmith@gmail.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Email&quot;</span><span class="p">);</span>
 <span class="n">soft</span><span class="p">.</span><span class="na">assertAll</span><span class="p">();</span><span class="w">       </span><span class="c1">// ⚠️ BẮT BUỘC: không gọi thì không bao giờ fail!</span></code></pre></div>
 <p>⚠️ Quên <code>assertAll()</code> là lỗi kinh điển: test <strong>luôn pass</strong>.</p>
+<h3 id="31-new-softassert">3.1. <code>new SoftAssert()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> tạo đối tượng "ghi nhớ lỗi". Các method <code>assertEquals</code>, <code>assertTrue</code>, <code>assertNotEquals</code>... của nó có <strong>cùng chữ ký</strong> với <code>Assert</code>, nhưng khi sai chỉ <strong>ghi lại</strong> lỗi và cho test chạy tiếp.</li>
+<li><strong>Lưu ý:</strong> tạo <code>SoftAssert</code> <strong>mới cho mỗi test</strong> (đừng dùng <code>static</code> dùng chung — lỗi test này lọt sang test khác).</li>
+</ul>
+<h3 id="32-softassertassertall">3.2. <code>softAssert.assertAll()</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <strong>tổng kết</strong>: nếu có ít nhất một lỗi đã ghi nhận, ném <strong>một</strong> <code>AssertionError</code> liệt kê tất cả lỗi; nếu không có thì không làm gì.</li>
+<li><strong>Thông báo khi sai</strong> (dạng điển hình):</li>
+</ul>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">java.lang.AssertionError: The following asserts failed:
+	Last name expected [Smith] but found [Smyth],
+	Email expected [jsmith@gmail.com] but found [x@y.com]</code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> phải gọi <code>assertAll()</code> <strong>ở cuối</strong> test. Bản <code>assertAll(String message)</code> thêm câu mô tả. Sau <code>assertAll()</code> đã ném lỗi thì các dòng bên dưới không chạy.</li>
+</ul>
+<h3 id="33-ví-dụ-so-sánh-hai-cách">3.3. Ví dụ so sánh hai cách</h3>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// Hard Assert: dừng ở lỗi đầu tiên → bạn chỉ thấy &quot;Last name&quot; sai, chưa biết Email có sai không</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Smith&quot;</span><span class="p">);</span>
+<span class="n">Assert</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;jsmith@gmail.com&quot;</span><span class="p">);</span><span class="w">      </span><span class="c1">// không bao giờ chạy tới nếu dòng trên fail</span>
+
+<span class="c1">// Soft Assert: thấy cả hai lỗi trong một lần chạy</span>
+<span class="n">SoftAssert</span><span class="w"> </span><span class="n">soft</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SoftAssert</span><span class="p">();</span>
+<span class="n">soft</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Smith&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Last name&quot;</span><span class="p">);</span>
+<span class="n">soft</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">row</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;jsmith@gmail.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Email&quot;</span><span class="p">);</span>
+<span class="n">soft</span><span class="p">.</span><span class="na">assertAll</span><span class="p">();</span></code></pre></div>
+<p>⚠️ <strong>Không dùng Soft Assert cho bước phụ thuộc</strong>: nếu đăng nhập sai mà vẫn tiếp tục kiểm tra trang sau, các lỗi tiếp theo chỉ là hệ quả gây nhiễu.</p>
 <h2 id="4-verify--assert-khái-niệm">4. Verify ≠ Assert (khái niệm)</h2>
 <p>Trong tài liệu tester, <em>verify</em> thường nghĩa là kiểm tra nhưng <strong>không dừng test</strong> khi sai (soft); <em>assert</em> dừng. TestNG: <code>Assert</code> (hard), <code>SoftAssert</code> (verify). Đề bài <code>de.md</code> dùng chữ "Verify" cho nghĩa "kiểm chứng"; dự án hiện thực bằng hard assert.</p>
 <h2 id="5-viết-assertion-tốt">5. Viết assertion tốt</h2>

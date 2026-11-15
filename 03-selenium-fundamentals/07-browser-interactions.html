@@ -48,32 +48,72 @@
 <span class="n">alert</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Xin chào&quot;</span><span class="p">);</span><span class="w">     </span><span class="c1">// chỉ prompt</span>
 <span class="n">alert</span><span class="p">.</span><span class="na">accept</span><span class="p">();</span><span class="w">                 </span><span class="c1">// OK</span>
 <span class="c1">// alert.dismiss();             // Cancel</span></code></pre></div>
+<p><strong>Ba loại popup JS và lệnh phù hợp:</strong></p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Ý nghĩa</th>
+<th>Loại</th>
+<th>Giao diện</th>
+<th>Nút</th>
+<th><code>accept()</code></th>
+<th><code>dismiss()</code></th>
+<th><code>sendKeys(...)</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>driver.switchTo().alert()</code></td>
-<td>Chuyển sang alert (ném <code>NoAlertPresentException</code> nếu chưa có)</td>
+<td><strong>alert</strong></td>
+<td>Thông báo</td>
+<td>OK</td>
+<td>Bấm OK, đóng</td>
+<td>Giống <code>accept()</code> (chỉ có OK)</td>
+<td><code>ElementNotInteractableException</code></td>
 </tr>
 <tr>
-<td><code>getText()</code></td>
-<td>Nội dung</td>
+<td><strong>confirm</strong></td>
+<td>Hỏi xác nhận</td>
+<td>OK, Cancel</td>
+<td>Bấm <strong>OK</strong> (trang nhận <code>true</code>)</td>
+<td>Bấm <strong>Cancel</strong> (trang nhận <code>false</code>)</td>
+<td>Không dùng được</td>
 </tr>
 <tr>
-<td><code>accept()</code> / <code>dismiss()</code></td>
-<td>OK / Cancel</td>
-</tr>
-<tr>
-<td><code>sendKeys(String)</code></td>
-<td>Nhập vào prompt</td>
+<td><strong>prompt</strong></td>
+<td>Hỏi nhập chữ</td>
+<td>OK, Cancel</td>
+<td>Gửi chữ đã nhập</td>
+<td>Huỷ (trang nhận <code>null</code>)</td>
+<td>Nhập chữ vào ô</td>
 </tr>
 </tbody>
 </table></div>
+<p><strong>Từng method:</strong></p>
+<h4 id="driverswitchtoalert"><code>driver.switchTo().alert()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chuyển điều khiển của driver sang popup JS đang hiện.</li>
+<li><strong>Trả về:</strong> <code>Alert</code>.</li>
+<li><strong>Khi lỗi:</strong> chưa có popup → <code>NoAlertPresentException</code>. Nên dùng <code>wait.until(ExpectedConditions.alertIsPresent())</code> (vừa chờ vừa trả <code>Alert</code>).</li>
+</ul>
+<h4 id="alertgettext"><code>alert.getText()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đọc <strong>nội dung câu thông báo</strong> của popup.</li>
+<li><strong>Trả về:</strong> <code>String</code>.</li>
+</ul>
+<h4 id="alertaccept"><code>alert.accept()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bấm nút <strong>OK</strong> (đồng ý). Popup đóng, driver quay lại trang.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+</ul>
+<h4 id="alertdismiss"><code>alert.dismiss()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bấm nút <strong>Cancel</strong> (huỷ); với alert chỉ có OK thì tương đương <code>accept()</code>.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+</ul>
+<h4 id="alertsendkeysstring-text"><code>alert.sendKeys(String text)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> gõ chữ vào ô nhập của <strong>prompt</strong>. Nhớ <code>accept()</code> sau đó để gửi.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+</ul>
 <p>Lưu ý:</p>
 <ul>
 <li>Khi alert đang mở, mọi lệnh khác (kể cả <code>findElement</code>) ném <code>UnhandledAlertException</code>.</li>
@@ -97,33 +137,43 @@
 <thead>
 <tr>
 <th>Method</th>
-<th>Ý nghĩa</th>
+<th>Làm chính xác gì</th>
+<th>Khi nào dùng</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>switchTo().frame(int index)</code></td>
-<td>Theo chỉ số (mong manh)</td>
+<td>Vào iframe thứ <code>index</code> trong trang hiện tại (<strong>đếm từ 0</strong>, theo thứ tự trong DOM)</td>
+<td>Chỉ khi trang có ít iframe và thứ tự cố định — mong manh</td>
 </tr>
 <tr>
 <td><code>switchTo().frame(String nameOrId)</code></td>
-<td>Theo <code>name</code> hoặc <code>id</code></td>
+<td>Vào iframe có thuộc tính <code>name</code> <strong>hoặc</strong> <code>id</code> bằng chuỗi</td>
+<td>Iframe có id/name ổn định (🧩 <code>"mce_0_ifr"</code>)</td>
 </tr>
 <tr>
 <td><code>switchTo().frame(WebElement)</code></td>
-<td>Theo phần tử <code>&lt;iframe&gt;</code></td>
+<td>Vào iframe là phần tử <code>&lt;iframe&gt;</code> bạn đã tìm bằng locator</td>
+<td>Iframe không có id/name; cần locator CSS/XPath</td>
 </tr>
 <tr>
 <td><code>switchTo().parentFrame()</code></td>
-<td>Lên <strong>một</strong> cấp</td>
+<td>Ra <strong>một cấp</strong> — về frame cha của frame hiện tại</td>
+<td>Iframe <strong>lồng nhau</strong></td>
 </tr>
 <tr>
 <td><code>switchTo().defaultContent()</code></td>
-<td>Về gốc</td>
+<td>Ra <strong>thẳng trang chính</strong> (ngoài mọi iframe)</td>
+<td>Xong việc trong iframe</td>
 </tr>
 </tbody>
 </table></div>
-<p>Frame lồng nhau: vào lần lượt từng cấp; ra bằng <code>parentFrame()</code>/<code>defaultContent()</code>.</p>
+<p>Frame lồng nhau — ví dụ trang chính chứa <code>outer</code>, <code>outer</code> chứa <code>inner</code>:</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">frame</span><span class="p">(</span><span class="s">&quot;outer&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// đang ở outer</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">frame</span><span class="p">(</span><span class="s">&quot;inner&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// đang ở inner (trong outer)</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">parentFrame</span><span class="p">();</span><span class="w">         </span><span class="c1">// lùi một cấp: về outer</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">switchTo</span><span class="p">().</span><span class="na">defaultContent</span><span class="p">();</span><span class="w">      </span><span class="c1">// về trang chính (bỏ qua mọi cấp)</span></code></pre></div>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -174,32 +224,39 @@
 <thead>
 <tr>
 <th>Method</th>
-<th>Ý nghĩa</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>getWindowHandle()</code></td>
-<td>Handle cửa sổ hiện tại</td>
+<td>Lấy mã định danh của cửa sổ/tab <strong>đang được điều khiển</strong></td>
+<td><code>String</code></td>
 </tr>
 <tr>
 <td><code>getWindowHandles()</code></td>
-<td><code>Set&lt;String&gt;</code> mọi cửa sổ (không có thứ tự đảm bảo)</td>
+<td>Lấy mã của <strong>tất cả</strong> cửa sổ/tab đang mở (thứ tự không đảm bảo)</td>
+<td><code>Set&lt;String&gt;</code></td>
 </tr>
 <tr>
 <td><code>switchTo().window(handle)</code></td>
-<td>Chuyển</td>
+<td><strong>Chuyển</strong> sự điều khiển sang cửa sổ có mã đó: các lệnh sau đó tác động lên cửa sổ này</td>
+<td><code>WebDriver</code></td>
 </tr>
 <tr>
 <td><code>switchTo().newWindow(WindowType.TAB \| WINDOW)</code></td>
-<td>Selenium 4: mở &amp; chuyển sang tab/cửa sổ mới</td>
+<td><strong>Mở</strong> tab hoặc cửa sổ mới <strong>và chuyển sang nó</strong> (Selenium 4)</td>
+<td><code>WebDriver</code></td>
 </tr>
 <tr>
 <td><code>close()</code></td>
-<td>Đóng cửa sổ hiện tại (xem <a href="05-browser-navigation.html#6-close-vs-quit">03</a>)</td>
+<td><strong>Đóng</strong> cửa sổ hiện tại; sau đó phải <code>switchTo().window(...)</code> sang cửa sổ còn lại (xem <a href="05-browser-navigation.html#6-close-vs-quit">05</a>)</td>
+<td><code>void</code></td>
 </tr>
 </tbody>
 </table></div>
+<p><code>WindowType.TAB</code> mở <strong>tab</strong> trong cùng cửa sổ trình duyệt; <code>WindowType.WINDOW</code> mở <strong>cửa sổ</strong> riêng. Chi tiết ở <a href="02-webdriver.html">02 - WebDriver</a>.</p>
 <p>⚠️ Lỗi thường gặp:</p>
 <div class="table-wrap"><table>
 <thead>

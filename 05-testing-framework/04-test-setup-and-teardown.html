@@ -214,6 +214,81 @@ Nguồn: <a href="../../../../src/test/java/base/BaseTest.java" class="ext" titl
 <li>Nếu <code>@BeforeMethod</code> <strong>fail</strong> (ví dụ không khởi tạo được Chrome): các test sau trong class thường bị <strong>skipped</strong> (cấu hình method fail ⇒ skip), và <code>@AfterMethod</code> có thể vẫn chạy ⇒ vì vậy kiểm tra <code>driver != null</code> là cần thiết.</li>
 <li>Chụp ảnh khi fail: nhận <code>ITestResult</code> trong <code>@AfterMethod</code> (<a href="../03-selenium-fundamentals/11-debugging-and-best-practices.html#3-screenshot-khi-test-fail">selenium/10</a>).</li>
 </ul>
+<h3 id="61-thuộc-tính-và-tham-số-hay-gặp-ở-setupteardown">6.1. Thuộc tính và tham số hay gặp ở setup/teardown</h3>
+<h4 id="alwaysrun--true"><code>alwaysRun = true</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bắt method cấu hình <strong>luôn chạy</strong>, kể cả khi test/nhóm trước đó bị bỏ qua (skip) hoặc phụ thuộc bị fail.</li>
+<li><strong>Ví dụ:</strong> <code>@AfterMethod(alwaysRun = true) public void tearDown() { ... }</code></li>
+<li><strong>Lưu ý:</strong> không có nó, khi chạy theo <code>groups</code>, các <code>@BeforeMethod</code>/<code>@AfterMethod</code> không thuộc nhóm được chọn có thể <strong>không chạy</strong> → trình duyệt không được đóng. Với <code>teardown</code>, hầu như luôn nên bật.</li>
+</ul>
+<h4 id="tham-số-itestresult-của-aftermethod">Tham số <code>ITestResult</code> của <code>@AfterMethod</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> TestNG tự truyền kết quả của test vừa chạy vào method nếu bạn khai báo tham số <code>ITestResult</code>.</li>
+<li><strong>Các method hay dùng:</strong></li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Trả về</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>result.getName()</code></td>
+<td><code>String</code></td>
+<td>Tên test method vừa chạy (dùng đặt tên ảnh chụp)</td>
+</tr>
+<tr>
+<td><code>result.getStatus()</code></td>
+<td><code>int</code></td>
+<td><code>ITestResult.SUCCESS</code> (1), <code>FAILURE</code> (2), <code>SKIP</code> (3)</td>
+</tr>
+<tr>
+<td><code>result.isSuccess()</code></td>
+<td><code>boolean</code></td>
+<td><code>true</code> nếu test pass</td>
+</tr>
+<tr>
+<td><code>result.getThrowable()</code></td>
+<td><code>Throwable</code></td>
+<td>Exception khiến test fail (<code>null</code> nếu pass)</td>
+</tr>
+<tr>
+<td><code>result.getMethod().getMethodName()</code></td>
+<td><code>String</code></td>
+<td>Tên method (cách khác của <code>getName()</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@AfterMethod</span><span class="p">(</span><span class="n">alwaysRun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ITestResult</span><span class="p">.</span><span class="na">FAILURE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;FAIL: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getThrowable</span><span class="p">().</span><span class="na">getMessage</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span>
+<span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> tham số <code>ITestResult</code> chỉ có ở <code>@AfterMethod</code>/<code>@BeforeMethod</code> (ở <code>@BeforeMethod</code> thường dùng <code>java.lang.reflect.Method</code>).</li>
+</ul>
+<h4 id="tham-số-method-của-beforemethod">Tham số <code>Method</code> của <code>@BeforeMethod</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> nhận thông tin <strong>test sắp chạy</strong> (<code>method.getName()</code>).</li>
+<li><strong>Ví dụ:</strong> <code>@BeforeMethod public void setup(Method method) { System.out.println("Bắt đầu: " + method.getName()); }</code></li>
+</ul>
+<h3 id="62-thứ-tự-khi-có-kế-thừa">6.2. Thứ tự khi có kế thừa</h3>
+<p>Với <code>class Exercise01_LoginTest extends BaseTest</code>:</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">BaseTest.@BeforeClass (nếu có)   ← class cha chạy TRƯỚC
+  BaseTest.@BeforeMethod          ← 🧩 setup()
+    Exercise01_LoginTest.@BeforeMethod (nếu có)
+      @Test
+    Exercise01_LoginTest.@AfterMethod (nếu có)
+  BaseTest.@AfterMethod           ← 🧩 tearDown()   (class con chạy trước, class cha sau)
+BaseTest.@AfterClass (nếu có)</code></pre></div>
 <h2 id="7-thiết-kế-tốt-hơn-đề-xuất--không-sửa-dự-án">7. Thiết kế tốt hơn (đề xuất — không sửa dự án)</h2>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">abstract</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BaseTest</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRIVER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;&gt;</span><span class="p">();</span>

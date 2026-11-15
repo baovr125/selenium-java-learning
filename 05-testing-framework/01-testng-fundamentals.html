@@ -47,68 +47,144 @@ Phiên bản dự án: <strong>TestNG 7.10.2</strong> (<code>org.testng:testng</
 <h2 id="1-testng-là-gì">1. TestNG là gì?</h2>
 <p><strong>TestNG</strong> (Test Next Generation) là framework kiểm thử cho Java lấy cảm hứng từ JUnit và NUnit, thêm nhiều tính năng hữu ích cho automation: nhóm test (<code>groups</code>), phụ thuộc (<code>dependsOnMethods</code>), <code>@DataProvider</code>, chạy song song, cấu hình bằng XML, báo cáo HTML.</p>
 <p>Nó <strong>không</strong> điều khiển trình duyệt; nó <strong>tổ chức và chạy</strong> test, còn Selenium điều khiển trình duyệt. Hai thư viện bổ sung cho nhau.</p>
-<h2 id="2-annotation-chính">2. Annotation chính</h2>
+<h2 id="2-annotation-chính--từng-annotation-làm-gì">2. Annotation chính — từng annotation làm gì</h2>
+<p><strong>Annotation</strong> là nhãn dạng <code>@Tên</code> đặt trên method/class để nói với TestNG "method này dùng để làm gì". TestNG đọc nhãn rồi tự quyết định <strong>gọi method nào, lúc nào</strong>. Bạn không tự gọi các method này.</p>
+<p>Cách đọc mỗi thẻ: <em>Làm gì · Chạy mấy lần · Ví dụ · Lưu ý</em>.</p>
+<h3 id="21-test">2.1. <code>@Test</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đánh dấu một method là <strong>một test case</strong>. TestNG chạy nó; ném exception (kể cả <code>AssertionError</code> từ <code>Assert</code>) = <strong>fail</strong>; chạy hết không lỗi = <strong>pass</strong>.</li>
+<li><strong>Chạy mấy lần:</strong> 1 lần mỗi method (nhiều hơn nếu có <code>invocationCount</code> hoặc <code>dataProvider</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLoginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> method <code>@Test</code> phải <code>public</code>. Nếu đặt <code>@Test</code> trên <strong>class</strong>, mọi <code>public</code> method của class đó đều là test. Các thuộc tính của <code>@Test</code> ở mục 3.</li>
+</ul>
+<h3 id="22-beforemethod--aftermethod">2.2. <code>@BeforeMethod</code> / <code>@AfterMethod</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy <strong>trước / sau mỗi</strong> method <code>@Test</code>.</li>
+<li><strong>Chạy mấy lần:</strong> số lần = số <code>@Test</code> trong class.</li>
+<li><strong>Ví dụ:</strong> 🧩 <code>BaseTest.setup()</code> mở Chrome, <code>tearDown()</code> gọi <code>quit()</code>.</li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@AfterMethod</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">driver</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> mỗi test có <strong>trình duyệt mới</strong> → test độc lập nhưng chậm hơn <code>@BeforeClass</code>. Method <code>private</code> hoặc class không kế thừa <code>BaseTest</code> thì không được gọi.</li>
+</ul>
+<h3 id="23-beforeclass--afterclass">2.3. <code>@BeforeClass</code> / <code>@AfterClass</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy <strong>một lần</strong> trước test đầu tiên / sau test cuối cùng <strong>của class</strong>.</li>
+<li><strong>Chạy mấy lần:</strong> 1 lần mỗi class.</li>
+<li><strong>Ví dụ:</strong> mở một trình duyệt dùng chung cho cả class (nhanh hơn).</li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@BeforeClass</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">openBrowser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChromeDriver</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@AfterClass</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">closeBrowser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">quit</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> các test <strong>dùng chung trạng thái</strong> (cùng trình duyệt, cùng cookie). Test này có thể ảnh hưởng test kia → chỉ dùng khi test không phá trạng thái.</li>
+</ul>
+<h3 id="24-beforetest--aftertest">2.4. <code>@BeforeTest</code> / <code>@AfterTest</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy một lần trước / sau <strong>mỗi thẻ <code>&lt;test&gt;</code></strong> trong <code>testng.xml</code> (không phải trước mỗi <code>@Test</code>!).</li>
+<li><strong>Chạy mấy lần:</strong> 1 lần mỗi thẻ <code>&lt;test&gt;</code>.</li>
+<li><strong>Lưu ý:</strong> tên dễ gây nhầm — đây <strong>không</strong> phải "trước mỗi test". Hiếm dùng; chủ yếu khi bạn chạy nhiều <code>&lt;test&gt;</code> với cấu hình khác nhau (browser khác nhau).</li>
+</ul>
+<h3 id="25-beforesuite--aftersuite">2.5. <code>@BeforeSuite</code> / <code>@AfterSuite</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy một lần trước <strong>mọi</strong> test / sau <strong>mọi</strong> test của cả suite (toàn bộ lần chạy).</li>
+<li><strong>Chạy mấy lần:</strong> 1 lần mỗi lần chạy suite.</li>
+<li><strong>Ví dụ:</strong> khởi tạo báo cáo, đọc file cấu hình, xoá thư mục ảnh chụp cũ.</li>
+<li><strong>Lưu ý:</strong> có thể đặt trong class bất kỳ thuộc suite; đừng mở trình duyệt ở đây nếu test chạy song song.</li>
+</ul>
+<h3 id="26-beforegroups--aftergroups">2.6. <code>@BeforeGroups</code> / <code>@AfterGroups</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy trước test đầu tiên / sau test cuối cùng thuộc một <strong>nhóm</strong> (<code>groups</code>) được chỉ định.</li>
+<li><strong>Ví dụ:</strong> <code>@BeforeGroups("db") public void connectDb() {...}</code></li>
+<li><strong>Lưu ý:</strong> hiếm dùng; nhớ ghi tên nhóm trong annotation.</li>
+</ul>
+<h3 id="27-dataprovider">2.7. <code>@DataProvider</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> đánh dấu method <strong>cung cấp dữ liệu</strong> cho test: mỗi hàng dữ liệu → TestNG gọi test một lần.</li>
+<li><strong>Trả về:</strong> <code>Object[][]</code> (mỗi <code>Object[]</code> là một bộ tham số) hoặc <code>Iterator&lt;Object[]&gt;</code> (tạo dần, hợp với dữ liệu lớn).</li>
+<li><strong>Thuộc tính:</strong> <code>name</code> (tên để test tham chiếu), <code>parallel</code> (chạy các hàng song song).</li>
+<li><strong>Ví dụ &amp; lưu ý:</strong> xem mục 7.</li>
+</ul>
+<h3 id="28-parameters-và-optional">2.8. <code>@Parameters</code> và <code>@Optional</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>@Parameters("browser")</code> đưa giá trị <code>&lt;parameter name="browser" value="..."/&gt;</code> từ <code>testng.xml</code> vào tham số của method. <code>@Optional("chrome")</code> đặt <strong>giá trị mặc định</strong> khi XML không khai báo.</li>
+<li><strong>Ví dụ &amp; lưu ý:</strong> xem mục 8.</li>
+</ul>
+<h3 id="29-thứ-tự-thực-thi--có-ví-dụ">2.9. Thứ tự thực thi — có ví dụ</h3>
+<p>Hai class trong cùng một <code>&lt;test&gt;</code>: <code>LoginTest</code> có test <code>a</code>, <code>b</code>; <code>TableTest</code> có test <code>c</code>. Mỗi method in ra tên của nó.</p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoginTest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@BeforeClass</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">bc</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="s">&quot;LoginTest @BeforeClass&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@BeforeMethod</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">bm</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="s">&quot;  @BeforeMethod&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@Test</span><span class="w">         </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">a</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="s">&quot;    test a&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@Test</span><span class="w">         </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">b</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="s">&quot;    test b&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@AfterMethod</span><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">am</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="s">&quot;  @AfterMethod&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="nd">@AfterClass</span><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ac</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="s">&quot;LoginTest @AfterClass&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// TableTest tương tự với một test c</span></code></pre></div>
+<p>Kết quả theo quy tắc của TestNG (suite có <code>@BeforeSuite</code>/<code>@BeforeTest</code> ở class nào đó):</p>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">@BeforeSuite
+@BeforeTest
+LoginTest @BeforeClass
+  @BeforeMethod
+    test a
+  @AfterMethod
+  @BeforeMethod
+    test b
+  @AfterMethod
+LoginTest @AfterClass
+TableTest @BeforeClass
+  @BeforeMethod
+    test c
+  @AfterMethod
+TableTest @AfterClass
+@AfterTest
+@AfterSuite</code></pre></div>
+<p>Quy tắc ghi nhớ:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Annotation</th>
-<th>Chạy khi nào</th>
-<th>Dùng cho</th>
+<th>Muốn chạy…</th>
+<th>Dùng</th>
+<th>Số lần với 2 class, 3 test (a, b, c)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>@BeforeSuite</code> / <code>@AfterSuite</code></td>
-<td>1 lần trước/sau <strong>cả suite</strong></td>
-<td>Khởi tạo report, đọc config</td>
+<td>1 lần cả lần chạy</td>
+<td><code>@BeforeSuite</code></td>
+<td>1</td>
 </tr>
 <tr>
-<td><code>@BeforeTest</code> / <code>@AfterTest</code></td>
-<td>Trước/sau thẻ <code>&lt;test&gt;</code> trong XML</td>
-<td>Hiếm dùng</td>
+<td>1 lần mỗi thẻ <code>&lt;test&gt;</code></td>
+<td><code>@BeforeTest</code></td>
+<td>1 (nếu một thẻ <code>&lt;test&gt;</code>)</td>
 </tr>
 <tr>
-<td><code>@BeforeClass</code> / <code>@AfterClass</code></td>
-<td>1 lần trước/sau <strong>mỗi class</strong></td>
-<td>Mở browser dùng chung cho class</td>
+<td>1 lần mỗi class</td>
+<td><code>@BeforeClass</code></td>
+<td>2</td>
 </tr>
 <tr>
-<td><code>@BeforeMethod</code> / <code>@AfterMethod</code></td>
-<td>Trước/sau <strong>mỗi <code>@Test</code></strong></td>
-<td>🧩 <code>BaseTest.setup()/tearDown()</code></td>
-</tr>
-<tr>
-<td><code>@Test</code></td>
-<td>Là một test</td>
-<td></td>
-</tr>
-<tr>
-<td><code>@DataProvider</code></td>
-<td>Cung cấp dữ liệu cho test</td>
-<td>Data-driven</td>
-</tr>
-<tr>
-<td><code>@Parameters</code></td>
-<td>Nhận tham số từ <code>testng.xml</code></td>
-<td>Browser, URL</td>
-</tr>
-<tr>
-<td><code>@BeforeGroups</code> / <code>@AfterGroups</code></td>
-<td>Quanh nhóm</td>
-<td></td>
+<td>Trước mỗi test</td>
+<td><code>@BeforeMethod</code></td>
+<td>3</td>
 </tr>
 </tbody>
 </table></div>
-<h3 id="thứ-tự-thực-thi">Thứ tự thực thi</h3>
-<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">@BeforeSuite
+<blockquote>
+<p>Cặp <code>@After...</code> chạy theo thứ tự <strong>ngược</strong> (method → class → test → suite). Các <code>@Before...</code> của class cha chạy <strong>trước</strong> class con; <code>@After...</code> của class con chạy <strong>trước</strong> class cha.</p>
+</blockquote>
+<div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">Sơ đồ lồng nhau:
+@BeforeSuite
   @BeforeTest
     @BeforeClass
-      @BeforeMethod   ← 🧩 mở Chrome
+      @BeforeMethod  ← 🧩 mở Chrome
         @Test
-      @AfterMethod    ← 🧩 quit()
-      @BeforeMethod
-        @Test
-      @AfterMethod
+      @AfterMethod   ← 🧩 quit()
     @AfterClass
   @AfterTest
 @AfterSuite</code></pre></div>
@@ -117,54 +193,115 @@ Phiên bản dự án: <strong>TestNG 7.10.2</strong> (<code>org.testng:testng</
 <span class="w">      </span><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">timeOut</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">60000</span><span class="p">,</span><span class="w"> </span><span class="n">invocationCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
 <span class="w">      </span><span class="n">dependsOnMethods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;testOpenHomePage&quot;</span><span class="p">})</span>
 <span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLoginSuccess</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<h3 id="31-priority">3.1. <code>priority</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> quyết định <strong>thứ tự</strong> chạy giữa các test trong cùng class: <strong>số nhỏ chạy trước</strong>. Mặc định 0; cho phép số âm.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="p">(</span><span class="n">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testOpenHome</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// chạy trước</span>
+<span class="nd">@Test</span><span class="p">(</span><span class="n">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogin</span><span class="p">()</span><span class="w">     </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// chạy sau</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> các test cùng <code>priority</code> chạy theo thứ tự bảng chữ cái tên method. Dùng <code>priority</code> để ép thứ tự là dấu hiệu test <strong>phụ thuộc nhau</strong> — nên tránh.</li>
+</ul>
+<h3 id="32-groups">3.2. <code>groups</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> gắn nhãn nhóm cho test (một test có thể thuộc nhiều nhóm). Dùng để chạy riêng một nhóm.</li>
+<li><strong>Ví dụ:</strong> <code>@Test(groups = {"smoke", "login"})</code>; chọn nhóm bằng <code>testng.xml</code> (mục 6) hoặc <code>-Dgroups=smoke</code>.</li>
+<li><strong>Lưu ý:</strong> tên nhóm là chuỗi tự do — viết sai chính tả thì test <strong>không</strong> thuộc nhóm bạn muốn và không báo lỗi.</li>
+</ul>
+<h3 id="33-enabled">3.3. <code>enabled</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <code>enabled = false</code> → TestNG <strong>bỏ qua hoàn toàn</strong> test (thường không xuất hiện cả trong số lượng skipped).</li>
+<li><strong>Ví dụ:</strong> <code>@Test(enabled = false) public void testFlaky() {...}</code></li>
+<li><strong>Lưu ý:</strong> dễ quên và tạo "test ẩn". Nếu tạm tắt, ghi lý do và ngày; hoặc chuyển sang <code>groups</code> rồi loại khỏi suite.</li>
+</ul>
+<h3 id="34-dependsonmethods">3.4. <code>dependsOnMethods</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> test này <strong>chỉ chạy sau</strong> các method được liệt kê. Nếu method kia <strong>fail hoặc skip</strong>, test này bị <strong>SKIPPED</strong> (không chạy, không fail).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+<span class="nd">@Test</span><span class="p">(</span><span class="n">dependsOnMethods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;testLogin&quot;</span><span class="p">)</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testLogout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> tạo thứ tự <strong>và</strong> quan hệ phụ thuộc; một lỗi ở đầu chuỗi kéo theo hàng loạt test skipped, che mất lỗi gốc. Có <code>alwaysRun = true</code> để vẫn chạy kể cả khi phụ thuộc fail. Tương tự có <code>dependsOnGroups</code> cho cả nhóm.</li>
+</ul>
+<h3 id="35-timeout">3.5. <code>timeOut</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> giới hạn thời gian chạy của test, đơn vị <strong>mili-giây</strong>. Chạy lâu hơn → test bị <strong>fail</strong> (TestNG chạy test trong luồng riêng và dừng nó).</li>
+<li><strong>Ví dụ:</strong> <code>@Test(timeOut = 60000)</code> — tối đa 60 giây.</li>
+<li><strong>Lưu ý:</strong> là thời gian của <strong>cả method</strong>, không phải của từng bước. Khác <code>pageLoadTimeout</code> hay <code>WebDriverWait</code>.</li>
+</ul>
+<h3 id="36-invocationcount">3.6. <code>invocationCount</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> chạy <strong>cùng một test N lần</strong> liên tiếp (mỗi lần đều qua <code>@BeforeMethod</code>/<code>@AfterMethod</code>).</li>
+<li><strong>Ví dụ:</strong> <code>@Test(invocationCount = 10)</code> — chạy thử 10 lần để kiểm tra test có "flaky" không.</li>
+<li><strong>Lưu ý:</strong> kết quả hiển thị 10 lượt chạy; chỉ cần 1 lượt fail là có vấn đề cần xem.</li>
+</ul>
+<h3 id="37-expectedexceptions">3.7. <code>expectedExceptions</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> test <strong>pass chỉ khi</strong> ném đúng loại exception chỉ định; <strong>fail</strong> nếu không ném gì hoặc ném loại khác.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nd">@Test</span><span class="p">(</span><span class="n">expectedExceptions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testMissingElement</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;khong-ton-tai&quot;</span><span class="p">));</span>
+<span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> chỉ kiểm tra được cả method ném lỗi, không kiểm tra được "ném đúng dòng nào". Cần kiểm tra chặt hơn dùng <code>Assert.assertThrows</code> (<a href="03-assertions-and-verification.html">Assertions</a>).</li>
+</ul>
+<h3 id="38-description">3.8. <code>description</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> thêm câu mô tả hiện trong báo cáo.</li>
+<li><strong>Ví dụ:</strong> <code>@Test(description = "Đăng nhập đúng tài khoản")</code></li>
+</ul>
+<h3 id="39-dataprovider">3.9. <code>dataProvider</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> nói với TestNG lấy dữ liệu từ <code>@DataProvider</code> có tên này; test chạy <strong>một lần cho mỗi hàng</strong> dữ liệu.</li>
+<li><strong>Ví dụ &amp; lưu ý:</strong> mục 7.</li>
+</ul>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Thuộc tính</th>
-<th>Ý nghĩa</th>
-<th>Lưu ý</th>
+<th>Có tác dụng</th>
+<th>Nếu dùng sai</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>priority</code></td>
-<td>Số nhỏ chạy trước (mặc định 0)</td>
-<td>Thứ tự test <strong>không</strong> nên là bắt buộc</td>
+<td>Sắp thứ tự</td>
+<td>Test phụ thuộc thứ tự → dễ vỡ</td>
 </tr>
 <tr>
 <td><code>groups</code></td>
-<td>Gắn nhãn</td>
-<td>Chạy theo nhóm</td>
+<td>Chọn test theo nhóm</td>
+<td>Sai chính tả → không báo lỗi</td>
 </tr>
 <tr>
 <td><code>enabled=false</code></td>
-<td>Test <strong>không được chạy</strong> (thường không xuất hiện trong kết quả)</td>
-<td>Dùng cẩn thận: dễ quên và tạo "test ẩn"</td>
+<td>Tắt test</td>
+<td>Thành "test ẩn"</td>
 </tr>
 <tr>
 <td><code>dependsOnMethods</code></td>
-<td>Phụ thuộc test khác; nếu cái kia fail ⇒ test này <strong>skipped</strong></td>
-<td>Tạo skipped; tránh lạm dụng</td>
+<td>Thứ tự + phụ thuộc</td>
+<td>Hàng loạt test skipped</td>
 </tr>
 <tr>
 <td><code>timeOut</code></td>
-<td>Quá thời gian (ms) ⇒ fail</td>
-<td></td>
+<td>Chặn test treo</td>
+<td>Đặt quá ngắn → fail oan</td>
 </tr>
 <tr>
 <td><code>invocationCount</code></td>
-<td>Chạy N lần</td>
-<td>Dùng thử flaky</td>
+<td>Lặp N lần</td>
+<td>Chậm nếu N lớn</td>
 </tr>
 <tr>
 <td><code>expectedExceptions</code></td>
-<td>Mong đợi exception</td>
 <td>Test negative</td>
-</tr>
-<tr>
-<td><code>description</code></td>
-<td>Mô tả trong báo cáo</td>
-<td></td>
+<td>Không chỉ rõ dòng nào ném lỗi</td>
 </tr>
 </tbody>
 </table></div>
@@ -280,32 +417,44 @@ Phiên bản dự án: <strong>TestNG 7.10.2</strong> (<code>org.testng:testng</
 <p><code>@Optional</code> cho giá trị mặc định nếu XML không có (hữu ích khi chạy <code>-Dtest</code>).</p>
 <h2 id="9-chạy-song-song-parallel">9. Chạy song song (Parallel)</h2>
 <div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;suite</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Parallel&quot;</span><span class="w"> </span><span class="na">parallel=</span><span class="s">&quot;classes&quot;</span><span class="w"> </span><span class="na">thread-count=</span><span class="s">&quot;3&quot;</span><span class="nt">&gt;</span></code></pre></div>
+<p>Giả sử suite có 2 class (<code>LoginTest</code> có test <code>a</code>, <code>b</code>; <code>TableTest</code> có test <code>c</code>), <code>thread-count="3"</code>:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th><code>parallel</code></th>
-<th>Chạy song song theo</th>
+<th>Đơn vị đưa vào một luồng</th>
+<th>Ví dụ chạy</th>
+<th>Rủi ro</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>methods</code></td>
 <td>Từng <code>@Test</code></td>
+<td><code>a</code>, <code>b</code>, <code>c</code> chạy <strong>cùng lúc</strong> trên 3 luồng, kể cả <code>a</code> và <code>b</code> của cùng một class</td>
+<td>Cao nhất: các test cùng class dùng chung field (ví dụ <code>driver</code>)</td>
 </tr>
 <tr>
 <td><code>classes</code></td>
 <td>Từng class</td>
+<td><code>LoginTest</code> (a rồi b, tuần tự) song song với <code>TableTest</code> (c)</td>
+<td>Thấp hơn: các test trong 1 class vẫn tuần tự trên 1 luồng</td>
 </tr>
 <tr>
 <td><code>tests</code></td>
-<td>Từng <code>&lt;test&gt;</code></td>
+<td>Từng thẻ <code>&lt;test&gt;</code> trong XML</td>
+<td>Mỗi <code>&lt;test&gt;</code> một luồng</td>
+<td>Thấp nhất nếu các <code>&lt;test&gt;</code> độc lập</td>
 </tr>
 <tr>
 <td><code>instances</code></td>
-<td>Từng instance</td>
+<td>Từng đối tượng class (instance)</td>
+<td>Mỗi instance một luồng, các method của cùng instance tuần tự</td>
+<td>Dùng khi tạo nhiều instance bằng <code>@Factory</code></td>
 </tr>
 </tbody>
 </table></div>
+<p>Chọn <code>classes</code> thường là điểm bắt đầu an toàn nhất cho Selenium.</p>
 <p><strong>Điều kiện để an toàn:</strong> mỗi luồng có <code>WebDriver</code> riêng ⇒ <strong>không</strong> dùng <code>static WebDriver</code>; dùng <code>ThreadLocal&lt;WebDriver&gt;</code>:</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;</span><span class="n">WebDriver</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DRIVER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadLocal</span><span class="o">&lt;&gt;</span><span class="p">();</span>
 <span class="kd">protected</span><span class="w"> </span><span class="n">WebDriver</span><span class="w"> </span><span class="nf">driver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">DRIVER</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></code></pre></div>
@@ -449,6 +598,39 @@ Phiên bản dự án: <strong>TestNG 7.10.2</strong> (<code>org.testng:testng</
 <details>
 <summary>Xem đáp án</summary>
 <p><strong>Đáp án: D.</strong> Số <code>Tests run</code> đếm method <code>@Test</code>.</p>
+</details>
+<p><strong>Câu 4.</strong> Một class có 3 <code>@Test</code>, 1 <code>@BeforeClass</code>, 1 <code>@BeforeMethod</code>. Chạy class đó thì <code>@BeforeClass</code> và <code>@BeforeMethod</code> lần lượt chạy bao nhiêu lần?</p>
+<ul>
+<li>A. 3 và 3</li>
+<li>B. 1 và 3</li>
+<li>C. 1 và 1</li>
+<li>D. 3 và 1</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>@BeforeClass</code> chạy một lần mỗi class; <code>@BeforeMethod</code> chạy trước <strong>mỗi</strong> <code>@Test</code>.</p>
+</details>
+<p><strong>Câu 5.</strong> <code>@Test(dependsOnMethods = "testLogin")</code> và <code>testLogin</code> <strong>fail</strong>. Kết quả của test phụ thuộc?</p>
+<ul>
+<li>A. Fail</li>
+<li>B. Pass</li>
+<li>C. Skipped</li>
+<li>D. Vẫn chạy bình thường</li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: C.</strong> Bị bỏ qua (skipped), không chạy. Thêm <code>alwaysRun = true</code> nếu vẫn muốn chạy.</p>
+</details>
+<p><strong>Câu 6.</strong> <code>parallel="classes"</code> với <code>thread-count="3"</code>: hai test trong <strong>cùng một class</strong> có chạy cùng lúc không?</p>
+<ul>
+<li>A. Có</li>
+<li>B. Không, chúng chạy tuần tự trên cùng một luồng</li>
+<li>C. Tuỳ hệ điều hành</li>
+<li>D. Chỉ khi dùng <code>@DataProvider</code></li>
+</ul>
+<details>
+<summary>Xem đáp án</summary>
+<p><strong>Đáp án: B.</strong> <code>classes</code> đưa nguyên một class vào một luồng. Muốn các test cùng class song song phải dùng <code>parallel="methods"</code> (và driver riêng mỗi luồng).</p>
 </details>
 <h2 id="-interview-corner">💼 Interview Corner</h2>
 <p><strong>1. What is TestNG and why use it with Selenium?</strong></p>

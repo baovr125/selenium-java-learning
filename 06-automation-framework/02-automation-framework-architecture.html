@@ -57,6 +57,86 @@
 │ 5. Infrastructure     Selenium, TestNG, Maven/mvnw, CI, Reports   │
 └──────────────────────────────────────────────────────────────────┘</code></pre></div>
 <p>Quy tắc phụ thuộc: tầng trên gọi tầng dưới, <strong>không ngược lại</strong> (Page không biết Test; Core không biết Page cụ thể).</p>
+<h3 id="21-từng-thành-phần-làm-gì--được-gọi-ai-không-được-gọi-ai">2.1. Từng thành phần làm gì — được gọi ai, không được gọi ai</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+<th>Được gọi</th>
+<th>Không được gọi / không được làm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Test class</strong> (<code>LoginTest</code>)</td>
+<td>Mô tả <strong>kịch bản</strong> ("đăng nhập đúng thì thấy thông báo") và <strong>assert</strong> kết quả</td>
+<td>Page, <code>BaseTest</code> (kế thừa), Config, Data</td>
+<td>Không chứa locator <code>By.id(...)</code>; không <code>Thread.sleep</code></td>
+</tr>
+<tr>
+<td><strong>Page class</strong> (<code>LoginPage</code>)</td>
+<td>Mô tả <strong>cách thao tác một trang</strong>: giữ locator, cung cấp hành vi nghiệp vụ (<code>loginAs</code>), trả dữ liệu</td>
+<td><code>BasePage</code> (kế thừa), Selenium</td>
+<td><strong>Không assert</strong>; không biết về test hay TestNG</td>
+</tr>
+<tr>
+<td><strong><code>BasePage</code></strong></td>
+<td>Gom thao tác dùng chung có sẵn chờ: <code>click</code>, <code>type</code>, <code>text</code>, <code>waitVisible</code>...</td>
+<td>Selenium, <code>WebDriverWait</code></td>
+<td>Không chứa locator của trang cụ thể</td>
+</tr>
+<tr>
+<td><strong><code>BaseTest</code></strong></td>
+<td>Quản lý <strong>vòng đời trình duyệt</strong> (<code>@BeforeMethod</code> tạo driver, <code>@AfterMethod</code> đóng)</td>
+<td><code>DriverFactory</code>, <code>Config</code>, <code>Screenshots</code></td>
+<td>Không chứa kịch bản test</td>
+</tr>
+<tr>
+<td><strong><code>DriverFactory</code></strong></td>
+<td><strong>Tạo</strong> <code>WebDriver</code> theo tên browser (+ headless)</td>
+<td>Selenium (<code>ChromeDriver</code>, <code>FirefoxDriver</code>...)</td>
+<td>Không biết gì về Page/Test</td>
+</tr>
+<tr>
+<td><strong><code>Config</code></strong></td>
+<td><strong>Đọc cấu hình</strong> theo thứ tự ưu tiên (<code>-D</code> &gt; file &gt; mặc định)</td>
+<td><code>System</code>, <code>Properties</code></td>
+<td>Không chứa logic test</td>
+</tr>
+<tr>
+<td><strong>Test data</strong> (<code>LoginData</code>, CSV)</td>
+<td>Giữ <strong>dữ liệu</strong> test</td>
+<td>—</td>
+<td>Không chứa hành vi</td>
+</tr>
+<tr>
+<td><strong>Utils</strong> (<code>Screenshots</code>, <code>ScrollUtils</code>, <code>TableUtils</code>)</td>
+<td>Các hàm tiện ích <strong>độc lập</strong>, dùng ở nhiều nơi</td>
+<td>Selenium, Java</td>
+<td>Không phụ thuộc Page/Test cụ thể</td>
+</tr>
+<tr>
+<td><strong>Listener</strong> (<code>TestListener</code>)</td>
+<td><strong>Phản ứng với sự kiện</strong> của TestNG (pass/fail/skip): chụp ảnh, ghi report</td>
+<td><code>Screenshots</code>, <code>BaseTest.driver()</code></td>
+<td>Không chứa kịch bản test</td>
+</tr>
+<tr>
+<td><strong><code>testng.xml</code></strong></td>
+<td>Khai báo <strong>test nào chạy</strong>, song song, tham số, listener</td>
+<td>—</td>
+<td>Không chứa code</td>
+</tr>
+<tr>
+<td><strong><code>pom.xml</code></strong></td>
+<td>Khai báo <strong>thư viện, phiên bản, plugin</strong></td>
+<td>—</td>
+<td>Không quyết định logic test</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ví dụ một dòng chảy hợp lệ: <code>LoginTest</code> → <code>LoginPage.loginAs()</code> → <code>BasePage.type()</code> → Selenium. Một dòng chảy <strong>sai</strong>: <code>BasePage</code> → <code>LoginPage</code> (tầng dưới không được biết tầng trên).</p>
 <h2 id="3-đối-chiếu-với-selenium1">3. Đối chiếu với <code>Selenium1</code></h2>
 <div class="table-wrap"><table>
 <thead>

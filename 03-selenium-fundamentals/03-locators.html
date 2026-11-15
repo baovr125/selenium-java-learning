@@ -125,6 +125,112 @@
 </tbody>
 </table></div>
 <p>🧩 Dự án dùng: <code>id</code>, <code>name</code>, <code>className</code>, <code>xpath</code>, <code>cssSelector</code>, <code>tagName</code>. Chưa dùng <code>linkText</code>, <code>partialLinkText</code>.</p>
+<h3 id="21-từng-method-by-làm-gì">2.1. Từng method <code>By.*</code> làm gì</h3>
+<p>Mỗi method <code>By.xxx(...)</code> <strong>chỉ tạo một "bản mô tả cách tìm"</strong> (đối tượng <code>By</code>) — chưa tìm gì. Việc tìm thật chỉ xảy ra khi bạn đưa nó cho <code>findElement</code>/<code>findElements</code>.</p>
+<h4 id="byidstring-id"><code>By.id(String id)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp phần tử có thuộc tính <code>id</code> <strong>bằng đúng</strong> chuỗi này.</li>
+<li><strong>Khớp phần tử:</strong> <code>&lt;input id="username"&gt;</code> ← <code>By.id("username")</code>.</li>
+<li><strong>Lưu ý:</strong> <code>id</code> lý thuyết là duy nhất trong trang, nên đây là lựa chọn <strong>đầu tiên</strong> nên thử. Không dùng được với id sinh tự động (<code>id="ember123"</code> đổi mỗi lần tải).</li>
+</ul>
+<h4 id="bynamestring-name"><code>By.name(String name)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp phần tử có thuộc tính <code>name</code> bằng đúng chuỗi.</li>
+<li><strong>Khớp phần tử:</strong> <code>&lt;input name="password"&gt;</code> ← <code>By.name("password")</code>.</li>
+<li><strong>Lưu ý:</strong> nhiều phần tử có thể cùng <code>name</code> (nhóm radio) → <code>findElement</code> lấy cái <strong>đầu tiên</strong>; dùng <code>findElements</code> để lấy cả nhóm.</li>
+</ul>
+<h4 id="byclassnamestring-classname"><code>By.className(String className)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp phần tử có <strong>một class</strong> bằng đúng chuỗi (phần tử có thể còn class khác).</li>
+<li><strong>Khớp phần tử:</strong> <code>&lt;div class="flash success"&gt;</code> ← <code>By.className("flash")</code> <strong>và</strong> <code>By.className("success")</code>.</li>
+<li><strong>Lưu ý:</strong> <strong>không</strong> nhận nhiều class có khoảng trắng (<code>"flash success"</code> → <code>InvalidSelectorException</code>). Cần cả hai class → <code>By.cssSelector(".flash.success")</code>.</li>
+</ul>
+<h4 id="bytagnamestring-tag"><code>By.tagName(String tag)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp theo <strong>tên thẻ</strong> HTML.</li>
+<li><strong>Khớp phần tử:</strong> <code>By.tagName("td")</code> khớp <strong>mọi</strong> <code>&lt;td&gt;</code>.</li>
+<li><strong>Lưu ý:</strong> gần như luôn dùng với <code>findElements</code> hoặc để tìm <strong>trong</strong> một phần tử đã có (<code>row.findElements(By.tagName("td"))</code> — 🧩 Ex3).</li>
+</ul>
+<h4 id="bylinktextstring-text"><code>By.linkText(String text)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp thẻ <code>&lt;a&gt;</code> có <strong>chữ hiển thị bằng đúng</strong> chuỗi (không phân biệt khoảng trắng đầu/cuối, <strong>phân biệt hoa thường</strong>).</li>
+<li><strong>Khớp phần tử:</strong> <code>&lt;a href="/abtest"&gt;A/B Testing&lt;/a&gt;</code> ← <code>By.linkText("A/B Testing")</code>.</li>
+<li><strong>Lưu ý:</strong> chỉ cho link; website đổi ngôn ngữ thì hỏng.</li>
+</ul>
+<h4 id="bypartiallinktextstring-text"><code>By.partialLinkText(String text)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> như <code>linkText</code> nhưng chỉ cần chữ hiển thị của link <strong>chứa</strong> chuỗi.</li>
+<li><strong>Khớp phần tử:</strong> <code>By.partialLinkText("Elemental")</code> khớp <code>&lt;a&gt;Elemental Selenium&lt;/a&gt;</code>.</li>
+<li><strong>Lưu ý:</strong> có thể khớp nhiều link; dùng chuỗi đủ đặc trưng.</li>
+</ul>
+<h4 id="bycssselectorstring-css"><code>By.cssSelector(String css)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp theo <strong>CSS selector</strong> — cùng cú pháp bạn dùng để định kiểu CSS (mục 3).</li>
+<li><strong>Khớp phần tử:</strong> <code>By.cssSelector("#checkboxes input[type='checkbox']")</code>.</li>
+<li><strong>Lưu ý:</strong> cú pháp sai → <code>InvalidSelectorException</code>. Không đi <strong>lên</strong> phần tử cha, không chọn theo chữ.</li>
+</ul>
+<h4 id="byxpathstring-xpath"><code>By.xpath(String xpath)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khớp theo <strong>biểu thức XPath</strong> (mục 4) — duyệt cây DOM lên/xuống, theo text, theo vị trí.</li>
+<li><strong>Khớp phần tử:</strong> <code>By.xpath("//button[text()='Add Element']")</code>.</li>
+<li><strong>Lưu ý:</strong> mạnh nhất nhưng dài và dễ gãy khi DOM đổi.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Muốn khớp</th>
+<th>Dùng</th>
+<th>Ghi nhớ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Một phần tử có <code>id</code></td>
+<td><code>By.id</code></td>
+<td>Nhanh, ổn định nhất</td>
+</tr>
+<tr>
+<td>Nhóm cùng <code>name</code> (radio)</td>
+<td><code>By.name</code> + <code>findElements</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Phần tử có <strong>một</strong> class</td>
+<td><code>By.className</code></td>
+<td>Nhiều class → CSS</td>
+</tr>
+<tr>
+<td><strong>Nhiều</strong> class cùng lúc</td>
+<td><code>By.cssSelector(".a.b")</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Mọi thẻ cùng loại</td>
+<td><code>By.tagName</code> + <code>findElements</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Link theo <strong>chữ đầy đủ</strong></td>
+<td><code>By.linkText</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Link theo <strong>một phần chữ</strong></td>
+<td><code>By.partialLinkText</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Quan hệ cha-con, thuộc tính</td>
+<td><code>By.cssSelector</code></td>
+<td>Ưu tiên</td>
+</tr>
+<tr>
+<td>Theo <strong>text</strong>, đi <strong>lên cha</strong>, vị trí</td>
+<td><code>By.xpath</code></td>
+<td>Khi CSS không đủ</td>
+</tr>
+</tbody>
+</table></div>
 <h3 id="-cạm-bẫy-của-classname">⚠️ Cạm bẫy của <code>className</code></h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;flash success&quot;</span><span class="p">);</span><span class="w">   </span><span class="c1">// ❌ InvalidSelectorException: compound class names not permitted</span>
 <span class="n">By</span><span class="p">.</span><span class="na">className</span><span class="p">(</span><span class="s">&quot;flash&quot;</span><span class="p">);</span><span class="w">           </span><span class="c1">// ✅</span>
@@ -260,7 +366,49 @@
 
 <span class="n">WebElement</span><span class="w"> </span><span class="n">pwd</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">));</span>
 <span class="n">WebElement</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">with</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;input&quot;</span><span class="p">)).</span><span class="na">above</span><span class="p">(</span><span class="n">pwd</span><span class="p">));</span></code></pre></div>
-<p>Các method: <code>above</code>, <code>below</code>, <code>toLeftOf</code>, <code>toRightOf</code>, <code>near</code>. Dùng khi phần tử không có thuộc tính tốt nhưng vị trí tương đối với phần tử khác ổn định. Không thay thế CSS/XPath tốt.</p>
+<p>Các method (gọi nối sau <code>with(By)</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>with(By)</code></td>
+<td>Bắt đầu: chọn <strong>loại phần tử</strong> muốn tìm (thường <code>By.tagName</code>)</td>
+<td><code>with(By.tagName("input"))</code></td>
+</tr>
+<tr>
+<td><code>above(WebElement \| By)</code></td>
+<td>Phần tử nằm <strong>phía trên</strong> phần tử tham chiếu</td>
+<td>Ô username nằm trên ô password</td>
+</tr>
+<tr>
+<td><code>below(WebElement \| By)</code></td>
+<td>Phần tử nằm <strong>phía dưới</strong> phần tử tham chiếu</td>
+<td>Nút Login dưới ô password</td>
+</tr>
+<tr>
+<td><code>toLeftOf(WebElement \| By)</code></td>
+<td>Phần tử nằm <strong>bên trái</strong> phần tử tham chiếu</td>
+<td>Nhãn bên trái ô nhập</td>
+</tr>
+<tr>
+<td><code>toRightOf(WebElement \| By)</code></td>
+<td>Phần tử nằm <strong>bên phải</strong> phần tử tham chiếu</td>
+<td>Nút bên phải ô tìm kiếm</td>
+</tr>
+<tr>
+<td><code>near(WebElement \| By)</code></td>
+<td>Phần tử <strong>gần</strong> phần tử tham chiếu (mặc định trong khoảng <strong>100 px</strong>)</td>
+<td><code>near(el, 50)</code> đổi khoảng cách</td>
+</tr>
+</tbody>
+</table></div>
+<p>Có thể <strong>nối nhiều điều kiện</strong>: <code>with(By.tagName("input")).above(pwd).toRightOf(label)</code>. Dùng khi phần tử không có thuộc tính tốt nhưng vị trí tương đối với phần tử khác ổn định. Không thay thế CSS/XPath tốt.</p>
 <h2 id="6-so-sánh-css-vs-xpath">6. So sánh CSS vs XPath</h2>
 <div class="table-wrap"><table>
 <thead>

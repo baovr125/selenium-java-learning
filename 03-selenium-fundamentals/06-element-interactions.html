@@ -260,45 +260,85 @@
 
 <span class="n">Select</span><span class="w"> </span><span class="n">dropdown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Select</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;dropdown&quot;</span><span class="p">)));</span><span class="w">   </span><span class="c1">// 🧩 Ex4</span></code></pre></div>
 <p><code>Select</code> chỉ bọc thẻ <code>&lt;select&gt;</code> thật. Truyền phần tử khác ⇒ <code>UnexpectedTagNameException</code>.</p>
+<p><strong>Từng method của <code>Select</code></strong> (HTML minh hoạ: <code>&lt;select id="dropdown"&gt;&lt;option value="1"&gt;Option 1&lt;/option&gt;&lt;option value="2"&gt;Option 2&lt;/option&gt;&lt;/select&gt;</code>):</p>
+<h4 id="new-selectwebelement"><code>new Select(WebElement)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bọc một phần tử <code>&lt;select&gt;</code> để dùng các lệnh chọn bên dưới. Chưa chọn gì.</li>
+<li><strong>Khi lỗi:</strong> phần tử <strong>không phải</strong> <code>&lt;select&gt;</code> → <code>UnexpectedTagNameException</code>.</li>
+</ul>
+<h4 id="selectbyvisibletextstring-text"><code>selectByVisibleText(String text)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chọn <code>&lt;option&gt;</code> có <strong>chữ hiển thị bằng đúng</strong> chuỗi (🧩 Ex4).</li>
+<li><strong>Ví dụ:</strong> <code>dropdown.selectByVisibleText("Option 1");</code></li>
+<li><strong>Khi lỗi:</strong> không có option nào khớp → <code>NoSuchElementException: Cannot locate option with text: ...</code>.</li>
+<li><strong>Lưu ý:</strong> dễ đọc nhất nhưng hỏng nếu đổi ngôn ngữ.</li>
+</ul>
+<h4 id="selectbyvaluestring-value"><code>selectByValue(String value)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chọn <code>&lt;option&gt;</code> có thuộc tính <strong><code>value</code></strong> bằng chuỗi (giá trị ẩn trong HTML, không phải chữ hiển thị).</li>
+<li><strong>Ví dụ:</strong> <code>dropdown.selectByValue("2");</code> → chọn "Option 2".</li>
+<li><strong>Lưu ý:</strong> ổn định khi chữ hiển thị đổi (đa ngôn ngữ).</li>
+</ul>
+<h4 id="selectbyindexint-index"><code>selectByIndex(int index)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chọn option theo <strong>vị trí, đếm từ 0</strong>.</li>
+<li><strong>Ví dụ:</strong> <code>dropdown.selectByIndex(1);</code> → chọn option thứ 2.</li>
+<li><strong>Lưu ý:</strong> mong manh — thêm/bớt option là lệch.</li>
+</ul>
+<h4 id="getoptions"><code>getOptions()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả <strong>mọi</strong> <code>&lt;option&gt;</code> của dropdown.</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code>.</li>
+<li><strong>Ví dụ:</strong> <code>dropdown.getOptions().size()</code> → số lựa chọn.</li>
+</ul>
+<h4 id="getfirstselectedoption"><code>getFirstSelectedOption()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả option <strong>đang được chọn</strong> (với multi-select: cái đầu tiên đang chọn). 🧩 Ex4.</li>
+<li><strong>Trả về:</strong> <code>WebElement</code>; không có cái nào được chọn → <code>NoSuchElementException</code>.</li>
+<li><strong>Ví dụ:</strong> <code>dropdown.getFirstSelectedOption().getText()</code>.</li>
+</ul>
+<h4 id="getallselectedoptions"><code>getAllSelectedOptions()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả <strong>mọi</strong> option đang chọn (dành cho multi-select).</li>
+<li><strong>Trả về:</strong> <code>List&lt;WebElement&gt;</code> (rỗng nếu không có).</li>
+</ul>
+<h4 id="ismultiple"><code>isMultiple()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> cho biết dropdown có phải <code>&lt;select multiple&gt;</code> (chọn nhiều) không.</li>
+<li><strong>Trả về:</strong> <code>boolean</code>.</li>
+</ul>
+<h4 id="deselectall-deselectbyvalueindexvisibletext"><code>deselectAll()</code>, <code>deselectByValue/Index/VisibleText(...)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>bỏ chọn</strong> (tất cả, hoặc theo value/index/chữ).</li>
+<li><strong>Khi lỗi:</strong> dropdown <strong>không</strong> phải multi-select → <code>UnsupportedOperationException</code>.</li>
+</ul>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Ý nghĩa</th>
+<th>Cách chọn</th>
+<th>Dựa vào</th>
+<th>Ổn định khi đổi ngôn ngữ</th>
+<th>Ổn định khi thêm/bớt option</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>selectByVisibleText("Option 1")</code></td>
-<td>Chọn theo chữ hiển thị (🧩 Ex4) — <strong>dễ đọc nhất</strong></td>
+<td><code>selectByVisibleText</code></td>
+<td>Chữ hiển thị</td>
+<td>❌</td>
+<td>✅</td>
 </tr>
 <tr>
-<td><code>selectByValue("1")</code></td>
-<td>Chọn theo thuộc tính <code>value</code> — ổn định khi chữ đổi ngôn ngữ</td>
+<td><code>selectByValue</code></td>
+<td>Thuộc tính <code>value</code></td>
+<td>✅</td>
+<td>✅</td>
 </tr>
 <tr>
-<td><code>selectByIndex(1)</code></td>
-<td>Chọn theo vị trí (0-based) — mong manh nếu danh sách đổi</td>
-</tr>
-<tr>
-<td><code>getOptions()</code></td>
-<td><code>List&lt;WebElement&gt;</code> mọi option</td>
-</tr>
-<tr>
-<td><code>getFirstSelectedOption()</code></td>
-<td>Option đang chọn (🧩 Ex4)</td>
-</tr>
-<tr>
-<td><code>getAllSelectedOptions()</code></td>
-<td>Dành cho multi-select</td>
-</tr>
-<tr>
-<td><code>isMultiple()</code></td>
-<td>Có phải <code>&lt;select multiple&gt;</code></td>
-</tr>
-<tr>
-<td><code>deselectAll()</code>, <code>deselectByValue/Index/VisibleText</code></td>
-<td>Chỉ với multi-select</td>
+<td><code>selectByIndex</code></td>
+<td>Vị trí</td>
+<td>✅</td>
+<td>❌</td>
 </tr>
 </tbody>
 </table></div>

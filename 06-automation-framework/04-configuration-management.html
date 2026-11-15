@@ -143,6 +143,50 @@
 <span class="w">    </span><span class="c1">// get(...) đọc theo thứ tự ưu tiên như trên</span>
 <span class="p">}</span></code></pre></div>
 <p>Dùng: <code>new WebDriverWait(driver, Config.timeout())</code>, <code>driver.get(Config.baseUrl() + "/login")</code>.</p>
+<h3 id="31-từng-hàm-trong-config-làm-gì">3.1. Từng hàm trong <code>Config</code> làm gì</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hàm</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get(key, default)</code></td>
+<td>Tìm giá trị theo <strong>thứ tự ưu tiên</strong> (<code>-D</code> → biến môi trường → file → <code>default</code>) và trả cái đầu tiên có</td>
+<td><code>String</code></td>
+<td>Mọi hàm khác dựa trên nó; một nơi duy nhất quyết định thứ tự ưu tiên</td>
+</tr>
+<tr>
+<td><code>baseUrl()</code></td>
+<td>Lấy <code>base.url</code></td>
+<td><code>String</code></td>
+<td>Test không cần biết URL ở đâu</td>
+</tr>
+<tr>
+<td><code>browser()</code></td>
+<td>Lấy <code>browser</code> ("chrome", "firefox"...)</td>
+<td><code>String</code></td>
+<td>Đưa vào <code>DriverFactory.create(...)</code></td>
+</tr>
+<tr>
+<td><code>headless()</code></td>
+<td>Lấy <code>headless</code> rồi chuyển chuỗi thành <code>boolean</code> bằng <code>Boolean.parseBoolean</code></td>
+<td><code>boolean</code></td>
+<td>Chuỗi khác <code>"true"</code> (không phân biệt hoa/thường) đều thành <code>false</code>, <strong>không báo lỗi</strong></td>
+</tr>
+<tr>
+<td><code>timeout()</code></td>
+<td>Lấy <code>timeout.seconds</code>, chuyển số bằng <code>Long.parseLong</code>, bọc thành <code>Duration.ofSeconds</code></td>
+<td><code>Duration</code></td>
+<td>Giá trị không phải số → <code>NumberFormatException</code> ngay khi gọi</td>
+</tr>
+</tbody>
+</table></div>
+<p>Vì sao tách <code>Config</code> ra? Đổi URL staging chỉ cần <code>-Dbase.url=...</code>; <strong>không sửa code test</strong>.</p>
 <h2 id="4-truyền-cấu-hình-từ-maven-sang-jvm-test">4. Truyền cấu hình từ Maven sang JVM test</h2>
 <p>Surefire chạy test trong <strong>JVM riêng</strong>. <code>-Dbrowser=firefox</code> ở command line là property của <strong>Maven JVM</strong>; Surefire thường <strong>chuyển tiếp</strong> các user property sang JVM test, nhưng để rõ ràng/đảm bảo, khai báo trong POM:</p>
 <div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;plugin&gt;</span>
@@ -160,6 +204,32 @@
 <span class="w">    </span><span class="nt">&lt;browser&gt;</span>chrome<span class="nt">&lt;/browser&gt;</span>
 <span class="w">    </span><span class="nt">&lt;base.url&gt;</span>https://example.com<span class="nt">&lt;/base.url&gt;</span>
 <span class="nt">&lt;/properties&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần trong POM</th>
+<th>Làm chính xác gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;properties&gt;&lt;browser&gt;chrome&lt;/browser&gt;&lt;/properties&gt;</code></td>
+<td><strong>Khai báo biến</strong> <code>browser</code> với giá trị mặc định <code>chrome</code></td>
+</tr>
+<tr>
+<td><code>${browser}</code></td>
+<td><strong>Thay thế</strong> bằng giá trị biến <code>browser</code>: lấy từ <code>-Dbrowser=...</code> nếu có, không thì lấy mặc định trong <code>&lt;properties&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;systemPropertyVariables&gt;</code></td>
+<td>Bảo Surefire đặt các biến này thành <strong>system property của JVM chạy test</strong>, để <code>System.getProperty("browser")</code> đọc được</td>
+</tr>
+<tr>
+<td><code>&lt;plugin&gt;maven-surefire-plugin&lt;/plugin&gt;</code></td>
+<td>Plugin chạy test; cấu hình ở đây chỉ tác dụng khi chạy test</td>
+</tr>
+</tbody>
+</table></div>
 <p>⇒ Không truyền gì thì dùng mặc định POM; truyền <code>-Dbrowser=firefox</code> thì đè. (Ví dụ minh hoạ; chạy thử và in giá trị ra để xác nhận.)</p>
 <h2 id="5-maven-profile-cho-môi-trường">5. Maven Profile cho môi trường</h2>
 <div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;profiles&gt;</span>
@@ -178,6 +248,32 @@
 <span class="nt">&lt;/profiles&gt;</span></code></pre></div>
 <div class="code" data-lang="powershell"><div class="code-head"><span class="lang">powershell</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="n">-Pstaging</span>
 <span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="n">-Pci</span><span class="p">,</span><span class="n">staging</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;profile&gt;&lt;id&gt;staging&lt;/id&gt;</code></td>
+<td>Một <strong>bộ cấu hình có tên</strong>, mặc định <strong>không</strong> bật</td>
+</tr>
+<tr>
+<td><code>&lt;properties&gt;</code> bên trong profile</td>
+<td>Biến nào được <strong>đè</strong> khi profile được bật</td>
+</tr>
+<tr>
+<td><code>-Pstaging</code></td>
+<td><strong>Bật</strong> profile <code>staging</code> cho lần chạy này</td>
+</tr>
+<tr>
+<td><code>-Pci,staging</code></td>
+<td>Bật <strong>nhiều</strong> profile; profile sau đè profile trước nếu trùng biến</td>
+</tr>
+</tbody>
+</table></div>
 <p>Khi nào dùng Profile vs file properties:</p>
 <div class="table-wrap"><table>
 <thead>

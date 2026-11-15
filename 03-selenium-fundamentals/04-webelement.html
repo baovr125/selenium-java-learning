@@ -42,109 +42,184 @@
 </ul>
 <h2 id="-java--selenium">☕ Java ↔ Selenium</h2>
 <p><code>findElements</code> trả <code>List&lt;WebElement&gt;</code> (Java Collections); <code>getText()</code> trả <code>String</code>; <code>isDisplayed()</code> trả <code>boolean</code>.</p>
-<h2 id="1-webelement-api">1. <code>WebElement</code> API</h2>
+<h2 id="1-webelement-api--từng-method-làm-gì">1. <code>WebElement</code> API — từng method làm gì</h2>
+<p><code>WebElement</code> là "tay nắm" (handle) tới <strong>một phần tử cụ thể</strong> trên trang. Bạn lấy nó từ <code>findElement(...)</code>, rồi gọi method của nó để <strong>thao tác</strong> (click, gõ), <strong>đọc</strong> (text, thuộc tính) hoặc <strong>kiểm tra trạng thái</strong> (hiển thị, bật, chọn).</p>
+<p>Cách đọc thẻ: <em>Làm gì · Trả về · Khi lỗi · Ví dụ · Lưu ý</em>. Chi tiết các lệnh tương tác hơn ở <a href="06-element-interactions.html">06 - Element Interactions</a>.</p>
+<h3 id="11-nhóm-thao-tác">1.1. Nhóm thao tác</h3>
+<h4 id="click"><code>click()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> cuộn phần tử vào vùng nhìn (nếu cần) rồi <strong>click chuột trái vào tâm</strong> phần tử.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khi lỗi:</strong> phần tử ẩn/bị khoá → <code>ElementNotInteractableException</code>; bị phần tử khác che → <code>ElementClickInterceptedException</code>; handle cũ → <code>StaleElementReferenceException</code>.</li>
+<li><strong>Ví dụ:</strong> <code>driver.findElement(By.cssSelector("button[type='submit']")).click();</code></li>
+<li><strong>Lưu ý:</strong> cần phần tử <strong>hiển thị + enabled + không bị che</strong>.</li>
+</ul>
+<h4 id="sendkeyscharsequence-keys"><code>sendKeys(CharSequence... keys)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>gõ phím</strong> vào phần tử: chuỗi chữ hoặc phím đặc biệt (<code>Keys.ENTER</code>, <code>Keys.TAB</code>). Với <code>&lt;input type="file"&gt;</code> thì nhận <strong>đường dẫn file</strong> để upload.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khi lỗi:</strong> phần tử ẩn/disabled → <code>ElementNotInteractableException</code>.</li>
+<li><strong>Ví dụ:</strong> <code>username.sendKeys("tomsmith");</code> <code>username.sendKeys(Keys.TAB);</code></li>
+<li><strong>Lưu ý:</strong> gõ <strong>nối</strong> vào chữ cũ, không thay thế — nên <code>clear()</code> trước.</li>
+</ul>
+<h4 id="clear"><code>clear()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>xoá toàn bộ nội dung</strong> của ô nhập.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khi lỗi:</strong> phần tử không phải ô nhập được → <code>InvalidElementStateException</code>.</li>
+<li><strong>Ví dụ:</strong> <code>username.clear();</code></li>
+<li><strong>Lưu ý:</strong> chỉ cho <code>input</code>/<code>textarea</code> đang enabled.</li>
+</ul>
+<h4 id="submit"><code>submit()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>gửi form</strong> chứa phần tử này (như nhấn Enter trong form).</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Lưu ý:</strong> ít dùng; ưu tiên <code>click()</code> nút submit vì mô phỏng người dùng thật hơn.</li>
+</ul>
+<h3 id="12-nhóm-đọc-nội-dung">1.2. Nhóm đọc nội dung</h3>
+<h4 id="gettext"><code>getText()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả <strong>văn bản đang hiển thị</strong> của phần tử và các phần tử con (đã bỏ khoảng trắng thừa ở đầu/cuối).</li>
+<li><strong>Trả về:</strong> <code>String</code>; <strong><code>""</code></strong> nếu phần tử đang ẩn.</li>
+<li><strong>Ví dụ:</strong> <code>String msg = driver.findElement(By.id("flash")).getText();</code></li>
+<li><strong>Lưu ý:</strong> với <code>&lt;input&gt;</code> luôn trả <code>""</code> (nội dung nằm trong thuộc tính <code>value</code>, xem <code>getAttribute</code>). Chữ hiển thị theo CSS (<code>text-transform: uppercase</code> → trả chữ HOA).</li>
+</ul>
+<h4 id="getattributestring-name"><code>getAttribute(String name)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả giá trị thuộc tính <strong>hoặc property</strong> có tên <code>name</code>. Ưu tiên <strong>property hiện tại</strong>; không có thì lấy attribute.</li>
+<li><strong>Trả về:</strong> <code>String</code>, hoặc <code>null</code> nếu không có. Với thuộc tính kiểu bật/tắt (<code>disabled</code>, <code>checked</code>) trả <code>"true"</code> hoặc <code>null</code>.</li>
+<li><strong>Ví dụ:</strong> <code>input.getAttribute("value")</code> → chữ người dùng đã gõ. <code>link.getAttribute("href")</code> → URL.</li>
+<li><strong>Lưu ý:</strong> tiện nhưng "gộp" hai khái niệm dễ gây nhầm; xem hai method kế tiếp.</li>
+</ul>
+<h4 id="getdomattributestring-name-selenium-4"><code>getDomAttribute(String name)</code> (Selenium 4)</h4>
+<ul>
+<li><strong>Làm gì:</strong> chỉ trả <strong>attribute viết trong HTML</strong> (giá trị khởi tạo).</li>
+<li><strong>Trả về:</strong> <code>String</code>, <code>null</code> nếu HTML không có attribute đó.</li>
+<li><strong>Ví dụ:</strong> <code>&lt;input value="abc"&gt;</code> rồi người dùng gõ đè "xyz": <code>getDomAttribute("value")</code> vẫn là <code>"abc"</code>.</li>
+</ul>
+<h4 id="getdompropertystring-name-selenium-4"><code>getDomProperty(String name)</code> (Selenium 4)</h4>
+<ul>
+<li><strong>Làm gì:</strong> trả <strong>property của DOM</strong> — trạng thái <strong>hiện tại</strong> của phần tử trong trình duyệt.</li>
+<li><strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> cùng ví dụ trên: <code>getDomProperty("value")</code> → <code>"xyz"</code>.</li>
+</ul>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Trả về</th>
-<th>Ý nghĩa</th>
-<th>Lưu ý</th>
+<th></th>
+<th><code>getAttribute</code></th>
+<th><code>getDomAttribute</code></th>
+<th><code>getDomProperty</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>click()</code></td>
-<td>void</td>
-<td>Click chuột trái</td>
-<td>Cần visible + enabled + không bị che</td>
+<td>Đọc từ</td>
+<td>Property, nếu không có thì attribute</td>
+<td>Chỉ attribute trong HTML</td>
+<td>Chỉ property của DOM</td>
 </tr>
 <tr>
-<td><code>sendKeys(CharSequence...)</code></td>
-<td>void</td>
-<td>Gõ chữ / phím đặc biệt (<code>Keys.ENTER</code>)</td>
-<td>Cần visible + enabled</td>
+<td><code>&lt;input value="abc"&gt;</code> sau khi gõ "xyz"</td>
+<td><code>"xyz"</code></td>
+<td><code>"abc"</code></td>
+<td><code>"xyz"</code></td>
 </tr>
 <tr>
-<td><code>clear()</code></td>
-<td>void</td>
-<td>Xoá nội dung <code>input</code>/<code>textarea</code></td>
-<td>Chỉ cho phần tử nhập được</td>
-</tr>
-<tr>
-<td><code>getText()</code></td>
-<td><code>String</code></td>
-<td>Văn bản <strong>đang hiển thị</strong> (đã trim đầu/cuối, bỏ qua phần tử ẩn)</td>
-<td>Ẩn ⇒ <code>""</code></td>
-</tr>
-<tr>
-<td><code>getAttribute(name)</code></td>
-<td><code>String</code></td>
-<td>Giá trị thuộc tính <strong>hoặc</strong> property</td>
-<td>Xem bên dưới</td>
-</tr>
-<tr>
-<td><code>getDomAttribute(name)</code></td>
-<td><code>String</code></td>
-<td>Chỉ <strong>attribute</strong> trong HTML</td>
-<td>Selenium 4</td>
-</tr>
-<tr>
-<td><code>getDomProperty(name)</code></td>
-<td><code>String</code></td>
-<td><strong>Property</strong> của DOM (ví dụ <code>value</code> hiện tại)</td>
-<td>Selenium 4</td>
-</tr>
-<tr>
-<td><code>getCssValue(name)</code></td>
-<td><code>String</code></td>
-<td>Giá trị CSS tính toán (<code>color</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>getTagName()</code></td>
-<td><code>String</code></td>
-<td>Tên thẻ</td>
-<td></td>
-</tr>
-<tr>
-<td><code>getSize()</code>, <code>getLocation()</code>, <code>getRect()</code></td>
-<td></td>
-<td>Kích thước/vị trí</td>
-<td></td>
-</tr>
-<tr>
-<td><code>isDisplayed()</code></td>
-<td><code>boolean</code></td>
-<td>Đang hiển thị trên trang</td>
-<td>Không ném lỗi khi ẩn</td>
-</tr>
-<tr>
-<td><code>isEnabled()</code></td>
-<td><code>boolean</code></td>
-<td>Không bị <code>disabled</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>isSelected()</code></td>
-<td><code>boolean</code></td>
-<td>Checkbox/radio/option đang chọn</td>
-<td></td>
-</tr>
-<tr>
-<td><code>submit()</code></td>
-<td>void</td>
-<td>Gửi form</td>
-<td>Ít dùng; ưu tiên click nút</td>
-</tr>
-<tr>
-<td><code>findElement(s)</code></td>
-<td></td>
-<td>Tìm trong phần tử</td>
-<td></td>
+<td>Dùng khi</td>
+<td>Cần nhanh, không phân biệt</td>
+<td>Cần giá trị <strong>gốc</strong> trong HTML</td>
+<td>Cần giá trị <strong>đang có</strong></td>
 </tr>
 </tbody>
 </table></div>
+<h4 id="getcssvaluestring-property"><code>getCssValue(String property)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả giá trị CSS <strong>đã tính toán</strong> (kết quả cuối cùng áp dụng cho phần tử).</li>
+<li><strong>Trả về:</strong> <code>String</code>; màu trả dạng <code>rgba(...)</code>.</li>
+<li><strong>Ví dụ:</strong> <code>el.getCssValue("background-color")</code> → <code>"rgba(0, 123, 255, 1)"</code>.</li>
+<li><strong>Lưu ý:</strong> dùng kiểm tra giao diện (màu, cỡ chữ), không nên so sánh quá chặt.</li>
+</ul>
+<h4 id="gettagname"><code>getTagName()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả tên thẻ HTML.</li>
+<li><strong>Trả về:</strong> <code>String</code> chữ thường, ví dụ <code>"input"</code>, <code>"a"</code>.</li>
+</ul>
+<h3 id="13-nhóm-kích-thước-và-vị-trí">1.3. Nhóm kích thước và vị trí</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>getSize()</code></td>
+<td>Kích thước phần tử theo pixel</td>
+<td><code>Dimension</code> (<code>getWidth()</code>, <code>getHeight()</code>)</td>
+</tr>
+<tr>
+<td><code>getLocation()</code></td>
+<td>Vị trí <strong>góc trên bên trái</strong> của phần tử so với góc trên trái của trang</td>
+<td><code>Point</code> (<code>getX()</code>, <code>getY()</code>)</td>
+</tr>
+<tr>
+<td><code>getRect()</code></td>
+<td><strong>Cả hai</strong> (vị trí và kích thước) trong một lần gọi</td>
+<td><code>Rectangle</code> (<code>getX()</code>, <code>getY()</code>, <code>getWidth()</code>, <code>getHeight()</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="14-nhóm-kiểm-tra-trạng-thái">1.4. Nhóm kiểm tra trạng thái</h3>
+<p>Cả ba trả <code>boolean</code>, <strong>không ném lỗi</strong> khi trạng thái là <code>false</code> (chỉ ném <code>StaleElementReferenceException</code> nếu handle đã cũ).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Trả <code>true</code> khi</th>
+<th>Trả <code>false</code> khi</th>
+<th>Dùng cho</th>
+<th>🧩 Dự án</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isDisplayed()</code></td>
+<td>Phần tử đang <strong>hiển thị</strong> trên trang</td>
+<td><code>display:none</code>, <code>visibility:hidden</code>, kích thước 0, <code>&lt;input type="hidden"&gt;</code></td>
+<td>Modal, thông báo có hiện không</td>
+<td>Ex 1, 5, 6, 8</td>
+</tr>
+<tr>
+<td><code>isEnabled()</code></td>
+<td>Phần tử <strong>không bị <code>disabled</code></strong></td>
+<td>Có thuộc tính <code>disabled</code></td>
+<td>Ô input/nút bị khoá</td>
+<td>Ex 4, Ex 10</td>
+</tr>
+<tr>
+<td><code>isSelected()</code></td>
+<td>Checkbox/radio/option <strong>đang được chọn</strong></td>
+<td>Chưa chọn</td>
+<td>Checkbox đã tick chưa</td>
+<td>Ex 2</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="15-nhóm-tìm-phần-tử-con">1.5. Nhóm tìm phần tử con</h3>
+<h4 id="findelementby--findelementsby-gọi-trên-một-webelement"><code>findElement(By)</code> / <code>findElements(By)</code> (gọi trên một <code>WebElement</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> tìm <strong>bên trong phần tử này</strong> (chỉ trong các phần tử con của nó), thay vì trên cả trang.</li>
+<li><strong>Trả về:</strong> <code>WebElement</code> / <code>List&lt;WebElement&gt;</code>; không thấy thì ném <code>NoSuchElementException</code> / trả list rỗng.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;tbody tr&quot;</span><span class="p">));</span>
+<span class="n">WebElement</span><span class="w"> </span><span class="n">firstCell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">tagName</span><span class="p">(</span><span class="s">&quot;td&quot;</span><span class="p">));</span><span class="w">    </span><span class="c1">// chỉ tìm trong dòng này</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> XPath tìm trong phần tử phải bắt đầu bằng <strong><code>.</code></strong> (<code>.//td</code>); thiếu dấu chấm sẽ tìm trên <strong>cả trang</strong>.</li>
+</ul>
 <h3 id="gettext-vs-getattributevalue"><code>getText()</code> vs <code>getAttribute("value")</code></h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;#input-example input&quot;</span><span class="p">));</span>
 <span class="n">input</span><span class="p">.</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;Selenium&quot;</span><span class="p">);</span>

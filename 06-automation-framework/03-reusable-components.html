@@ -143,6 +143,112 @@ Mọi code dưới đây là <strong>ví dụ tham khảo</strong> để bạn t
 <span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">openqa</span><span class="p">.</span><span class="na">selenium</span><span class="p">.</span><span class="na">interactions</span><span class="p">.</span><span class="na">Actions</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="na">moveToElement</span><span class="p">(</span><span class="n">waitVisible</span><span class="p">(</span><span class="n">by</span><span class="p">)).</span><span class="na">perform</span><span class="p">();</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
+<h3 id="21-từng-method-của-basepage-làm-gì">2.1. Từng method của <code>BasePage</code> làm gì</h3>
+<p><strong>Constructor <code>BasePage(WebDriver driver)</code>:</strong> lưu <code>driver</code> và tạo một <code>WebDriverWait</code> 15 giây dùng chung cho mọi Page con. Vì vậy Page con không phải tự tạo wait.</p>
+<p><strong>Nhóm chờ</strong> (đều lấy <code>By</code>, tìm lại mỗi lần chờ nên ít bị stale):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Bên trong gọi gì</th>
+<th>Trả về</th>
+<th>Khi nào dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>waitVisible(By)</code></td>
+<td><code>wait.until(visibilityOfElementLocated(by))</code> — chờ phần tử có <strong>và hiển thị</strong></td>
+<td><code>WebElement</code></td>
+<td>Trước khi đọc chữ hoặc gõ vào ô</td>
+</tr>
+<tr>
+<td><code>waitClickable(By)</code></td>
+<td><code>wait.until(elementToBeClickable(by))</code> — chờ phần tử <strong>hiển thị và enabled</strong></td>
+<td><code>WebElement</code></td>
+<td>Trước khi click</td>
+</tr>
+<tr>
+<td><code>waitInvisible(By)</code></td>
+<td><code>wait.until(invisibilityOfElementLocated(by))</code> — chờ <strong>biến mất</strong> hoặc ẩn</td>
+<td><code>void</code></td>
+<td>Chờ spinner/modal đóng</td>
+</tr>
+<tr>
+<td><code>waitCount(By, int)</code></td>
+<td><code>wait.until(numberOfElementsToBe(by, n))</code> — chờ đủ <strong>đúng n</strong> phần tử</td>
+<td><code>void</code></td>
+<td>Sau khi thêm/xoá phần tử</td>
+</tr>
+<tr>
+<td><code>waitText(By, String)</code></td>
+<td><code>wait.until(textToBe(by, text))</code> — chờ text <strong>bằng đúng</strong> chuỗi</td>
+<td><code>void</code></td>
+<td>Chờ thông báo đổi sang nội dung mới</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Nhóm hành động</strong> (đã bao sẵn bước chờ ở trên):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Khác Selenium thuần ở điểm nào</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>click(By)</code></td>
+<td><code>waitClickable(by).click()</code></td>
+<td><code>driver.findElement(by).click()</code> <strong>không chờ</strong> → dễ lỗi khi phần tử chưa sẵn sàng</td>
+<td><code>void</code></td>
+</tr>
+<tr>
+<td><code>type(By, String)</code></td>
+<td>Chờ hiển thị → <code>clear()</code> xoá chữ cũ → <code>sendKeys(text)</code></td>
+<td>Thuần Selenium thường quên <code>clear()</code>, chữ mới nối vào chữ cũ</td>
+<td><code>void</code></td>
+</tr>
+<tr>
+<td><code>text(By)</code></td>
+<td>Chờ hiển thị → <code>getText().trim()</code></td>
+<td><code>getText()</code> thuần <strong>không chờ</strong> và có thể thừa khoảng trắng</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td><code>value(By)</code></td>
+<td>Chờ hiển thị → <code>getAttribute("value")</code></td>
+<td>Đọc <strong>nội dung ô nhập</strong> (<code>getText()</code> của <code>&lt;input&gt;</code> trả rỗng)</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td><code>isPresent(By)</code></td>
+<td><code>!driver.findElements(by).isEmpty()</code></td>
+<td><strong>Không chờ</strong> — chỉ hỏi "lúc này có không" mà không bị <code>NoSuchElementException</code></td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
+<td><code>all(By)</code></td>
+<td><code>driver.findElements(by)</code></td>
+<td>Trả tất cả phần tử khớp; list rỗng nếu không có</td>
+<td><code>List&lt;WebElement&gt;</code></td>
+</tr>
+<tr>
+<td><code>hover(By)</code></td>
+<td>Chờ hiển thị → <code>new Actions(driver).moveToElement(el).perform()</code></td>
+<td>Gom ba bước <code>Actions</code> thành một lệnh</td>
+<td><code>void</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Ví dụ: cùng một hành động, hai cách viết</strong></p>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// Selenium thuần — không chờ, không xoá chữ cũ</span>
+<span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;username&quot;</span><span class="p">)).</span><span class="na">sendKeys</span><span class="p">(</span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span>
+
+<span class="c1">// Qua BasePage — chờ hiển thị, xoá chữ cũ, rồi gõ</span>
+<span class="n">type</span><span class="p">(</span><span class="n">usernameInput</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tomsmith&quot;</span><span class="p">);</span></code></pre></div>
 <p>Điểm mấu chốt:</p>
 <ul>
 <li><strong>Wait nằm trong <code>BasePage</code></strong> ⇒ Page và Test không phải lo đồng bộ hoá.</li>
@@ -191,6 +297,38 @@ Mọi code dưới đây là <strong>ví dụ tham khảo</strong> để bạn t
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <p>Mỗi luồng có <code>WebDriver</code> riêng. Nhớ <code>DRIVER.remove()</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method của <code>ThreadLocal&lt;WebDriver&gt;</code></th>
+<th>Làm chính xác gì</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new ThreadLocal&lt;&gt;()</code></td>
+<td>Tạo một "ngăn chứa" mà <strong>mỗi luồng có ô riêng</strong></td>
+<td>Khai báo <code>static final</code> để mọi class dùng chung một ngăn</td>
+</tr>
+<tr>
+<td><code>DRIVER.set(driver)</code></td>
+<td>Cất <code>driver</code> vào ô của <strong>luồng hiện tại</strong></td>
+<td>Gọi trong <code>@BeforeMethod</code>, <strong>trên cùng luồng</strong> chạy test</td>
+</tr>
+<tr>
+<td><code>DRIVER.get()</code></td>
+<td>Lấy <code>driver</code> trong ô của <strong>luồng hiện tại</strong></td>
+<td>Luồng chưa <code>set</code> thì trả <code>null</code></td>
+</tr>
+<tr>
+<td><code>DRIVER.remove()</code></td>
+<td>Xoá ô của luồng hiện tại</td>
+<td>Quên → rò rỉ bộ nhớ khi luồng được tái sử dụng (thread pool)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Hai test chạy song song trên hai luồng A và B: <code>A.get()</code> và <code>B.get()</code> trả về <strong>hai driver khác nhau</strong>, nên không giẫm lên nhau (khác với <code>static WebDriver</code> dùng chung).</p>
 <h2 id="5-utility-bảng">5. Utility: bảng</h2>
 <p>Rút từ 🧩 <a href="../../../../src/test/java/tests/Exercise03_WebTablesTest.java" class="ext" title="File của dự án (chỉ mở được khi xem local)">Exercise03</a>:</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TableUtils</span><span class="w"> </span><span class="p">{</span>
@@ -235,6 +373,48 @@ Mọi code dưới đây là <strong>ví dụ tham khảo</strong> để bạn t
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
+<h3 id="71-các-lệnh-trong-screenshotstake">7.1. Các lệnh trong <code>Screenshots.take(...)</code></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Trả về / Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>((TakesScreenshot) driver)</code></td>
+<td><strong>Ép kiểu</strong> <code>driver</code> sang interface có khả năng chụp ảnh (<code>ChromeDriver</code> đã implement)</td>
+<td>Dùng ép kiểu vì <code>WebDriver</code> không có lệnh chụp</td>
+</tr>
+<tr>
+<td><code>getScreenshotAs(OutputType.FILE)</code></td>
+<td>Chụp phần <strong>đang hiển thị</strong> của trang, lưu vào <strong>file tạm</strong></td>
+<td>Trả <code>File</code> (ảnh PNG)</td>
+</tr>
+<tr>
+<td><code>getScreenshotAs(OutputType.BYTES)</code></td>
+<td>Chụp, trả <strong>mảng byte</strong></td>
+<td>Trả <code>byte[]</code>; hợp để đính vào báo cáo (Allure/Extent)</td>
+</tr>
+<tr>
+<td><code>getScreenshotAs(OutputType.BASE64)</code></td>
+<td>Chụp, trả <strong>chuỗi base64</strong></td>
+<td>Trả <code>String</code>; hợp để nhúng thẳng vào HTML</td>
+</tr>
+<tr>
+<td><code>Files.createDirectories(dir)</code></td>
+<td>Tạo thư mục (và cha của nó) nếu chưa có</td>
+<td>Không lỗi nếu thư mục đã tồn tại</td>
+</tr>
+<tr>
+<td><code>Files.copy(src, dest, REPLACE_EXISTING)</code></td>
+<td>Sao chép file tạm vào thư mục của bạn, <strong>ghi đè</strong> nếu trùng tên</td>
+<td>Trả <code>Path</code> của file đích; không có <code>REPLACE_EXISTING</code> thì lỗi <code>FileAlreadyExistsException</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="8-logging">8. Logging</h2>
 <p>Đơn giản nhất: SLF4J.</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Logger</span><span class="w"> </span><span class="n">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">LoginPage</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>

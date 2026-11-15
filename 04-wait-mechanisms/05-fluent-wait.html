@@ -62,6 +62,96 @@
 </ul>
 <p><code>WebDriverWait</code> là <code>FluentWait&lt;WebDriver&gt;</code> đã đặt sẵn mặc định ⇒ trong thực tế <code>WebDriverWait</code> + <code>.ignoring(...)</code> + <code>.pollingEvery(...)</code> đã làm được mọi thứ FluentWait làm.</p>
 <p>🧩 Dự án chưa dùng <code>FluentWait</code> trực tiếp; Ex 7 dùng <code>wait.until(lambda)</code> — là <strong>custom wait</strong> đúng tinh thần Fluent.</p>
+<h3 id="11-từng-method-của-fluentwaitt">1.1. Từng method của <code>FluentWait&lt;T&gt;</code></h3>
+<p><code>T</code> là <strong>đối tượng đầu vào</strong> được đưa cho điều kiện mỗi lần hỏi (thường là <code>WebDriver</code>, nhưng có thể là <code>Path</code>, <code>WebElement</code>...). <code>Wait&lt;T&gt;</code> là interface; <code>FluentWait&lt;T&gt;</code> là lớp cài đặt nó.</p>
+<h4 id="new-fluentwaitt-input"><code>new FluentWait&lt;&gt;(T input)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tạo đối tượng chờ với <strong>cấu hình tối thiểu</strong>: timeout và polling đều mặc định <strong>500 ms</strong>, không bỏ qua exception nào.</li>
+<li><strong>Trả về:</strong> <code>FluentWait&lt;T&gt;</code>.</li>
+<li><strong>Ví dụ:</strong> <code>new FluentWait&lt;&gt;(driver)</code></li>
+<li><strong>Lưu ý:</strong> khác <code>WebDriverWait</code>, <code>FluentWait</code> mặc định <strong>timeout rất ngắn (500 ms)</strong> và <strong>không</strong> tự bỏ qua <code>NoSuchElementException</code>. Quên <code>withTimeout</code> thì gần như hết giờ ngay; quên <code>ignoring(NoSuchElementException.class)</code> thì lệnh <code>findElement</code> trong lambda ném lỗi ngay lần đầu.</li>
+</ul>
+<h4 id="withtimeoutduration"><code>withTimeout(Duration)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đặt thời gian chờ <strong>tối đa</strong>.</li>
+<li><strong>Trả về:</strong> chính đối tượng (nối chuỗi).</li>
+<li><strong>Ví dụ:</strong> <code>.withTimeout(Duration.ofSeconds(30))</code></li>
+<li><strong>Lưu ý:</strong> hết giờ → <code>TimeoutException</code>.</li>
+</ul>
+<h4 id="pollingeveryduration"><code>pollingEvery(Duration)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đặt khoảng nghỉ giữa hai lần hỏi điều kiện.</li>
+<li><strong>Trả về:</strong> chính đối tượng.</li>
+<li><strong>Ví dụ:</strong> <code>.pollingEvery(Duration.ofMillis(200))</code></li>
+<li><strong>Lưu ý:</strong> điều kiện nặng (đọc file, gọi API) nên polling dài hơn (1 s); điều kiện nhẹ (DOM) 200–500 ms.</li>
+</ul>
+<h4 id="ignoringclass-extends-throwable-và-ignoreallcollectionclass-extends-throwable"><code>ignoring(Class&lt;? extends Throwable&gt;)</code> và <code>ignoreAll(Collection&lt;Class&lt;? extends Throwable&gt;&gt;)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khai báo exception nào được <strong>bỏ qua</strong> (coi là "chưa đạt, hỏi lại"). <code>ignoring(Class)</code> thêm một loại (gọi nhiều lần để thêm nhiều loại; có bản nhận 2 lớp một lúc); <code>ignoreAll(...)</code> thêm cả danh sách.</li>
+<li><strong>Trả về:</strong> chính đối tượng.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="p">.</span><span class="na">ignoring</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="p">.</span><span class="na">ignoreAll</span><span class="p">(</span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">StaleElementReferenceException</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">ElementNotInteractableException</span><span class="p">.</span><span class="na">class</span><span class="p">))</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> exception <strong>không</strong> nằm trong danh sách sẽ được ném thẳng ra ngoài ngay lần đó.</li>
+</ul>
+<h4 id="withmessagestring-và-withmessagesupplierstring"><code>withMessage(String)</code> và <code>withMessage(Supplier&lt;String&gt;)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> thêm câu mô tả vào <code>TimeoutException</code> khi hết giờ. Bản <code>Supplier</code> chỉ tính chuỗi <strong>khi thật sự timeout</strong> (tiết kiệm nếu chuỗi tốn công tạo).</li>
+<li><strong>Trả về:</strong> chính đối tượng.</li>
+<li><strong>Ví dụ:</strong> <code>.withMessage("Không thấy nút Download")</code></li>
+</ul>
+<h4 id="untilfunction-super-t-v-istrue"><code>until(Function&lt;? super T, V&gt; isTrue)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> lệnh chạy: lặp hỏi <code>isTrue.apply(input)</code> → <code>null</code>/<code>false</code> thì ngủ rồi hỏi lại; khác <code>null</code>/<code>false</code> thì trả luôn.</li>
+<li><strong>Trả về:</strong> <code>V</code> — giá trị điều kiện trả về khi đạt.</li>
+<li><strong>Khi lỗi:</strong> hết giờ → <code>TimeoutException</code>; exception không được ignore → ném ngay.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">WebElement</span><span class="w"> </span><span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fluent</span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">d</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;download&quot;</span><span class="p">)));</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> hàm điều kiện nhận <strong><code>T</code></strong> (đối tượng đầu vào), nên với <code>FluentWait&lt;Path&gt;</code> bạn viết <code>until(Files::exists)</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>WebDriverWait</code></th>
+<th><code>FluentWait&lt;T&gt;</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kiểu đầu vào</td>
+<td>Luôn <code>WebDriver</code></td>
+<td>Bất kỳ <code>T</code></td>
+</tr>
+<tr>
+<td>Timeout mặc định</td>
+<td>Phải truyền ở constructor</td>
+<td>500 ms (rất ngắn) → luôn gọi <code>withTimeout</code></td>
+</tr>
+<tr>
+<td>Polling mặc định</td>
+<td>500 ms</td>
+<td>500 ms</td>
+</tr>
+<tr>
+<td>Ignore mặc định</td>
+<td><code>NotFoundException</code></td>
+<td><strong>Không có</strong></td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Chờ thao tác trên trình duyệt</td>
+<td>Chờ thứ không thuộc <code>WebDriver</code> (file, API, đối tượng Java) hoặc cần cấu hình tách biệt</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><code>WebDriverWait extends FluentWait&lt;WebDriver&gt;</code>: mọi method trên đều dùng được với <code>WebDriverWait</code>.</p>
+</blockquote>
 <h2 id="2-custom-wait">2. Custom Wait</h2>
 <p>Khi <code>ExpectedConditions</code> không có điều kiện bạn cần, viết bằng <strong>lambda</strong> hoặc <code>ExpectedCondition</code>:</p>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="c1">// 1. Lambda (🧩 Ex7 dùng cách này)</span>
@@ -80,6 +170,37 @@
 <span class="n">Path</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Path</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;downloads&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;report.pdf&quot;</span><span class="p">);</span>
 <span class="k">new</span><span class="w"> </span><span class="n">FluentWait</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="na">withTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">30</span><span class="p">)).</span><span class="na">pollingEvery</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="w">        </span><span class="p">.</span><span class="na">until</span><span class="p">(</span><span class="n">Files</span><span class="p">::</span><span class="n">exists</span><span class="p">);</span></code></pre></div>
+<h3 id="21-ba-cách-viết-điều-kiện--khi-nào-dùng-cách-nào">2.1. Ba cách viết điều kiện — khi nào dùng cách nào</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cách</th>
+<th>Cú pháp</th>
+<th>Thông báo timeout</th>
+<th>Dùng khi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Lambda</strong></td>
+<td><code>d -&gt; ...</code></td>
+<td>Chung chung (tên lớp lambda)</td>
+<td>Điều kiện ngắn, dùng một lần</td>
+</tr>
+<tr>
+<td><strong><code>ExpectedCondition&lt;T&gt;</code></strong> (interface có 1 method <code>T apply(WebDriver d)</code>)</td>
+<td>lớp ẩn danh + <code>toString()</code></td>
+<td>Dùng chuỗi <code>toString()</code> bạn viết</td>
+<td>Điều kiện dùng lại, cần báo lỗi rõ</td>
+</tr>
+<tr>
+<td><strong><code>FluentWait&lt;Path&gt;</code></strong> / <code>FluentWait&lt;T&gt;</code></td>
+<td><code>until(Files::exists)</code></td>
+<td>Do <code>withMessage</code></td>
+<td>Điều kiện <strong>không</strong> phụ thuộc <code>WebDriver</code></td>
+</tr>
+</tbody>
+</table></div>
 <p>Quy tắc viết:</p>
 <ol>
 <li>Trả <code>true</code>/đối tượng khi <strong>đạt</strong>; <code>false</code>/<code>null</code> khi <strong>chưa đạt</strong>.</li>

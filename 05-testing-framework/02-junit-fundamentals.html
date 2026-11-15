@@ -120,6 +120,84 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-annotation-làm-gì-khác-testng-ở-đâu">2.1. Từng annotation làm gì (khác TestNG ở đâu)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>Làm chính xác gì</th>
+<th>Khác TestNG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Test</code></td>
+<td>Đánh dấu một method là test. Fail khi ném exception (gồm <code>AssertionFailedError</code>). Method <strong>không cần <code>public</code></strong></td>
+<td>TestNG bắt buộc <code>public</code></td>
+</tr>
+<tr>
+<td><code>@BeforeEach</code></td>
+<td>Chạy <strong>trước mỗi</strong> <code>@Test</code></td>
+<td>= <code>@BeforeMethod</code></td>
+</tr>
+<tr>
+<td><code>@AfterEach</code></td>
+<td>Chạy <strong>sau mỗi</strong> <code>@Test</code></td>
+<td>= <code>@AfterMethod</code></td>
+</tr>
+<tr>
+<td><code>@BeforeAll</code></td>
+<td>Chạy <strong>một lần</strong> trước test đầu tiên của class. Phải là method <strong><code>static</code></strong> (trừ khi class có <code>@TestInstance(PER_CLASS)</code>)</td>
+<td>= <code>@BeforeClass</code>, nhưng bắt buộc <code>static</code></td>
+</tr>
+<tr>
+<td><code>@AfterAll</code></td>
+<td>Chạy <strong>một lần</strong> sau test cuối của class; cũng <code>static</code></td>
+<td>= <code>@AfterClass</code></td>
+</tr>
+<tr>
+<td><code>@Disabled("lý do")</code></td>
+<td><strong>Bỏ qua</strong> test và báo là <em>skipped</em> kèm lý do</td>
+<td><code>enabled=false</code> của TestNG thường không hiện trong báo cáo</td>
+</tr>
+<tr>
+<td><code>@DisplayName("...")</code></td>
+<td>Tên hiển thị của test (cho phép tiếng Việt, dấu cách)</td>
+<td>= <code>description</code></td>
+</tr>
+<tr>
+<td><code>@Tag("smoke")</code></td>
+<td>Gắn nhãn nhóm; chọn nhóm khi chạy bằng Maven <code>-Dgroups=smoke</code> hoặc cấu hình Platform</td>
+<td>= <code>groups</code></td>
+</tr>
+<tr>
+<td><code>@ParameterizedTest</code> + nguồn dữ liệu</td>
+<td>Chạy test <strong>một lần cho mỗi bộ dữ liệu</strong></td>
+<td>= <code>@DataProvider</code> + <code>dataProvider</code></td>
+</tr>
+<tr>
+<td><code>@RepeatedTest(n)</code></td>
+<td>Chạy cùng một test <code>n</code> lần</td>
+<td>= <code>invocationCount</code></td>
+</tr>
+<tr>
+<td><code>@Timeout(value, unit)</code></td>
+<td>Test chạy quá thời gian → fail</td>
+<td>= <code>timeOut</code> (TestNG dùng ms)</td>
+</tr>
+<tr>
+<td><code>@TestMethodOrder</code> + <code>@Order(n)</code></td>
+<td>Đặt thứ tự chạy; số nhỏ chạy trước</td>
+<td>= <code>priority</code></td>
+</tr>
+<tr>
+<td><code>@ExtendWith(...)</code></td>
+<td>Gắn "extension" (listener, tiêm tham số...)</td>
+<td>≈ <code>ITestListener</code>/<code>@Listeners</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Khác biệt quan trọng về vòng đời:</strong> JUnit 5 tạo <strong>một đối tượng class test mới cho mỗi <code>@Test</code></strong> (mặc định <code>PER_METHOD</code>). Vì vậy field <code>driver</code> của test này <strong>không</strong> còn nằm lại cho test khác. TestNG dùng <strong>một đối tượng</strong> cho cả class, nên field được giữ giữa các test — dễ dẫn đến test "phá" trạng thái nhau.</p>
 <h2 id="3-ví-dụ-tương-đương-basetest-junit-5">3. Ví dụ tương đương <code>BaseTest</code> (JUnit 5)</h2>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.junit.jupiter.api.AfterEach</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">org.junit.jupiter.api.BeforeEach</span><span class="p">;</span>
@@ -168,6 +246,75 @@
 <span class="n">assertTrue</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;message&quot;</span><span class="p">);</span>
 <span class="n">assertAll</span><span class="p">(</span><span class="s">&quot;login&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">assertEquals</span><span class="p">(...),</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">assertTrue</span><span class="p">(...));</span><span class="w">   </span><span class="c1">// gom nhiều assertion (soft)</span>
 <span class="n">assertThrows</span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)));</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method JUnit 5</th>
+<th>Làm chính xác gì</th>
+<th>Tương đương TestNG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>assertEquals(expected, actual[, message])</code></td>
+<td>So bằng <code>equals()</code>. <strong>Message có thể nằm cuối</strong> (tham số cuối cùng)</td>
+<td><code>assertEquals(actual, expected)</code> — <strong>đảo thứ tự</strong></td>
+</tr>
+<tr>
+<td><code>assertNotEquals(unexpected, actual)</code></td>
+<td>Hai giá trị khác nhau</td>
+<td><code>assertNotEquals</code></td>
+</tr>
+<tr>
+<td><code>assertTrue(cond[, message])</code> / <code>assertFalse</code></td>
+<td>Điều kiện đúng / sai</td>
+<td>Giống</td>
+</tr>
+<tr>
+<td><code>assertNull</code> / <code>assertNotNull</code></td>
+<td>Null / không null</td>
+<td>Giống</td>
+</tr>
+<tr>
+<td><code>assertSame</code> / <code>assertNotSame</code></td>
+<td>Cùng / khác đối tượng (<code>==</code>)</td>
+<td>Giống</td>
+</tr>
+<tr>
+<td><code>assertArrayEquals(exp, act)</code></td>
+<td>So hai mảng theo từng phần tử</td>
+<td><code>assertEquals</code> cho mảng</td>
+</tr>
+<tr>
+<td><code>assertIterableEquals(exp, act)</code></td>
+<td>So hai <code>Iterable</code> theo thứ tự</td>
+<td><code>assertEquals</code> cho <code>List</code></td>
+</tr>
+<tr>
+<td><code>assertAll("tên nhóm", executables...)</code></td>
+<td>Chạy <strong>tất cả</strong> assertion trong nhóm, báo <strong>mọi</strong> lỗi cùng lúc</td>
+<td><code>SoftAssert</code> + <code>assertAll()</code></td>
+</tr>
+<tr>
+<td><code>assertThrows(Class, Executable)</code></td>
+<td>Phải ném exception đó; <strong>trả về</strong> exception để kiểm tra thêm</td>
+<td><code>assertThrows</code> / <code>expectThrows</code></td>
+</tr>
+<tr>
+<td><code>assertTimeout(Duration, Executable)</code></td>
+<td>Thực thi phải xong trong thời gian cho trước</td>
+<td><code>@Test(timeOut)</code></td>
+</tr>
+<tr>
+<td><code>fail("message")</code></td>
+<td>Ép fail</td>
+<td><code>Assert.fail</code></td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>Không cần nhớ thuộc lòng từng method: chỉ cần nhớ <strong>(1)</strong> thứ tự <code>expected, actual</code>, <strong>(2)</strong> <code>assertAll</code> = soft assert, <strong>(3)</strong> <code>assertThrows</code> trả exception.</p>
+</blockquote>
 <h2 id="6-so-sánh-testng-và-junit-5">6. So sánh TestNG và JUnit 5</h2>
 <div class="table-wrap"><table>
 <thead>

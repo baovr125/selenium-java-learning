@@ -42,6 +42,82 @@
 <h2 id="1-implicit-wait">1. Implicit Wait</h2>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">driver</span><span class="p">.</span><span class="na">manage</span><span class="p">().</span><span class="na">timeouts</span><span class="p">().</span><span class="na">implicitlyWait</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span></code></pre></div>
 <p>Nghĩa là: <em>"mỗi lần <code>findElement</code>/<code>findElements</code> không thấy phần tử, hãy thử lại tối đa 10 giây rồi mới báo"</em>. Cài <strong>một lần</strong>, áp dụng suốt session.</p>
+<h3 id="implicitlywaitduration--thẻ-method"><code>implicitlyWait(Duration)</code> — thẻ method</h3>
+<ul>
+<li><strong>Làm gì:</strong> đặt một "thời gian kiên nhẫn" cho <strong>mọi</strong> lần tìm phần tử trong session. Trong khoảng đó, driver cứ thử tìm lại (khoảng vài trăm ms một lần) cho tới khi tìm được hoặc hết giờ.</li>
+<li><strong>Gọi từ:</strong> <code>driver.manage().timeouts()</code> → trả về đối tượng <code>Timeouts</code> (nên gọi 1 lần ở setup).</li>
+<li><strong>Trả về:</strong> <code>Timeouts</code> (để nối thêm <code>pageLoadTimeout(...)</code> v.v.).</li>
+<li><strong>Mặc định:</strong> 0 — tức không chờ, không tìm thấy là báo lỗi ngay.</li>
+<li><strong>Lệnh nào bị ảnh hưởng:</strong></li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Bị ảnh hưởng?</th>
+<th>Hành vi khi bật implicit 10 s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>driver.findElement(by)</code></td>
+<td>✅</td>
+<td>Thấy → trả ngay. Không thấy → thử lại tới 10 s rồi ném <code>NoSuchElementException</code></td>
+</tr>
+<tr>
+<td><code>driver.findElements(by)</code></td>
+<td>✅</td>
+<td>Thấy ≥ 1 phần tử → trả ngay. <strong>Không thấy → chờ đủ 10 s</strong> rồi trả list rỗng</td>
+</tr>
+<tr>
+<td><code>element.findElement(s)</code> (tìm con)</td>
+<td>✅</td>
+<td>Như trên</td>
+</tr>
+<tr>
+<td><code>click()</code>, <code>sendKeys()</code>, <code>getText()</code>, <code>isDisplayed()</code></td>
+<td>❌</td>
+<td>Không chờ gì thêm; phần tử không hiện thì vẫn lỗi ngay</td>
+</tr>
+<tr>
+<td><code>wait.until(ExpectedConditions...)</code></td>
+<td>⚠️</td>
+<td>Không bị trực tiếp, nhưng bên trong điều kiện có <code>findElement</code> → <strong>bị implicit chen vào</strong> (xem mục 2)</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Ví dụ thời gian</strong> (implicit = 10 s):</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th><code>findElement</code></th>
+<th><code>findElements</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phần tử có sẵn</td>
+<td>~0 s, trả ngay</td>
+<td>~0 s, trả ngay</td>
+</tr>
+<tr>
+<td>Phần tử xuất hiện sau 3 s</td>
+<td>~3 s, trả phần tử</td>
+<td>~3 s, trả list có phần tử</td>
+</tr>
+<tr>
+<td>Phần tử <strong>không bao giờ</strong> xuất hiện</td>
+<td>~10 s rồi <code>NoSuchElementException</code></td>
+<td>~10 s rồi trả <strong>list rỗng</strong></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Lưu ý:</strong> chỉ chờ phần tử <strong>có trong DOM</strong> (presence), không chờ hiển thị hay bấm được — nên vẫn có thể gặp <code>ElementNotInteractableException</code>. Phải dùng <code>Duration</code> (bản <code>implicitlyWait(10, TimeUnit.SECONDS)</code> đã bị loại).</li>
+</ul>
 <p><strong>Ưu điểm:</strong> đơn giản; ít dòng code.
 <strong>Nhược điểm:</strong></p>
 <ol>

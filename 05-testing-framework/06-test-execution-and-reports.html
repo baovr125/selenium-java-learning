@@ -85,6 +85,84 @@
 </tbody>
 </table></div>
 <p>Chi tiết lệnh Maven: <a href="../02-maven-and-project/07-build-and-test-execution.html">maven/06</a>.</p>
+<h3 id="11-từng-phần-của-lệnh-maven-chạy-test">1.1. Từng phần của lệnh Maven chạy test</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phần của lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Ví dụ / Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.\mvnw.cmd</code></td>
+<td>Chạy Maven <strong>Wrapper</strong> của dự án (không cần cài Maven)</td>
+<td>Linux/macOS: <code>./mvnw</code></td>
+</tr>
+<tr>
+<td><code>test</code></td>
+<td>Chạy các bước của vòng đời <strong>tới</strong> <code>test</code>: biên dịch rồi chạy test bằng Surefire</td>
+<td>Không đóng gói jar</td>
+</tr>
+<tr>
+<td><code>clean</code></td>
+<td>Xoá thư mục <code>target/</code> trước khi build</td>
+<td><code>clean test</code>: báo cáo luôn mới, không lẫn bản cũ</td>
+</tr>
+<tr>
+<td><code>-Dtest=Exercise01_LoginTest</code></td>
+<td>Chỉ chạy <strong>một class</strong></td>
+<td>Khi dùng <code>-Dtest</code>, <code>testng.xml</code> bị <strong>bỏ qua</strong></td>
+</tr>
+<tr>
+<td><code>-Dtest=Exercise01_LoginTest#testLoginSuccess</code></td>
+<td>Chỉ chạy <strong>một method</strong></td>
+<td>Dấu <code>#</code> ngăn giữa class và method</td>
+</tr>
+<tr>
+<td><code>-Dtest="Exercise0*"</code></td>
+<td>Chạy các class khớp <strong>mẫu</strong> (wildcard)</td>
+<td>Đặt trong dấu ngoặc kép</td>
+</tr>
+<tr>
+<td><code>-Dgroups=smoke</code></td>
+<td>Chỉ chạy test thuộc nhóm <code>smoke</code> (TestNG <code>groups</code>)</td>
+<td>Khớp với <code>@Test(groups = "smoke")</code></td>
+</tr>
+<tr>
+<td><code>-Dsurefire.suiteXmlFiles=smoke.xml</code></td>
+<td>Chạy theo file <code>testng.xml</code> khác</td>
+<td>Khi cần nhiều bộ suite</td>
+</tr>
+<tr>
+<td><code>-DskipTests</code></td>
+<td><strong>Biên dịch</strong> test nhưng <strong>không chạy</strong></td>
+<td>Dùng khi chỉ cần build</td>
+</tr>
+<tr>
+<td><code>-Dmaven.test.skip=true</code></td>
+<td><strong>Bỏ cả</strong> biên dịch lẫn chạy test</td>
+<td>Mạnh hơn <code>-DskipTests</code></td>
+</tr>
+<tr>
+<td><code>-B</code></td>
+<td>Batch mode: tắt màu, tắt thanh tiến trình</td>
+<td>Dùng trên CI để log sạch</td>
+</tr>
+<tr>
+<td><code>-q</code></td>
+<td>Quiet: chỉ in lỗi</td>
+<td>Gọn khi chỉ muốn thấy kết quả</td>
+</tr>
+<tr>
+<td><code>"-Dbrowser=firefox"</code></td>
+<td>Truyền system property cho code đọc bằng <code>System.getProperty</code></td>
+<td>Trên PowerShell nên đặt trong ngoặc kép</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ví dụ ghép: <code>.\mvnw.cmd -B clean test "-Dgroups=smoke" "-Dbrowser=chrome"</code> — build sạch, chạy nhóm smoke, dùng Chrome.</p>
 <h2 id="2-cách-đọc-kết-quả-console">2. Cách đọc kết quả console</h2>
 <div class="code" data-lang="text"><div class="code-head"><span class="lang">text</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">[INFO] Running TestSuite
 ...
@@ -208,6 +286,86 @@
 </tbody>
 </table></div>
 <p>Cách tích hợp chung: viết một <code>ITestListener</code> (<code>onTestStart/Success/Failure</code>) để ghi bước, chụp ảnh khi fail, đẩy vào công cụ báo cáo. Thêm thư viện vào <code>pom.xml</code> <strong>sau khi</strong> tra phiên bản ổn định và xem <code>dependency:tree</code>.</p>
+<h3 id="61-itestlistener--từng-method-được-gọi-khi-nào">6.1. <code>ITestListener</code> — từng method được gọi khi nào</h3>
+<p><strong>Listener</strong> là lớp bạn viết để TestNG <strong>báo cho bạn biết</strong> khi có sự kiện (test bắt đầu, pass, fail...). Bạn không tự gọi các method này — TestNG gọi.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Được gọi khi</th>
+<th>Tham số</th>
+<th>Dùng để</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>onStart(ITestContext)</code></td>
+<td>Trước khi chạy một thẻ <code>&lt;test&gt;</code></td>
+<td>Thông tin <code>&lt;test&gt;</code></td>
+<td>Khởi tạo báo cáo</td>
+</tr>
+<tr>
+<td><code>onTestStart(ITestResult)</code></td>
+<td>Ngay <strong>trước mỗi</strong> <code>@Test</code></td>
+<td>Test sắp chạy</td>
+<td>Ghi log "bắt đầu"</td>
+</tr>
+<tr>
+<td><code>onTestSuccess(ITestResult)</code></td>
+<td>Test <strong>pass</strong></td>
+<td>Kết quả</td>
+<td>Ghi bước pass</td>
+</tr>
+<tr>
+<td><code>onTestFailure(ITestResult)</code></td>
+<td>Test <strong>fail</strong> (assert sai hoặc exception)</td>
+<td>Kết quả (có <code>getThrowable()</code>)</td>
+<td><strong>Chụp ảnh màn hình</strong>, ghi lỗi</td>
+</tr>
+<tr>
+<td><code>onTestSkipped(ITestResult)</code></td>
+<td>Test bị <strong>skip</strong></td>
+<td>Kết quả</td>
+<td>Ghi lý do bỏ qua</td>
+</tr>
+<tr>
+<td><code>onTestFailedButWithinSuccessPercentage(ITestResult)</code></td>
+<td>Fail nhưng nằm trong ngưỡng <code>successPercentage</code></td>
+<td>Kết quả</td>
+<td>Hiếm dùng</td>
+</tr>
+<tr>
+<td><code>onFinish(ITestContext)</code></td>
+<td>Sau khi chạy xong thẻ <code>&lt;test&gt;</code></td>
+<td>Thông tin <code>&lt;test&gt;</code></td>
+<td>Đóng/ghi báo cáo cuối</td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ScreenshotListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ITestListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onTestFailure</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;FAIL: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">// chụp ảnh ở đây (cần truy cập driver)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>Cách gắn: trong <code>testng.xml</code> <code>&lt;listeners&gt;&lt;listener class-name="listeners.ScreenshotListener"/&gt;&lt;/listeners&gt;</code>, hoặc trên class test <code>@Listeners(ScreenshotListener.class)</code>.</p>
+<blockquote>
+<p>Với <code>ITestListener</code>, các method đều có <strong>cài đặt mặc định</strong> (từ TestNG 7), nên bạn chỉ cần viết method mình quan tâm.</p>
+</blockquote>
+<h4 id="iretryanalyzerretryitestresult-result"><code>IRetryAnalyzer.retry(ITestResult result)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> TestNG gọi sau mỗi lần test <strong>fail</strong> để hỏi "có chạy lại không?".</li>
+<li><strong>Trả về:</strong> <code>boolean</code> — <code>true</code> = chạy lại, <code>false</code> = dừng và ghi fail.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Retry</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">IRetryAnalyzer</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">retry</span><span class="p">(</span><span class="n">ITestResult</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">count</span><span class="o">++</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// thử lại tối đa 2 lần</span>
+<span class="p">}</span>
+<span class="c1">// gắn: @Test(retryAnalyzer = Retry.class)</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> che đi test flaky thay vì sửa. Chỉ dùng tạm khi hiểu nguyên nhân.</li>
+</ul>
 <h2 id="7-chạy-trên-ci-ví-dụ-minh-hoạ">7. Chạy trên CI (ví dụ minh hoạ)</h2>
 <p>GitHub Actions (<strong>không có trong dự án</strong>, chỉ minh hoạ):</p>
 <div class="code" data-lang="yaml"><div class="code-head"><span class="lang">yaml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ui-tests</span>

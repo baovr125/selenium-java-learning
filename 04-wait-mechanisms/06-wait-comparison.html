@@ -40,7 +40,50 @@
 <li><a href="02-implicit-wait.html">Implicit Wait</a></li>
 </ul>
 <h2 id="1-threadsleep">1. <code>Thread.sleep()</code></h2>
-<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">);</span><span class="w">   </span><span class="c1">// ngủ cứng 5 giây</span></code></pre></div>
+<h3 id="thẻ-method-threadsleeplong-millis--threadsleepduration">Thẻ method: <code>Thread.sleep(long millis)</code> / <code>Thread.sleep(Duration)</code></h3>
+<ul>
+<li><strong>Làm gì:</strong> <strong>tạm dừng luồng đang chạy</strong> đúng khoảng thời gian chỉ định, <strong>không quan tâm</strong> trình duyệt hay trang đang ra sao. Đây là lệnh của Java, <strong>không phải</strong> của Selenium.</li>
+<li><strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Khi lỗi:</strong> có thể ném <code>InterruptedException</code> (checked) nếu luồng bị ngắt — bắt buộc phải <code>try/catch</code> hoặc <code>throws</code>.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">);</span><span class="w">                       </span><span class="c1">// ngủ cứng 5 giây (đơn vị ms)</span>
+<span class="n">Thread</span><span class="p">.</span><span class="na">sleep</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span><span class="w">      </span><span class="c1">// Java 19+: cùng ý nghĩa</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> Selenium hoàn toàn không biết bạn đang chờ gì; ngủ xong mà trang chưa sẵn sàng vẫn lỗi, còn trang sẵn sàng sớm vẫn phải ngủ hết.</li>
+</ul>
+<p><strong>Ví dụ định lượng</strong> (chờ phần tử mà thực tế xuất hiện sau X giây):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thực tế phần tử xuất hiện sau</th>
+<th><code>Thread.sleep(5000)</code></th>
+<th>Explicit Wait (timeout 15 s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 giây</td>
+<td>Chờ 5 s (phí 4 s) → pass</td>
+<td>Chờ ~1 s → pass</td>
+</tr>
+<tr>
+<td>4 giây</td>
+<td>Chờ 5 s → pass</td>
+<td>Chờ ~4 s → pass</td>
+</tr>
+<tr>
+<td>7 giây</td>
+<td>Chờ 5 s → <strong>fail</strong></td>
+<td>Chờ ~7 s → pass</td>
+</tr>
+<tr>
+<td>Không bao giờ</td>
+<td>Chờ 5 s → fail</td>
+<td>Chờ 15 s → <code>TimeoutException</code> có mô tả điều kiện</td>
+</tr>
+</tbody>
+</table></div>
 <div class="table-wrap"><table>
 <thead>
 <tr>
