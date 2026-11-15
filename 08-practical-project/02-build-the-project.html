@@ -98,6 +98,84 @@ Làm trong thư mục <strong>riêng</strong> (ví dụ <code>B:\Fresher\Seleniu
     │   ├── utils/Screenshots.java
     │   └── tests/LoginTest.java, DynamicControlsTest.java, ...
     └── resources/config.properties</code></pre></div>
+<h3 id="21-từng-filethư-mục-trong-cấu-trúc-đích--vai-trò-và-bài-học-liên-quan">2.1. Từng file/thư mục trong cấu trúc đích — vai trò và bài học liên quan</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+<th>Bài học liên quan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pom.xml</code></td>
+<td>Khai báo thư viện (Selenium, TestNG), phiên bản Java, plugin chạy test</td>
+<td><a href="../02-maven-and-project/02-pom-xml.html">pom.xml</a></td>
+</tr>
+<tr>
+<td><code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/maven-wrapper.properties</code></td>
+<td>Chạy <strong>đúng phiên bản Maven</strong> mà không cần cài</td>
+<td><a href="../02-maven-and-project/03-maven-wrapper.html">Maven Wrapper</a></td>
+</tr>
+<tr>
+<td><code>.gitignore</code>, <code>.gitattributes</code></td>
+<td>Chặn file sinh ra (<code>target/</code>), ép kết thúc dòng của <code>mvnw</code></td>
+<td><a href="../07-git-and-team-workflow/04-gitignore-and-selenium-maven-project.html">.gitignore</a></td>
+</tr>
+<tr>
+<td><code>smoke.xml</code>, <code>all.xml</code></td>
+<td>Hai bộ suite TestNG: chạy nhanh vs chạy đầy đủ</td>
+<td><a href="../05-testing-framework/01-testng-fundamentals.html">TestNG</a></td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>Hướng dẫn cài, chạy, đọc báo cáo</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>base/BaseTest.java</code></td>
+<td>Mở Chrome trước mỗi test, đóng sau; giữ <code>driver</code>, <code>wait</code></td>
+<td><a href="../05-testing-framework/04-test-setup-and-teardown.html">Setup/Teardown</a></td>
+</tr>
+<tr>
+<td><code>core/DriverFactory.java</code></td>
+<td><strong>Tạo</strong> <code>WebDriver</code> theo tên browser</td>
+<td><a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a></td>
+</tr>
+<tr>
+<td><code>config/Config.java</code></td>
+<td><strong>Đọc</strong> cấu hình (<code>-D</code> &gt; file &gt; mặc định)</td>
+<td><a href="../06-automation-framework/04-configuration-management.html">Configuration</a></td>
+</tr>
+<tr>
+<td><code>pages/BasePage.java</code></td>
+<td>Thao tác chung có sẵn Wait: <code>click</code>, <code>type</code>, <code>text</code></td>
+<td><a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a></td>
+</tr>
+<tr>
+<td><code>pages/LoginPage.java</code>...</td>
+<td>Mỗi trang một class: locator + hành vi nghiệp vụ</td>
+<td><a href="../06-automation-framework/01-page-object-model.html">Page Object Model</a></td>
+</tr>
+<tr>
+<td><code>utils/Screenshots.java</code></td>
+<td>Chụp ảnh khi test fail</td>
+<td><a href="../06-automation-framework/03-reusable-components.html">Reusable Components</a></td>
+</tr>
+<tr>
+<td><code>tests/LoginTest.java</code>...</td>
+<td><strong>Kịch bản</strong> + assert; không chứa locator</td>
+<td><a href="../05-testing-framework/03-assertions-and-verification.html">Assertions</a></td>
+</tr>
+<tr>
+<td><code>resources/config.properties</code></td>
+<td>Giá trị cấu hình mặc định (URL, browser, timeout)</td>
+<td><a href="../05-testing-framework/05-test-data-and-configuration.html">Test Data &amp; Config</a></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Thứ tự nên dựng</strong> (từ ít phụ thuộc đến nhiều): <code>pom.xml</code> + Wrapper → <code>.gitignore</code> → <code>Config</code> → <code>DriverFactory</code> → <code>BaseTest</code> → <code>BasePage</code> → Page → Test → suite XML → báo cáo.</p>
 <h2 id="3-ví-dụ-kế-hoạch-6-mốc">3. Ví dụ: kế hoạch 6 mốc</h2>
 <div class="table-wrap"><table>
 <thead>

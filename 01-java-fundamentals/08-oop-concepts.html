@@ -169,6 +169,112 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-từ-khoá-oop-làm-gì">2.1. Từng từ khoá OOP làm gì</h3>
+<h4 id="extends"><code>extends</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> class con <strong>kế thừa</strong> mọi thành viên không <code>private</code> của class cha — dùng lại mà không viết lại.</li>
+<li><strong>Ví dụ:</strong> <code>public class Exercise01_LoginTest extends BaseTest</code> → có sẵn <code>driver</code>, <code>wait</code>, <code>setup()</code>, <code>tearDown()</code>.</li>
+<li><strong>Lưu ý:</strong> một class chỉ <code>extends</code> <strong>một</strong> class cha.</li>
+</ul>
+<h4 id="super-và-supermethod"><code>super(...)</code> và <code>super.method()</code></h4>
+<ul>
+<li><strong><code>super(args)</code>:</strong> gọi <strong>constructor của class cha</strong>; phải là dòng <strong>đầu tiên</strong> của constructor con. Nếu không viết, Java tự gọi <code>super()</code> (constructor rỗng của cha) — lỗi nếu cha không có.</li>
+<li><strong><code>super.method()</code>:</strong> gọi phiên bản method <strong>của cha</strong> khi con đã ghi đè nó.</li>
+<li><strong>Ví dụ:</strong> <code>public LoginPage(WebDriver driver) { super(driver); }</code> — chuyển <code>driver</code> cho <code>BasePage</code>.</li>
+</ul>
+<h4 id="override"><code>@Override</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> báo cho compiler "method này <strong>ghi đè</strong> method của cha/interface". Nếu bạn gõ sai chữ ký, compiler <strong>báo lỗi</strong> thay vì lặng lẽ tạo method mới.</li>
+<li><strong>Lưu ý:</strong> luôn viết <code>@Override</code>. Ghi đè = <strong>cùng tên, cùng tham số</strong>; khác tham số là <strong>overload</strong> (một method khác).</li>
+</ul>
+<h4 id="abstract"><code>abstract</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>abstract class</code> <strong>không</strong> <code>new</code> trực tiếp được — chỉ làm khung cho class con. <code>abstract method</code> chỉ có chữ ký, <strong>không có thân</strong>; class con <strong>bắt buộc</strong> hiện thực.</li>
+<li><strong>Ví dụ:</strong> <code>public abstract class BasePage { ... }</code>.</li>
+</ul>
+<h4 id="interface-và-implements"><code>interface</code> và <code>implements</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>interface</code> là "hợp đồng" chỉ khai báo <strong>làm được gì</strong>; class <code>implements</code> nó <strong>phải</strong> hiện thực mọi method. Một class <code>implements</code> <strong>nhiều</strong> interface.</li>
+<li><strong>Ví dụ:</strong> <code>ChromeDriver implements WebDriver, JavascriptExecutor, TakesScreenshot</code>.</li>
+<li><strong>Lưu ý:</strong> method trong interface mặc định <code>public abstract</code>; từ Java 8 có <code>default</code> method (có thân mặc định).</li>
+</ul>
+<h4 id="đa-hình-webdriver-driver--new-chromedriver">Đa hình: <code>WebDriver driver = new ChromeDriver();</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> biến kiểu <strong>cha/interface</strong> giữ được đối tượng kiểu <strong>con</strong>. Lệnh gọi <code>driver.get(...)</code> chạy phiên bản của <strong>đối tượng thật</strong> (<code>ChromeDriver</code>).</li>
+<li><strong>Lợi ích:</strong> đổi sang <code>FirefoxDriver</code> chỉ sửa <strong>một dòng</strong> <code>new</code>, phần còn lại giữ nguyên.</li>
+</ul>
+<h4 id="instanceof-và-ép-kiểu-kiểu-x"><code>instanceof</code> và ép kiểu <code>(Kiểu) x</code></h4>
+<ul>
+<li><strong><code>x instanceof Kiểu</code>:</strong> kiểm tra <code>x</code> có phải đối tượng thuộc <code>Kiểu</code> không. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong><code>(Kiểu) x</code>:</strong> ép sang kiểu con để dùng method riêng. Sai kiểu → <code>ClassCastException</code>.</li>
+<li><strong>Ví dụ:</strong> <code>((JavascriptExecutor) driver).executeScript(...)</code> 🧩 Ex7.</li>
+</ul>
+<h4 id="enum"><code>enum</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểu có <strong>tập giá trị cố định</strong>: <code>enum Browser { CHROME, FIREFOX, EDGE }</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method của enum</th>
+<th>Làm gì</th>
+<th>Ví dụ → kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>values()</code></td>
+<td>Mảng mọi giá trị</td>
+<td><code>Browser.values()</code> → <code>{CHROME, FIREFOX, EDGE}</code></td>
+</tr>
+<tr>
+<td><code>valueOf(String)</code></td>
+<td>Đổi chuỗi thành giá trị enum (phải <strong>đúng chính tả, hoa/thường</strong>)</td>
+<td><code>Browser.valueOf("CHROME")</code>; sai → <code>IllegalArgumentException</code></td>
+</tr>
+<tr>
+<td><code>name()</code></td>
+<td>Tên giá trị dạng chuỗi</td>
+<td><code>Browser.CHROME.name()</code> → <code>"CHROME"</code></td>
+</tr>
+<tr>
+<td><code>ordinal()</code></td>
+<td>Vị trí (từ 0)</td>
+<td><code>Browser.FIREFOX.ordinal()</code> → <code>1</code></td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="package-và-import"><code>package</code> và <code>import</code></h4>
+<ul>
+<li><strong><code>package tests;</code>:</strong> dòng đầu file — khai báo class thuộc gói nào (tên gói phải khớp <strong>thư mục</strong>).</li>
+<li><strong><code>import org.openqa.selenium.WebDriver;</code>:</strong> cho phép dùng tên ngắn <code>WebDriver</code> thay vì tên đầy đủ. <code>import ...*</code> nhập cả gói (nên tránh vì dễ trùng tên như <code>NoSuchElementException</code>).</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>extends</code></th>
+<th><code>implements</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Với</td>
+<td>class cha</td>
+<td>interface</td>
+</tr>
+<tr>
+<td>Số lượng</td>
+<td><strong>1</strong></td>
+<td><strong>Nhiều</strong></td>
+</tr>
+<tr>
+<td>Nhận được</td>
+<td>Thành viên và hiện thực có sẵn</td>
+<td>Chỉ chữ ký phải tự viết</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--encapsulation">Ví dụ 1 — Encapsulation</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">Account</span><span class="w"> </span><span class="p">{</span>

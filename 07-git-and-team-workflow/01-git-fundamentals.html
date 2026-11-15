@@ -139,6 +139,203 @@ git<span class="w"> </span>pull<span class="w">                         </span><
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-lệnh-git-làm-gì">2.1. Từng lệnh Git làm gì</h3>
+<p>Cách đọc thẻ: <em>Làm gì · Thay đổi gì · Mức an toàn · Ví dụ · Lưu ý</em>. Mức an toàn: 🟢 chỉ đọc/xem · 🟡 thay đổi nhưng hoàn tác được · 🔴 có thể <strong>mất dữ liệu</strong>.</p>
+<p><strong>Ba "vùng" cần nhớ khi đọc các lệnh bên dưới:</strong> <em>working tree</em> (file đang sửa trên đĩa) → <code>git add</code> → <em>staging</em> (danh sách sẽ đưa vào commit) → <code>git commit</code> → <em>repository</em> (lịch sử commit).</p>
+<h4 id="git-config---global-username--và-useremail-"><code>git config --global user.name "…"</code> và <code>user.email "…"</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> ghi tên và email sẽ gắn vào <strong>mọi commit</strong> của bạn. <code>--global</code> = áp dụng cho cả máy; bỏ <code>--global</code> thì chỉ cho repo hiện tại.</li>
+<li><strong>An toàn:</strong> 🟡. <strong>Lưu ý:</strong> chưa đặt thì commit báo <code>Author identity unknown</code>. Xem cấu hình: <code>git config --list</code>.</li>
+</ul>
+<h4 id="git-init"><code>git init</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> biến thư mục hiện tại thành repo Git (tạo thư mục ẩn <code>.git</code>).</li>
+<li><strong>An toàn:</strong> 🟡.</li>
+</ul>
+<h4 id="git-clone-url"><code>git clone &lt;url&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tải <strong>toàn bộ repo</strong> (code + lịch sử) từ remote về máy, đặt remote tên <code>origin</code>.</li>
+<li><strong>An toàn:</strong> 🟢 (chỉ tạo thư mục mới). <strong>Ví dụ:</strong> <code>git clone https://github.com/user/Selenium1.git</code>.</li>
+</ul>
+<h4 id="git-status"><code>git status</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> cho biết <strong>file nào đã sửa</strong>, file nào đã staged, file nào chưa được theo dõi, bạn đang ở nhánh nào.</li>
+<li><strong>An toàn:</strong> 🟢. <strong>Dùng:</strong> trước <strong>mọi</strong> lần <code>add</code>/<code>commit</code>. Bản gọn: <code>git status -sb</code>.</li>
+</ul>
+<h4 id="git-add-file"><code>git add &lt;file&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đưa thay đổi của file vào <strong>staging</strong> (chọn thứ sẽ có trong commit kế tiếp).</li>
+<li><strong>An toàn:</strong> 🟡 (hoàn tác bằng <code>git restore --staged</code>).</li>
+<li><strong>Biến thể:</strong> <code>git add .</code> đưa <strong>mọi</strong> thứ trong thư mục (kể cả <code>target/</code> nếu chưa ignore) → <strong>tránh</strong>; <code>git add -p</code> chọn từng đoạn thay đổi.</li>
+</ul>
+<h4 id="git-diff--git-diff---staged"><code>git diff</code> / <code>git diff --staged</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>git diff</code> hiện thay đổi <strong>chưa staged</strong>; <code>--staged</code> hiện thay đổi <strong>đã staged</strong> (sẽ vào commit).</li>
+<li><strong>An toàn:</strong> 🟢. <strong>Lưu ý:</strong> <code>git diff</code> trống không có nghĩa là không có thay đổi — có thể đã <code>add</code> hết, hãy xem <code>--staged</code>.</li>
+</ul>
+<h4 id="git-commit--m-thông-điệp"><code>git commit -m "thông điệp"</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chụp một <strong>snapshot</strong> của mọi thứ trong staging thành commit mới, kèm thông điệp, tác giả, mã băm.</li>
+<li><strong>An toàn:</strong> 🟡. <strong>Lưu ý:</strong> commit chỉ nằm <strong>ở máy bạn</strong> cho tới khi <code>push</code>. Thông điệp nên nói <em>cái gì</em> và <em>vì sao</em>.</li>
+<li><strong>Biến thể:</strong> <code>git commit --amend</code> <strong>sửa commit cuối</strong> (🔴 nếu đã push — làm đổi lịch sử).</li>
+</ul>
+<h4 id="git-log---oneline---graph"><code>git log --oneline --graph</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> xem lịch sử: <code>--oneline</code> mỗi commit một dòng, <code>--graph</code> vẽ nhánh.</li>
+<li><strong>An toàn:</strong> 🟢. <strong>Biến thể:</strong> <code>git log --oneline -- &lt;file&gt;</code> chỉ lịch sử của một file.</li>
+</ul>
+<h4 id="git-show-commit"><code>git show &lt;commit&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> xem <strong>nội dung một commit</strong> (thông điệp + thay đổi). 🟢.</li>
+</ul>
+<h4 id="git-blame-file"><code>git blame &lt;file&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> hiện <strong>mỗi dòng</strong> của file do ai, commit nào sửa lần cuối. 🟢. Dùng tìm "vì sao dòng này có".</li>
+</ul>
+<h4 id="git-remote--v"><code>git remote -v</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> liệt kê remote và URL fetch/push. 🟢. Dùng kiểm tra đang đẩy lên đâu.</li>
+</ul>
+<h4 id="git-push--u-origin-nhánh"><code>git push -u origin &lt;nhánh&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>gửi commit</strong> của nhánh lên remote <code>origin</code>. <code>-u</code> ghi nhớ nhánh remote tương ứng để lần sau chỉ cần <code>git push</code>.</li>
+<li><strong>An toàn:</strong> 🟡 (người khác sẽ thấy). <strong>Lưu ý:</strong> bị <code>rejected ... non-fast-forward</code> khi remote có commit mới mà bạn chưa có → <code>pull</code> trước.</li>
+<li><strong><code>--force</code> / <code>--force-with-lease</code>:</strong> 🔴 <strong>ghi đè lịch sử</strong> remote; <code>--force-with-lease</code> an toàn hơn (từ chối nếu người khác vừa đẩy). Không dùng trên <code>main</code>.</li>
+</ul>
+<h4 id="git-fetch"><code>git fetch</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tải <strong>thông tin commit mới</strong> từ remote về nhưng <strong>không gộp</strong> vào nhánh của bạn.</li>
+<li><strong>An toàn:</strong> 🟢. Dùng khi muốn xem trước có gì mới.</li>
+</ul>
+<h4 id="git-pull"><code>git pull</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>fetch</code> <strong>rồi gộp</strong> (merge) commit mới vào nhánh hiện tại. <code>git pull --rebase</code> thì dùng rebase thay merge (lịch sử thẳng hơn).</li>
+<li><strong>An toàn:</strong> 🟡 — <strong>có thể sinh conflict</strong>. Nên commit/stash thay đổi dở trước.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>git fetch</code></th>
+<th><code>git pull</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tải commit mới</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Gộp vào nhánh hiện tại</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Có thể sinh conflict</td>
+<td>Không</td>
+<td><strong>Có</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="git-restore-file"><code>git restore &lt;file&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>bỏ thay đổi chưa staged</strong> của file, đưa nó về như commit gần nhất.</li>
+<li><strong>An toàn:</strong> 🔴 — thay đổi bị bỏ <strong>không lấy lại được</strong>. Cần chắc chắn hoặc <code>stash</code> trước.</li>
+<li><strong>Biến thể:</strong> <code>git restore --staged &lt;file&gt;</code> chỉ <strong>bỏ khỏi staging</strong> (file vẫn giữ nội dung đã sửa) — 🟡.</li>
+</ul>
+<h4 id="git-reset"><code>git reset</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>di chuyển</strong> nhánh về một commit khác. Ba chế độ:</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Commit</th>
+<th>Staging</th>
+<th>File trên đĩa</th>
+<th>An toàn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git reset --soft HEAD~1</code></td>
+<td>Bỏ commit cuối</td>
+<td>Giữ thay đổi <strong>đã staged</strong></td>
+<td>Giữ</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td><code>git reset HEAD~1</code> (<code>--mixed</code>)</td>
+<td>Bỏ commit cuối</td>
+<td>Bỏ staged</td>
+<td>Giữ</td>
+<td>🟡</td>
+</tr>
+<tr>
+<td><code>git reset --hard HEAD~1</code></td>
+<td>Bỏ commit cuối</td>
+<td>Bỏ</td>
+<td><strong>Mất thay đổi</strong></td>
+<td>🔴</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Lưu ý:</strong> không <code>reset</code> các commit <strong>đã push</strong>.</li>
+</ul>
+<h4 id="git-stash--git-stash-pop--git-stash-list"><code>git stash</code> / <code>git stash pop</code> / <code>git stash list</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>git stash</code> <strong>cất</strong> thay đổi chưa commit vào "ngăn kéo" và đưa thư mục về sạch; <code>git stash pop</code> <strong>lấy ra</strong> và áp lại; <code>git stash list</code> xem những gì đang cất.</li>
+<li><strong>An toàn:</strong> 🟡. Dùng khi cần chuyển nhánh/pull mà đang sửa dở.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tôi muốn</th>
+<th>Lệnh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xem đang có gì thay đổi</td>
+<td><code>git status</code></td>
+</tr>
+<tr>
+<td>Xem chi tiết thay đổi</td>
+<td><code>git diff</code> / <code>git diff --staged</code></td>
+</tr>
+<tr>
+<td>Chọn file vào commit</td>
+<td><code>git add &lt;file&gt;</code></td>
+</tr>
+<tr>
+<td>Chốt thay đổi</td>
+<td><code>git commit -m "..."</code></td>
+</tr>
+<tr>
+<td>Gửi lên server</td>
+<td><code>git push</code></td>
+</tr>
+<tr>
+<td>Lấy thay đổi người khác (an toàn)</td>
+<td><code>git fetch</code></td>
+</tr>
+<tr>
+<td>Lấy và gộp</td>
+<td><code>git pull</code></td>
+</tr>
+<tr>
+<td>Bỏ thay đổi một file</td>
+<td><code>git restore &lt;file&gt;</code> (🔴)</td>
+</tr>
+<tr>
+<td>Cất tạm</td>
+<td><code>git stash</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-đã-chạy-thật-trên-repo-thử">3. Ví dụ (đã chạy thật trên repo thử)</h2>
 <h3 id="ví-dụ-1--khởi-tạo-commit-đầu-tiên-đẩy-lên-remote">Ví dụ 1 — Khởi tạo, commit đầu tiên, đẩy lên remote</h3>
 <div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>init<span class="w"> </span>-b<span class="w"> </span>main

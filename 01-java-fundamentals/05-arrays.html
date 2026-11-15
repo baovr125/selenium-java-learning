@@ -110,6 +110,92 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-thành-phần-và-method-của-mảng">2.1. Từng thành phần và method của mảng</h3>
+<h4 id="arraylength-thuộc-tính-không-có-dấu-ngoặc"><code>array.length</code> (thuộc tính, không có dấu ngoặc)</h4>
+<ul>
+<li><strong>Làm gì:</strong> số phần tử của mảng. <strong>Kiểu:</strong> <code>int</code>. Không phải method nên <strong>không có <code>()</code></strong>.</li>
+<li><strong>Ví dụ:</strong> <code>new String[3].length</code> → <code>3</code>.</li>
+<li><strong>Nhớ:</strong> mảng <code>length</code>, <code>String</code> <code>length()</code>, <code>List</code> <code>size()</code>.</li>
+</ul>
+<h4 id="arri"><code>arr[i]</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> truy cập phần tử ở chỉ số <code>i</code> (đếm từ <strong>0</strong>). Gán: <code>arr[i] = x</code>.</li>
+<li><strong>Khi lỗi:</strong> <code>i &lt; 0</code> hoặc <code>i &gt;= length</code> → <code>ArrayIndexOutOfBoundsException</code>.</li>
+</ul>
+<h3 id="22-từng-method-của-lớp-arrays-import-javautilarrays">2.2. Từng method của lớp <code>Arrays</code> (<code>import java.util.Arrays;</code>)</h3>
+<p>Mọi method đều là <code>static</code>, gọi dạng <code>Arrays.xxx(...)</code>.</p>
+<h4 id="arraystostringarr"><code>Arrays.toString(arr)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> biến mảng thành chuỗi dễ đọc để in/debug. <strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Arrays.toString(new int[]{3,1,2})</code> → <code>"[3, 1, 2]"</code>.</li>
+<li><strong>Lưu ý:</strong> in thẳng <code>System.out.println(arr)</code> ra địa chỉ kiểu <code>[I@1b6d3586</code>, <strong>không</strong> ra nội dung.</li>
+</ul>
+<h4 id="arraysdeeptostringarr2d"><code>Arrays.deepToString(arr2d)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> như <code>toString</code> nhưng cho <strong>mảng nhiều chiều</strong>. <strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Arrays.deepToString(new int[][]{{1,2},{3}})</code> → <code>"[[1, 2], [3]]"</code>.</li>
+</ul>
+<h4 id="arrayssortarr"><code>Arrays.sort(arr)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>sắp xếp tăng dần</strong> ngay trên mảng gốc (thay đổi mảng). <strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Ví dụ:</strong> <code>int[] a = {3,1,2}; Arrays.sort(a);</code> → <code>a</code> là <code>{1,2,3}</code>.</li>
+<li><strong>Lưu ý:</strong> chuỗi sắp theo thứ tự từ điển, phân biệt hoa/thường.</li>
+</ul>
+<h4 id="arraysbinarysearcharr-key"><code>Arrays.binarySearch(arr, key)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tìm <code>key</code> trong mảng <strong>đã sắp xếp</strong>. <strong>Trả về:</strong> <code>int</code> vị trí; số <strong>âm</strong> nếu không có.</li>
+<li><strong>Lưu ý:</strong> mảng chưa sắp xếp thì kết quả <strong>không đáng tin</strong>.</li>
+</ul>
+<h4 id="arraysfillarr-value"><code>Arrays.fill(arr, value)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> gán <strong>cùng một giá trị</strong> cho mọi phần tử. <strong>Trả về:</strong> <code>void</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Arrays.fill(a, 0);</code></li>
+</ul>
+<h4 id="arrayscopyofarr-newlength--arrayscopyofrangearr-from-to"><code>Arrays.copyOf(arr, newLength)</code> / <code>Arrays.copyOfRange(arr, from, to)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tạo <strong>mảng mới</strong> là bản sao: <code>copyOf</code> lấy <code>newLength</code> phần tử đầu (thiếu thì thêm <code>0</code>/<code>null</code>); <code>copyOfRange</code> lấy đoạn <code>[from, to)</code>. <strong>Trả về:</strong> mảng mới.</li>
+<li><strong>Lưu ý:</strong> <code>int[] b = a;</code> <strong>không</strong> sao chép — hai biến cùng trỏ một mảng.</li>
+</ul>
+<h4 id="arraysequalsa-b"><code>Arrays.equals(a, b)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> so hai mảng có <strong>cùng độ dài và cùng từng phần tử</strong>. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong>Lưu ý:</strong> <code>a.equals(b)</code> và <code>a == b</code> chỉ so <strong>địa chỉ</strong>, không so nội dung.</li>
+</ul>
+<h4 id="arraysaslistt-items"><code>Arrays.asList(T... items)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bọc mảng thành <code>List</code> <strong>kích thước cố định</strong> (sửa phần tử được, nhưng <strong>không</strong> <code>add</code>/<code>remove</code>). <strong>Trả về:</strong> <code>List&lt;T&gt;</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Arrays.asList("Smith", "John")</code> 🧩 Ex3. Cần list sửa được: <code>new ArrayList&lt;&gt;(Arrays.asList(arr))</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cần</th>
+<th>Dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>In mảng 1 chiều / nhiều chiều</td>
+<td><code>Arrays.toString</code> / <code>Arrays.deepToString</code></td>
+</tr>
+<tr>
+<td>Sắp xếp mảng gốc</td>
+<td><code>Arrays.sort</code></td>
+</tr>
+<tr>
+<td>Sao chép mảng</td>
+<td><code>Arrays.copyOf</code> / <code>copyOfRange</code></td>
+</tr>
+<tr>
+<td>So nội dung hai mảng</td>
+<td><code>Arrays.equals</code></td>
+</tr>
+<tr>
+<td>Chuyển sang <code>List</code></td>
+<td><code>Arrays.asList</code> (cố định) hoặc <code>new ArrayList&lt;&gt;(...)</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--tạo-truy-cập-duyệt">Ví dụ 1 — Tạo, truy cập, duyệt</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Arrays</span><span class="p">;</span>

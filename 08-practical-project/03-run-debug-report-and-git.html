@@ -82,6 +82,77 @@
 <span class="p">.\</span><span class="n">mvnw</span><span class="p">.</span><span class="n">cmd</span> <span class="n">test</span> <span class="s2">&quot;-Dtest=LoginTest#shouldLoginWithValidCredentials&quot;</span>   <span class="c"># một test</span>
 <span class="nb">Get-Content</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">TestSuite</span><span class="p">.</span><span class="n">txt</span>  <span class="c"># tóm tắt</span>
 <span class="nb">Start-Process</span> <span class="n">target</span><span class="p">\</span><span class="n">surefire-reports</span><span class="p">\</span><span class="n">emailable-report</span><span class="p">.</span><span class="n">html</span>          <span class="c"># báo cáo HTML</span></code></pre></div>
+<h3 id="21-từng-lệnh-làm-gì-và-khi-nào-dùng">2.1. Từng lệnh làm gì và khi nào dùng</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Dùng khi</th>
+<th>Kết quả cần nhìn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.\mvnw.cmd clean test</code></td>
+<td><strong>Xoá</strong> <code>target/</code> rồi biên dịch và <strong>chạy toàn bộ</strong> suite</td>
+<td>Chạy chuẩn trước khi push, trong CI</td>
+<td><code>Tests run</code>, <code>Failures</code>, <code>Errors</code>, <code>Skipped</code>, <code>BUILD</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test "-DsuiteFile=smoke.xml"</code></td>
+<td>Chạy theo <strong>file suite chỉ định</strong> (cần POM đọc <code>${suiteFile}</code>)</td>
+<td>Chỉ muốn chạy bộ smoke nhanh</td>
+<td>Số test = số test trong <code>smoke.xml</code></td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test "-Dtest=LoginTest#shouldLoginWithValidCredentials"</code></td>
+<td>Chạy <strong>đúng một method</strong> (<code>#</code> ngăn class và method)</td>
+<td>Debug một test đang fail</td>
+<td><code>Tests run: 1</code></td>
+</tr>
+<tr>
+<td><code>Get-Content target\surefire-reports\TestSuite.txt</code></td>
+<td>In file <strong>tóm tắt</strong> kết quả (một vài dòng)</td>
+<td>Kiểm tra nhanh trong script/CI</td>
+<td>Dòng <code>Tests run: N, ...</code></td>
+</tr>
+<tr>
+<td><code>Start-Process target\surefire-reports\emailable-report.html</code></td>
+<td><strong>Mở báo cáo HTML</strong> bằng trình duyệt mặc định</td>
+<td>Xem test nào fail và vì sao</td>
+<td>Bảng pass/fail, thông báo lỗi</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Đọc nhanh dòng kết quả:</strong> <code>Tests run: 12, Failures: 1, Errors: 0, Skipped: 2</code> nghĩa là chạy 12 test, 1 test <strong>assert sai</strong>, 0 test gặp <strong>exception</strong>, 2 test <strong>bị bỏ qua</strong>. Với <code>BUILD SUCCESS</code> mà <code>Tests run: 0</code> → <strong>chưa kiểm tra gì</strong> (xem <a href="../02-maven-and-project/07-build-and-test-execution.html">Build &amp; Test</a>).</p>
+<p><strong>Lệnh nào cho bước debug nào</strong> (xem 8 bước ở mục 3.2):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bước debug</th>
+<th>Lệnh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chạy lại <strong>một mình</strong> test fail</td>
+<td><code>-Dtest=Class#method</code></td>
+</tr>
+<tr>
+<td>Chạy lại nhiều lần để thấy flaky</td>
+<td>Chạy lệnh trên 3–5 lần liên tiếp</td>
+</tr>
+<tr>
+<td>Xem lỗi chi tiết</td>
+<td>Mở <code>emailable-report.html</code> hoặc <code>TestSuite.txt</code></td>
+</tr>
+<tr>
+<td>Lỗi build mơ hồ</td>
+<td><code>.\mvnw.cmd -e test</code> (stacktrace), <code>-X</code> (debug)</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ">3. Ví dụ</h2>
 <h3 id="31-bước-9--đọc-kết-quả-đúng">3.1. Bước 9 — Đọc kết quả đúng</h3>
 <div class="table-wrap"><table>

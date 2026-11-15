@@ -149,6 +149,78 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="36-từng-tham-số-cấu-hình-của-surefire">3.6. Từng tham số cấu hình của Surefire</h3>
+<p>Cấu hình trong <code>&lt;plugin&gt;&lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;&lt;configuration&gt;...&lt;/configuration&gt;&lt;/plugin&gt;</code> hoặc truyền bằng <code>-D</code> trên dòng lệnh.</p>
+<h4 id="suitexmlfiles--dsurefiresuitexmlfiles"><code>&lt;suiteXmlFiles&gt;</code> (<code>-Dsurefire.suiteXmlFiles=...</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> chỉ định <strong>file TestNG XML</strong> quyết định test nào chạy. 🧩 <code>testng.xml</code>.</li>
+<li><strong>Lưu ý:</strong> bị <strong>bỏ qua</strong> khi có <code>-Dtest</code>.</li>
+</ul>
+<h4 id="-dtest"><code>-Dtest=...</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chọn test chạy theo <strong>tên class/method/mẫu</strong> (xem bảng mẫu ở mục 3.3).</li>
+<li><strong>Ví dụ:</strong> <code>-Dtest=Exercise01_LoginTest#testLogin*</code>.</li>
+</ul>
+<h4 id="includes--excludes"><code>&lt;includes&gt;</code> / <code>&lt;excludes&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khai báo <strong>mẫu tên file</strong> của class được/không được chạy (khi <strong>không</strong> dùng <code>suiteXmlFiles</code>).</li>
+<li><strong>Ví dụ:</strong> <code>&lt;include&gt;**/*Test.java&lt;/include&gt;</code>.</li>
+<li><strong>Mặc định:</strong> quét <code>**/Test*.java</code>, <code>**/*Test.java</code>, <code>**/*Tests.java</code>, <code>**/*TestCase.java</code>.</li>
+</ul>
+<h4 id="groups--excludedgroups--dgroupssmoke"><code>&lt;groups&gt;</code> / <code>&lt;excludedGroups&gt;</code> (<code>-Dgroups=smoke</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> chỉ chạy (hoặc loại) test thuộc <strong>nhóm</strong> TestNG <code>@Test(groups = "...")</code>.</li>
+</ul>
+<h4 id="systempropertyvariables"><code>&lt;systemPropertyVariables&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đặt các <strong>system property cho JVM chạy test</strong>, để code đọc bằng <code>System.getProperty(...)</code>.</li>
+<li><strong>Ví dụ:</strong> <code>&lt;browser&gt;${browser}&lt;/browser&gt;</code>.</li>
+<li><strong>Lưu ý:</strong> Surefire chạy test trong <strong>JVM riêng</strong>; <code>-D</code> của Maven không phải lúc nào cũng tới được đó.</li>
+</ul>
+<h4 id="argline"><code>&lt;argLine&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> truyền <strong>tham số cho JVM</strong> chạy test (bộ nhớ, mã hoá).</li>
+<li><strong>Ví dụ:</strong> <code>&lt;argLine&gt;-Xmx1g -Dfile.encoding=UTF-8&lt;/argLine&gt;</code>.</li>
+</ul>
+<h4 id="skiptests--testfailureignore"><code>&lt;skipTests&gt;</code> / <code>&lt;testFailureIgnore&gt;</code></h4>
+<ul>
+<li><strong><code>skipTests</code>:</strong> <code>true</code> = không chạy test (như <code>-DskipTests</code>).</li>
+<li><strong><code>testFailureIgnore</code>:</strong> <code>true</code> = test fail <strong>vẫn</strong> cho <code>BUILD SUCCESS</code> — nguy hiểm vì che lỗi; chỉ dùng có chủ đích.</li>
+</ul>
+<h4 id="parallel--threadcount"><code>&lt;parallel&gt;</code> / <code>&lt;threadCount&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> cấu hình chạy song song của Surefire. Với TestNG nên cấu hình trong <code>testng.xml</code> thay vì ở đây.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Muốn</th>
+<th>Dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chọn test theo tên</td>
+<td><code>-Dtest=...</code></td>
+</tr>
+<tr>
+<td>Chọn test theo file XML</td>
+<td><code>suiteXmlFiles</code></td>
+</tr>
+<tr>
+<td>Chọn theo nhóm</td>
+<td><code>-Dgroups=...</code></td>
+</tr>
+<tr>
+<td>Chuyển biến vào code test</td>
+<td><code>systemPropertyVariables</code></td>
+</tr>
+<tr>
+<td>Đổi bộ nhớ/mã hoá của JVM test</td>
+<td><code>argLine</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="4-failsafe-không-có-trong-dự-án">4. Failsafe (không có trong dự án)</h2>
 <p><code>maven-failsafe-plugin</code> dành cho <strong>integration test</strong> (chạy ở phase <code>integration-test</code>, kiểm tra ở <code>verify</code>). Quy ước tên mặc định: <code>*IT.java</code>, <code>IT*.java</code>, <code>*ITCase.java</code>.</p>
 <p>Vì sao có thể dùng cho Selenium? Test UI chậm, nên có nhóm tách riêng: <code>test</code> chạy unit test nhanh, <code>verify</code> chạy UI test. Cấu hình mẫu (<strong>minh hoạ</strong>, chưa áp dụng vào dự án):</p>

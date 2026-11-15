@@ -358,6 +358,67 @@
 <blockquote>
 <p>Vì sao Wrapper không "cài" Maven vào <code>PATH</code>? Nó không cần. Nó trực tiếp gọi file <code>mvn.cmd</code> trong thư mục cache. Vì vậy <code>mvn -version</code> vẫn lỗi, còn <code>mvnw -version</code> thì chạy được.</p>
 </blockquote>
+<h3 id="31-từng-lệnh-và-biến-môi-trường-của-wrapper">3.1. Từng lệnh và biến môi trường của Wrapper</h3>
+<h4 id="mvnwcmd-lệnh-maven-windows--mvnw-lệnh-maven-linuxmacos"><code>.\mvnw.cmd &lt;lệnh Maven&gt;</code> (Windows) / <code>./mvnw &lt;lệnh Maven&gt;</code> (Linux/macOS)</h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy Maven <strong>đúng phiên bản của dự án</strong>, theo thứ tự: (1) đọc <code>distributionUrl</code> trong <code>.mvn/wrapper/maven-wrapper.properties</code>; (2) kiểm tra bản Maven đó đã có trong <code>~/.m2/wrapper/dists/</code> chưa — chưa thì <strong>tải về và giải nén</strong>; (3) chạy Maven vừa chuẩn bị với các tham số bạn truyền.</li>
+<li><strong>Ví dụ:</strong> <code>.\mvnw.cmd clean test</code>.</li>
+<li><strong>Lưu ý:</strong> trên PowerShell phải có <code>.\</code> ở đầu; đứng sai thư mục thì báo <code>not recognized</code>.</li>
+</ul>
+<h4 id="mvnwcmd--version-hoặc--v"><code>.\mvnw.cmd -version</code> (hoặc <code>-v</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> in phiên bản <strong>Maven, Java, hệ điều hành</strong> đang được dùng — cách nhanh nhất kiểm tra Wrapper chạy được và dùng JDK nào.</li>
+<li><strong>Lưu ý:</strong> lần đầu sẽ kèm bước tải Maven.</li>
+</ul>
+<h4 id="mvnw_verbosetrue"><code>MVNW_VERBOSE=true</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> biến môi trường bật <strong>chế độ chi tiết</strong> của Wrapper: in rõ nó đang tìm Maven ở đâu, tải từ URL nào.</li>
+<li><strong>Ví dụ (PowerShell):</strong> <code>$env:MVNW_VERBOSE = "true"; .\mvnw.cmd -version</code>.</li>
+<li><strong>Dùng khi:</strong> Wrapper không tải được Maven.</li>
+</ul>
+<h4 id="mvnw_repourlurl"><code>MVNW_REPOURL=&lt;url&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> biến môi trường <strong>đổi nơi tải Maven</strong>: Wrapper thay phần máy chủ trong <code>distributionUrl</code> bằng URL này (dùng cho kho nội bộ công ty/mirror).</li>
+<li><strong>Dùng khi:</strong> mạng chặn <code>repo.maven.apache.org</code>.</li>
+</ul>
+<h4 id="mvn-wrapperwrapper--dmaven3916"><code>mvn wrapper:wrapper -Dmaven=3.9.16</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>sinh (hoặc cập nhật)</strong> các file Wrapper cho dự án, chốt phiên bản Maven là <code>3.9.16</code>. Cần có Maven (<code>mvn</code>) để chạy lần đầu.</li>
+<li><strong>Kết quả:</strong> tạo/ghi lại <code>mvnw</code>, <code>mvnw.cmd</code>, <code>.mvn/wrapper/maven-wrapper.properties</code>.</li>
+<li><strong>Lưu ý:</strong> nâng phiên bản Maven cho cả nhóm = chạy lệnh này hoặc sửa một dòng <code>distributionUrl</code>, rồi <strong>commit</strong>.</li>
+</ul>
+<h4 id="chmod-x-mvnw-và-git-update-index---chmodx-mvnw"><code>chmod +x mvnw</code> và <code>git update-index --chmod=+x mvnw</code></h4>
+<ul>
+<li><strong><code>chmod +x mvnw</code>:</strong> cấp quyền <strong>thực thi</strong> cho file trên Linux/macOS (lỗi <code>Permission denied</code> khi thiếu).</li>
+<li><strong><code>git update-index --chmod=+x mvnw</code>:</strong> ghi <strong>bit thực thi vào Git</strong> (từ máy Windows) để người khác clone về chạy được ngay.</li>
+</ul>
+<h4 id="hai-file-mvnw-và-mvnwcmd">Hai file <code>mvnw</code> và <code>mvnw.cmd</code></h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>mvnw</code></th>
+<th><code>mvnw.cmd</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dành cho</td>
+<td>Linux, macOS (và Git Bash/WSL)</td>
+<td>Windows (cmd/PowerShell)</td>
+</tr>
+<tr>
+<td>Cách gọi</td>
+<td><code>./mvnw test</code></td>
+<td><code>.\mvnw.cmd test</code></td>
+</tr>
+<tr>
+<td>Cần commit</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="4-dùng-mvnw-trên-windows">4. Dùng <code>mvnw</code> trên Windows</h2>
 <p>Mở PowerShell tại thư mục chứa <code>pom.xml</code> (<code>B:\Fresher\Selenium1</code>). <strong>Phải có <code>.\</code></strong> vì PowerShell không chạy lệnh ở thư mục hiện tại nếu thiếu tiền tố.</p>
 <div class="table-wrap"><table>

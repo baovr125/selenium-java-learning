@@ -142,6 +142,96 @@
 </table></div>
 <p>Quy tắc cú pháp: Java <strong>phân biệt hoa-thường</strong> (<code>System</code> ≠ <code>system</code>); mỗi câu lệnh kết thúc bằng <code>;</code>; tên class viết <code>PascalCase</code>, tên biến/method <code>camelCase</code>, hằng <code>UPPER_SNAKE_CASE</code>.</p>
 <p>🧩 Trong dự án <code>Selenium1</code>, test chạy bằng TestNG nên <strong>không cần</strong> <code>main</code>; nhưng mỗi Exercise vẫn có <code>main()</code> để chạy trực tiếp (xem <code>Exercise01_LoginTest.java</code>).</p>
+<h3 id="21-từng-lệnh-in-ra-màn-hình-và-chạy-chương-trình">2.1. Từng lệnh in ra màn hình và chạy chương trình</h3>
+<h4 id="systemoutprintlnx"><code>System.out.println(x)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in giá trị <code>x</code> ra console <strong>rồi xuống dòng</strong>. <code>x</code> có thể là chuỗi, số, <code>boolean</code>, hoặc một đối tượng (Java gọi <code>toString()</code> của nó).</li>
+<li><strong>Trả về:</strong> <code>void</code>. Gọi <code>System.out.println()</code> không tham số thì chỉ in một dòng trống.</li>
+<li><strong>Ví dụ:</strong> <code>System.out.println("Xin chào");</code> → <code>Xin chào</code> + xuống dòng.</li>
+</ul>
+<h4 id="systemoutprintx"><code>System.out.print(x)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in <code>x</code> <strong>không</strong> xuống dòng; lần in tiếp theo nối ngay phía sau.</li>
+<li><strong>Ví dụ:</strong> <code>print("a"); print("b");</code> → <code>ab</code> trên cùng một dòng.</li>
+</ul>
+<h4 id="systemoutprintfstring-format-object-args"><code>System.out.printf(String format, Object... args)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in chuỗi theo <strong>mẫu định dạng</strong>: mỗi mã <code>%s</code>, <code>%d</code>, <code>%.1f</code>... được thay bằng một đối số theo thứ tự.</li>
+<li><strong>Trả về:</strong> <code>PrintStream</code> (bỏ qua). <strong>Không tự xuống dòng</strong> — thêm <code>%n</code>.</li>
+<li><strong>Ví dụ:</strong> <code>System.out.printf("Tên: %s, tuổi: %d%n", "An", 22);</code> → <code>Tên: An, tuổi: 22</code>.</li>
+<li><strong>Lưu ý:</strong> số mã định dạng phải khớp số đối số; sai kiểu (ví dụ <code>%d</code> với chuỗi) → <code>IllegalFormatException</code>.</li>
+</ul>
+<h4 id="stringformatstring-format-object-args"><code>String.format(String format, Object... args)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> giống <code>printf</code> nhưng <strong>không in</strong> — trả về chuỗi đã định dạng để bạn dùng tiếp.</li>
+<li><strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> <code>String msg = String.format("Hàng %d: %s", 3, "Smith");</code> → <code>"Hàng 3: Smith"</code>. Hay dùng để tạo thông báo lỗi trong assert.</li>
+</ul>
+<h4 id="systemerrprintlnx"><code>System.err.println(x)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in vào <strong>luồng lỗi</strong> (tách khỏi output thường). IDE thường hiện màu đỏ.</li>
+</ul>
+<h4 id="hai-lệnh-chạy-chương-trình">Hai lệnh chạy chương trình</h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>javac Hello.java</code></td>
+<td><strong>Biên dịch</strong> mã nguồn thành bytecode</td>
+<td>Sinh file <code>Hello.class</code> (lỗi cú pháp được báo ở bước này)</td>
+</tr>
+<tr>
+<td><code>java Hello</code></td>
+<td><strong>Chạy</strong> class <code>Hello</code> trên JVM (không có đuôi <code>.class</code>)</td>
+<td>Gọi <code>main(...)</code> của class đó</td>
+</tr>
+<tr>
+<td><code>java Hello.java</code></td>
+<td>(Java 11+) biên dịch <strong>và</strong> chạy file nguồn một bước</td>
+<td>Không tạo file <code>.class</code> lâu dài</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>println</code></th>
+<th><code>print</code></th>
+<th><code>printf</code></th>
+<th><code>String.format</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Xuống dòng tự động</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌ (dùng <code>%n</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Định dạng theo mẫu</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>In ra console</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌ (trả <code>String</code>)</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--hello-và-output">Ví dụ 1 — Hello và Output</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>

@@ -94,6 +94,93 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-công-cụ-gỡ-lỗi--cách-dùng-cụ-thể">2.1. Từng công cụ gỡ lỗi — cách dùng cụ thể</h3>
+<h4 id="chrome-devtools-css">Chrome DevTools: <code>$$("css")</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> gõ trong tab <strong>Console</strong> (F12): trả về <strong>mảng mọi phần tử khớp</strong> CSS selector.</li>
+<li><strong>Ví dụ:</strong> <code>$$("#checkboxes input")</code> → số phần tử và danh sách; trả về 0 phần tử nghĩa là locator <strong>sai</strong>.</li>
+<li><strong>Dùng để:</strong> kiểm tra locator <strong>trước khi</strong> đưa vào code, và kiểm tra tính <strong>duy nhất</strong> (chỉ nên ra 1 kết quả).</li>
+</ul>
+<h4 id="chrome-devtools-xxpath">Chrome DevTools: <code>$x("xpath")</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> như <code>$$</code> nhưng dùng <strong>XPath</strong>.</li>
+<li><strong>Ví dụ:</strong> <code>$x("//button[text()='Add Element']")</code>.</li>
+</ul>
+<h4 id="chrome-devtools-tab-elements--network--console">Chrome DevTools: tab Elements / Network / Console</h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>Cho biết</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Elements</strong></td>
+<td>Cây DOM hiện tại, thuộc tính, CSS của phần tử (đúng như Selenium thấy)</td>
+</tr>
+<tr>
+<td><strong>Console</strong></td>
+<td>Lỗi JavaScript của trang; nơi thử <code>$$</code>/<code>$x</code></td>
+</tr>
+<tr>
+<td><strong>Network</strong></td>
+<td>Các request đang chạy — biết khi nào AJAX xong để chọn điều kiện Wait</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="breakpoint-trong-ide">Breakpoint trong IDE</h4>
+<ul>
+<li><strong>Làm gì:</strong> đặt điểm dừng ở một dòng; khi chạy ở chế độ <strong>Debug</strong>, chương trình <strong>dừng</strong> tại đó để bạn xem giá trị biến, rồi chạy từng bước.</li>
+<li><strong>Lưu ý:</strong> trình duyệt vẫn mở khi dừng — nhìn trực tiếp trang đang ở trạng thái nào.</li>
+</ul>
+<h4 id="systemoutprintln--log"><code>System.out.println</code> / log</h4>
+<ul>
+<li><strong>Làm gì:</strong> in giá trị ra console để theo dõi luồng chạy. <strong>Ví dụ:</strong> in <code>getText()</code> thực tế trước khi <code>assert</code>.</li>
+<li><strong>Lưu ý:</strong> không in mật khẩu. Dự án lớn nên dùng logger (SLF4J).</li>
+</ul>
+<h4 id="takesscreenshot-drivergetscreenshotasoutputtypefile"><code>((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chụp ảnh phần trang <strong>đang hiển thị</strong>; trả về <code>File</code> tạm để bạn sao chép đi (xem mục 3).</li>
+</ul>
+<h4 id="drivergetpagesource"><code>driver.getPageSource()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả HTML hiện tại của DOM — lưu ra file khi test fail để xem lại phần tử có tồn tại không.</li>
+</ul>
+<h4 id="-dtestclassmethod"><code>-Dtest=Class#method</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy <strong>riêng một test</strong> để cô lập lỗi, không bị các test khác ảnh hưởng.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Công cụ đầu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Không chắc locator đúng</td>
+<td><code>$$("css")</code> / <code>$x("xpath")</code> trong Console</td>
+</tr>
+<tr>
+<td>Phần tử "có mà không tìm thấy"</td>
+<td>Elements: có nằm trong iframe/shadow DOM?</td>
+</tr>
+<tr>
+<td>Không biết khi nào trang sẵn sàng</td>
+<td>Network</td>
+</tr>
+<tr>
+<td>Muốn xem trạng thái giữa chừng test</td>
+<td>Breakpoint</td>
+</tr>
+<tr>
+<td>Fail trên CI không xem được</td>
+<td>Screenshot + <code>getPageSource()</code> + log</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-screenshot-khi-test-fail">3. Screenshot khi test fail</h2>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.OutputType</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">org.openqa.selenium.TakesScreenshot</span><span class="p">;</span>

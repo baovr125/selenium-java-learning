@@ -158,6 +158,57 @@ Java version: 25.0.1, vendor: Oracle Corporation, runtime: C:\Program Files\Java
 <blockquote>
 <p>Cảnh báo <code>SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"</code> là bình thường (TestNG kéo <code>slf4j-api</code> nhưng chưa có logging binding).</p>
 </blockquote>
+<h3 id="61-từng-lệnh-kiểm-tra-làm-gì-kết-quả-nghĩa-là-gì">6.1. Từng lệnh kiểm tra làm gì, kết quả nghĩa là gì</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Làm chính xác gì</th>
+<th>Kết quả tốt</th>
+<th>Kết quả xấu → nghĩa là</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>java -version</code></td>
+<td>Hỏi <strong>JVM</strong> (bộ chạy Java) đang dùng là bản nào</td>
+<td><code>openjdk version "21..."</code> hoặc cao hơn</td>
+<td>Báo <code>1.8</code>/<code>11</code>/<code>17</code> → JDK quá cũ; <code>not recognized</code> → chưa có Java trong <code>PATH</code></td>
+</tr>
+<tr>
+<td><code>javac -version</code></td>
+<td>Hỏi <strong>trình biên dịch</strong> có bản nào</td>
+<td><code>javac 21...</code></td>
+<td><code>not recognized</code> → mới cài <strong>JRE</strong>, thiếu <strong>JDK</strong></td>
+</tr>
+<tr>
+<td><code>echo $env:JAVA_HOME</code></td>
+<td>In giá trị biến môi trường <code>JAVA_HOME</code> (thư mục cài JDK)</td>
+<td>Đường dẫn tới thư mục JDK</td>
+<td>Dòng trống → chưa đặt (vẫn chạy được nếu <code>java</code> trong <code>PATH</code>, nhưng nên đặt)</td>
+</tr>
+<tr>
+<td><code>where.exe java</code></td>
+<td>Liệt kê <strong>mọi file <code>java.exe</code> trong <code>PATH</code></strong> theo thứ tự ưu tiên</td>
+<td>Một hoặc vài đường dẫn</td>
+<td>Nhiều phiên bản → cái <strong>đầu tiên</strong> được dùng</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd -version</code></td>
+<td>Chạy Maven Wrapper và in phiên bản Maven + Java + HĐH</td>
+<td><code>Apache Maven 3.9.16 ...</code> và <code>Java version: 2x</code></td>
+<td><code>not recognized</code> → sai thư mục hoặc thiếu <code>.\</code> ở đầu</td>
+</tr>
+<tr>
+<td><code>.\mvnw.cmd test "-Dtest=EnvironmentCheckTest"</code></td>
+<td>Biên dịch dự án rồi chạy <strong>riêng một test</strong> để kiểm tra mở được Chrome</td>
+<td><code>Tests run: 1, Failures: 0</code> và <code>BUILD SUCCESS</code></td>
+<td><code>SessionNotCreatedException</code> → Chrome/driver lỗi; <code>Tests run: 0</code> → sai tên test</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Vì sao cần cả <code>java -version</code> lẫn <code>javac -version</code>?</strong> <code>java</code> là phần <strong>chạy</strong> chương trình, <code>javac</code> là phần <strong>biên dịch</strong>. Máy chỉ cài JRE thì có <code>java</code> mà không có <code>javac</code>; Maven cần <code>javac</code> để biên dịch code test.</p>
+<p><strong><code>JAVA_HOME</code> và <code>PATH</code> khác nhau thế nào?</strong> <code>PATH</code> là danh sách thư mục hệ điều hành tìm lệnh (<code>java</code>, <code>javac</code>). <code>JAVA_HOME</code> là <strong>một</strong> đường dẫn trỏ tới thư mục JDK để IDE, Maven, CI biết dùng JDK nào.</p>
 <h2 id="7-lỗi-môi-trường-thường-gặp">7. Lỗi môi trường thường gặp</h2>
 <div class="table-wrap"><table>
 <thead>

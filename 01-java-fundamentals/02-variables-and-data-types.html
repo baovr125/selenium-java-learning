@@ -186,6 +186,145 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-phạm-vi-giá-trị-của-kiểu-nguyên-thuỷ">2.1. Phạm vi giá trị của kiểu nguyên thuỷ</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kiểu</th>
+<th>Phạm vi</th>
+<th>Khi vượt quá</th>
+<th>Ghi chú</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>byte</code></td>
+<td>−128 … 127</td>
+<td>Quay vòng (tràn số)</td>
+<td>Hiếm dùng</td>
+</tr>
+<tr>
+<td><code>short</code></td>
+<td>−32 768 … 32 767</td>
+<td>Quay vòng</td>
+<td>Hiếm dùng</td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td>−2 147 483 648 … 2 147 483 647 (≈ ±2,1 tỷ)</td>
+<td><strong>Quay vòng, không báo lỗi</strong> (<code>Integer.MAX_VALUE + 1</code> ra số âm)</td>
+<td>Mặc định cho số nguyên</td>
+</tr>
+<tr>
+<td><code>long</code></td>
+<td>≈ ±9,2 × 10¹⁸</td>
+<td>Quay vòng</td>
+<td>Literal phải có <code>L</code>: <code>3000000000L</code></td>
+</tr>
+<tr>
+<td><code>float</code> / <code>double</code></td>
+<td>≈ 7 / 15–16 chữ số có nghĩa</td>
+<td>Mất độ chính xác</td>
+<td>Literal <code>float</code> phải có <code>f</code>; tiền tệ dùng <code>BigDecimal</code></td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td><code>true</code> / <code>false</code></td>
+<td>—</td>
+<td>Không chuyển được từ số</td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td>0 … 65 535 (một ký tự Unicode)</td>
+<td>—</td>
+<td>Dấu nháy <strong>đơn</strong>: <code>'A'</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-từng-hàm-chuyển-đổi-kiểu-thường-dùng">2.2. Từng hàm chuyển đổi kiểu thường dùng</h3>
+<h4 id="integerparseintstring-s"><code>Integer.parseInt(String s)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đổi chuỗi số nguyên thành <code>int</code>.</li>
+<li><strong>Trả về:</strong> <code>int</code>.</li>
+<li><strong>Khi lỗi:</strong> chuỗi không phải số (<code>"abc"</code>, <code>""</code>, <code>"1.5"</code>, <code>" 42"</code>) → <code>NumberFormatException</code>.</li>
+<li><strong>Ví dụ:</strong> <code>int rows = Integer.parseInt("42");</code> → <code>42</code>.</li>
+<li><strong>Lưu ý:</strong> chuỗi <strong>có khoảng trắng</strong> cũng lỗi — <code>trim()</code> trước. Truyền <code>null</code> → <code>NumberFormatException</code>.</li>
+</ul>
+<h4 id="doubleparsedoublestring-s"><code>Double.parseDouble(String s)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đổi chuỗi số thực thành <code>double</code>. <strong>Trả về:</strong> <code>double</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Double.parseDouble("50.75")</code> → <code>50.75</code>. Dấu thập phân là <strong>chấm</strong>, không phải phẩy.</li>
+<li><strong>Khi lỗi:</strong> <code>NumberFormatException</code>. Với giá tiền <code>"$50.00"</code> phải bỏ ký hiệu <code>$</code> trước.</li>
+</ul>
+<h4 id="integervalueofstring-s--integervalueofint-i"><code>Integer.valueOf(String s)</code> / <code>Integer.valueOf(int i)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> như <code>parseInt</code> nhưng trả về <strong>đối tượng <code>Integer</code></strong> (kiểu bọc), dùng khi cần bỏ vào <code>List&lt;Integer&gt;</code> hoặc cần <code>null</code>.</li>
+<li><strong>Khác <code>parseInt</code>:</strong> <code>parseInt</code> → <code>int</code> (nguyên thuỷ); <code>valueOf</code> → <code>Integer</code> (đối tượng).</li>
+</ul>
+<h4 id="stringvalueofx-và-integertostringi"><code>String.valueOf(x)</code> và <code>Integer.toString(i)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đổi một số/<code>boolean</code>/<code>char</code>/đối tượng thành chuỗi. <strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> <code>String.valueOf(42)</code> → <code>"42"</code>; <code>String.valueOf(true)</code> → <code>"true"</code>.</li>
+<li><strong>Cách ngắn hơn:</strong> <code>"" + 42</code>.</li>
+</ul>
+<h4 id="booleanparsebooleanstring-s"><code>Boolean.parseBoolean(String s)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>"true"</code> (không phân biệt hoa/thường) → <code>true</code>; <strong>mọi chuỗi khác</strong> → <code>false</code>, <strong>không báo lỗi</strong>.</li>
+<li><strong>Ví dụ:</strong> <code>Boolean.parseBoolean("yes")</code> → <code>false</code> (dễ bất ngờ).</li>
+</ul>
+<h4 id="ép-kiểu-int-x">Ép kiểu <code>(int) x</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> ép giá trị sang kiểu hẹp hơn <strong>một cách chủ ý</strong>.</li>
+<li><strong>Ví dụ:</strong> <code>(int) 7.9</code> → <code>7</code> (<strong>cắt</strong> phần thập phân, không làm tròn); <code>(int) 3_000_000_000L</code> → số sai do tràn.</li>
+<li><strong>Lưu ý:</strong> compiler chỉ cho phép ép khi <strong>bạn</strong> viết <code>(kiểu)</code> — nếu không sẽ báo <code>possible lossy conversion</code>.</li>
+</ul>
+<h4 id="mathrounddouble"><code>Math.round(double)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> làm <strong>tròn</strong> tới số nguyên gần nhất (khác ép kiểu là cắt). <strong>Trả về:</strong> <code>long</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Math.round(7.5)</code> → <code>8</code>; <code>(int) 7.5</code> → <code>7</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Muốn</th>
+<th>Dùng</th>
+<th>Ví dụ → kết quả</th>
+<th>Khi sai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chuỗi → số nguyên</td>
+<td><code>Integer.parseInt</code></td>
+<td><code>"42"</code> → <code>42</code></td>
+<td><code>NumberFormatException</code></td>
+</tr>
+<tr>
+<td>Chuỗi → số thực</td>
+<td><code>Double.parseDouble</code></td>
+<td><code>"1.5"</code> → <code>1.5</code></td>
+<td><code>NumberFormatException</code></td>
+</tr>
+<tr>
+<td>Số → chuỗi</td>
+<td><code>String.valueOf</code> / <code>"" + x</code></td>
+<td><code>42</code> → <code>"42"</code></td>
+<td>không lỗi</td>
+</tr>
+<tr>
+<td>Số thực → nguyên (cắt)</td>
+<td><code>(int) x</code></td>
+<td><code>7.9</code> → <code>7</code></td>
+<td>mất dữ liệu</td>
+</tr>
+<tr>
+<td>Số thực → nguyên (làm tròn)</td>
+<td><code>Math.round(x)</code></td>
+<td><code>7.5</code> → <code>8</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--khai-báo-in-đổi-giá-trị">Ví dụ 1 — Khai báo, in, đổi giá trị</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>

@@ -116,6 +116,91 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-khái-niệm-về-method">2.1. Từng khái niệm về method</h3>
+<h4 id="chữ-ký-method-signature">Chữ ký method (signature)</h4>
+<ul>
+<li><strong>Là gì:</strong> <strong>tên + danh sách kiểu tham số</strong> (không tính kiểu trả về). Hai method trong cùng class phải có chữ ký <strong>khác nhau</strong>.</li>
+<li><strong>Ví dụ:</strong> <code>add(int, int)</code> và <code>add(double, double)</code> là hai method khác nhau.</li>
+</ul>
+<h4 id="tham-số-parameter-và-đối-số-argument">Tham số (parameter) và đối số (argument)</h4>
+<ul>
+<li><strong>Tham số:</strong> biến khai báo ở <strong>định nghĩa</strong> method: <code>int add(int a, int b)</code> — <code>a</code>, <code>b</code> là tham số.</li>
+<li><strong>Đối số:</strong> giá trị bạn <strong>truyền khi gọi</strong>: <code>add(2, 3)</code> — <code>2</code>, <code>3</code> là đối số.</li>
+<li><strong>Truyền theo giá trị:</strong> Java luôn <strong>sao chép</strong> giá trị vào tham số. Sửa <code>int</code>/<code>String</code> bên trong method <strong>không</strong> đổi biến bên ngoài. Với đối tượng, bản sao là <strong>bản sao của tham chiếu</strong> — sửa <em>nội dung</em> đối tượng thì bên ngoài thấy, nhưng gán tham số sang đối tượng khác thì không ảnh hưởng.</li>
+</ul>
+<h4 id="return"><code>return</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> trả giá trị về nơi gọi <strong>và thoát</strong> method ngay lập tức.</li>
+<li><strong>Quy tắc:</strong> kiểu giá trị phải khớp kiểu trả về; <strong>mọi nhánh</strong> (<code>if/else</code>) phải <code>return</code>, nếu không báo <code>missing return statement</code>.</li>
+</ul>
+<h4 id="void"><code>void</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> method <strong>không trả giá trị</strong>. <code>return;</code> (không kèm giá trị) vẫn dùng được để thoát sớm.</li>
+<li><strong>Phân biệt:</strong> method <em>làm việc</em> (<code>click()</code>, <code>void</code>) và method <em>lấy dữ liệu</em> (<code>getText()</code>, trả <code>String</code>).</li>
+</ul>
+<h4 id="overloading-nạp-chồng">Overloading (nạp chồng)</h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>cùng tên, khác tham số</strong> (khác số lượng hoặc khác kiểu). Java chọn method khớp với đối số khi gọi.</li>
+<li><strong>Ví dụ:</strong> <code>findElement(By)</code>; <code>sendKeys(CharSequence...)</code>; <code>new WebDriverWait(driver, Duration)</code> và <code>new WebDriverWait(driver, Duration, Duration)</code>.</li>
+<li><strong>Lưu ý:</strong> chỉ khác <strong>kiểu trả về</strong> thì <strong>không</strong> phải overload (lỗi biên dịch).</li>
+</ul>
+<h4 id="varargs-kiểu-tên">Varargs <code>Kiểu... tên</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> nhận <strong>số lượng đối số tuỳ ý</strong> của một kiểu; bên trong method nó là <strong>mảng</strong>.</li>
+<li><strong>Ví dụ:</strong> <code>static void assertSameElement(String name, WebElement ref, WebElement... others)</code> — gọi với 0, 1 hoặc nhiều <code>WebElement</code>.</li>
+<li><strong>Lưu ý:</strong> phải là tham số <strong>cuối cùng</strong>, và mỗi method chỉ có một.</li>
+</ul>
+<h4 id="phạm-vi-biến-scope">Phạm vi biến (scope)</h4>
+<ul>
+<li><strong>Làm gì:</strong> biến chỉ tồn tại <strong>trong khối <code>{ }</code> khai báo nó</strong>. Hết khối là biến biến mất.</li>
+<li><strong>Phân biệt:</strong> <em>biến cục bộ</em> (trong method, phải gán giá trị trước khi dùng) và <em>field</em> (thuộc đối tượng/class, có giá trị mặc định).</li>
+</ul>
+<h4 id="đệ-quy">Đệ quy</h4>
+<ul>
+<li><strong>Làm gì:</strong> method <strong>tự gọi lại chính nó</strong> để giải bài toán nhỏ hơn.</li>
+<li><strong>Bắt buộc:</strong> có <strong>điều kiện dừng</strong> (base case); thiếu thì <code>StackOverflowError</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Từ khoá</th>
+<th>Ở đâu</th>
+<th>Ý nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tham số</td>
+<td>định nghĩa method</td>
+<td>Biến nhận dữ liệu</td>
+</tr>
+<tr>
+<td>đối số</td>
+<td>lời gọi method</td>
+<td>Giá trị truyền vào</td>
+</tr>
+<tr>
+<td><code>return</code></td>
+<td>thân method</td>
+<td>Trả giá trị + thoát</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td>kiểu trả về</td>
+<td>Không trả gì</td>
+</tr>
+<tr>
+<td>overload</td>
+<td>cùng class</td>
+<td>Cùng tên, khác tham số</td>
+</tr>
+<tr>
+<td>varargs</td>
+<td>tham số cuối</td>
+<td>Số đối số tuỳ ý (là mảng)</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--tham-số-và-giá-trị-trả-về">Ví dụ 1 — Tham số và giá trị trả về</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>

@@ -104,6 +104,102 @@ git<span class="w"> </span>rebase<span class="w"> </span>main<span class="w">   
 git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>feature/add-logging<span class="w"> </span><span class="c1"># xoá nhánh đã gộp</span>
 git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>feature/add-logging</code></pre></div>
 <p>Quy ước tên nhánh: <code>feature/&lt;mô-tả&gt;</code>, <code>fix/&lt;mô-tả&gt;</code>, <code>chore/&lt;mô-tả&gt;</code> (ví dụ <code>feature/page-object-login</code>, <code>fix/stale-element-ex10</code>).</p>
+<h3 id="21-từng-lệnh-làm-việc-với-nhánh">2.1. Từng lệnh làm việc với nhánh</h3>
+<p>Mức an toàn: 🟢 chỉ đọc · 🟡 hoàn tác được · 🔴 có thể mất dữ liệu / ảnh hưởng người khác.</p>
+<h4 id="git-branch"><code>git branch</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>liệt kê</strong> nhánh cục bộ; nhánh đang đứng có dấu <code>*</code>. 🟢.</li>
+<li><strong>Biến thể:</strong> <code>git branch --show-current</code> (in tên nhánh hiện tại), <code>git branch -vv</code> (kèm nhánh remote theo dõi), <code>git branch &lt;tên&gt;</code> (tạo nhánh nhưng <strong>chưa chuyển</strong> sang).</li>
+</ul>
+<h4 id="git-switch--c-nhánh-hoặc-git-checkout--b-nhánh"><code>git switch -c &lt;nhánh&gt;</code> (hoặc <code>git checkout -b &lt;nhánh&gt;</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>tạo nhánh mới từ vị trí hiện tại và chuyển sang nó</strong>.</li>
+<li><strong>An toàn:</strong> 🟡. <strong>Ví dụ:</strong> <code>git switch -c feature/page-object-login</code>.</li>
+</ul>
+<h4 id="git-switch-nhánh-hoặc-git-checkout-nhánh"><code>git switch &lt;nhánh&gt;</code> (hoặc <code>git checkout &lt;nhánh&gt;</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>chuyển</strong> sang nhánh đã có; file trên đĩa đổi theo nhánh đó.</li>
+<li><strong>An toàn:</strong> 🟡. <strong>Lưu ý:</strong> có thay đổi chưa commit mà xung đột với nhánh đích → Git từ chối; <code>commit</code> hoặc <code>stash</code> trước.</li>
+<li><strong>Khác nhau:</strong> <code>switch</code> chỉ dành cho nhánh (rõ nghĩa hơn); <code>checkout</code> còn dùng để lấy file/commit nên dễ nhầm.</li>
+</ul>
+<h4 id="git-merge-nhánh"><code>git merge &lt;nhánh&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>gộp</strong> nhánh <code>&lt;nhánh&gt;</code> vào nhánh <strong>đang đứng</strong>. Hai trường hợp:</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tình huống</th>
+<th>Kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nhánh đang đứng <strong>không có commit mới</strong> kể từ lúc tách</td>
+<td><strong>Fast-forward</strong>: chỉ dời con trỏ, không có commit gộp</td>
+</tr>
+<tr>
+<td>Cả hai đều có commit mới</td>
+<td><strong>3-way merge</strong>: tạo <strong>commit gộp</strong> có hai cha</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>An toàn:</strong> 🟡 — có thể <strong>sinh conflict</strong>. Huỷ giữa chừng: <code>git merge --abort</code>.</li>
+<li><strong>Biến thể:</strong> <code>--no-ff</code> luôn tạo commit gộp (giữ dấu vết nhánh tính năng).</li>
+</ul>
+<h4 id="git-rebase-nhánh"><code>git rebase &lt;nhánh&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>dựng lại</strong> commit của nhánh hiện tại lên <strong>đầu</strong> <code>&lt;nhánh&gt;</code> — commit được viết lại (mã băm mới), lịch sử thành một đường thẳng.</li>
+<li><strong>An toàn:</strong> 🔴 nếu nhánh đã <code>push</code> và người khác dùng (vì <strong>viết lại lịch sử</strong>). Nhánh cá nhân chưa chia sẻ thì ổn.</li>
+<li><strong>Khi conflict:</strong> sửa → <code>git add</code> → <code>git rebase --continue</code>; muốn huỷ: <code>git rebase --abort</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>merge</code></th>
+<th><code>rebase</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lịch sử</td>
+<td>Giữ nguyên + thêm commit gộp</td>
+<td><strong>Viết lại</strong>, thẳng một đường</td>
+</tr>
+<tr>
+<td>Commit cũ</td>
+<td>Không đổi</td>
+<td>Đổi mã băm</td>
+</tr>
+<tr>
+<td>An toàn với nhánh chung</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Dùng khi</td>
+<td>Gộp nhánh tính năng vào <code>main</code></td>
+<td>Cập nhật nhánh <strong>cá nhân</strong> theo <code>main</code> trước khi gộp</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="git-branch--d-nhánh--git-branch--d-nhánh"><code>git branch -d &lt;nhánh&gt;</code> / <code>git branch -D &lt;nhánh&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> xoá nhánh cục bộ. <code>-d</code> <strong>chỉ xoá nếu đã gộp</strong> (an toàn, 🟡); <code>-D</code> <strong>xoá bất kể</strong> (🔴 mất commit chưa gộp).</li>
+</ul>
+<h4 id="git-push---force-with-lease"><code>git push --force-with-lease</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đẩy đè lên remote <strong>chỉ khi</strong> remote chưa có commit lạ mà bạn chưa thấy. Cần sau <code>rebase</code> một nhánh đã push.</li>
+<li><strong>An toàn:</strong> 🔴 — chỉ trên <strong>nhánh cá nhân</strong>, không bao giờ trên <code>main</code>.</li>
+</ul>
+<h4 id="quy-trình-thường-dùng">Quy trình thường dùng</h4>
+<div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>switch<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w">                 </span><span class="c1"># cập nhật main</span>
+git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>feature/add-logging<span class="w">           </span><span class="c1"># tạo nhánh làm việc</span>
+<span class="c1"># ... sửa, commit ...</span>
+git<span class="w"> </span>fetch<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>rebase<span class="w"> </span>origin/main<span class="w">         </span><span class="c1"># (tuỳ chọn) cập nhật nhánh theo main mới nhất</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>feature/add-logging<span class="w">      </span><span class="c1"># đẩy và mở Pull Request</span></code></pre></div>
 <h2 id="3-ví-dụ-đã-chạy-thật">3. Ví dụ (đã chạy thật)</h2>
 <h3 id="ví-dụ-1--nhánh-phân-kỳ">Ví dụ 1 — Nhánh phân kỳ</h3>
 <p>Từ commit đầu <code>26ba9ac</code>, nhánh <code>feature/a</code> và <code>main</code> cùng sửa <strong>một dòng</strong> <code>pom.xml</code>:</p>

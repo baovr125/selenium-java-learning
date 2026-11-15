@@ -121,6 +121,91 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="11-từng-lệnh-trả-về-gì-khi-nào-lỗi">1.1. Từng lệnh: trả về gì, khi nào lỗi</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lệnh</th>
+<th>Hành động chính xác</th>
+<th>Trả về</th>
+<th>Có thể ném</th>
+<th>Chờ trang tải?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get(url)</code></td>
+<td>Mở URL trong tab đang focus</td>
+<td><code>void</code></td>
+<td><code>TimeoutException</code> (quá <code>pageLoadTimeout</code>), <code>InvalidArgumentException</code> (URL thiếu <code>https://</code>)</td>
+<td>✅ theo <code>PageLoadStrategy</code></td>
+</tr>
+<tr>
+<td><code>navigate().to(url)</code></td>
+<td>Như <code>get</code>, thêm vào lịch sử</td>
+<td><code>void</code></td>
+<td>Như <code>get</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>navigate().back()</code></td>
+<td>Lùi một trang trong lịch sử</td>
+<td><code>void</code></td>
+<td>—</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>navigate().forward()</code></td>
+<td>Tiến một trang (chỉ sau khi đã <code>back</code>)</td>
+<td><code>void</code></td>
+<td>—</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>navigate().refresh()</code></td>
+<td>Tải lại trang hiện tại</td>
+<td><code>void</code></td>
+<td><code>TimeoutException</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>getCurrentUrl()</code></td>
+<td>Đọc URL sau mọi lần chuyển hướng</td>
+<td><code>String</code></td>
+<td>—</td>
+<td>❌ chỉ <strong>đọc</strong> — gọi ngay sau <code>click()</code> có thể ra URL cũ</td>
+</tr>
+<tr>
+<td><code>getTitle()</code></td>
+<td>Đọc <code>&lt;title&gt;</code></td>
+<td><code>String</code> (<code>""</code> nếu không có)</td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>getPageSource()</code></td>
+<td>Đọc HTML hiện tại của DOM (sau JS)</td>
+<td><code>String</code></td>
+<td>—</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><code>close()</code></td>
+<td>Đóng tab đang focus</td>
+<td><code>void</code></td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>quit()</code></td>
+<td>Đóng mọi cửa sổ và <strong>kết thúc session</strong></td>
+<td><code>void</code></td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Quy tắc nhớ:</strong> lệnh <strong>mở/chuyển trang</strong> (<code>get</code>, <code>to</code>, <code>back</code>, <code>forward</code>, <code>refresh</code>) tự chờ tải xong; lệnh <strong>đọc</strong> (<code>getCurrentUrl</code>, <code>getTitle</code>, <code>getPageSource</code>) chỉ trả <strong>trạng thái ngay lúc đó</strong> — cần chắc trang đã đổi thì chờ bằng <code>wait.until(urlContains(...))</code>.</p>
 <h2 id="2-get-vs-navigateto">2. <code>get()</code> vs <code>navigate().to()</code></h2>
 <p>Về chức năng gần như <strong>giống nhau</strong>: cả hai tải URL và chờ load. Khác biệt:</p>
 <div class="table-wrap"><table>

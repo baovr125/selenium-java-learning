@@ -127,6 +127,91 @@
 </tbody>
 </table></div>
 <p>Dùng tất cả thành phần Selenium <strong>cùng một phiên bản</strong> (dự án để chúng đi qua <code>selenium-java</code>, nên luôn đồng bộ 4.52.0).</p>
+<h3 id="41-từng-lệnh-dependency-làm-gì">4.1. Từng lệnh <code>dependency:*</code> làm gì</h3>
+<p>Dạng lệnh: <code>.\mvnw.cmd dependency:&lt;goal&gt;</code>. Đây là các <strong>goal</strong> của plugin <code>maven-dependency-plugin</code>; không thuộc vòng đời build, chạy riêng.</p>
+<h4 id="dependencytree"><code>dependency:tree</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in <strong>cây phụ thuộc</strong>: thư viện bạn khai báo và mọi thư viện con nó kéo theo.</li>
+<li><strong>Dùng khi:</strong> muốn biết "vì sao có thư viện này", hay tìm xung đột phiên bản.</li>
+<li><strong>Mẹo:</strong> thêm <code>-Dverbose</code> để thấy cả những bản <strong>bị loại</strong> do trùng; <code>-Dincludes=com.google.guava</code> để lọc theo thư viện.</li>
+</ul>
+<h4 id="dependencylist"><code>dependency:list</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in <strong>danh sách phẳng</strong> các thư viện (không phân cấp) với phiên bản.</li>
+<li><strong>Khác <code>tree</code>:</strong> gọn hơn, không cho biết ai kéo ai.</li>
+</ul>
+<h4 id="dependencyanalyze"><code>dependency:analyze</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> so sánh dependency <strong>khai báo</strong> với dependency <strong>thực sự dùng trong code</strong>; báo thư viện <strong>khai báo nhưng thừa</strong>, hoặc <strong>dùng mà chưa khai báo</strong>.</li>
+<li><strong>Dùng khi:</strong> dọn <code>pom.xml</code>.</li>
+</ul>
+<h4 id="dependencyresolve"><code>dependency:resolve</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>tải</strong> mọi dependency về Local Repository và liệt kê chúng.</li>
+<li><strong>Dùng khi:</strong> muốn tải sẵn thư viện (ví dụ trước khi mất mạng).</li>
+</ul>
+<h4 id="dependencypurge-local-repository"><code>dependency:purge-local-repository</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>xoá</strong> các dependency của dự án khỏi Local Repository rồi tải lại sạch.</li>
+<li><strong>Dùng khi:</strong> nghi ngờ file <code>.jar</code>/<code>.pom</code> trong cache bị hỏng.</li>
+<li><strong>Rủi ro:</strong> tốn thời gian tải lại, cần mạng.</li>
+</ul>
+<h4 id="helpeffective-pom"><code>help:effective-pom</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in <code>pom.xml</code> <strong>sau khi gộp</strong> mọi thừa kế (parent, profile, mặc định Maven) — POM mà Maven <strong>thực sự dùng</strong>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Lệnh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Vì sao có thư viện X?"</td>
+<td><code>dependency:tree</code></td>
+</tr>
+<tr>
+<td>"Có những thư viện nào, bản nào?"</td>
+<td><code>dependency:list</code></td>
+</tr>
+<tr>
+<td>"Có thư viện thừa/thiếu khai báo không?"</td>
+<td><code>dependency:analyze</code></td>
+</tr>
+<tr>
+<td>"Cache bị hỏng?"</td>
+<td><code>dependency:purge-local-repository</code></td>
+</tr>
+<tr>
+<td>"POM thực sự là gì?"</td>
+<td><code>help:effective-pom</code></td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="hai-thẻ-để-xử-lý-xung-đột">Hai thẻ để xử lý xung đột</h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thẻ</th>
+<th>Làm chính xác gì</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;exclusions&gt;</code> bên trong <code>&lt;dependency&gt;</code></td>
+<td><strong>Cắt</strong> một thư viện con khỏi nhánh phụ thuộc này</td>
+<td>Loại một bản <code>guava</code> cũ do thư viện A kéo vào</td>
+</tr>
+<tr>
+<td><code>&lt;dependencyManagement&gt;</code></td>
+<td><strong>Ghim phiên bản</strong> cho một thư viện, bất kể ai kéo nó vào</td>
+<td>Ép toàn dự án dùng một bản <code>guava</code> thống nhất</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="5-dependency-conflicts-xung-đột-phiên-bản">5. Dependency Conflicts (xung đột phiên bản)</h2>
 <p>Nếu hai nhánh phụ thuộc cùng cần thư viện X nhưng khác phiên bản, Maven chọn theo quy tắc <strong>"nearest definition wins"</strong> (gần gốc nhất thắng; ngang nhau thì khai báo <strong>trước</strong> thắng). Có thể dẫn đến:</p>
 <ul>

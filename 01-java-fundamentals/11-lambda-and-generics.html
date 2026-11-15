@@ -126,6 +126,249 @@
 </tbody>
 </table></div>
 <p>Biến cục bộ được dùng trong lambda phải là <strong>final hoặc effectively final</strong> (không được gán lại).</p>
+<h3 id="21-lambda-và-functional-interface--từng-loại-làm-gì">2.1. Lambda và Functional Interface — từng loại làm gì</h3>
+<p><strong>Functional interface</strong> là interface có <strong>đúng một</strong> method trừu tượng; lambda là cách viết ngắn cho một hiện thực của nó.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>Method</th>
+<th>Nhận → Trả</th>
+<th>Ví dụ lambda</th>
+<th>Gặp trong Selenium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Runnable</code></td>
+<td><code>run()</code></td>
+<td>không → không</td>
+<td><code>() -&gt; System.out.println("hi")</code></td>
+<td>Chạy trong <code>Thread</code></td>
+</tr>
+<tr>
+<td><code>Function&lt;T, R&gt;</code></td>
+<td><code>apply(T)</code></td>
+<td><code>T</code> → <code>R</code></td>
+<td><code>s -&gt; s.length()</code></td>
+<td><code>wait.until(d -&gt; d.findElement(...))</code> (<code>Function&lt;WebDriver, V&gt;</code>)</td>
+</tr>
+<tr>
+<td><code>Predicate&lt;T&gt;</code></td>
+<td><code>test(T)</code></td>
+<td><code>T</code> → <code>boolean</code></td>
+<td><code>s -&gt; s.isEmpty()</code></td>
+<td><code>removeIf(...)</code>, <code>filter(...)</code></td>
+</tr>
+<tr>
+<td><code>Consumer&lt;T&gt;</code></td>
+<td><code>accept(T)</code></td>
+<td><code>T</code> → không</td>
+<td><code>s -&gt; System.out.println(s)</code></td>
+<td><code>forEach(...)</code></td>
+</tr>
+<tr>
+<td><code>Supplier&lt;T&gt;</code></td>
+<td><code>get()</code></td>
+<td>không → <code>T</code></td>
+<td><code>() -&gt; "abc"</code></td>
+<td><code>withMessage(() -&gt; "...")</code></td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="cú-pháp-lambda">Cú pháp lambda</h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cú pháp</th>
+<th>Nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x -&gt; x * 2</code></td>
+<td>Một tham số, một biểu thức (kết quả tự được trả về)</td>
+</tr>
+<tr>
+<td><code>(a, b) -&gt; a + b</code></td>
+<td>Nhiều tham số</td>
+</tr>
+<tr>
+<td><code>d -&gt; { ...; return true; }</code></td>
+<td>Nhiều câu lệnh: cần <code>{ }</code> và <code>return</code></td>
+</tr>
+<tr>
+<td><code>String::length</code></td>
+<td><strong>Method reference</strong>: viết gọn lambda chỉ gọi một method (<code>s -&gt; s.length()</code>)</td>
+</tr>
+<tr>
+<td><code>WebElement::getText</code></td>
+<td>Gọi <code>getText()</code> trên từng phần tử</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Quy tắc:</strong> biến cục bộ dùng trong lambda phải là <code>final</code> hoặc <strong>không bị gán lại</strong> (<em>effectively final</em>).</p>
+<h3 id="22-stream--từng-thao-tác-làm-gì">2.2. Stream — từng thao tác làm gì</h3>
+<p><code>list.stream()</code> mở một "dây chuyền xử lý": các thao tác <strong>trung gian</strong> (<code>filter</code>, <code>map</code>...) trả về stream mới; thao tác <strong>kết thúc</strong> (<code>toList</code>, <code>count</code>...) mới thực sự chạy.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thao tác</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Ví dụ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter(predicate)</code></td>
+<td><strong>Giữ</strong> phần tử thoả điều kiện</td>
+<td>stream</td>
+<td><code>.filter(e -&gt; e.isDisplayed())</code></td>
+</tr>
+<tr>
+<td><code>map(function)</code></td>
+<td><strong>Biến đổi</strong> từng phần tử</td>
+<td>stream</td>
+<td><code>.map(WebElement::getText)</code></td>
+</tr>
+<tr>
+<td><code>sorted()</code></td>
+<td>Sắp xếp tăng dần</td>
+<td>stream</td>
+<td></td>
+</tr>
+<tr>
+<td><code>distinct()</code></td>
+<td>Bỏ phần tử trùng</td>
+<td>stream</td>
+<td></td>
+</tr>
+<tr>
+<td><code>limit(n)</code></td>
+<td>Chỉ lấy <code>n</code> phần tử đầu</td>
+<td>stream</td>
+<td></td>
+</tr>
+<tr>
+<td><code>forEach(consumer)</code></td>
+<td>Chạy hành động cho từng phần tử</td>
+<td><code>void</code></td>
+<td><code>.forEach(System.out::println)</code></td>
+</tr>
+<tr>
+<td><code>toList()</code></td>
+<td>Gom kết quả thành <code>List</code> (<strong>bất biến</strong>)</td>
+<td><code>List&lt;T&gt;</code></td>
+<td><code>elements.stream().map(WebElement::getText).toList()</code></td>
+</tr>
+<tr>
+<td><code>count()</code></td>
+<td>Đếm</td>
+<td><code>long</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>anyMatch(p)</code></td>
+<td><strong>Có ít nhất một</strong> phần tử thoả</td>
+<td><code>boolean</code></td>
+<td><code>.anyMatch(t -&gt; t.contains("Error"))</code></td>
+</tr>
+<tr>
+<td><code>allMatch(p)</code></td>
+<td><strong>Mọi</strong> phần tử thoả</td>
+<td><code>boolean</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>findFirst()</code></td>
+<td>Phần tử đầu tiên (nếu có)</td>
+<td><code>Optional&lt;T&gt;</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">texts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">.</span><span class="na">findElements</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">cssSelector</span><span class="p">(</span><span class="s">&quot;.row&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">WebElement</span><span class="p">::</span><span class="n">isDisplayed</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">WebElement</span><span class="p">::</span><span class="n">getText</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">toList</span><span class="p">();</span></code></pre></div>
+<h3 id="23-regex--từng-method-của-patternmatcher">2.3. RegEx — từng method của <code>Pattern</code>/<code>Matcher</code></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pattern.compile(String regex)</code></td>
+<td>Biên dịch biểu thức chính quy (tạo một lần, dùng lại)</td>
+<td><code>Pattern</code></td>
+</tr>
+<tr>
+<td><code>pattern.matcher(String text)</code></td>
+<td>Tạo "bộ so khớp" áp mẫu lên <code>text</code></td>
+<td><code>Matcher</code></td>
+</tr>
+<tr>
+<td><code>matcher.matches()</code></td>
+<td>Khớp <strong>toàn bộ</strong> chuỗi?</td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
+<td><code>matcher.find()</code></td>
+<td>Tìm <strong>đoạn khớp kế tiếp</strong> (gọi lặp để tìm nhiều)</td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
+<td><code>matcher.group()</code> / <code>group(n)</code></td>
+<td>Lấy đoạn khớp / nhóm trong ngoặc <code>(...)</code> thứ <code>n</code></td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td><code>String.matches(regex)</code></td>
+<td>Đường tắt: khớp toàn bộ chuỗi</td>
+<td><code>boolean</code></td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Matcher</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pattern</span><span class="p">.</span><span class="na">compile</span><span class="p">(</span><span class="s">&quot;\\$(\\d+\\.\\d+)&quot;</span><span class="p">).</span><span class="na">matcher</span><span class="p">(</span><span class="s">&quot;Due: $50.00&quot;</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="na">find</span><span class="p">())</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">     </span><span class="c1">// 50.00</span></code></pre></div>
+<p>Mã hay dùng: <code>\\d</code> (chữ số), <code>\\w</code> (chữ/số/_), <code>.</code> (ký tự bất kỳ), <code>+</code> (một hoặc nhiều), <code>*</code> (không hoặc nhiều), <code>^</code>/<code>$</code> (đầu/cuối). Trong chuỗi Java phải viết <strong>hai</strong> dấu <code>\\</code>.</p>
+<h3 id="24-thread-và-threadlocal">2.4. Thread và ThreadLocal</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new Thread(runnable)</code></td>
+<td>Tạo luồng (chưa chạy)</td>
+</tr>
+<tr>
+<td><code>thread.start()</code></td>
+<td><strong>Bắt đầu</strong> chạy luồng song song</td>
+</tr>
+<tr>
+<td><code>thread.join()</code></td>
+<td>Đứng chờ luồng đó <strong>kết thúc</strong></td>
+</tr>
+<tr>
+<td><code>Thread.sleep(ms)</code></td>
+<td><strong>Ngủ</strong> luồng hiện tại (có thể ném <code>InterruptedException</code>)</td>
+</tr>
+<tr>
+<td><code>ThreadLocal&lt;T&gt;</code></td>
+<td>Mỗi luồng có <strong>bản riêng</strong> của giá trị: <code>set(v)</code>, <code>get()</code>, <code>remove()</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--generics">Ví dụ 1 — Generics</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.ArrayList</span><span class="p">;</span>

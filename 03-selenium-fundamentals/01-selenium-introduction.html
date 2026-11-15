@@ -224,6 +224,79 @@
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <p><code>try/finally</code> quan trọng: nếu có exception mà quên <code>quit()</code>, Chrome vẫn mở. Dự án giải quyết vấn đề này bằng <code>@AfterMethod</code> (TestNG luôn chạy nó kể cả khi test fail).</p>
+<h3 id="71-từ-điển-thuật-ngữ-selenium--từng-khái-niệm-là-gì">7.1. Từ điển thuật ngữ Selenium — từng khái niệm là gì</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thuật ngữ</th>
+<th>Là gì, nói đơn giản</th>
+<th>Ví dụ / Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Selenium WebDriver</strong></td>
+<td>Bộ <strong>thư viện (API)</strong> bạn gọi trong Java để ra lệnh cho trình duyệt: mở trang, tìm phần tử, click, gõ</td>
+<td><code>selenium-java-4.52.0.jar</code></td>
+</tr>
+<tr>
+<td><strong>Browser Driver</strong></td>
+<td><strong>Chương trình trung gian</strong> của hãng trình duyệt: nhận lệnh từ code của bạn và điều khiển trình duyệt thật</td>
+<td><code>chromedriver.exe</code> cho Chrome</td>
+</tr>
+<tr>
+<td><strong>Selenium Manager</strong></td>
+<td>Công cụ <strong>tự tìm và tải</strong> đúng bản Browser Driver cho trình duyệt bạn đang cài (Selenium 4.6+)</td>
+<td>Chạy ngầm khi <code>new ChromeDriver()</code> — bạn không phải tải <code>chromedriver.exe</code></td>
+</tr>
+<tr>
+<td><strong>Session</strong></td>
+<td>Một "phiên làm việc" giữa test và <strong>một</strong> trình duyệt; giữ cookie, cửa sổ, cấu hình</td>
+<td>Mỗi <code>new ChromeDriver()</code> mở một session mới; <code>quit()</code> kết thúc</td>
+</tr>
+<tr>
+<td><strong>W3C WebDriver protocol</strong></td>
+<td><strong>Giao thức chuẩn</strong> (qua HTTP) giữa thư viện Selenium và Browser Driver</td>
+<td>Nhờ chuẩn chung, cùng code chạy được trên Chrome/Firefox/Edge</td>
+</tr>
+<tr>
+<td><strong>DOM</strong></td>
+<td><strong>Cây phần tử</strong> HTML mà trình duyệt dựng ra; Selenium tìm phần tử trong cây này</td>
+<td>Phần tử JS thêm vào sau cũng nằm trong DOM</td>
+</tr>
+<tr>
+<td><strong>Locator</strong></td>
+<td><strong>Cách chỉ định</strong> phần tử cần tìm (<code>id</code>, <code>css</code>, <code>xpath</code>...)</td>
+<td><code>By.id("username")</code></td>
+</tr>
+<tr>
+<td><strong>WebElement</strong></td>
+<td><strong>Đối tượng đại diện</strong> một phần tử đã tìm được, để bạn click, đọc chữ</td>
+<td><code>driver.findElement(...)</code> trả về <code>WebElement</code></td>
+</tr>
+<tr>
+<td><strong>Headless</strong></td>
+<td>Chạy trình duyệt <strong>không hiện cửa sổ</strong></td>
+<td>Dùng trên CI/server không có màn hình</td>
+</tr>
+<tr>
+<td><strong>Selenium Grid</strong></td>
+<td>Hệ thống chạy test <strong>song song trên nhiều máy/trình duyệt</strong></td>
+<td>Không dùng trong dự án này</td>
+</tr>
+<tr>
+<td><strong>Selenium IDE</strong></td>
+<td>Tiện ích trình duyệt <strong>ghi và phát lại</strong> thao tác</td>
+<td>Không dùng trong dự án này</td>
+</tr>
+<tr>
+<td><strong>Flaky test</strong></td>
+<td>Test <strong>lúc xanh lúc đỏ</strong> dù code không đổi</td>
+<td>Nguyên nhân hàng đầu: thiếu đồng bộ hoá (Wait)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Luồng một lệnh <code>driver.get(...)</code>:</strong> code Java → thư viện Selenium → (giao thức W3C qua HTTP) → <code>chromedriver</code> → Chrome mở trang.</p>
 <h2 id="8-phạm-vi-và-giới-hạn-của-selenium">8. Phạm vi và giới hạn của Selenium</h2>
 <div class="table-wrap"><table>
 <thead>

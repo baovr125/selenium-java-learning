@@ -93,6 +93,140 @@ git<span class="w"> </span>rm<span class="w"> </span>-r<span class="w"> </span>-
 git<span class="w"> </span>ls-files<span class="w"> </span>--stage<span class="w"> </span>mvnw<span class="w">                     </span><span class="c1"># xem mode: 100755 (thực thi) hay 100644</span>
 git<span class="w"> </span>update-index<span class="w"> </span>--chmod<span class="o">=</span>+x<span class="w"> </span>mvnw<span class="w">              </span><span class="c1"># đặt bit thực thi trong Git</span>
 git<span class="w"> </span>ls-files<span class="w"> </span>--eol<span class="w"> </span>mvnw<span class="w"> </span>mvnw.cmd<span class="w">              </span><span class="c1"># xem line ending trong index/working tree</span></code></pre></div>
+<h3 id="21-từng-quy-tắc-và-lệnh-liên-quan">2.1. Từng quy tắc và lệnh liên quan</h3>
+<h4 id="cú-pháp-trong-gitignore">Cú pháp trong <code>.gitignore</code></h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mẫu</th>
+<th>Làm chính xác gì</th>
+<th>Ví dụ khớp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>target/</code></td>
+<td>Bỏ qua <strong>thư mục</strong> <code>target</code> (dấu <code>/</code> cuối = thư mục) ở mọi cấp</td>
+<td><code>target/classes/...</code></td>
+</tr>
+<tr>
+<td><code>*.iml</code></td>
+<td><code>*</code> khớp <strong>mọi ký tự</strong> trong tên: bỏ qua mọi file đuôi <code>.iml</code></td>
+<td><code>Selenium1.iml</code></td>
+</tr>
+<tr>
+<td><code>.mvn/repository/</code></td>
+<td>Đường dẫn có <code>/</code> ở giữa: tính từ <strong>thư mục chứa <code>.gitignore</code></strong></td>
+<td><code>.mvn/repository/org/...</code></td>
+</tr>
+<tr>
+<td><code>**/logs/</code></td>
+<td><code>**</code> khớp <strong>mọi cấp thư mục</strong></td>
+<td><code>a/b/logs/</code></td>
+</tr>
+<tr>
+<td><code>!important.log</code></td>
+<td><code>!</code> <strong>loại trừ</strong>: file này <strong>không</strong> bị bỏ qua dù mẫu trước khớp</td>
+<td></td>
+</tr>
+<tr>
+<td><code># ghi chú</code></td>
+<td>Dòng chú thích</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Lưu ý:</strong> <code>.gitignore</code> chỉ ảnh hưởng file <strong>chưa được theo dõi</strong>. File đã commit rồi thì phải <code>git rm --cached</code>.</p>
+<h4 id="git-check-ignore--v-đường-dẫn"><code>git check-ignore -v &lt;đường dẫn&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> cho biết một file/thư mục <strong>có bị bỏ qua không</strong> và <strong>quy tắc nào (ở file nào, dòng nào)</strong> khớp.</li>
+<li>🟢. <strong>Dùng khi:</strong> "vì sao file này không hiện trong <code>git status</code>?".</li>
+</ul>
+<h4 id="git-ls-files-đường-dẫn"><code>git ls-files &lt;đường dẫn&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> liệt kê file <strong>Git đang theo dõi</strong> (đã vào index). 🟢.</li>
+<li><strong>Ví dụ:</strong> <code>git ls-files .mvn</code> — kiểm tra <code>.mvn/repository</code> không bị commit.</li>
+</ul>
+<h4 id="git-rm--r---cached-đường-dẫn"><code>git rm -r --cached &lt;đường dẫn&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>ngừng theo dõi</strong> file/thư mục trong Git nhưng <strong>giữ file trên đĩa</strong>.</li>
+<li><strong>An toàn:</strong> 🟡. <strong>Dùng khi:</strong> lỡ commit <code>target/</code> rồi mới thêm <code>.gitignore</code>; sau đó commit để Git "quên" nó.</li>
+<li><strong>Khác <code>git rm</code> (không <code>--cached</code>):</strong> <code>git rm</code> <strong>xoá luôn file trên đĩa</strong> (🔴).</li>
+</ul>
+<h4 id="git-ls-files---stage-mvnw"><code>git ls-files --stage mvnw</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> hiện <strong>mode</strong> của file trong Git: <code>100755</code> = có quyền thực thi; <code>100644</code> = file thường. 🟢.</li>
+</ul>
+<h4 id="git-update-index---chmodx-mvnw"><code>git update-index --chmod=+x mvnw</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đặt <strong>bit thực thi</strong> cho file trong Git (cần cho <code>./mvnw</code> trên Linux/macOS/CI). Sau đó phải <code>commit</code>.</li>
+<li>🟡. <strong>Dùng khi:</strong> <code>mvnw</code> bị <code>100644</code> (thường xảy ra khi commit từ Windows).</li>
+</ul>
+<h4 id="gitattributes--mvnw-text-eollf"><code>.gitattributes</code> — <code>/mvnw text eol=lf</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> ép file <code>mvnw</code> luôn dùng kết thúc dòng <strong>LF</strong> (kiểu Linux) khi checkout, để tránh lỗi <code>/bin/sh^M: bad interpreter</code>.</li>
+<li><strong>Mẫu thường gặp:</strong></li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Dòng</th>
+<th>Nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>* text=auto</code></td>
+<td>Git tự nhận file văn bản và chuẩn hoá kết thúc dòng</td>
+</tr>
+<tr>
+<td><code>/mvnw text eol=lf</code></td>
+<td><code>mvnw</code> <strong>luôn</strong> LF</td>
+</tr>
+<tr>
+<td><code>*.cmd text eol=crlf</code></td>
+<td>File <code>.cmd</code> <strong>luôn</strong> CRLF (Windows)</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="git-add---renormalize-"><code>git add --renormalize .</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> áp lại quy tắc <code>.gitattributes</code> lên các file đã theo dõi để <strong>sửa kết thúc dòng</strong> trong index. 🟡.</li>
+</ul>
+<h4 id="git-ls-files---eol-file"><code>git ls-files --eol &lt;file&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> hiện kiểu kết thúc dòng (<code>lf</code>/<code>crlf</code>) của file trong index và trên đĩa. 🟢. Cảnh báo <code>LF will be replaced by CRLF</code> chỉ là Git báo sẽ đổi khi checkout theo <code>core.autocrlf</code> — không phải lỗi.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Câu hỏi</th>
+<th>Lệnh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File này có bị ignore không? vì sao?</td>
+<td><code>git check-ignore -v</code></td>
+</tr>
+<tr>
+<td>Git đang theo dõi những file nào?</td>
+<td><code>git ls-files</code></td>
+</tr>
+<tr>
+<td>Lỡ commit thư mục cần ignore</td>
+<td><code>git rm -r --cached</code> + <code>.gitignore</code> + commit</td>
+</tr>
+<tr>
+<td><code>mvnw</code> không chạy trên Linux</td>
+<td><code>git update-index --chmod=+x mvnw</code></td>
+</tr>
+<tr>
+<td><code>^M: bad interpreter</code></td>
+<td><code>.gitattributes</code> + <code>git add --renormalize</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-đã-chạy-thật-trên-repo-thử">3. Ví dụ (đã chạy thật trên repo thử)</h2>
 <h3 id="ví-dụ-1--gitignore-chặn-đúng-file-sinh-ra">Ví dụ 1 — <code>.gitignore</code> chặn đúng file sinh ra</h3>
 <div class="code" data-lang="bash"><div class="code-head"><span class="lang">bash</span><button class="copy" type="button">Copy</button></div><pre><code class="hl">git<span class="w"> </span>check-ignore<span class="w"> </span>-v<span class="w"> </span>target<span class="w"> </span>.mvn/repository</code></pre></div>

@@ -86,6 +86,96 @@ git<span class="w"> </span>add<span class="w"> </span>pom.xml<span class="w">   
 git<span class="w"> </span>commit<span class="w">                      </span><span class="c1"># (merge) hoặc: git rebase --continue (rebase)</span>
 <span class="c1"># huỷ bỏ nếu rối:</span>
 git<span class="w"> </span>merge<span class="w"> </span>--abort<span class="w">               </span><span class="c1"># hoặc: git rebase --abort</span></code></pre></div>
+<h3 id="21-từng-dấu-hiệu-và-lệnh-khi-xử-lý-conflict">2.1. Từng dấu hiệu và lệnh khi xử lý conflict</h3>
+<h4 id="ba-dòng-đánh-dấu---">Ba dòng đánh dấu <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></h4>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Dòng</th>
+<th>Nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code></td>
+<td><strong>Bắt đầu</strong> vùng xung đột; phần ngay sau là phiên bản của nhánh <strong>bạn đang đứng</strong></td>
+</tr>
+<tr>
+<td><code>=======</code></td>
+<td>Ngăn cách hai phiên bản</td>
+</tr>
+<tr>
+<td><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/a</code></td>
+<td><strong>Kết thúc</strong>; phần ngay trước là phiên bản của nhánh <strong>đang được gộp vào</strong></td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Nhiệm vụ của bạn:</strong> quyết định nội dung đúng (giữ một bên, giữ cả hai, hoặc viết lại) rồi <strong>xoá cả ba dòng đánh dấu</strong>.</li>
+<li><strong>Lưu ý:</strong> để sót dòng đánh dấu thì file hỏng (<code>pom.xml</code> không còn là XML hợp lệ). Kiểm tra: <code>grep -rn "&lt;&lt;&lt;&lt;&lt;&lt;&lt;" .</code></li>
+</ul>
+<h4 id="git-status-khi-đang-conflict"><code>git status</code> khi đang conflict</h4>
+<ul>
+<li><strong>Làm gì:</strong> liệt kê file <strong><code>both modified</code></strong> (cả hai bên cùng sửa — cần bạn giải quyết) và cho biết đang ở giữa merge/rebase.</li>
+<li>🟢.</li>
+</ul>
+<h4 id="git-diff---name-only---diff-filteru"><code>git diff --name-only --diff-filter=U</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chỉ liệt kê <strong>tên các file còn conflict</strong> chưa giải quyết. 🟢.</li>
+</ul>
+<h4 id="git-add-file-sau-khi-sửa-conflict"><code>git add &lt;file&gt;</code> (sau khi sửa conflict)</h4>
+<ul>
+<li><strong>Làm gì:</strong> báo cho Git "file này <strong>đã giải quyết xong</strong>". Chưa <code>add</code> thì Git vẫn coi là conflict.</li>
+</ul>
+<h4 id="git-commit-khi-đang-merge--git-rebase---continue-khi-đang-rebase"><code>git commit</code> (khi đang merge) / <code>git rebase --continue</code> (khi đang rebase)</h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>hoàn tất</strong> việc gộp sau khi mọi file đã <code>add</code>. Merge → commit gộp; rebase → tiếp tục áp commit kế tiếp.</li>
+</ul>
+<h4 id="git-merge---abort--git-rebase---abort"><code>git merge --abort</code> / <code>git rebase --abort</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>huỷ hẳn</strong> lần gộp đang dở, đưa mọi thứ về trạng thái trước khi bắt đầu. 🟡 — an toàn để bắt đầu lại khi bị rối.</li>
+</ul>
+<h4 id="git-checkout---ours-file--git-checkout---theirs-file"><code>git checkout --ours &lt;file&gt;</code> / <code>git checkout --theirs &lt;file&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chọn <strong>nhanh một phía</strong> cho cả file khi không cần trộn.</li>
+<li><strong>Lưu ý:</strong> khi <strong>merge</strong>, <code>--ours</code> = nhánh bạn đang đứng; khi <strong>rebase</strong>, ý nghĩa <strong>đảo ngược</strong> (<code>--ours</code> = nhánh đích). Dễ nhầm nên thường <strong>sửa tay</strong> an toàn hơn.</li>
+</ul>
+<h3 id="22-pull-request--các-khái-niệm">2.2. Pull Request — các khái niệm</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thuật ngữ</th>
+<th>Nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Base</strong> (nhánh đích)</td>
+<td>Nhánh muốn gộp <strong>vào</strong> (thường <code>main</code>)</td>
+</tr>
+<tr>
+<td><strong>Compare</strong> (nhánh nguồn)</td>
+<td>Nhánh chứa thay đổi của bạn</td>
+</tr>
+<tr>
+<td><strong>Review</strong></td>
+<td>Người khác đọc code; có thể <em>Comment</em>, <em>Approve</em> (đồng ý), <em>Request changes</em> (yêu cầu sửa)</td>
+</tr>
+<tr>
+<td><strong>CI check</strong></td>
+<td>Kiểm tra tự động (chạy <code>clean test</code>) — nên xanh mới merge</td>
+</tr>
+<tr>
+<td><strong>Merge pull request</strong></td>
+<td>Gộp vào <code>base</code>; có các kiểu: <em>merge commit</em>, <em>squash</em> (gom thành 1 commit), <em>rebase and merge</em></td>
+</tr>
+<tr>
+<td><strong>Draft PR</strong></td>
+<td>PR chưa sẵn sàng review</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Một PR tốt:</strong> nhỏ (một mục đích), mô tả <em>Mục đích – Thay đổi – Cách kiểm chứng</em>, CI xanh, đã tự đọc lại diff trước khi mở.</p>
 <h2 id="3-ví-dụ-đã-chạy-thật">3. Ví dụ (đã chạy thật)</h2>
 <h3 id="ví-dụ-1--conflict-thật-ở-pomxml">Ví dụ 1 — Conflict thật ở <code>pom.xml</code></h3>
 <p>Hai nhánh cùng đổi <code>selenium.version</code>; <code>git merge feature/a</code> báo:</p>

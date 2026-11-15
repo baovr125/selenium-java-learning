@@ -120,6 +120,196 @@
 <span class="n">props</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="n">inputStream</span><span class="p">);</span><span class="w">                                 </span><span class="c1">// nạp key=value</span>
 <span class="n">props</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">&quot;browser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chrome&quot;</span><span class="p">);</span><span class="w">                  </span><span class="c1">// lấy giá trị, có mặc định</span></code></pre></div>
 <p>Hầu hết method của <code>Files</code> ném <code>IOException</code> (checked) → cần <code>try/catch</code> hoặc <code>throws</code> (<a href="10-exception-handling.html">Exception Handling</a>).</p>
+<h3 id="21-từng-method-để-làm-việc-với-file">2.1. Từng method để làm việc với file</h3>
+<h4 id="pathofstring-first-string-more"><code>Path.of(String first, String... more)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tạo đối tượng <code>Path</code> biểu diễn một đường dẫn, <strong>ghép các phần</strong> bằng dấu phân cách đúng hệ điều hành. Chưa kiểm tra file có tồn tại.</li>
+<li><strong>Trả về:</strong> <code>Path</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Path.of("target", "screenshots", "login.png")</code> → <code>target\screenshots\login.png</code> (Windows) / <code>target/screenshots/login.png</code> (Linux).</li>
+<li><strong>Lưu ý:</strong> tránh viết cứng <code>\</code> trong chuỗi — không chạy trên Linux/CI.</li>
+</ul>
+<h4 id="filesexistspath--filesnotexistspath"><code>Files.exists(Path)</code> / <code>Files.notExists(Path)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra file/thư mục <strong>có tồn tại</strong> không. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong>Ví dụ:</strong> <code>Files.exists(Path.of("downloads", "report.xlsx"))</code>.</li>
+</ul>
+<h4 id="filescreatedirectoriespath"><code>Files.createDirectories(Path)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tạo thư mục <strong>và mọi thư mục cha</strong> còn thiếu. <strong>Trả về:</strong> <code>Path</code>.</li>
+<li><strong>Lưu ý:</strong> thư mục đã có thì <strong>không lỗi</strong>. Khác <code>createDirectory</code> (chỉ tạo một cấp, lỗi nếu cha chưa có).</li>
+</ul>
+<h4 id="fileswritestringpath-string-text"><code>Files.writeString(Path, String text)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>ghi</strong> chuỗi vào file; file chưa có thì tạo, đã có thì <strong>ghi đè</strong>. <strong>Trả về:</strong> <code>Path</code>.</li>
+<li><strong>Lưu ý:</strong> ném <code>IOException</code> (checked). Thêm <code>StandardOpenOption.APPEND</code> để <strong>ghi nối</strong>.</li>
+</ul>
+<h4 id="fileswritepath-iterablestring-lines"><code>Files.write(Path, Iterable&lt;String&gt; lines)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> ghi <strong>từng phần tử</strong> của danh sách thành một dòng. <strong>Trả về:</strong> <code>Path</code>.</li>
+</ul>
+<h4 id="filesreadstringpath--filesreadalllinespath"><code>Files.readString(Path)</code> / <code>Files.readAllLines(Path)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đọc <strong>toàn bộ</strong> file thành một <code>String</code> / thành <code>List&lt;String&gt;</code> (mỗi dòng một phần tử).</li>
+<li><strong>Khi lỗi:</strong> file không có → <code>NoSuchFileException</code>.</li>
+<li><strong>Lưu ý:</strong> mặc định đọc UTF-8; cần chỉ định: <code>Files.readString(path, StandardCharsets.UTF_8)</code>. Không hợp với file rất lớn.</li>
+</ul>
+<h4 id="filescopypath-src-path-dest-copyoption"><code>Files.copy(Path src, Path dest, CopyOption...)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> sao chép file. <strong>Trả về:</strong> <code>Path</code> đích.</li>
+<li><strong>Lưu ý:</strong> <code>dest</code> đã tồn tại → <code>FileAlreadyExistsException</code> <strong>trừ khi</strong> thêm <code>StandardCopyOption.REPLACE_EXISTING</code>. 🧩 dùng để lưu ảnh chụp màn hình.</li>
+</ul>
+<h4 id="filesdeletepath--filesdeleteifexistspath"><code>Files.delete(Path)</code> / <code>Files.deleteIfExists(Path)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> xoá file. <code>delete</code> lỗi nếu không tồn tại; <code>deleteIfExists</code> <strong>trả <code>false</code></strong> thay vì lỗi.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>Files.delete</code></th>
+<th><code>Files.deleteIfExists</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File không có</td>
+<td><code>NoSuchFileException</code></td>
+<td>trả <code>false</code>, không lỗi</td>
+</tr>
+<tr>
+<td>Trả về</td>
+<td><code>void</code></td>
+<td><code>boolean</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-từng-method-của-properties-file-keyvalue">2.2. Từng method của <code>Properties</code> (file <code>key=value</code>)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new Properties()</code></td>
+<td>Tạo bảng key-value rỗng (là một <code>Map&lt;Object,Object&gt;</code>)</td>
+<td><code>Properties</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>load(InputStream)</code></td>
+<td>Đọc file <code>key=value</code> vào bảng</td>
+<td><code>void</code></td>
+<td>Đọc theo <strong>ISO-8859-1</strong> → tiếng Việt có thể hỏng; dùng <code>load(Reader)</code> với UTF-8</td>
+</tr>
+<tr>
+<td><code>load(Reader)</code></td>
+<td>Như trên, đọc theo bộ mã bạn chọn</td>
+<td><code>void</code></td>
+<td><code>new InputStreamReader(in, StandardCharsets.UTF_8)</code></td>
+</tr>
+<tr>
+<td><code>getProperty(key)</code></td>
+<td>Lấy giá trị theo khoá</td>
+<td><code>String</code>, <strong><code>null</code></strong> nếu thiếu</td>
+<td><code>Integer.parseInt(null)</code> sẽ lỗi → nên có mặc định</td>
+</tr>
+<tr>
+<td><code>getProperty(key, default)</code></td>
+<td>Như trên, trả <code>default</code> khi thiếu</td>
+<td><code>String</code></td>
+<td>An toàn hơn</td>
+</tr>
+<tr>
+<td><code>setProperty(key, value)</code></td>
+<td>Thêm/đổi một cặp</td>
+<td>giá trị cũ hoặc <code>null</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>store(Writer, comment)</code></td>
+<td>Ghi bảng ra file</td>
+<td><code>void</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="23-từng-thành-phần-của-đọc-file-từ-classpath">2.3. Từng thành phần của đọc file từ classpath</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Làm chính xác gì</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Config.class.getClassLoader()</code></td>
+<td>Lấy "bộ nạp class" để tìm tài nguyên trong <strong>classpath</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>.getResourceAsStream("config.properties")</code></td>
+<td>Mở file trong <code>src/test/resources</code> (sau build nằm trong <code>target/test-classes</code>) thành <code>InputStream</code></td>
+<td>Trả <strong><code>null</code></strong> nếu không có — phải kiểm tra</td>
+</tr>
+<tr>
+<td><code>try (InputStream in = ...) { }</code></td>
+<td>try-with-resources: tự đóng <code>in</code></td>
+<td>Không cần <code>finally</code></td>
+</tr>
+<tr>
+<td><code>new BufferedReader(new InputStreamReader(in, UTF_8))</code></td>
+<td>Bọc stream để đọc <strong>từng dòng</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>br.readLine()</code></td>
+<td>Đọc một dòng</td>
+<td><code>String</code>, <strong><code>null</code></strong> khi hết file</td>
+</tr>
+<tr>
+<td><code>br.lines()</code></td>
+<td>Luồng (<code>Stream</code>) mọi dòng</td>
+<td>Dùng với <code>skip(1)</code> để bỏ dòng tiêu đề CSV</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cần</th>
+<th>Dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ghép đường dẫn đúng mọi hệ điều hành</td>
+<td><code>Path.of(...)</code></td>
+</tr>
+<tr>
+<td>Đọc cả file nhỏ</td>
+<td><code>Files.readString</code> / <code>readAllLines</code></td>
+</tr>
+<tr>
+<td>Đọc file cấu hình đóng gói trong dự án</td>
+<td><code>getResourceAsStream</code> + <code>Properties</code></td>
+</tr>
+<tr>
+<td>Đọc file lớn từng dòng</td>
+<td><code>BufferedReader</code> (try-with-resources)</td>
+</tr>
+<tr>
+<td>Lưu ảnh chụp</td>
+<td><code>Files.createDirectories</code> + <code>Files.copy(..., REPLACE_EXISTING)</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--ghi-rồi-đọc-file">Ví dụ 1 — Ghi rồi đọc file</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>

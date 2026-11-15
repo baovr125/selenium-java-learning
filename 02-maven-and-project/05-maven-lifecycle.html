@@ -256,6 +256,98 @@ BUILD SUCCESS</code></pre></div>
 </tr>
 </tbody>
 </table></div>
+<h3 id="51-từng-cờ-option-dòng-lệnh-thường-dùng">5.1. Từng cờ (option) dòng lệnh thường dùng</h3>
+<p>Đặt cờ <strong>sau</strong> <code>mvnw</code> và có thể kết hợp nhiều cờ: <code>.\mvnw.cmd -B -q clean test "-Dgroups=smoke"</code>.</p>
+<h4 id="-dtêngiá-trị"><code>-D&lt;tên&gt;=&lt;giá trị&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đặt một <strong>system property</strong> cho lần chạy này (đè giá trị cùng tên trong <code>pom.xml</code>).</li>
+<li><strong>Ví dụ:</strong> <code>-Dtest=Exercise01_LoginTest</code>, <code>-Dbrowser=firefox</code>.</li>
+<li><strong>Lưu ý:</strong> trên PowerShell đặt trong ngoặc kép khi giá trị có ký tự đặc biệt: <code>"-Dtest=Exercise0*"</code>.</li>
+</ul>
+<h4 id="-dskiptests-và--dmaventestskiptrue"><code>-DskipTests</code> và <code>-Dmaven.test.skip=true</code></h4>
+<ul>
+<li><strong><code>-DskipTests</code>:</strong> <strong>biên dịch</strong> test nhưng <strong>không chạy</strong>.</li>
+<li><strong><code>-Dmaven.test.skip=true</code>:</strong> <strong>bỏ cả biên dịch lẫn chạy</strong> test (mạnh hơn).</li>
+<li><strong>Lưu ý:</strong> kết quả <code>BUILD SUCCESS</code> ở đây <strong>không</strong> có nghĩa test đã pass.</li>
+</ul>
+<h4 id="-pid"><code>-P&lt;id&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>bật profile</strong> có <code>&lt;id&gt;</code> đó trong <code>pom.xml</code>. Nhiều profile: <code>-Pci,staging</code>.</li>
+</ul>
+<h4 id="-b-batch-mode"><code>-B</code> (batch mode)</h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy <strong>không tương tác</strong>, bỏ màu và thanh tiến trình — log gọn khi chạy trên CI.</li>
+</ul>
+<h4 id="-q-quiet"><code>-q</code> (quiet)</h4>
+<ul>
+<li><strong>Làm gì:</strong> chỉ in <strong>lỗi</strong>; bỏ phần lớn thông tin <code>[INFO]</code>.</li>
+</ul>
+<h4 id="-e-và--x"><code>-e</code> và <code>-X</code></h4>
+<ul>
+<li><strong><code>-e</code>:</strong> in <strong>stacktrace</strong> đầy đủ của lỗi build.</li>
+<li><strong><code>-X</code>:</strong> bật <strong>log debug</strong> (rất dài) — để tìm nguyên nhân khó.</li>
+</ul>
+<h4 id="-o-offline"><code>-o</code> (offline)</h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>không dùng mạng</strong>, chỉ dùng thư viện đã có trong Local Repository.</li>
+<li><strong>Lưu ý:</strong> thiếu thư viện/plugin trong cache → lỗi <code>Cannot access central ... in offline mode</code>.</li>
+</ul>
+<h4 id="-u-update-snapshots"><code>-U</code> (update snapshots)</h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>ép Maven kiểm tra lại</strong> bản mới của thư viện (kể cả khi lần trước tải lỗi bị nhớ).</li>
+<li><strong>Dùng khi:</strong> sau <code>git pull</code> mà gặp <code>Could not resolve dependencies</code>.</li>
+</ul>
+<h4 id="-f-đường-dẫn-pom"><code>-f &lt;đường dẫn pom&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy Maven với <strong>file <code>pom.xml</code> ở chỗ khác</strong> thay vì thư mục hiện tại.</li>
+</ul>
+<h4 id="-t-số-luồng-hoặc--t-1c"><code>-T &lt;số luồng&gt;</code> (hoặc <code>-T 1C</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> build <strong>song song</strong> nhiều module bằng số luồng đã cho (<code>1C</code> = 1 luồng mỗi lõi CPU).</li>
+<li><strong>Lưu ý:</strong> là song song <strong>module</strong> của Maven, <strong>không phải</strong> chạy song song test.</li>
+</ul>
+<h4 id="-ntp----no-transfer-progress"><code>-ntp</code> / <code>--no-transfer-progress</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> ẩn dòng tiến trình tải thư viện — log CI sạch hơn.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Muốn</th>
+<th>Cờ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Truyền giá trị cho code/plugin</td>
+<td><code>-D&lt;tên&gt;=&lt;giá trị&gt;</code></td>
+</tr>
+<tr>
+<td>Chạy một test</td>
+<td><code>-Dtest=...</code></td>
+</tr>
+<tr>
+<td>Bỏ qua chạy test</td>
+<td><code>-DskipTests</code></td>
+</tr>
+<tr>
+<td>Log gọn cho CI</td>
+<td><code>-B -ntp</code></td>
+</tr>
+<tr>
+<td>Điều tra lỗi</td>
+<td><code>-e</code> rồi <code>-X</code></td>
+</tr>
+<tr>
+<td>Không dùng mạng</td>
+<td><code>-o</code></td>
+</tr>
+<tr>
+<td>Ép tải lại</td>
+<td><code>-U</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="6-clean-test-package-verify-install-khác-nhau-thế-nào">6. <code>clean</code>, <code>test</code>, <code>package</code>, <code>verify</code>, <code>install</code> khác nhau thế nào?</h2>
 <div class="table-wrap"><table>
 <thead>

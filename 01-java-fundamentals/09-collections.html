@@ -164,6 +164,318 @@
 </tbody>
 </table></div>
 <p><code>Map</code>: <code>put</code>, <code>get</code>, <code>getOrDefault(k, d)</code>, <code>containsKey</code>, <code>remove</code>, <code>keySet()</code>, <code>values()</code>, <code>entrySet()</code>.</p>
+<h3 id="21-từng-method-của-list-arraylist">2.1. Từng method của <code>List</code> (<code>ArrayList</code>)</h3>
+<p><code>List&lt;String&gt; list = new ArrayList&lt;&gt;();</code> — có thứ tự, cho phép trùng, truy cập theo chỉ số (từ 0).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Khi lỗi / lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add(e)</code></td>
+<td>Thêm <code>e</code> vào <strong>cuối</strong></td>
+<td><code>boolean</code> (<code>true</code>)</td>
+<td><code>List.of(...)</code>/<code>Arrays.asList</code> → <code>UnsupportedOperationException</code></td>
+</tr>
+<tr>
+<td><code>add(i, e)</code></td>
+<td>Chèn <code>e</code> tại vị trí <code>i</code>, <strong>đẩy các phần tử sau</strong> sang phải</td>
+<td><code>void</code></td>
+<td><code>i</code> ngoài phạm vi → <code>IndexOutOfBoundsException</code></td>
+</tr>
+<tr>
+<td><code>get(i)</code></td>
+<td>Lấy phần tử ở vị trí <code>i</code></td>
+<td><code>E</code></td>
+<td><code>i &gt;= size()</code> → <code>IndexOutOfBoundsException</code></td>
+</tr>
+<tr>
+<td><code>set(i, e)</code></td>
+<td><strong>Thay</strong> phần tử ở vị trí <code>i</code></td>
+<td>phần tử <strong>cũ</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>remove(int i)</code></td>
+<td>Xoá phần tử ở vị trí <code>i</code></td>
+<td>phần tử vừa xoá</td>
+<td>Với <code>List&lt;Integer&gt;</code>: <code>remove(1)</code> xoá <strong>theo chỉ số</strong>; xoá theo giá trị dùng <code>remove(Integer.valueOf(1))</code></td>
+</tr>
+<tr>
+<td><code>remove(Object o)</code></td>
+<td>Xoá phần tử <strong>đầu tiên</strong> bằng <code>o</code></td>
+<td><code>boolean</code></td>
+<td>Không có thì <code>false</code></td>
+</tr>
+<tr>
+<td><code>size()</code></td>
+<td>Số phần tử</td>
+<td><code>int</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>isEmpty()</code></td>
+<td>Danh sách rỗng không</td>
+<td><code>boolean</code></td>
+<td>Rõ nghĩa hơn <code>size() == 0</code></td>
+</tr>
+<tr>
+<td><code>contains(o)</code></td>
+<td>Có chứa <code>o</code> không (so bằng <code>equals</code>)</td>
+<td><code>boolean</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>indexOf(o)</code></td>
+<td>Vị trí đầu tiên của <code>o</code></td>
+<td><code>int</code></td>
+<td><strong><code>-1</code></strong> nếu không có</td>
+</tr>
+<tr>
+<td><code>addAll(list2)</code></td>
+<td>Thêm cả danh sách khác vào cuối</td>
+<td><code>boolean</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear()</code></td>
+<td>Xoá hết</td>
+<td><code>void</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>sort(comparator)</code></td>
+<td>Sắp xếp tại chỗ (<code>null</code> = thứ tự tự nhiên)</td>
+<td><code>void</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>subList(from, to)</code></td>
+<td>Lấy đoạn <code>[from, to)</code> (là <strong>khung nhìn</strong>, không phải bản sao)</td>
+<td><code>List&lt;E&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>List.of(a, b, c)</code></td>
+<td>Tạo list <strong>bất biến</strong> nhanh</td>
+<td><code>List&lt;E&gt;</code></td>
+<td>Không <code>add/remove/set</code>; không chứa <code>null</code></td>
+</tr>
+<tr>
+<td><code>forEach(x -&gt; ...)</code></td>
+<td>Chạy một hành động cho từng phần tử</td>
+<td><code>void</code></td>
+<td>Xem <a href="11-lambda-and-generics.html">Lambda</a></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-từng-method-của-set-hashset">2.2. Từng method của <code>Set</code> (<code>HashSet</code>)</h3>
+<p>Không chứa phần tử trùng; <strong>không đảm bảo thứ tự</strong> (cần giữ thứ tự thêm vào → <code>LinkedHashSet</code>; luôn sắp xếp → <code>TreeSet</code>).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add(e)</code></td>
+<td>Thêm <code>e</code> nếu <strong>chưa có</strong></td>
+<td><code>true</code> nếu thêm được; <strong><code>false</code></strong> nếu đã có (không lỗi)</td>
+</tr>
+<tr>
+<td><code>contains(o)</code></td>
+<td>Có chứa <code>o</code> không</td>
+<td><code>boolean</code> (rất nhanh)</td>
+</tr>
+<tr>
+<td><code>remove(o)</code></td>
+<td>Xoá <code>o</code></td>
+<td><code>true</code> nếu có và đã xoá</td>
+</tr>
+<tr>
+<td><code>size()</code>, <code>isEmpty()</code>, <code>clear()</code></td>
+<td>Giống <code>List</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">unique</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">));</span><span class="w">   </span><span class="c1">// {&quot;a&quot;, &quot;b&quot;}: loại trùng</span></code></pre></div>
+<h3 id="23-từng-method-của-map-hashmap">2.3. Từng method của <code>Map</code> (<code>HashMap</code>)</h3>
+<p>Cặp <strong>key → value</strong>, key không trùng; <code>put</code> cùng key sẽ <strong>ghi đè</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+<th>Lưu ý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>put(k, v)</code></td>
+<td>Thêm cặp, hoặc <strong>ghi đè</strong> nếu key đã có</td>
+<td>giá trị <strong>cũ</strong> (hoặc <code>null</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>get(k)</code></td>
+<td>Lấy value theo key</td>
+<td><code>V</code>, <strong><code>null</code></strong> nếu không có key</td>
+<td>Unboxing <code>null</code> → <code>NullPointerException</code></td>
+</tr>
+<tr>
+<td><code>getOrDefault(k, d)</code></td>
+<td>Như <code>get</code> nhưng trả <code>d</code> khi không có key</td>
+<td><code>V</code></td>
+<td>Tránh <code>null</code></td>
+</tr>
+<tr>
+<td><code>containsKey(k)</code></td>
+<td>Có key này không</td>
+<td><code>boolean</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>containsValue(v)</code></td>
+<td>Có value này không</td>
+<td><code>boolean</code></td>
+<td>Chậm (duyệt hết)</td>
+</tr>
+<tr>
+<td><code>remove(k)</code></td>
+<td>Xoá theo key</td>
+<td>value đã xoá</td>
+<td></td>
+</tr>
+<tr>
+<td><code>putIfAbsent(k, v)</code></td>
+<td>Chỉ thêm nếu key <strong>chưa có</strong></td>
+<td>giá trị hiện có hoặc <code>null</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>keySet()</code></td>
+<td>Tập mọi <strong>key</strong></td>
+<td><code>Set&lt;K&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>values()</code></td>
+<td>Mọi <strong>value</strong></td>
+<td><code>Collection&lt;V&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>entrySet()</code></td>
+<td>Mọi <strong>cặp</strong></td>
+<td><code>Set&lt;Map.Entry&lt;K,V&gt;&gt;</code></td>
+<td>Duyệt cả key lẫn value: <code>for (Map.Entry&lt;K,V&gt; e : map.entrySet())</code> — <code>e.getKey()</code>, <code>e.getValue()</code></td>
+</tr>
+<tr>
+<td><code>size()</code>, <code>isEmpty()</code>, <code>clear()</code></td>
+<td>Giống <code>List</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="24-iterator-và-removeif">2.4. <code>Iterator</code> và <code>removeIf</code></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list.iterator()</code></td>
+<td>Tạo "con trỏ duyệt"</td>
+</tr>
+<tr>
+<td><code>it.hasNext()</code></td>
+<td>Còn phần tử kế không (<code>boolean</code>)</td>
+</tr>
+<tr>
+<td><code>it.next()</code></td>
+<td>Lấy phần tử kế và tiến con trỏ</td>
+</tr>
+<tr>
+<td><code>it.remove()</code></td>
+<td>Xoá phần tử <strong>vừa</strong> lấy bằng <code>next()</code> — <strong>cách xoá an toàn khi đang duyệt</strong></td>
+</tr>
+<tr>
+<td><code>list.removeIf(x -&gt; điều_kiện)</code></td>
+<td>Xoá mọi phần tử thoả điều kiện — gọn hơn <code>Iterator</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="25-collections--hàm-tiện-ích">2.5. <code>Collections</code> — hàm tiện ích</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm gì</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Collections.sort(list)</code></td>
+<td>Sắp xếp tăng dần (list gốc bị đổi)</td>
+</tr>
+<tr>
+<td><code>Collections.reverse(list)</code></td>
+<td>Đảo ngược thứ tự</td>
+</tr>
+<tr>
+<td><code>Collections.max(c)</code> / <code>min(c)</code></td>
+<td>Phần tử lớn / nhỏ nhất</td>
+</tr>
+<tr>
+<td><code>Collections.unmodifiableList(list)</code></td>
+<td>Bọc thành list <strong>chỉ đọc</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cần</th>
+<th>Dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Danh sách có thứ tự, truy cập theo chỉ số</td>
+<td><code>List</code> (<code>ArrayList</code>)</td>
+</tr>
+<tr>
+<td>Loại trùng, kiểm tra tồn tại nhanh</td>
+<td><code>Set</code> (<code>HashSet</code>)</td>
+</tr>
+<tr>
+<td>Tra cứu giá trị theo khoá</td>
+<td><code>Map</code> (<code>HashMap</code>)</td>
+</tr>
+<tr>
+<td>Giữ thứ tự thêm vào</td>
+<td><code>LinkedHashSet</code> / <code>LinkedHashMap</code></td>
+</tr>
+<tr>
+<td>Luôn sắp xếp</td>
+<td><code>TreeSet</code> / <code>TreeMap</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--arraylist">Ví dụ 1 — <code>ArrayList</code></h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.ArrayList</span><span class="p">;</span>

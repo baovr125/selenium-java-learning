@@ -136,6 +136,119 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-từ-khoá-và-method-xử-lý-lỗi">2.1. Từng từ khoá và method xử lý lỗi</h3>
+<h4 id="try---"><code>try { ... }</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bao đoạn code <strong>có thể ném exception</strong>. Nếu một dòng ném lỗi, Java <strong>bỏ qua phần còn lại</strong> của khối <code>try</code> và nhảy sang <code>catch</code> phù hợp.</li>
+</ul>
+<h4 id="catch-kiểuexception-e"><code>catch (KiểuException e)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>bắt</strong> exception thuộc <code>KiểuException</code> (hoặc lớp con của nó) và chạy khối xử lý. <code>e</code> là đối tượng lỗi.</li>
+<li><strong>Lưu ý:</strong> nhiều <code>catch</code> thì kiểm tra <strong>từ trên xuống</strong>, nhánh khớp đầu tiên chạy → đặt <strong>cụ thể trước, chung sau</strong> (<code>Exception</code> ở cuối). Multi-catch: <code>catch (A | B e)</code>.</li>
+</ul>
+<h4 id="finally---"><code>finally { ... }</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>luôn chạy</strong> sau <code>try</code>/<code>catch</code>, dù có lỗi hay không (kể cả khi có <code>return</code>). Dùng để <strong>dọn dẹp</strong>: <code>driver.quit()</code>, đóng file.</li>
+<li><strong>Ví dụ:</strong> <code>try { test(); } finally { tearDown(); }</code> 🧩 <code>main()</code> của các Exercise.</li>
+</ul>
+<h4 id="throw-new-xexception"><code>throw new XException("...")</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>chủ động ném</strong> một exception tại chỗ này (câu lệnh).</li>
+<li><strong>Ví dụ:</strong> <code>throw new IllegalArgumentException("Browser không hỗ trợ: " + name);</code></li>
+</ul>
+<h4 id="throws-xexception-trên-khai-báo-method"><code>throws XException</code> (trên khai báo method)</h4>
+<ul>
+<li><strong>Làm gì:</strong> báo "method này <strong>có thể ném</strong> <code>XException</code>" — <strong>đẩy trách nhiệm xử lý</strong> cho nơi gọi. Bắt buộc với <strong>checked exception</strong> nếu bạn không <code>catch</code>.</li>
+<li><strong>Ví dụ:</strong> <code>public List&lt;String&gt; readCsv() throws IOException</code>.</li>
+</ul>
+<h4 id="try-with-resources-try-var-r----">try-with-resources <code>try (var r = ...) { }</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tự động <strong>đóng</strong> tài nguyên (file, stream) khi ra khỏi khối, kể cả khi có lỗi — không cần <code>finally</code>. Tài nguyên phải implement <code>AutoCloseable</code>.</li>
+</ul>
+<h3 id="22-từng-method-của-đối-tượng-throwable-biến-e">2.2. Từng method của đối tượng <code>Throwable</code> (biến <code>e</code>)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>e.getMessage()</code></td>
+<td>Câu thông báo lỗi</td>
+<td><code>String</code> (có thể <code>null</code>)</td>
+</tr>
+<tr>
+<td><code>e.getCause()</code></td>
+<td><strong>Nguyên nhân gốc</strong> (nếu lỗi này bọc lỗi khác)</td>
+<td><code>Throwable</code> hoặc <code>null</code></td>
+</tr>
+<tr>
+<td><code>e.printStackTrace()</code></td>
+<td>In <strong>toàn bộ stacktrace</strong> ra luồng lỗi (để debug)</td>
+<td><code>void</code></td>
+</tr>
+<tr>
+<td><code>e.getStackTrace()</code></td>
+<td>Stacktrace dạng mảng để xử lý bằng code</td>
+<td><code>StackTraceElement[]</code></td>
+</tr>
+<tr>
+<td><code>e.toString()</code></td>
+<td><code>"TênClass: message"</code></td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td><code>new RuntimeException("msg", e)</code></td>
+<td>Tạo lỗi mới <strong>giữ lỗi gốc</strong> làm <code>cause</code></td>
+<td><code>RuntimeException</code></td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">));</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">NoSuchElementException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="s">&quot;Thiếu phần tử x&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w">   </span><span class="c1">// giữ cause → không mất lỗi gốc</span>
+<span class="p">}</span></code></pre></div>
+<h3 id="23-checked-và-unchecked--nhận-biết-nhanh">2.3. Checked và Unchecked — nhận biết nhanh</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Checked</strong></th>
+<th><strong>Unchecked</strong> (<code>RuntimeException</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kế thừa</td>
+<td><code>Exception</code> (không phải <code>RuntimeException</code>)</td>
+<td><code>RuntimeException</code>, <code>Error</code></td>
+</tr>
+<tr>
+<td>Compiler bắt buộc <code>catch</code>/<code>throws</code>?</td>
+<td><strong>Có</strong></td>
+<td>Không</td>
+</tr>
+<tr>
+<td>Ví dụ</td>
+<td><code>IOException</code>, <code>InterruptedException</code> (của <code>Thread.sleep</code>)</td>
+<td><code>NullPointerException</code>, <code>NumberFormatException</code>, mọi exception của Selenium (<code>NoSuchElementException</code>...)</td>
+</tr>
+<tr>
+<td>Thường do</td>
+<td>Môi trường bên ngoài (file, mạng)</td>
+<td>Lỗi lập trình / trạng thái sai</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="objectsrequirenonnullobj-message"><code>Objects.requireNonNull(obj, "message")</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra <code>obj</code> <strong>không phải <code>null</code></strong>; là <code>null</code> thì ném <code>NullPointerException</code> kèm thông báo của bạn ngay tại chỗ (dễ tìm lỗi hơn).</li>
+<li><strong>Trả về:</strong> chính <code>obj</code>.</li>
+</ul>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--trycatchfinally">Ví dụ 1 — <code>try/catch/finally</code></h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>

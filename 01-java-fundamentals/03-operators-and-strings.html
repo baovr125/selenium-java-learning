@@ -194,6 +194,271 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-toán-tử--hành-vi-cần-nhớ">2.1. Toán tử — hành vi cần nhớ</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Toán tử</th>
+<th>Làm chính xác gì</th>
+<th>Ví dụ → kết quả</th>
+<th>Bẫy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td>Chia. Hai số <strong>nguyên</strong> → kết quả <strong>nguyên</strong> (cắt phần dư)</td>
+<td><code>7 / 2</code> → <code>3</code>; <code>7 / 2.0</code> → <code>3.5</code></td>
+<td>Chia số nguyên cho <code>0</code> → <code>ArithmeticException</code></td>
+</tr>
+<tr>
+<td><code>%</code></td>
+<td><strong>Phần dư</strong> của phép chia</td>
+<td><code>7 % 2</code> → <code>1</code>; <code>10 % 5</code> → <code>0</code></td>
+<td>Dùng kiểm tra chẵn/lẻ: <code>n % 2 == 0</code></td>
+</tr>
+<tr>
+<td><code>+</code> với chuỗi</td>
+<td><strong>Nối chuỗi</strong></td>
+<td><code>"a" + 1</code> → <code>"a1"</code>; <code>"2" + 3</code> → <code>"23"</code></td>
+<td>Cộng số trước: <code>1 + 2 + "x"</code> → <code>"3x"</code>, còn <code>"x" + 1 + 2</code> → <code>"x12"</code></td>
+</tr>
+<tr>
+<td><code>i++</code> / <code>++i</code></td>
+<td>Tăng 1. <code>i++</code> dùng giá trị <strong>cũ</strong> rồi tăng; <code>++i</code> tăng <strong>rồi</strong> dùng</td>
+<td><code>int i=5; int a=i++;</code> → <code>a=5, i=6</code></td>
+<td>Tránh viết <code>x = x++</code></td>
+</tr>
+<tr>
+<td><code>+=</code></td>
+<td>Cộng rồi gán</td>
+<td><code>x += 5</code> ≡ <code>x = x + 5</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>==</code></td>
+<td>So sánh <strong>giá trị</strong> (số) hoặc <strong>địa chỉ</strong> (đối tượng)</td>
+<td><code>5 == 5</code> → <code>true</code></td>
+<td><strong>Không</strong> dùng <code>==</code> để so sánh <code>String</code></td>
+</tr>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td><strong>Và</strong>, ngắn mạch: vế trái <code>false</code> thì <strong>không chạy</strong> vế phải</td>
+<td><code>list != null &amp;&amp; list.size() &gt; 0</code></td>
+<td>Dùng để tránh <code>NullPointerException</code></td>
+</tr>
+<tr>
+<td><code>\|\|</code></td>
+<td><strong>Hoặc</strong>, ngắn mạch: vế trái <code>true</code> thì bỏ vế phải</td>
+<td><code>a \|\| b</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>!</code></td>
+<td>Phủ định</td>
+<td><code>!el.isDisplayed()</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="22-từng-method-của-string">2.2. Từng method của <code>String</code></h3>
+<p><code>String</code> là <strong>bất biến</strong>: mọi method bên dưới <strong>không sửa chuỗi gốc</strong> mà <strong>trả về chuỗi mới</strong> — nhớ gán kết quả lại (<code>s = s.trim();</code>).</p>
+<h4 id="length"><code>length()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đếm số <strong>ký tự</strong> (kể cả khoảng trắng). <strong>Trả về:</strong> <code>int</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"abc".length()</code> → <code>3</code>. Lưu ý có dấu ngoặc <code>()</code>, khác mảng (<code>arr.length</code>).</li>
+</ul>
+<h4 id="charatint-index"><code>charAt(int index)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> lấy ký tự ở vị trí <code>index</code> (đếm từ <strong>0</strong>). <strong>Trả về:</strong> <code>char</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"abc".charAt(1)</code> → <code>'b'</code>. Chỉ số ngoài phạm vi → <code>StringIndexOutOfBoundsException</code>.</li>
+</ul>
+<h4 id="trim--strip"><code>trim()</code> / <code>strip()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bỏ <strong>khoảng trắng đầu và cuối</strong> (không đụng khoảng trắng ở giữa). <strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"  a b ".trim()</code> → <code>"a b"</code>.</li>
+<li><strong>Khác nhau:</strong> <code>strip()</code> (Java 11+) hiểu cả khoảng trắng Unicode; <code>trim()</code> chỉ bỏ ký tự điều khiển ASCII. Hay dùng với <code>getText()</code>.</li>
+</ul>
+<h4 id="equalsstring-other--equalsignorecasestring-other"><code>equals(String other)</code> / <code>equalsIgnoreCase(String other)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> so sánh <strong>nội dung</strong> hai chuỗi. <code>equalsIgnoreCase</code> bỏ qua hoa/thường. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"Abc".equals("abc")</code> → <code>false</code>; <code>"Abc".equalsIgnoreCase("abc")</code> → <code>true</code>.</li>
+<li><strong>Lưu ý:</strong> viết <code>"hằng".equals(biến)</code> để tránh <code>NullPointerException</code> khi <code>biến</code> là <code>null</code>.</li>
+</ul>
+<h4 id="containsstring-s"><code>contains(String s)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra chuỗi <strong>có chứa</strong> đoạn <code>s</code> không. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"You logged in".contains("logged")</code> → <code>true</code>. Phân biệt hoa/thường.</li>
+</ul>
+<h4 id="startswithstring-s--endswithstring-s"><code>startsWith(String s)</code> / <code>endsWith(String s)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra chuỗi <strong>bắt đầu / kết thúc</strong> bằng <code>s</code>. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong>Ví dụ:</strong> <code>driver.getCurrentUrl().endsWith("/secure")</code>.</li>
+</ul>
+<h4 id="substringint-begin--substringint-begin-int-end"><code>substring(int begin)</code> / <code>substring(int begin, int end)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> cắt chuỗi con. Có <code>end</code> thì lấy từ <code>begin</code> đến <strong>trước</strong> <code>end</code> (nửa mở <code>[begin, end)</code>). <strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"abcdef".substring(1, 4)</code> → <code>"bcd"</code>; <code>"abcdef".substring(2)</code> → <code>"cdef"</code>.</li>
+<li><strong>Lưu ý:</strong> chỉ số sai → <code>StringIndexOutOfBoundsException</code>.</li>
+</ul>
+<h4 id="indexofstring-s"><code>indexOf(String s)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tìm vị trí <strong>đầu tiên</strong> xuất hiện <code>s</code>. <strong>Trả về:</strong> <code>int</code>, <strong><code>-1</code></strong> nếu không có.</li>
+<li><strong>Ví dụ:</strong> <code>"a-b-c".indexOf("-")</code> → <code>1</code>. <code>lastIndexOf</code> tìm từ cuối.</li>
+</ul>
+<h4 id="replacestring-a-string-b"><code>replace(String a, String b)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> thay <strong>mọi</strong> <code>a</code> bằng <code>b</code> (không dùng regex). <strong>Trả về:</strong> <code>String</code> mới.</li>
+<li><strong>Ví dụ:</strong> <code>"$50.00".replace("$", "")</code> → <code>"50.00"</code>. (<code>replaceAll</code> dùng regex.)</li>
+</ul>
+<h4 id="splitstring-regex"><code>split(String regex)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tách chuỗi theo dấu phân cách (là <strong>regex</strong>). <strong>Trả về:</strong> <code>String[]</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"a,b,c".split(",")</code> → <code>{"a","b","c"}</code>; <code>"1.5".split("\\.")</code> (dấu <code>.</code> phải escape vì là regex).</li>
+<li><strong>Lưu ý:</strong> <code>split(",", 3)</code> giới hạn số phần tử (dùng khi dữ liệu có dấu phẩy).</li>
+</ul>
+<h4 id="touppercase--tolowercase"><code>toUpperCase()</code> / <code>toLowerCase()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đổi hết chữ hoa/thường. <strong>Trả về:</strong> <code>String</code>.</li>
+<li><strong>Ví dụ:</strong> 🧩 Ex8 so tiêu đề bằng <code>getText().toUpperCase()</code> vì CSS hiển thị chữ HOA.</li>
+</ul>
+<h4 id="isempty--isblank"><code>isEmpty()</code> / <code>isBlank()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>isEmpty()</code> — độ dài bằng 0; <code>isBlank()</code> (Java 11+) — rỗng <strong>hoặc chỉ toàn khoảng trắng</strong>. <strong>Trả về:</strong> <code>boolean</code>.</li>
+<li><strong>Ví dụ:</strong> <code>"".isEmpty()</code> → <code>true</code>; <code>"  ".isEmpty()</code> → <code>false</code>; <code>"  ".isBlank()</code> → <code>true</code>.</li>
+</ul>
+<h4 id="stringjoinsep-items--repeatn--comparetos"><code>String.join(sep, items...)</code> / <code>repeat(n)</code> / <code>compareTo(s)</code></h4>
+<ul>
+<li><code>String.join(", ", "a", "b")</code> → <code>"a, b"</code> (nối nhiều chuỗi bằng dấu phân cách).</li>
+<li><code>"ab".repeat(3)</code> → <code>"ababab"</code> (Java 11+).</li>
+<li><code>"a".compareTo("b")</code> → số âm (<code>a</code> đứng trước <code>b</code> theo thứ tự từ điển); <code>0</code> nếu bằng nhau.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Muốn</th>
+<th>Dùng</th>
+<th>Không dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>So hai chuỗi bằng nhau</td>
+<td><code>a.equals(b)</code></td>
+<td><code>a == b</code></td>
+</tr>
+<tr>
+<td>Chuỗi có chứa từ khoá</td>
+<td><code>s.contains(x)</code></td>
+<td><code>s.equals(x)</code> (đòi bằng cả chuỗi)</td>
+</tr>
+<tr>
+<td>Bỏ khoảng trắng thừa của <code>getText()</code></td>
+<td><code>s.trim()</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Kiểm tra chuỗi rỗng/chỉ khoảng trắng</td>
+<td><code>s.isBlank()</code></td>
+<td><code>s == ""</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="23-stringbuilder--nối-chuỗi-nhiều-lần">2.3. <code>StringBuilder</code> — nối chuỗi nhiều lần</h3>
+<ul>
+<li><strong>Làm gì:</strong> bộ đệm chuỗi <strong>có thể sửa</strong> (khác <code>String</code> bất biến) — nhanh hơn khi nối nhiều lần trong vòng lặp.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm chính xác gì</th>
+<th>Trả về</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new StringBuilder()</code></td>
+<td>Tạo bộ đệm rỗng</td>
+<td><code>StringBuilder</code></td>
+</tr>
+<tr>
+<td><code>append(x)</code></td>
+<td>Thêm <code>x</code> vào <strong>cuối</strong></td>
+<td>chính nó (nối chuỗi lệnh được)</td>
+</tr>
+<tr>
+<td><code>insert(int i, x)</code></td>
+<td>Chèn <code>x</code> tại vị trí <code>i</code></td>
+<td>chính nó</td>
+</tr>
+<tr>
+<td><code>reverse()</code></td>
+<td>Đảo ngược chuỗi</td>
+<td>chính nó</td>
+</tr>
+<tr>
+<td><code>length()</code></td>
+<td>Số ký tự hiện có</td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>toString()</code></td>
+<td>Lấy ra <code>String</code> kết quả</td>
+<td><code>String</code></td>
+</tr>
+</tbody>
+</table></div>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">))</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">s</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sb</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w">        </span><span class="c1">// &quot;a,b,c,&quot;</span></code></pre></div>
+<h3 id="24-math--các-hàm-toán-học">2.4. <code>Math</code> — các hàm toán học</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Làm gì</th>
+<th>Ví dụ → kết quả</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Math.max(a, b)</code> / <code>Math.min(a, b)</code></td>
+<td>Số lớn / nhỏ hơn</td>
+<td><code>Math.max(3, 7)</code> → <code>7</code></td>
+</tr>
+<tr>
+<td><code>Math.abs(x)</code></td>
+<td>Giá trị tuyệt đối</td>
+<td><code>Math.abs(-5)</code> → <code>5</code></td>
+</tr>
+<tr>
+<td><code>Math.round(x)</code></td>
+<td>Làm tròn gần nhất</td>
+<td><code>Math.round(2.5)</code> → <code>3</code></td>
+</tr>
+<tr>
+<td><code>Math.floor(x)</code> / <code>Math.ceil(x)</code></td>
+<td>Làm tròn <strong>xuống</strong> / <strong>lên</strong> (trả <code>double</code>)</td>
+<td><code>floor(2.9)</code> → <code>2.0</code>; <code>ceil(2.1)</code> → <code>3.0</code></td>
+</tr>
+<tr>
+<td><code>Math.pow(a, b)</code></td>
+<td>Luỹ thừa <code>aᵇ</code> (trả <code>double</code>)</td>
+<td><code>Math.pow(2, 3)</code> → <code>8.0</code></td>
+</tr>
+<tr>
+<td><code>Math.sqrt(x)</code></td>
+<td>Căn bậc hai</td>
+<td><code>Math.sqrt(16)</code> → <code>4.0</code></td>
+</tr>
+<tr>
+<td><code>Math.random()</code></td>
+<td>Số thực ngẫu nhiên <code>[0, 1)</code></td>
+<td>Dùng tạo dữ liệu test ngẫu nhiên</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--toán-tử">Ví dụ 1 — Toán tử</h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>

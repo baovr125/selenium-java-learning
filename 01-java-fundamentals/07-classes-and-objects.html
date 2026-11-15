@@ -213,6 +213,106 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-từ-khoá-và-khái-niệm-làm-gì">2.1. Từng từ khoá và khái niệm làm gì</h3>
+<h4 id="new"><code>new</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>tạo một đối tượng</strong> mới trong bộ nhớ từ class rồi gọi constructor của nó. Trả về <strong>tham chiếu</strong> tới đối tượng đó.</li>
+<li><strong>Ví dụ:</strong> <code>LoginPage page = new LoginPage(driver);</code></li>
+<li><strong>Lưu ý:</strong> mỗi lần <code>new</code> là một đối tượng <strong>riêng</strong>. Khai báo <code>LoginPage page;</code> mà chưa <code>new</code> thì <code>page</code> là <code>null</code> → <code>NullPointerException</code> khi dùng.</li>
+</ul>
+<h4 id="constructor">Constructor</h4>
+<ul>
+<li><strong>Làm gì:</strong> method đặc biệt chạy <strong>một lần khi <code>new</code></strong> để đặt trạng thái ban đầu của đối tượng. <strong>Tên trùng tên class, không có kiểu trả về</strong> (kể cả <code>void</code>).</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="nf">LoginPage</span><span class="p">(</span><span class="n">WebDriver</span><span class="w"> </span><span class="n">driver</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> không viết constructor nào thì Java tự thêm constructor rỗng; <strong>đã viết constructor có tham số</strong> thì constructor rỗng <strong>không</strong> còn tự có. Thêm <code>void</code> vào là biến nó thành method thường.</li>
+</ul>
+<h4 id="this"><code>this</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> tham chiếu tới <strong>chính đối tượng đang chạy</strong>. Dùng khi tham số trùng tên field: <code>this.name = name;</code> (vế trái là field, vế phải là tham số).</li>
+<li><strong><code>this(...)</code>:</strong> gọi constructor khác của cùng class (phải là dòng đầu tiên).</li>
+<li><strong>Lưu ý:</strong> quên <code>this</code> thì <code>name = name;</code> chỉ gán tham số cho chính nó, field vẫn rỗng.</li>
+</ul>
+<h4 id="static"><code>static</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> gắn thành viên với <strong>class</strong>, không phải từng đối tượng. Dùng được mà <strong>không cần <code>new</code></strong>.</li>
+<li><strong>Ví dụ:</strong> <code>Duration.ofSeconds(15)</code>, <code>Assert.assertEquals(...)</code>, <code>main(String[] args)</code>.</li>
+<li><strong>Lưu ý:</strong> method <code>static</code> <strong>không</strong> dùng được <code>this</code> và không gọi trực tiếp member non-static (<code>non-static ... cannot be referenced from a static context</code>). Field <code>static</code> dùng chung cho mọi đối tượng — nguy hiểm khi chạy song song (xem <code>static WebDriver</code>).</li>
+</ul>
+<h4 id="final"><code>final</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> "không được đổi". Áp dụng ở ba nơi:</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gắn vào</th>
+<th>Nghĩa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>biến / field</strong></td>
+<td>Chỉ được gán <strong>một lần</strong>; thường dùng cho hằng số <code>private static final String LOGIN_URL</code></td>
+</tr>
+<tr>
+<td><strong>method</strong></td>
+<td>Class con <strong>không</strong> được ghi đè</td>
+</tr>
+<tr>
+<td><strong>class</strong></td>
+<td><strong>Không</strong> được kế thừa (ví dụ <code>String</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="public--protected--private--mặc-định"><code>public</code> / <code>protected</code> / <code>private</code> / (mặc định)</h4>
+<ul>
+<li><strong>Làm gì:</strong> quyết định <strong>ai được truy cập</strong> một thành viên (xem bảng ở mục 2). Quy tắc thực dụng: <strong>field <code>private</code></strong>, method cần dùng ngoài thì <code>public</code>, thành viên cho class con <code>protected</code>.</li>
+</ul>
+<h4 id="getter-và-setter">Getter và Setter</h4>
+<ul>
+<li><strong>Làm gì:</strong> method <code>public</code> để đọc (<code>getName()</code>) / gán (<code>setName(...)</code>) một field <code>private</code> — cho phép kiểm tra dữ liệu trước khi gán (đóng gói).</li>
+</ul>
+<h4 id="record-java-16"><code>record</code> (Java 16+)</h4>
+<ul>
+<li><strong>Làm gì:</strong> khai báo <strong>class dữ liệu bất biến</strong> gọn: <code>public record LoginData(String user, String pass) {}</code> — Java tự tạo constructor, getter (<code>user()</code>), <code>equals</code>, <code>hashCode</code>, <code>toString</code>.</li>
+</ul>
+<h4 id="tostring"><code>toString()</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> method mọi đối tượng có; quyết định chuỗi hiện khi <code>System.out.println(obj)</code> hoặc nối chuỗi. Mặc định in dạng <code>ClassName@hash</code> — thường <strong>ghi đè</strong> để in nội dung dễ đọc.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Field</th>
+<th>Method</th>
+<th>Constructor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Là gì</td>
+<td>Biến thuộc đối tượng</td>
+<td>Hành vi</td>
+<td>Khởi tạo ban đầu</td>
+</tr>
+<tr>
+<td>Có kiểu trả về?</td>
+<td>Có (kiểu dữ liệu)</td>
+<td>Có</td>
+<td><strong>Không</strong></td>
+</tr>
+<tr>
+<td>Chạy khi nào</td>
+<td>—</td>
+<td>Khi bạn gọi</td>
+<td>Một lần, lúc <code>new</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--class-testresult">Ví dụ 1 — Class <code>TestResult</code></h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">class</span> <span class="nc">TestResult</span><span class="w"> </span><span class="p">{</span>

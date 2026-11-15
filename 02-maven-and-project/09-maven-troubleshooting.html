@@ -291,6 +291,81 @@ Chạy nhưng BUILD FAILURE?
 </tr>
 </tbody>
 </table></div>
+<h3 id="41-từng-công-cụ-chẩn-đoán-làm-gì-và-khi-nào-dùng">4.1. Từng công cụ chẩn đoán làm gì và khi nào dùng</h3>
+<h4 id="mvnwcmd--version"><code>.\mvnw.cmd -version</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in Maven, Java (đường dẫn, nhà cung cấp) và hệ điều hành đang dùng.</li>
+<li><strong>Dùng khi:</strong> lỗi liên quan JDK (<code>release 21 not supported</code>, <code>JAVA_HOME</code>) — xem Maven <strong>thực sự</strong> chạy bằng JDK nào.</li>
+</ul>
+<h4 id="mvnwcmd--e-test"><code>.\mvnw.cmd -e test</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> hiện <strong>stacktrace</strong> của lỗi build thay vì chỉ một dòng ngắn.</li>
+<li><strong>Dùng khi:</strong> thông báo lỗi chung chung ("Failed to execute goal ...").</li>
+</ul>
+<h4 id="mvnwcmd--x-test"><code>.\mvnw.cmd -X test</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bật <strong>log debug</strong>: thấy classpath, plugin, từng bước phân giải. Rất dài.</li>
+<li><strong>Mẹo:</strong> lọc bằng PowerShell: <code>.\mvnw.cmd -X test | Select-String "ERROR|classpath"</code>.</li>
+</ul>
+<h4 id="mvnwcmd-helpeffective-pom"><code>.\mvnw.cmd help:effective-pom</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in <strong>POM cuối cùng</strong> sau khi gộp thừa kế và profile.</li>
+<li><strong>Dùng khi:</strong> nghi ngờ một cấu hình được đặt ở nơi khác (parent, profile) đè giá trị bạn thấy.</li>
+</ul>
+<h4 id="mvnwcmd-helpeffective-settings"><code>.\mvnw.cmd help:effective-settings</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in <strong><code>settings.xml</code> hiệu lực</strong> (proxy, mirror, kho cục bộ).</li>
+<li><strong>Dùng khi:</strong> lỗi tải thư viện, nghi do proxy/mirror.</li>
+</ul>
+<h4 id="mvnwcmd-dependencytree"><code>.\mvnw.cmd dependency:tree</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> in cây phụ thuộc.</li>
+<li><strong>Dùng khi:</strong> <code>NoSuchMethodError</code>, <code>ClassNotFoundException</code>, xung đột phiên bản. Thêm <code>-Dverbose</code>.</li>
+</ul>
+<h4 id="envmvnw_verbose--true"><code>$env:MVNW_VERBOSE = "true"</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> bật log chi tiết của <strong>Wrapper</strong> (không phải của Maven).</li>
+<li><strong>Dùng khi:</strong> Wrapper không tải được Maven.</li>
+</ul>
+<h4 id="get-content-targetsurefire-reportsdumpstream"><code>Get-Content target\surefire-reports\*.dumpstream</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đọc file ghi lỗi <strong>hạ tầng Surefire</strong> (khi JVM test bị lỗi khởi động/kết thúc bất thường).</li>
+<li><strong>Dùng khi:</strong> <code>Tests run</code> không hiện hoặc log báo "The forked VM terminated".</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Triệu chứng</th>
+<th>Công cụ đầu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lỗi JDK/Java</td>
+<td><code>-version</code></td>
+</tr>
+<tr>
+<td>Lỗi build mơ hồ</td>
+<td><code>-e</code>, sau đó <code>-X</code></td>
+</tr>
+<tr>
+<td>Cấu hình "lạ"</td>
+<td><code>help:effective-pom</code></td>
+</tr>
+<tr>
+<td>Lỗi tải thư viện</td>
+<td><code>help:effective-settings</code>, <code>dependency:tree</code></td>
+</tr>
+<tr>
+<td>Wrapper không tải được Maven</td>
+<td><code>MVNW_VERBOSE</code></td>
+</tr>
+<tr>
+<td>JVM test chết bất thường</td>
+<td><code>*.dumpstream</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="5-khi-nào-xoá-cache">5. Khi nào xoá cache?</h2>
 <div class="table-wrap"><table>
 <thead>

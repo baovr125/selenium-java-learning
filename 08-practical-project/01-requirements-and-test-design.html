@@ -148,6 +148,98 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-trường-của-test-case--viết-thế-nào-là-tốt">2.1. Từng trường của Test Case — viết thế nào là tốt</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trường</th>
+<th>Làm chính xác gì</th>
+<th>Viết <strong>tốt</strong></th>
+<th>Viết <strong>xấu</strong> (và vì sao)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ID</strong></td>
+<td>Mã định danh duy nhất để tham chiếu từ báo cáo, bug, code</td>
+<td><code>TC_LOGIN_001</code></td>
+<td><code>Test1</code> — không biết thuộc chức năng nào</td>
+</tr>
+<tr>
+<td><strong>Tiêu đề</strong></td>
+<td>Một câu nêu <strong>hành vi</strong> được kiểm tra</td>
+<td><code>Đăng nhập thành công với tài khoản hợp lệ</code></td>
+<td><code>Test login</code> — không nói kiểm cái gì</td>
+</tr>
+<tr>
+<td><strong>Mức ưu tiên</strong></td>
+<td>Quyết định test nào chạy trước/nếu thiếu thời gian</td>
+<td><code>High</code> cho đăng nhập (nếu hỏng thì mọi thứ khác vô nghĩa)</td>
+<td>Mọi test đều <code>High</code> — mất ý nghĩa</td>
+</tr>
+<tr>
+<td><strong>Precondition</strong></td>
+<td>Trạng thái <strong>cần có trước</strong> khi chạy</td>
+<td><code>Đã mở /login; chưa đăng nhập</code></td>
+<td>Để trống — người khác không tái hiện được</td>
+</tr>
+<tr>
+<td><strong>Bước</strong></td>
+<td>Các hành động <strong>đánh số</strong>, mỗi bước một việc</td>
+<td><code>1. Nhập username  2. Nhập password  3. Bấm Login</code></td>
+<td><code>Đăng nhập</code> — gộp mọi thứ vào một dòng</td>
+</tr>
+<tr>
+<td><strong>Dữ liệu</strong></td>
+<td>Giá trị <strong>cụ thể</strong> dùng trong bước</td>
+<td><code>tomsmith / SuperSecretPassword!</code></td>
+<td><code>tài khoản đúng</code> — không biết là gì</td>
+</tr>
+<tr>
+<td><strong>Kết quả mong đợi</strong></td>
+<td>Điều <strong>quan sát được</strong> và kiểm tra được bằng máy</td>
+<td><code>URL kết thúc /secure; thông báo chứa "You logged into a secure area!"</code></td>
+<td><code>Đăng nhập được</code> — không kiểm chứng được</td>
+</tr>
+<tr>
+<td><strong>Tự động hoá?</strong></td>
+<td>Có/Không <strong>kèm lý do</strong></td>
+<td><code>Có — chạy lặp lại mỗi lần build</code></td>
+<td><code>Có</code> — không nêu lý do</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Cách chuyển một Test Case thành code Selenium:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trường Test Case</th>
+<th>Trở thành trong code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Precondition</td>
+<td><code>@BeforeMethod</code>, hoặc bước <code>driver.get(...)</code> đầu test</td>
+</tr>
+<tr>
+<td>Bước</td>
+<td>Các lệnh <code>type</code>, <code>click</code> của Page Object</td>
+</tr>
+<tr>
+<td>Dữ liệu</td>
+<td>Tham số truyền vào method (hoặc <code>@DataProvider</code>)</td>
+</tr>
+<tr>
+<td>Kết quả mong đợi</td>
+<td>Các câu <code>Assert.assertEquals/assertTrue</code></td>
+</tr>
+<tr>
+<td>Mức ưu tiên</td>
+<td><code>@Test(groups = "smoke")</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-phân-tích-các-chức-năng-trong-đề-demd">3. Ví dụ: phân tích các chức năng trong đề <code>de.md</code></h2>
 <h3 id="31-requirement-rút-từ-10-bài-tập-của-dự-án">3.1. Requirement (rút từ 10 bài tập của dự án)</h3>
 <div class="table-wrap"><table>

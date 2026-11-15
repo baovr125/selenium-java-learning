@@ -267,6 +267,122 @@ Nguồn thật: <a href="../../../../pom.xml" class="ext" title="File của dự
 </ul>
 <p>Plugin còn <strong>được dùng ngầm</strong> dù không khai báo: <code>maven-resources-plugin</code> 3.4.0 (copy <code>src/test/resources</code>), và <code>maven-dependency-plugin</code> 3.7.0 khi bạn gọi <code>dependency:tree</code>. Bản không khai báo do Super POM/Maven mặc định quyết định ⇒ thông tin này thể hiện trong log (<code>--- resources:3.4.0:resources ---</code>).</p>
 <p>✅ Nên <strong>ghim phiên bản plugin</strong> như dự án đã làm với compiler và surefire để kết quả build lặp lại được.</p>
+<h3 id="41-từ-điển-thẻ-pomxml--từng-thẻ-làm-gì">4.1. Từ điển thẻ <code>pom.xml</code> — từng thẻ làm gì</h3>
+<p>Mỗi thẻ có dạng <code>&lt;tên&gt;giá trị&lt;/tên&gt;</code>; thẻ lồng nhau tạo thành cây. Cách đọc thẻ: <em>Làm gì · Nằm ở đâu · Ví dụ · Lưu ý</em>.</p>
+<h4 id="project"><code>&lt;project&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> thẻ <strong>gốc</strong> bao toàn bộ POM; chứa các khai báo namespace của Maven.</li>
+<li><strong>Lưu ý:</strong> mọi thẻ khác nằm <strong>bên trong</strong> nó.</li>
+</ul>
+<h4 id="modelversion"><code>&lt;modelVersion&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> phiên bản <strong>cấu trúc</strong> của file POM. Luôn là <code>4.0.0</code> với Maven 3.</li>
+<li><strong>Lưu ý:</strong> không phải phiên bản dự án của bạn.</li>
+</ul>
+<h4 id="groupid-artifactid-version-ở-cấp-project"><code>&lt;groupId&gt;</code>, <code>&lt;artifactId&gt;</code>, <code>&lt;version&gt;</code> (ở cấp <code>&lt;project&gt;</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> ba thẻ tạo <strong>tọa độ</strong> (GAV) của <strong>chính dự án</strong>: nhóm / tên / phiên bản.</li>
+<li><strong>Ví dụ:</strong> <code>com.fresher</code> / <code>SeleniumPractice</code> / <code>1.0-SNAPSHOT</code>.</li>
+<li><strong>Lưu ý:</strong> <code>-SNAPSHOT</code> = bản đang phát triển. Cùng ba thẻ này đặt trong <code>&lt;dependency&gt;</code> thì chỉ <strong>thư viện</strong> được dùng.</li>
+</ul>
+<h4 id="packaging"><code>&lt;packaging&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểu đóng gói khi build (<code>jar</code>, <code>war</code>, <code>pom</code>).</li>
+<li><strong>Lưu ý:</strong> không khai báo → mặc định <strong><code>jar</code></strong>.</li>
+</ul>
+<h4 id="properties"><code>&lt;properties&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> khai báo <strong>biến</strong> dùng chung trong POM; mỗi thẻ con là một biến.</li>
+<li><strong>Ví dụ:</strong> <code>&lt;selenium.version&gt;4.52.0&lt;/selenium.version&gt;</code> rồi dùng <code>${selenium.version}</code>.</li>
+<li><strong>Lưu ý:</strong> một số tên <strong>có ý nghĩa đặc biệt</strong> với Maven (<code>maven.compiler.release</code>, <code>project.build.sourceEncoding</code>); tên khác do bạn tự đặt.</li>
+</ul>
+<h4 id="tên"><code>${tên}</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>thay thế</strong> bằng giá trị của biến <code>tên</code> (từ <code>&lt;properties&gt;</code>, <code>-D</code> trên dòng lệnh, hoặc <code>project.*</code>).</li>
+<li><strong>Lưu ý:</strong> <code>-Dselenium.version=4.50.0</code> trên dòng lệnh <strong>đè</strong> giá trị trong <code>&lt;properties&gt;</code>.</li>
+</ul>
+<h4 id="dependencies-và-dependency"><code>&lt;dependencies&gt;</code> và <code>&lt;dependency&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>&lt;dependencies&gt;</code> là <strong>danh sách</strong> thư viện cần; mỗi <code>&lt;dependency&gt;</code> là <strong>một</strong> thư viện, xác định bằng GAV.</li>
+<li><strong>Ví dụ:</strong></li>
+</ul>
+<div class="code" data-lang="xml"><div class="code-head"><span class="lang">xml</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>org.testng<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>testng<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>7.10.2<span class="nt">&lt;/version&gt;</span>
+<span class="w">    </span><span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span></code></pre></div>
+<ul>
+<li><strong>Lưu ý:</strong> Maven tải thêm cả các thư viện <strong>mà nó phụ thuộc</strong> (transitive).</li>
+</ul>
+<h4 id="scope"><code>&lt;scope&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> nói thư viện được dùng <strong>ở giai đoạn nào</strong> (biên dịch, test, chạy). Mặc định <code>compile</code>; <code>test</code> = chỉ cho <code>src/test</code>.</li>
+<li><strong>Ví dụ:</strong> Selenium và TestNG dùng <code>test</code> (code sản phẩm không cần).</li>
+</ul>
+<h4 id="exclusions"><code>&lt;exclusions&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>loại bỏ</strong> một thư viện kéo theo không mong muốn khỏi một dependency.</li>
+<li><strong>Dùng khi:</strong> thư viện con xung đột phiên bản.</li>
+</ul>
+<h4 id="optionaltrueoptional"><code>&lt;optional&gt;true&lt;/optional&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> đánh dấu dependency <strong>không truyền</strong> sang dự án khác dùng dự án của bạn. Hiếm gặp trong dự án test.</li>
+</ul>
+<h4 id="build"><code>&lt;build&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> gom cấu hình <strong>quá trình build</strong>: thư mục, plugin.</li>
+</ul>
+<h4 id="plugins-và-plugin"><code>&lt;plugins&gt;</code> và <code>&lt;plugin&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <code>&lt;plugin&gt;</code> khai báo <strong>một công cụ</strong> (compiler, surefire) cùng phiên bản; <code>&lt;plugins&gt;</code> là danh sách.</li>
+<li><strong>Ví dụ:</strong> <code>maven-surefire-plugin</code> chạy test; <code>maven-compiler-plugin</code> biên dịch.</li>
+<li><strong>Lưu ý:</strong> nên <strong>ghim phiên bản</strong> plugin để build ổn định.</li>
+</ul>
+<h4 id="configuration-trong-plugin"><code>&lt;configuration&gt;</code> (trong <code>&lt;plugin&gt;</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> truyền <strong>tham số</strong> cho plugin đó.</li>
+<li><strong>Ví dụ:</strong> trong Surefire: <code>&lt;suiteXmlFiles&gt;</code>, <code>&lt;systemPropertyVariables&gt;</code>.</li>
+</ul>
+<h4 id="suitexmlfiles--suitexmlfile"><code>&lt;suiteXmlFiles&gt;</code> / <code>&lt;suiteXmlFile&gt;</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chỉ cho Surefire chạy test <strong>theo file TestNG XML</strong> (🧩 <code>testng.xml</code>).</li>
+<li><strong>Lưu ý:</strong> có <code>-Dtest=...</code> trên dòng lệnh thì file XML này bị <strong>bỏ qua</strong>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thẻ</th>
+<th>Trả lời câu hỏi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;groupId&gt;/&lt;artifactId&gt;/&lt;version&gt;</code></td>
+<td>"Cái này là <strong>ai</strong>?" (tọa độ)</td>
+</tr>
+<tr>
+<td><code>&lt;properties&gt;</code></td>
+<td>"Giá trị dùng chung ở đâu?"</td>
+</tr>
+<tr>
+<td><code>&lt;dependencies&gt;</code></td>
+<td>"Dự án cần <strong>thư viện</strong> nào?"</td>
+</tr>
+<tr>
+<td><code>&lt;scope&gt;</code></td>
+<td>"Thư viện dùng ở <strong>giai đoạn</strong> nào?"</td>
+</tr>
+<tr>
+<td><code>&lt;plugins&gt;</code></td>
+<td>"Dùng <strong>công cụ</strong> nào để build/test?"</td>
+</tr>
+<tr>
+<td><code>&lt;configuration&gt;</code></td>
+<td>"Cấu hình công cụ đó thế nào?"</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="5-những-thẻ-không-có-trong-dự-án-nhưng-cần-biết">5. Những thẻ KHÔNG có trong dự án (nhưng cần biết)</h2>
 <h3 id="51-dependencymanagement">5.1. <code>&lt;dependencyManagement&gt;</code></h3>
 <p>Khai báo <strong>phiên bản/scope trung tâm</strong> mà không thật sự thêm thư viện vào dự án. Hữu ích cho dự án nhiều module:</p>

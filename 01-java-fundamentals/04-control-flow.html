@@ -122,6 +122,119 @@
 </tr>
 </tbody>
 </table></div>
+<h3 id="21-từng-câu-lệnh-điều-khiển--chọn-cái-nào-khi-nào">2.1. Từng câu lệnh điều khiển — chọn cái nào, khi nào</h3>
+<h4 id="if--else-if--else"><code>if / else if / else</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy <strong>một nhánh</strong> đầu tiên có điều kiện đúng; các nhánh sau bị bỏ qua. <code>else</code> (nếu có) chạy khi <strong>không</strong> nhánh nào đúng.</li>
+<li><strong>Điều kiện phải là <code>boolean</code></strong> — <code>if (x = 5)</code> là lỗi.</li>
+<li><strong>Ví dụ:</strong> <code>if (!checkbox.isSelected()) { checkbox.click(); }</code> 🧩 Ex2.</li>
+</ul>
+<h4 id="toán-tử-ba-ngôi-điều_kiện--a--b">Toán tử ba ngôi <code>điều_kiện ? a : b</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> là <code>if/else</code> <strong>một dòng</strong> trả về một giá trị: đúng → <code>a</code>, sai → <code>b</code>.</li>
+<li><strong>Ví dụ:</strong> <code>String s = passed ? "PASS" : "FAIL";</code>. Chỉ dùng khi ngắn gọn.</li>
+</ul>
+<h4 id="switch-cú-pháp-mũi-tên--"><code>switch</code> (cú pháp mũi tên <code>-&gt;</code>)</h4>
+<ul>
+<li><strong>Làm gì:</strong> so một giá trị với nhiều <code>case</code> cố định, chạy nhánh khớp. Dạng mũi tên <strong>không</strong> chạy xuyên sang nhánh sau.</li>
+<li><strong>Ví dụ:</strong> <code>switch (browser) { case "chrome" -&gt; ...; case "firefox" -&gt; ...; default -&gt; ...; }</code>.</li>
+<li><strong>Lưu ý:</strong> dạng cũ <code>case X:</code> cần <code>break</code>, quên thì chạy xuyên (fall-through). <code>default</code> xử lý trường hợp còn lại.</li>
+</ul>
+<h4 id="for-khởi-tạo-điều-kiện-bước"><code>for (khởi tạo; điều kiện; bước)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> lặp <strong>đếm theo chỉ số</strong>: khởi tạo một lần → kiểm tra điều kiện → chạy thân → thực hiện bước → lặp lại.</li>
+<li><strong>Ví dụ:</strong> <code>for (int i = 0; i &lt; rows.size(); i++) { ... }</code> 🧩 Ex5.</li>
+<li><strong>Lưu ý:</strong> dùng <code>i &lt; size</code>, không phải <code>&lt;=</code> (sẽ vượt phạm vi).</li>
+</ul>
+<h4 id="for-kiểu-x--tập--for-each"><code>for (Kiểu x : tập)</code> — for-each</h4>
+<ul>
+<li><strong>Làm gì:</strong> duyệt <strong>từng phần tử</strong> của mảng/List/Set, không cần chỉ số.</li>
+<li><strong>Ví dụ:</strong> <code>for (WebElement option : dropdown.getOptions()) { ... }</code> 🧩 Ex4.</li>
+<li><strong>Lưu ý:</strong> không xoá phần tử khỏi danh sách đang duyệt (<code>ConcurrentModificationException</code>).</li>
+</ul>
+<h4 id="while-điều_kiện"><code>while (điều_kiện)</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> kiểm tra điều kiện <strong>trước</strong>, đúng thì chạy thân, lặp lại. Có thể <strong>chạy 0 lần</strong>.</li>
+<li><strong>Dùng khi:</strong> không biết trước số lần lặp.</li>
+<li><strong>Lưu ý:</strong> thân phải làm điều kiện sớm hay muộn thành <code>false</code>, nếu không là <strong>vòng lặp vô hạn</strong>.</li>
+</ul>
+<h4 id="do----while-điều_kiện"><code>do { ... } while (điều_kiện);</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> chạy thân <strong>trước</strong>, rồi mới kiểm tra điều kiện → <strong>luôn chạy ít nhất 1 lần</strong>.</li>
+<li><strong>Dùng khi:</strong> cần thử một lần rồi mới quyết định (retry).</li>
+</ul>
+<h4 id="break"><code>break</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>thoát ngay</strong> vòng lặp (hoặc <code>switch</code>) đang chạy.</li>
+<li><strong>Ví dụ:</strong> tìm thấy tab mới thì <code>break</code> khỏi vòng duyệt handle.</li>
+</ul>
+<h4 id="continue"><code>continue</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>bỏ phần còn lại của lượt này</strong>, nhảy sang lượt kế tiếp (không thoát vòng lặp).</li>
+<li><strong>Ví dụ:</strong> <code>if (!option.isEnabled()) continue;</code> — bỏ qua option bị khoá.</li>
+</ul>
+<h4 id="return"><code>return</code></h4>
+<ul>
+<li><strong>Làm gì:</strong> <strong>thoát khỏi method</strong> (và trả giá trị nếu method có kiểu trả về). Trong vòng lặp, thoát cả method.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>break</code></th>
+<th><code>continue</code></th>
+<th><code>return</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thoát cái gì</td>
+<td>Vòng lặp/<code>switch</code> hiện tại</td>
+<td>Chỉ lượt hiện tại</td>
+<td><strong>Cả method</strong></td>
+</tr>
+<tr>
+<td>Vòng lặp tiếp tục?</td>
+<td>Không</td>
+<td>Có (lượt kế)</td>
+<td>Không</td>
+</tr>
+</tbody>
+</table></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Cần</th>
+<th>Dùng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chạy khi có điều kiện</td>
+<td><code>if</code></td>
+</tr>
+<tr>
+<td>Đếm theo chỉ số</td>
+<td><code>for</code></td>
+</tr>
+<tr>
+<td>Duyệt mọi phần tử</td>
+<td>for-each</td>
+</tr>
+<tr>
+<td>Lặp tới khi một điều kiện đổi</td>
+<td><code>while</code></td>
+</tr>
+<tr>
+<td>Chạy ít nhất 1 lần</td>
+<td><code>do-while</code></td>
+</tr>
+<tr>
+<td>Chọn theo nhiều giá trị cố định</td>
+<td><code>switch</code></td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="3-ví-dụ-code">3. Ví dụ code</h2>
 <h3 id="ví-dụ-1--ifelse-ifelse">Ví dụ 1 — <code>if/else if/else</code></h3>
 <div class="code" data-lang="java"><div class="code-head"><span class="lang">java</span><button class="copy" type="button">Copy</button></div><pre><code class="hl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Main</span><span class="w"> </span><span class="p">{</span>
